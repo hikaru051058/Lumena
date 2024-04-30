@@ -1,0 +1,661 @@
+# this is an auto generated file. This will be overwritten
+
+mutation CreateFollowQL(
+  $input: CreateFollowQLInput!
+  $condition: ModelFollowQLConditionInput
+) {
+  createFollowQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    followingID
+    following {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    followerID
+    status
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateFollowQL(
+  $input: UpdateFollowQLInput!
+  $condition: ModelFollowQLConditionInput
+) {
+  updateFollowQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    followingID
+    following {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    followerID
+    status
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteFollowQL(
+  $input: DeleteFollowQLInput!
+  $condition: ModelFollowQLConditionInput
+) {
+  deleteFollowQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    followingID
+    following {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    followerID
+    status
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateLikedLumeQL(
+  $input: CreateLikedLumeQLInput!
+  $condition: ModelLikedLumeQLConditionInput
+) {
+  createLikedLumeQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateLikedLumeQL(
+  $input: UpdateLikedLumeQLInput!
+  $condition: ModelLikedLumeQLConditionInput
+) {
+  updateLikedLumeQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteLikedLumeQL(
+  $input: DeleteLikedLumeQLInput!
+  $condition: ModelLikedLumeQLConditionInput
+) {
+  deleteLikedLumeQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateCommentQL(
+  $input: CreateCommentQLInput!
+  $condition: ModelCommentQLConditionInput
+) {
+  createCommentQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    comment
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateCommentQL(
+  $input: UpdateCommentQLInput!
+  $condition: ModelCommentQLConditionInput
+) {
+  updateCommentQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    comment
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteCommentQL(
+  $input: DeleteCommentQLInput!
+  $condition: ModelCommentQLConditionInput
+) {
+  deleteCommentQL(input: $input, condition: $condition) {
+    id
+    timestamp
+    comment
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateCosmeticQL(
+  $input: CreateCosmeticQLInput!
+  $condition: ModelCosmeticQLConditionInput
+) {
+  createCosmeticQL(input: $input, condition: $condition) {
+    id
+    productName
+    companyID
+    price
+    amount
+    totTagCount
+    authenticated
+    link
+    tagCnt
+    type
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateCosmeticQL(
+  $input: UpdateCosmeticQLInput!
+  $condition: ModelCosmeticQLConditionInput
+) {
+  updateCosmeticQL(input: $input, condition: $condition) {
+    id
+    productName
+    companyID
+    price
+    amount
+    totTagCount
+    authenticated
+    link
+    tagCnt
+    type
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteCosmeticQL(
+  $input: DeleteCosmeticQLInput!
+  $condition: ModelCosmeticQLConditionInput
+) {
+  deleteCosmeticQL(input: $input, condition: $condition) {
+    id
+    productName
+    companyID
+    price
+    amount
+    totTagCount
+    authenticated
+    link
+    tagCnt
+    type
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateLumeQL(
+  $input: CreateLumeQLInput!
+  $condition: ModelLumeQLConditionInput
+) {
+  createLumeQL(input: $input, condition: $condition) {
+    id
+    postURL
+    timestamp
+    tagProducts {
+      cosmeticID
+      authProduct
+      recommend
+      effect
+      fading
+      feeling
+      attachedURL
+      __typename
+    }
+    tagMusic {
+      trackID
+      tagMusicRange
+      __typename
+    }
+    description
+    userprofileqlID
+    userprofile {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    likeCount
+    commentCount
+    hashTags
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateLumeQL(
+  $input: UpdateLumeQLInput!
+  $condition: ModelLumeQLConditionInput
+) {
+  updateLumeQL(input: $input, condition: $condition) {
+    id
+    postURL
+    timestamp
+    tagProducts {
+      cosmeticID
+      authProduct
+      recommend
+      effect
+      fading
+      feeling
+      attachedURL
+      __typename
+    }
+    tagMusic {
+      trackID
+      tagMusicRange
+      __typename
+    }
+    description
+    userprofileqlID
+    userprofile {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    likeCount
+    commentCount
+    hashTags
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteLumeQL(
+  $input: DeleteLumeQLInput!
+  $condition: ModelLumeQLConditionInput
+) {
+  deleteLumeQL(input: $input, condition: $condition) {
+    id
+    postURL
+    timestamp
+    tagProducts {
+      cosmeticID
+      authProduct
+      recommend
+      effect
+      fading
+      feeling
+      attachedURL
+      __typename
+    }
+    tagMusic {
+      trackID
+      tagMusicRange
+      __typename
+    }
+    description
+    userprofileqlID
+    userprofile {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    likeCount
+    commentCount
+    hashTags
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateUserProfileQL(
+  $input: CreateUserProfileQLInput!
+  $condition: ModelUserProfileQLConditionInput
+) {
+  createUserProfileQL(input: $input, condition: $condition) {
+    id
+    followingUsers
+    followerUsers
+    username
+    DOB
+    firstName
+    Sensitivity
+    SunBathing
+    SkinType
+    postContents {
+      nextToken
+      __typename
+    }
+    likedContents {
+      nextToken
+      __typename
+    }
+    comments {
+      nextToken
+      __typename
+    }
+    lockState
+    profileImage
+    backgroundImage
+    followerCount
+    followingCount
+    bio
+    zipURL
+    following {
+      nextToken
+      __typename
+    }
+    postCount
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateUserProfileQL(
+  $input: UpdateUserProfileQLInput!
+  $condition: ModelUserProfileQLConditionInput
+) {
+  updateUserProfileQL(input: $input, condition: $condition) {
+    id
+    followingUsers
+    followerUsers
+    username
+    DOB
+    firstName
+    Sensitivity
+    SunBathing
+    SkinType
+    postContents {
+      nextToken
+      __typename
+    }
+    likedContents {
+      nextToken
+      __typename
+    }
+    comments {
+      nextToken
+      __typename
+    }
+    lockState
+    profileImage
+    backgroundImage
+    followerCount
+    followingCount
+    bio
+    zipURL
+    following {
+      nextToken
+      __typename
+    }
+    postCount
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteUserProfileQL(
+  $input: DeleteUserProfileQLInput!
+  $condition: ModelUserProfileQLConditionInput
+) {
+  deleteUserProfileQL(input: $input, condition: $condition) {
+    id
+    followingUsers
+    followerUsers
+    username
+    DOB
+    firstName
+    Sensitivity
+    SunBathing
+    SkinType
+    postContents {
+      nextToken
+      __typename
+    }
+    likedContents {
+      nextToken
+      __typename
+    }
+    comments {
+      nextToken
+      __typename
+    }
+    lockState
+    profileImage
+    backgroundImage
+    followerCount
+    followingCount
+    bio
+    zipURL
+    following {
+      nextToken
+      __typename
+    }
+    postCount
+    createdAt
+    updatedAt
+    __typename
+  }
+}
