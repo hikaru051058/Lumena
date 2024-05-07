@@ -1,0 +1,21 @@
+{
+    "appName": "lumena",
+    "roleName": "pinpointLambdaRoledecd6ce6",
+    "cloudformationPolicyName": "cloudformationPolicydecd6ce6",
+    "cloudWatchPolicyName": "cloudWatchPolicydecd6ce6",
+    "pinpointPolicyName": "pinpointPolicydecd6ce6",
+    "authPolicyName": "pinpoint_amplify_decd6ce6",
+    "unauthPolicyName": "pinpoint_amplify_decd6ce6",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

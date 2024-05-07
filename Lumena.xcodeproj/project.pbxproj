@@ -1,0 +1,1002 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0983FCC09C5D3B2F0B2B8B51 /* FollowQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1CA30015C2F5509B072489 /* FollowQL+Schema.swift */; };
+		173AB8692BD8EF70008D76BB /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB8682BD8EF70008D76BB /* ProfileViewController.swift */; };
+		173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */; };
+		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
+		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
+		1798E7D42BD6233800793A2C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D32BD6233800793A2C /* MainViewController.swift */; };
+		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
+		1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D72BD6238500793A2C /* LoadingViewController.swift */; };
+		17A7C21B2BD66B57008FED83 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A7C21A2BD66B57008FED83 /* NotificationService.swift */; };
+		17A7C21F2BD66B57008FED83 /* LumenaNotificationAPNAWS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		17A7C2252BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17A7C2242BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin */; };
+		17A7C2272BD66BA3008FED83 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A7C2262BD66BA3008FED83 /* NotificationService.swift */; };
+		17B5AC422BEA0284000B2A7F /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */; };
+		17BAE1BD2BE6E85600E7C7C9 /* LumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */; };
+		17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA42BD616D900682EE2 /* AppDelegate.swift */; };
+		17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */; };
+		17FFBFA92BD616D900682EE2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA82BD616D900682EE2 /* ViewController.swift */; };
+		17FFBFAC2BD616D900682EE2 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 17FFBFAB2BD616D900682EE2 /* Base */; };
+		17FFBFAE2BD616DC00682EE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17FFBFAD2BD616DC00682EE2 /* Assets.xcassets */; };
+		17FFBFB12BD616DC00682EE2 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 17FFBFB02BD616DC00682EE2 /* Base */; };
+		17FFC03A2BD6190900682EE2 /* CosmeticModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFF82BD6185300682EE2 /* CosmeticModel.swift */; };
+		17FFC03B2BD6190900682EE2 /* GI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFF92BD6185300682EE2 /* GI.swift */; };
+		17FFC03C2BD6190900682EE2 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFA2BD6185300682EE2 /* ModelCache.swift */; };
+		17FFC03D2BD6190900682EE2 /* MusicModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFB2BD6185300682EE2 /* MusicModel.swift */; };
+		17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFC2BD6185300682EE2 /* ProfileModel.swift */; };
+		17FFC03F2BD6190900682EE2 /* ReelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFD2BD6185300682EE2 /* ReelModel.swift */; };
+		17FFC0402BD6190900682EE2 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFE2BD6185300682EE2 /* SearchModel.swift */; };
+		17FFC0412BD6190900682EE2 /* BarcodeScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0012BD618AC00682EE2 /* BarcodeScanner.swift */; };
+		17FFC0422BD6190900682EE2 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0022BD618AC00682EE2 /* Camera.swift */; };
+		17FFC0432BD6190900682EE2 /* CosmeticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */; };
+		17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */; };
+		17FFC0452BD6190900682EE2 /* GradientEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0052BD618AC00682EE2 /* GradientEffectView.swift */; };
+		17FFC0462BD6190900682EE2 /* ImageExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */; };
+		17FFC0472BD6190900682EE2 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0072BD618AC00682EE2 /* PostContent.swift */; };
+		17FFC0482BD6190900682EE2 /* PreviewMusic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */; };
+		17FFC0492BD6190900682EE2 /* ProductSubmission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0092BD618AC00682EE2 /* ProductSubmission.swift */; };
+		17FFC04A2BD6190900682EE2 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC00A2BD618AC00682EE2 /* Search.swift */; };
+		17FFC04B2BD6190900682EE2 /* SubComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC00B2BD618AC00682EE2 /* SubComponents.swift */; };
+		17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0162BD618CB00682EE2 /* CustomVideoPlayer.swift */; };
+		17FFC0602BD6190900682EE2 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0172BD618CB00682EE2 /* Main.swift */; };
+		17FFC0632BD6190900682EE2 /* ReelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC01A2BD618CB00682EE2 /* ReelsView.swift */; };
+		17FFC06F2BD6190900682EE2 /* Amplify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC02E2BD6190900682EE2 /* Amplify.swift */; };
+		17FFC0702BD6190900682EE2 /* CreateAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC02F2BD6190900682EE2 /* CreateAccount.swift */; };
+		17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0302BD6190900682EE2 /* LoginView.swift */; };
+		17FFC0722BD6190900682EE2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0312BD6190900682EE2 /* Profile.swift */; };
+		17FFC0732BD6190900682EE2 /* SkinSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0322BD6190900682EE2 /* SkinSetting.swift */; };
+		17FFC0762BD61A3800682EE2 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0752BD61A3800682EE2 /* test.swift */; };
+		17FFC07A2BD61C7200682EE2 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0792BD61C7200682EE2 /* Zip */; };
+		17FFC07D2BD61C8400682EE2 /* ColorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC07C2BD61C8400682EE2 /* ColorKit */; };
+		17FFC0832BD61E2C00682EE2 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */; };
+		17FFC0852BD61E7E00682EE2 /* AWSAPIPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0842BD61E7E00682EE2 /* AWSAPIPlugin */; };
+		17FFC0872BD61E7E00682EE2 /* AWSCloudWatchLoggingPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0862BD61E7E00682EE2 /* AWSCloudWatchLoggingPlugin */; };
+		17FFC0892BD61E7E00682EE2 /* AWSCognitoAuthPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0882BD61E7E00682EE2 /* AWSCognitoAuthPlugin */; };
+		17FFC08B2BD61E7E00682EE2 /* AWSDataStorePlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC08A2BD61E7E00682EE2 /* AWSDataStorePlugin */; };
+		17FFC08D2BD61E7E00682EE2 /* AWSLocationGeoPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC08C2BD61E7E00682EE2 /* AWSLocationGeoPlugin */; };
+		17FFC08F2BD61E7E00682EE2 /* AWSPinpointAnalyticsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC08E2BD61E7E00682EE2 /* AWSPinpointAnalyticsPlugin */; };
+		17FFC0912BD61E7E00682EE2 /* AWSPinpointPushNotificationsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0902BD61E7E00682EE2 /* AWSPinpointPushNotificationsPlugin */; };
+		17FFC0932BD61E7E00682EE2 /* AWSPluginsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0922BD61E7E00682EE2 /* AWSPluginsCore */; };
+		17FFC0952BD61E7E00682EE2 /* AWSPredictionsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0942BD61E7E00682EE2 /* AWSPredictionsPlugin */; };
+		17FFC0972BD61E7E00682EE2 /* AWSS3StoragePlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0962BD61E7E00682EE2 /* AWSS3StoragePlugin */; };
+		17FFC0992BD61E7E00682EE2 /* Amplify in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0982BD61E7E00682EE2 /* Amplify */; };
+		17FFC09B2BD61E7E00682EE2 /* CoreMLPredictionsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC09A2BD61E7E00682EE2 /* CoreMLPredictionsPlugin */; };
+		20DFC5EB606A735ED7E72356 /* FollowStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A2310EEC3BE35FC305BB9 /* FollowStatus.swift */; };
+		289A3AD1AD4D2FC8D2B18CCC /* TagTrackQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49685701C790F10CF9F6AD62 /* TagTrackQL.swift */; };
+		3437565D3E4B5B2FE0EB6BE8 /* LikedLumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD15051602AC0562FF54E42F /* LikedLumeQL.swift */; };
+		3B940D44345CB860D8AC6DDC /* CosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A649F905F407D7B0E3721F /* CosmeticQL.swift */; };
+		3F895ABB9903C95C21ECADA9 /* UserProfileQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */; };
+		51A87C82B8F1E677A7956BD1 /* TagTrackQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB253D209DCB12BFF2B5AD5B /* TagTrackQL+Schema.swift */; };
+		596FCA3363C220C8113CC5F6 /* LumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6CCB9A0CB9D57FB6AF3F13 /* LumeQL.swift */; };
+		9E9F5DB0CDDF92416F95B1F4 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 43857A6C65D43346ED17699C /* awsconfiguration.json */; };
+		B21F4CB3AE6752F2B70D53BD /* CommentQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC05480F882D8F9451AAA573 /* CommentQL.swift */; };
+		B9B42B22EAF04524FC174A62 /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B8B41178BF26D66A9A30BE6 /* AmplifyModels.swift */; };
+		BBF0E7299FCA3112E33DC9A9 /* UserProfileQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75EFE485ACECD46B932519C4 /* UserProfileQL.swift */; };
+		C6984BC31533AE700B0261DC /* TagCosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C522896EC3B87500CB7D58 /* TagCosmeticQL+Schema.swift */; };
+		C717920F97CE0A122BC32F1E /* TagCosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A68E589B4590DEABB92ED2 /* TagCosmeticQL.swift */; };
+		C9D8475A5F4AD51606ACDDD5 /* LumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39F4DF369703EE83D9E53B6 /* LumeQL+Schema.swift */; };
+		D46841A48683F900074A3D33 /* FollowQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF182FFC9382C4012ED042A /* FollowQL.swift */; };
+		D8B06BB103C63793778B1F10 /* CommentQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9967140AFDAABE970E812F /* CommentQL+Schema.swift */; };
+		E2E15858C2B4FB6A94BCAC0D /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */; };
+		E942C3C6E9EBF5EBA646AC43 /* CosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436748F3D789D98FA0B5F77B /* CosmeticQL+Schema.swift */; };
+		F2D70857164F3DD8A7E044DC /* LikedLumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F16349EDD7BC0C8F11DC42 /* LikedLumeQL+Schema.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17A7C21D2BD66B57008FED83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17FFBF992BD616D900682EE2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17A7C2172BD66B57008FED83;
+			remoteInfo = LumenaNotificationAPNAWS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		17A7C2202BD66B57008FED83 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				17A7C21F2BD66B57008FED83 /* LumenaNotificationAPNAWS.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		173AB8682BD8EF70008D76BB /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfirmationCodeViewController.swift; sourceTree = "<group>"; };
+		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
+		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
+		1798E7D32BD6233800793A2C /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		1798E7D72BD6238500793A2C /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
+		17A7C2132BD64F52008FED83 /* Lumena.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lumena.entitlements; sourceTree = "<group>"; };
+		17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LumenaNotificationAPNAWS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		17A7C21A2BD66B57008FED83 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		17A7C21C2BD66B57008FED83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		17A7C2262BD66BA3008FED83 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumeViewController.swift; sourceTree = "<group>"; };
+		17FFBFA12BD616D900682EE2 /* Lumena.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumena.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17FFBFA42BD616D900682EE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		17FFBFA82BD616D900682EE2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		17FFBFAB2BD616D900682EE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		17FFBFAD2BD616DC00682EE2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		17FFBFB02BD616DC00682EE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		17FFBFB22BD616DC00682EE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		17FFBFF82BD6185300682EE2 /* CosmeticModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CosmeticModel.swift; sourceTree = "<group>"; };
+		17FFBFF92BD6185300682EE2 /* GI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GI.swift; sourceTree = "<group>"; };
+		17FFBFFA2BD6185300682EE2 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
+		17FFBFFB2BD6185300682EE2 /* MusicModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicModel.swift; sourceTree = "<group>"; };
+		17FFBFFC2BD6185300682EE2 /* ProfileModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
+		17FFBFFD2BD6185300682EE2 /* ReelModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReelModel.swift; sourceTree = "<group>"; };
+		17FFBFFE2BD6185300682EE2 /* SearchModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchModel.swift; sourceTree = "<group>"; };
+		17FFC0012BD618AC00682EE2 /* BarcodeScanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScanner.swift; sourceTree = "<group>"; };
+		17FFC0022BD618AC00682EE2 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CosmeticViewModel.swift; sourceTree = "<group>"; };
+		17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
+		17FFC0052BD618AC00682EE2 /* GradientEffectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectView.swift; sourceTree = "<group>"; };
+		17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtractor.swift; sourceTree = "<group>"; };
+		17FFC0072BD618AC00682EE2 /* PostContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostContent.swift; sourceTree = "<group>"; };
+		17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewMusic.swift; sourceTree = "<group>"; };
+		17FFC0092BD618AC00682EE2 /* ProductSubmission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductSubmission.swift; sourceTree = "<group>"; };
+		17FFC00A2BD618AC00682EE2 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
+		17FFC00B2BD618AC00682EE2 /* SubComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubComponents.swift; sourceTree = "<group>"; };
+		17FFC0162BD618CB00682EE2 /* CustomVideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomVideoPlayer.swift; sourceTree = "<group>"; };
+		17FFC0172BD618CB00682EE2 /* Main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		17FFC01A2BD618CB00682EE2 /* ReelsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReelsView.swift; sourceTree = "<group>"; };
+		17FFC02E2BD6190900682EE2 /* Amplify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Amplify.swift; sourceTree = "<group>"; };
+		17FFC02F2BD6190900682EE2 /* CreateAccount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccount.swift; sourceTree = "<group>"; };
+		17FFC0302BD6190900682EE2 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		17FFC0312BD6190900682EE2 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		17FFC0322BD6190900682EE2 /* SkinSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinSetting.swift; sourceTree = "<group>"; };
+		17FFC0752BD61A3800682EE2 /* test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
+		17FFC07E2BD61D8500682EE2 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
+		17FFC07F2BD61DB100682EE2 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		32A649F905F407D7B0E3721F /* CosmeticQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = CosmeticQL.swift; path = amplify/generated/models/CosmeticQL.swift; sourceTree = "<group>"; };
+		436748F3D789D98FA0B5F77B /* CosmeticQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "CosmeticQL+Schema.swift"; path = "amplify/generated/models/CosmeticQL+Schema.swift"; sourceTree = "<group>"; };
+		43857A6C65D43346ED17699C /* awsconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
+		49685701C790F10CF9F6AD62 /* TagTrackQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = TagTrackQL.swift; path = amplify/generated/models/TagTrackQL.swift; sourceTree = "<group>"; };
+		5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
+		5D1CA30015C2F5509B072489 /* FollowQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "FollowQL+Schema.swift"; path = "amplify/generated/models/FollowQL+Schema.swift"; sourceTree = "<group>"; };
+		75EFE485ACECD46B932519C4 /* UserProfileQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = UserProfileQL.swift; path = amplify/generated/models/UserProfileQL.swift; sourceTree = "<group>"; };
+		87A68E589B4590DEABB92ED2 /* TagCosmeticQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = TagCosmeticQL.swift; path = amplify/generated/models/TagCosmeticQL.swift; sourceTree = "<group>"; };
+		8B8B41178BF26D66A9A30BE6 /* AmplifyModels.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = AmplifyModels.swift; path = amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
+		8B9967140AFDAABE970E812F /* CommentQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "CommentQL+Schema.swift"; path = "amplify/generated/models/CommentQL+Schema.swift"; sourceTree = "<group>"; };
+		8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "UserProfileQL+Schema.swift"; path = "amplify/generated/models/UserProfileQL+Schema.swift"; sourceTree = "<group>"; };
+		AB253D209DCB12BFF2B5AD5B /* TagTrackQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "TagTrackQL+Schema.swift"; path = "amplify/generated/models/TagTrackQL+Schema.swift"; sourceTree = "<group>"; };
+		B15A2310EEC3BE35FC305BB9 /* FollowStatus.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = FollowStatus.swift; path = amplify/generated/models/FollowStatus.swift; sourceTree = "<group>"; };
+		BD15051602AC0562FF54E42F /* LikedLumeQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = LikedLumeQL.swift; path = amplify/generated/models/LikedLumeQL.swift; sourceTree = "<group>"; };
+		C39F4DF369703EE83D9E53B6 /* LumeQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "LumeQL+Schema.swift"; path = "amplify/generated/models/LumeQL+Schema.swift"; sourceTree = "<group>"; };
+		C4F16349EDD7BC0C8F11DC42 /* LikedLumeQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "LikedLumeQL+Schema.swift"; path = "amplify/generated/models/LikedLumeQL+Schema.swift"; sourceTree = "<group>"; };
+		DBF182FFC9382C4012ED042A /* FollowQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = FollowQL.swift; path = amplify/generated/models/FollowQL.swift; sourceTree = "<group>"; };
+		DE6CCB9A0CB9D57FB6AF3F13 /* LumeQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = LumeQL.swift; path = amplify/generated/models/LumeQL.swift; sourceTree = "<group>"; };
+		E8C522896EC3B87500CB7D58 /* TagCosmeticQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "TagCosmeticQL+Schema.swift"; path = "amplify/generated/models/TagCosmeticQL+Schema.swift"; sourceTree = "<group>"; };
+		FC05480F882D8F9451AAA573 /* CommentQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = CommentQL.swift; path = amplify/generated/models/CommentQL.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		17A7C2152BD66B57008FED83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17A7C2252BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17FFBF9E2BD616D900682EE2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17FFC08D2BD61E7E00682EE2 /* AWSLocationGeoPlugin in Frameworks */,
+				17FFC0852BD61E7E00682EE2 /* AWSAPIPlugin in Frameworks */,
+				17FFC0892BD61E7E00682EE2 /* AWSCognitoAuthPlugin in Frameworks */,
+				17FFC0992BD61E7E00682EE2 /* Amplify in Frameworks */,
+				17FFC09B2BD61E7E00682EE2 /* CoreMLPredictionsPlugin in Frameworks */,
+				17FFC0872BD61E7E00682EE2 /* AWSCloudWatchLoggingPlugin in Frameworks */,
+				17FFC0932BD61E7E00682EE2 /* AWSPluginsCore in Frameworks */,
+				17FFC0912BD61E7E00682EE2 /* AWSPinpointPushNotificationsPlugin in Frameworks */,
+				17FFC08B2BD61E7E00682EE2 /* AWSDataStorePlugin in Frameworks */,
+				17FFC08F2BD61E7E00682EE2 /* AWSPinpointAnalyticsPlugin in Frameworks */,
+				17FFC07A2BD61C7200682EE2 /* Zip in Frameworks */,
+				17FFC0952BD61E7E00682EE2 /* AWSPredictionsPlugin in Frameworks */,
+				17FFC07D2BD61C8400682EE2 /* ColorKit in Frameworks */,
+				17FFC0972BD61E7E00682EE2 /* AWSS3StoragePlugin in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		173AB8672BD8EF48008D76BB /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				1798E7D32BD6233800793A2C /* MainViewController.swift */,
+				1798E7D52BD6237200793A2C /* LoginViewController.swift */,
+				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
+				173AB8682BD8EF70008D76BB /* ProfileViewController.swift */,
+				173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */,
+				173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */,
+				17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */,
+				175709A82BE78F4400643C40 /* SideButtonViewController.swift */,
+				17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */ = {
+			isa = PBXGroup;
+			children = (
+				17A7C21A2BD66B57008FED83 /* NotificationService.swift */,
+				17A7C21C2BD66B57008FED83 /* Info.plist */,
+			);
+			path = LumenaNotificationAPNAWS;
+			sourceTree = "<group>";
+		};
+		17FFBF982BD616D900682EE2 = {
+			isa = PBXGroup;
+			children = (
+				173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */,
+				17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */,
+				17FFBFA32BD616D900682EE2 /* Lumena */,
+				17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */,
+				17FFBFA22BD616D900682EE2 /* Products */,
+				2B5361B86E21440D64F99BF8 /* AmplifyConfig */,
+				9BC7B5AD92F0831954F4A389 /* AmplifyModels */,
+			);
+			sourceTree = "<group>";
+		};
+		17FFBFA22BD616D900682EE2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17FFBFA12BD616D900682EE2 /* Lumena.app */,
+				17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17FFBFA32BD616D900682EE2 /* Lumena */ = {
+			isa = PBXGroup;
+			children = (
+				17A7C2132BD64F52008FED83 /* Lumena.entitlements */,
+				17FFBFA42BD616D900682EE2 /* AppDelegate.swift */,
+				17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */,
+				17FFBFA82BD616D900682EE2 /* ViewController.swift */,
+				17FFBFAA2BD616D900682EE2 /* Main.storyboard */,
+				17FFBFAD2BD616DC00682EE2 /* Assets.xcassets */,
+				17FFBFAF2BD616DC00682EE2 /* LaunchScreen.storyboard */,
+				17FFBFB22BD616DC00682EE2 /* Info.plist */,
+				17FFC0752BD61A3800682EE2 /* test.swift */,
+				17FFC0332BD6190900682EE2 /* Account */,
+				17FFC01B2BD618CB00682EE2 /* Main */,
+				17FFBFFF2BD6185300682EE2 /* Models */,
+				17FFC00C2BD618AC00682EE2 /* SubFunctions */,
+				173AB8672BD8EF48008D76BB /* ViewControllers */,
+			);
+			path = Lumena;
+			sourceTree = "<group>";
+		};
+		17FFBFFF2BD6185300682EE2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				17FFBFF82BD6185300682EE2 /* CosmeticModel.swift */,
+				17FFBFF92BD6185300682EE2 /* GI.swift */,
+				17FFBFFA2BD6185300682EE2 /* ModelCache.swift */,
+				17FFBFFB2BD6185300682EE2 /* MusicModel.swift */,
+				17FFBFFC2BD6185300682EE2 /* ProfileModel.swift */,
+				17FFBFFD2BD6185300682EE2 /* ReelModel.swift */,
+				17FFBFFE2BD6185300682EE2 /* SearchModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		17FFC00C2BD618AC00682EE2 /* SubFunctions */ = {
+			isa = PBXGroup;
+			children = (
+				17FFC0012BD618AC00682EE2 /* BarcodeScanner.swift */,
+				17FFC0022BD618AC00682EE2 /* Camera.swift */,
+				17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */,
+				17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */,
+				17FFC0052BD618AC00682EE2 /* GradientEffectView.swift */,
+				17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */,
+				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
+				17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */,
+				17FFC0092BD618AC00682EE2 /* ProductSubmission.swift */,
+				17FFC00A2BD618AC00682EE2 /* Search.swift */,
+				17FFC00B2BD618AC00682EE2 /* SubComponents.swift */,
+			);
+			path = SubFunctions;
+			sourceTree = "<group>";
+		};
+		17FFC01B2BD618CB00682EE2 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				17FFC0162BD618CB00682EE2 /* CustomVideoPlayer.swift */,
+				17FFC0172BD618CB00682EE2 /* Main.swift */,
+				17FFC01A2BD618CB00682EE2 /* ReelsView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		17FFC0332BD6190900682EE2 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				17FFC02E2BD6190900682EE2 /* Amplify.swift */,
+				17FFC02F2BD6190900682EE2 /* CreateAccount.swift */,
+				17FFC0302BD6190900682EE2 /* LoginView.swift */,
+				17FFC0312BD6190900682EE2 /* Profile.swift */,
+				17FFC0322BD6190900682EE2 /* SkinSetting.swift */,
+				17A7C2262BD66BA3008FED83 /* NotificationService.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		2B5361B86E21440D64F99BF8 /* AmplifyConfig */ = {
+			isa = PBXGroup;
+			children = (
+				43857A6C65D43346ED17699C /* awsconfiguration.json */,
+				5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */,
+			);
+			name = AmplifyConfig;
+			sourceTree = "<group>";
+		};
+		9BC7B5AD92F0831954F4A389 /* AmplifyModels */ = {
+			isa = PBXGroup;
+			children = (
+				8B8B41178BF26D66A9A30BE6 /* AmplifyModels.swift */,
+				8B9967140AFDAABE970E812F /* CommentQL+Schema.swift */,
+				FC05480F882D8F9451AAA573 /* CommentQL.swift */,
+				436748F3D789D98FA0B5F77B /* CosmeticQL+Schema.swift */,
+				32A649F905F407D7B0E3721F /* CosmeticQL.swift */,
+				5D1CA30015C2F5509B072489 /* FollowQL+Schema.swift */,
+				DBF182FFC9382C4012ED042A /* FollowQL.swift */,
+				B15A2310EEC3BE35FC305BB9 /* FollowStatus.swift */,
+				C4F16349EDD7BC0C8F11DC42 /* LikedLumeQL+Schema.swift */,
+				BD15051602AC0562FF54E42F /* LikedLumeQL.swift */,
+				C39F4DF369703EE83D9E53B6 /* LumeQL+Schema.swift */,
+				DE6CCB9A0CB9D57FB6AF3F13 /* LumeQL.swift */,
+				E8C522896EC3B87500CB7D58 /* TagCosmeticQL+Schema.swift */,
+				87A68E589B4590DEABB92ED2 /* TagCosmeticQL.swift */,
+				AB253D209DCB12BFF2B5AD5B /* TagTrackQL+Schema.swift */,
+				49685701C790F10CF9F6AD62 /* TagTrackQL.swift */,
+				8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */,
+				75EFE485ACECD46B932519C4 /* UserProfileQL.swift */,
+			);
+			name = AmplifyModels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		17A7C2172BD66B57008FED83 /* LumenaNotificationAPNAWS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17A7C2232BD66B57008FED83 /* Build configuration list for PBXNativeTarget "LumenaNotificationAPNAWS" */;
+			buildPhases = (
+				17A7C2142BD66B57008FED83 /* Sources */,
+				17A7C2152BD66B57008FED83 /* Frameworks */,
+				17A7C2162BD66B57008FED83 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LumenaNotificationAPNAWS;
+			packageProductDependencies = (
+				17A7C2242BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin */,
+			);
+			productName = LumenaNotificationAPNAWS;
+			productReference = 17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		17FFBFA02BD616D900682EE2 /* Lumena */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17FFBFB52BD616DC00682EE2 /* Build configuration list for PBXNativeTarget "Lumena" */;
+			buildPhases = (
+				17FFBF9D2BD616D900682EE2 /* Sources */,
+				17FFBF9E2BD616D900682EE2 /* Frameworks */,
+				17FFBF9F2BD616D900682EE2 /* Resources */,
+				17A7C2202BD66B57008FED83 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				17A7C21E2BD66B57008FED83 /* PBXTargetDependency */,
+			);
+			name = Lumena;
+			packageProductDependencies = (
+				17FFC0792BD61C7200682EE2 /* Zip */,
+				17FFC07C2BD61C8400682EE2 /* ColorKit */,
+				17FFC0842BD61E7E00682EE2 /* AWSAPIPlugin */,
+				17FFC0862BD61E7E00682EE2 /* AWSCloudWatchLoggingPlugin */,
+				17FFC0882BD61E7E00682EE2 /* AWSCognitoAuthPlugin */,
+				17FFC08A2BD61E7E00682EE2 /* AWSDataStorePlugin */,
+				17FFC08C2BD61E7E00682EE2 /* AWSLocationGeoPlugin */,
+				17FFC08E2BD61E7E00682EE2 /* AWSPinpointAnalyticsPlugin */,
+				17FFC0902BD61E7E00682EE2 /* AWSPinpointPushNotificationsPlugin */,
+				17FFC0922BD61E7E00682EE2 /* AWSPluginsCore */,
+				17FFC0942BD61E7E00682EE2 /* AWSPredictionsPlugin */,
+				17FFC0962BD61E7E00682EE2 /* AWSS3StoragePlugin */,
+				17FFC0982BD61E7E00682EE2 /* Amplify */,
+				17FFC09A2BD61E7E00682EE2 /* CoreMLPredictionsPlugin */,
+			);
+			productName = Lumena;
+			productReference = 17FFBFA12BD616D900682EE2 /* Lumena.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		17FFBF992BD616D900682EE2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					17A7C2172BD66B57008FED83 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					17FFBFA02BD616D900682EE2 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+				};
+			};
+			buildConfigurationList = 17FFBF9C2BD616D900682EE2 /* Build configuration list for PBXProject "Lumena" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ja,
+			);
+			mainGroup = 17FFBF982BD616D900682EE2;
+			packageReferences = (
+				17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */,
+				17FFC0782BD61C7200682EE2 /* XCRemoteSwiftPackageReference "Zip" */,
+				17FFC07B2BD61C8400682EE2 /* XCRemoteSwiftPackageReference "ColorKit" */,
+			);
+			productRefGroup = 17FFBFA22BD616D900682EE2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				17FFBFA02BD616D900682EE2 /* Lumena */,
+				17A7C2172BD66B57008FED83 /* LumenaNotificationAPNAWS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		17A7C2162BD66B57008FED83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17FFBF9F2BD616D900682EE2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17FFBFAE2BD616DC00682EE2 /* Assets.xcassets in Resources */,
+				17FFBFB12BD616DC00682EE2 /* Base in Resources */,
+				17FFC0832BD61E2C00682EE2 /* Localizable.xcstrings in Resources */,
+				17FFBFAC2BD616D900682EE2 /* Base in Resources */,
+				9E9F5DB0CDDF92416F95B1F4 /* awsconfiguration.json in Resources */,
+				E2E15858C2B4FB6A94BCAC0D /* amplifyconfiguration.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		17A7C2142BD66B57008FED83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17A7C21B2BD66B57008FED83 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17FFBF9D2BD616D900682EE2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17FFC0482BD6190900682EE2 /* PreviewMusic.swift in Sources */,
+				17FFC0722BD6190900682EE2 /* Profile.swift in Sources */,
+				17FFC06F2BD6190900682EE2 /* Amplify.swift in Sources */,
+				17FFC0472BD6190900682EE2 /* PostContent.swift in Sources */,
+				17A7C2272BD66BA3008FED83 /* NotificationService.swift in Sources */,
+				17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */,
+				17FFC0762BD61A3800682EE2 /* test.swift in Sources */,
+				17FFC03F2BD6190900682EE2 /* ReelModel.swift in Sources */,
+				17FFBFA92BD616D900682EE2 /* ViewController.swift in Sources */,
+				17FFC0732BD6190900682EE2 /* SkinSetting.swift in Sources */,
+				17FFC0602BD6190900682EE2 /* Main.swift in Sources */,
+				17FFC0632BD6190900682EE2 /* ReelsView.swift in Sources */,
+				17FFC03D2BD6190900682EE2 /* MusicModel.swift in Sources */,
+				17FFC0412BD6190900682EE2 /* BarcodeScanner.swift in Sources */,
+				17FFC0402BD6190900682EE2 /* SearchModel.swift in Sources */,
+				173AB8692BD8EF70008D76BB /* ProfileViewController.swift in Sources */,
+				17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */,
+				17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */,
+				17B5AC422BEA0284000B2A7F /* TabBarViewController.swift in Sources */,
+				17FFC03C2BD6190900682EE2 /* ModelCache.swift in Sources */,
+				17FFC0452BD6190900682EE2 /* GradientEffectView.swift in Sources */,
+				17FFC0702BD6190900682EE2 /* CreateAccount.swift in Sources */,
+				17FFC03A2BD6190900682EE2 /* CosmeticModel.swift in Sources */,
+				17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */,
+				17FFC0422BD6190900682EE2 /* Camera.swift in Sources */,
+				1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */,
+				1798E7D42BD6233800793A2C /* MainViewController.swift in Sources */,
+				17FFC04B2BD6190900682EE2 /* SubComponents.swift in Sources */,
+				17FFC03B2BD6190900682EE2 /* GI.swift in Sources */,
+				17FFC0492BD6190900682EE2 /* ProductSubmission.swift in Sources */,
+				17BAE1BD2BE6E85600E7C7C9 /* LumeViewController.swift in Sources */,
+				17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */,
+				17FFC0432BD6190900682EE2 /* CosmeticViewModel.swift in Sources */,
+				17FFC04A2BD6190900682EE2 /* Search.swift in Sources */,
+				17FFC0462BD6190900682EE2 /* ImageExtractor.swift in Sources */,
+				17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */,
+				1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */,
+				173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */,
+				B9B42B22EAF04524FC174A62 /* AmplifyModels.swift in Sources */,
+				D8B06BB103C63793778B1F10 /* CommentQL+Schema.swift in Sources */,
+				175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */,
+				B21F4CB3AE6752F2B70D53BD /* CommentQL.swift in Sources */,
+				E942C3C6E9EBF5EBA646AC43 /* CosmeticQL+Schema.swift in Sources */,
+				3B940D44345CB860D8AC6DDC /* CosmeticQL.swift in Sources */,
+				0983FCC09C5D3B2F0B2B8B51 /* FollowQL+Schema.swift in Sources */,
+				D46841A48683F900074A3D33 /* FollowQL.swift in Sources */,
+				20DFC5EB606A735ED7E72356 /* FollowStatus.swift in Sources */,
+				F2D70857164F3DD8A7E044DC /* LikedLumeQL+Schema.swift in Sources */,
+				3437565D3E4B5B2FE0EB6BE8 /* LikedLumeQL.swift in Sources */,
+				C9D8475A5F4AD51606ACDDD5 /* LumeQL+Schema.swift in Sources */,
+				596FCA3363C220C8113CC5F6 /* LumeQL.swift in Sources */,
+				C6984BC31533AE700B0261DC /* TagCosmeticQL+Schema.swift in Sources */,
+				C717920F97CE0A122BC32F1E /* TagCosmeticQL.swift in Sources */,
+				51A87C82B8F1E677A7956BD1 /* TagTrackQL+Schema.swift in Sources */,
+				289A3AD1AD4D2FC8D2B18CCC /* TagTrackQL.swift in Sources */,
+				173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */,
+				3F895ABB9903C95C21ECADA9 /* UserProfileQL+Schema.swift in Sources */,
+				BBF0E7299FCA3112E33DC9A9 /* UserProfileQL.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17A7C21E2BD66B57008FED83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17A7C2172BD66B57008FED83 /* LumenaNotificationAPNAWS */;
+			targetProxy = 17A7C21D2BD66B57008FED83 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		17FFBFAA2BD616D900682EE2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				17FFBFAB2BD616D900682EE2 /* Base */,
+				17FFC07E2BD61D8500682EE2 /* ja */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		17FFBFAF2BD616DC00682EE2 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				17FFBFB02BD616DC00682EE2 /* Base */,
+				17FFC07F2BD61DB100682EE2 /* ja */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		17A7C2212BD66B57008FED83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 684823BN5K;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LumenaNotificationAPNAWS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LumenaNotificationAPNAWS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena.LumenaNotificationAPNAWS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		17A7C2222BD66B57008FED83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 684823BN5K;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LumenaNotificationAPNAWS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LumenaNotificationAPNAWS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena.LumenaNotificationAPNAWS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		17FFBFB32BD616DC00682EE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		17FFBFB42BD616DC00682EE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		17FFBFB62BD616DC00682EE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Lumena/Lumena.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 684823BN5K;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Lumena/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is required to scan the barcode, film and take a picure for both posts and use profile images.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone is used to record the audio for the post";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "The access to Photo Library is necessary for the app to fetch images from the library";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This is for the microphone usage for video capturing";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		17FFBFB72BD616DC00682EE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Lumena/Lumena.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 684823BN5K;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Lumena/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is required to scan the barcode, film and take a picure for both posts and use profile images.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone is used to record the audio for the post";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "The access to Photo Library is necessary for the app to fetch images from the library";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This is for the microphone usage for video capturing";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		17A7C2232BD66B57008FED83 /* Build configuration list for PBXNativeTarget "LumenaNotificationAPNAWS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17A7C2212BD66B57008FED83 /* Debug */,
+				17A7C2222BD66B57008FED83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		17FFBF9C2BD616D900682EE2 /* Build configuration list for PBXProject "Lumena" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17FFBFB32BD616DC00682EE2 /* Debug */,
+				17FFBFB42BD616DC00682EE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		17FFBFB52BD616DC00682EE2 /* Build configuration list for PBXNativeTarget "Lumena" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17FFBFB62BD616DC00682EE2 /* Debug */,
+				17FFBFB72BD616DC00682EE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aws-amplify/amplify-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.29.2;
+			};
+		};
+		17FFC0782BD61C7200682EE2 /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.2;
+			};
+		};
+		17FFC07B2BD61C8400682EE2 /* XCRemoteSwiftPackageReference "ColorKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Boris-Em/ColorKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		17A7C2242BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSPinpointPushNotificationsPlugin;
+		};
+		17FFC0792BD61C7200682EE2 /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0782BD61C7200682EE2 /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
+		};
+		17FFC07C2BD61C8400682EE2 /* ColorKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC07B2BD61C8400682EE2 /* XCRemoteSwiftPackageReference "ColorKit" */;
+			productName = ColorKit;
+		};
+		17FFC0842BD61E7E00682EE2 /* AWSAPIPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSAPIPlugin;
+		};
+		17FFC0862BD61E7E00682EE2 /* AWSCloudWatchLoggingPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSCloudWatchLoggingPlugin;
+		};
+		17FFC0882BD61E7E00682EE2 /* AWSCognitoAuthPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSCognitoAuthPlugin;
+		};
+		17FFC08A2BD61E7E00682EE2 /* AWSDataStorePlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSDataStorePlugin;
+		};
+		17FFC08C2BD61E7E00682EE2 /* AWSLocationGeoPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSLocationGeoPlugin;
+		};
+		17FFC08E2BD61E7E00682EE2 /* AWSPinpointAnalyticsPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSPinpointAnalyticsPlugin;
+		};
+		17FFC0902BD61E7E00682EE2 /* AWSPinpointPushNotificationsPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSPinpointPushNotificationsPlugin;
+		};
+		17FFC0922BD61E7E00682EE2 /* AWSPluginsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSPluginsCore;
+		};
+		17FFC0942BD61E7E00682EE2 /* AWSPredictionsPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSPredictionsPlugin;
+		};
+		17FFC0962BD61E7E00682EE2 /* AWSS3StoragePlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = AWSS3StoragePlugin;
+		};
+		17FFC0982BD61E7E00682EE2 /* Amplify */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = Amplify;
+		};
+		17FFC09A2BD61E7E00682EE2 /* CoreMLPredictionsPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FFC0772BD61C5700682EE2 /* XCRemoteSwiftPackageReference "amplify-swift" */;
+			productName = CoreMLPredictionsPlugin;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 17FFBF992BD616D900682EE2 /* Project object */;
+}
