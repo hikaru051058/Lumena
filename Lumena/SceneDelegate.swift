@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -18,28 +19,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        _ = AuthenticationManager.shared
+        //_ = AuthenticationManager.shared
         
         
-        window.rootViewController = UINavigationController(rootViewController: LoadingViewController())
+//        window.rootViewController = UINavigationController(rootViewController: LoadingViewController())
         
-//        window.rootViewController = UINavigationController(rootViewController: TestMainHorizontalPageViewController())
+        
+//        let pageContainerViewController = PageContainerViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+//        
+//        window.rootViewController = pageContainerViewController
+        
+        window.rootViewController = UINavigationController(rootViewController: TestCustomViewController())
         
         
         self.window = window
         window.makeKeyAndVisible()
-    }
-        
-    private func fetchLumes(completion: @escaping (_ success: Bool) -> Void) {
-        Task {
-            do {
-                lumes = try await GraphQL.shared.fetchRandomLumes()
-                completion(true)
-            } catch {
-                print(error)
-                completion(false)
-            }
-        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

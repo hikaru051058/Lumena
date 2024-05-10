@@ -107,6 +107,7 @@ class NewProfileViewController: UIViewController, UIScrollViewDelegate {
         
         scrollView.delegate = self
         scrollView.backgroundColor = .lightGray
+        scrollView.showsHorizontalScrollIndicator = false
         view.addSubview(scrollView)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -136,7 +137,6 @@ class NewProfileViewController: UIViewController, UIScrollViewDelegate {
     
     private func setupFixedBoxView() {
         
-        // Set up the fixed box
         fixedBox.backgroundColor = .darkGray
         headerView.addSubview(fixedBox)
         
@@ -280,6 +280,8 @@ class NewProfileViewController: UIViewController, UIScrollViewDelegate {
         
         setupContentView()
         
+        setupBackgroundGradient()
+        
         setupPagingScrollView()
         
         setupTabBarOverlay()
@@ -325,8 +327,6 @@ class NewProfileViewController: UIViewController, UIScrollViewDelegate {
         pageControl.translatesAutoresizingMaskIntoConstraints = false
     }
 }
-
-
 
 
 class CollapsibleHeaderViewController: UIViewController, UIScrollViewDelegate {
@@ -514,3 +514,494 @@ class CollapsibleHeaderViewController: UIViewController, UIScrollViewDelegate {
         pageControl.translatesAutoresizingMaskIntoConstraints = false
     }
 }
+
+// OR
+
+
+class TestCustomViewController: UIViewController, UIScrollViewDelegate {
+    
+    let scrollView = UIScrollView()
+    let scrollViewContent = UIView()
+    let topBox = UIView()
+    let bottomBox = UIView()
+    
+    var topBoxTopConstraint: NSLayoutConstraint!
+    
+    var topBoxHeight: CGFloat = 200
+    var bottomBoxHeight: CGFloat = 50
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupViews()
+        setupConstraints()
+        setupHorizontalPagingViewController()
+    }
+    
+    private func setupViews() {
+        
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        
+        // Configure scrollView
+        scrollView.delegate = self
+        scrollView.backgroundColor = .lightGray
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.showsHorizontalScrollIndicator = false
+        view.addSubview(scrollView)
+        
+        // Configure scrollViewContent
+        scrollViewContent.backgroundColor = .clear // add background blur here
+        scrollViewContent.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(scrollViewContent)
+        
+        // Configure topBox
+        topBox.backgroundColor = .blue
+        topBox.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(topBox)
+        
+        // Configure bottomBox
+        bottomBox.backgroundColor = .red
+        bottomBox.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bottomBox)
+    }
+    
+    private func setupConstraints() {
+        topBoxTopConstraint = topBox.bottomAnchor.constraint(equalTo: view.topAnchor, constant: topBoxHeight)
+        
+        NSLayoutConstraint.activate([
+            topBoxTopConstraint,
+            topBox.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topBox.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topBox.heightAnchor.constraint(equalToConstant: topBoxHeight),
+            
+            bottomBox.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomBox.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomBox.heightAnchor.constraint(equalToConstant: bottomBoxHeight),
+            bottomBox.topAnchor.constraint(equalTo: topBox.bottomAnchor),
+            
+            scrollView.topAnchor.constraint(equalTo: bottomBox.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            scrollViewContent.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            scrollViewContent.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            scrollViewContent.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            scrollViewContent.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            scrollViewContent.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            scrollViewContent.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        ])
+    }
+    
+    private func setupHorizontalPagingViewController() {
+        // Initialize PageContainerViewController
+        let pageContainer = PageContainerViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        addChild(pageContainer)
+        scrollViewContent.addSubview(pageContainer.view)
+
+        // Configure constraints for PageContainerViewController's view
+        pageContainer.view.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            pageContainer.view.topAnchor.constraint(equalTo: scrollViewContent.topAnchor),
+            pageContainer.view.bottomAnchor.constraint(equalTo: scrollViewContent.bottomAnchor),
+            pageContainer.view.leadingAnchor.constraint(equalTo: scrollViewContent.leadingAnchor),
+            pageContainer.view.trailingAnchor.constraint(equalTo: scrollViewContent.trailingAnchor)
+        ])
+
+        // Notify the pageContainer that it has been moved to a parent
+        pageContainer.didMove(toParent: self)
+        
+        // Adjust scrollViewContent height to match the pageContainer height
+        let contentHeight = pageContainer.view.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        contentHeight.priority = .defaultLow
+        NSLayoutConstraint.activate([contentHeight])
+    }
+}
+
+extension TestCustomViewController: PageScrollDelegate {
+    func pageDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let newTopBoxTop = max(0, topBoxHeight - offsetY)
+        topBoxTopConstraint.constant = newTopBoxTop
+        view.layoutIfNeeded()
+    }
+}
+
+protocol PageScrollDelegate: AnyObject {
+    func pageDidScroll(_ scrollView: UIScrollView)
+}
+
+
+class PageContainerViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    
+    private var previousPageOffset: CGFloat = 0
+    
+    lazy var subViewControllers: [UIViewController] = {
+        return [
+            PageViewController(with: 2.0, backgroundColor: .blue), // 50% of the view's height
+            PageViewController(with: 2.0, backgroundColor: .green), // 150% of the view's height
+            PageViewController(with: 2.0, backgroundColor: .red)  // 200% of the view's height
+        ]
+    }()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.dataSource = self
+        self.delegate = self
+        if let firstViewController = subViewControllers.first {
+            setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+        }
+        
+        for viewController in subViewControllers {
+            if let page = viewController as? PageViewController {
+                page.delegate = self.parent as? PageScrollDelegate
+            }
+        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = subViewControllers.firstIndex(of: viewController) else {
+            return nil
+        }
+        
+        let previousIndex = viewControllerIndex - 1
+        guard previousIndex >= 0 else { return nil }
+        return subViewControllers[previousIndex]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = subViewControllers.firstIndex(of: viewController) else {
+            return nil
+        }
+        
+        let nextIndex = viewControllerIndex + 1
+        guard nextIndex < subViewControllers.count else { return nil }
+        return subViewControllers[nextIndex]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if completed, let currentViewController = viewControllers?.first as? PageViewController {
+            // Check the scroll offset of the current page before the transition
+            let currentPageOffset = (currentViewController.scrollView.contentOffset.y)
+            
+            // Determine the scroll position for the new page based on the current page's scroll position
+            if currentPageOffset >= 200 {
+                // If the current page was scrolled more than 200, set the new page to 200 as well
+                let targetOffset = CGPoint(x: 0, y: 200)
+                currentViewController.scrollView.setContentOffset(targetOffset, animated: true)
+            } else {
+                // If the current page was scrolled less than 200, set the new page to the top
+                let targetOffset = CGPoint(x: 0, y: -200)
+                currentViewController.scrollView.setContentOffset(targetOffset, animated: true)
+            }
+            
+            // Update the previous page offset for next page change
+            previousPageOffset = currentViewController.lastScrollOffset
+        }
+    }
+
+    
+    // Ensure to update previousPageOffset when scrolling
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        if let currentPage = viewControllers?.first as? PageViewController {
+            previousPageOffset = currentPage.lastScrollOffset
+        }
+    }
+}
+
+class PageViewController: UIViewController {
+    
+    weak var delegate: PageScrollDelegate?
+    
+    var scrollView: UIScrollView!
+    
+    var scrollViewHeightMultiplier: CGFloat
+    var backgroundColor: UIColor
+    var lastScrollOffset: CGFloat = 0
+    
+    init(with heightMultiplier: CGFloat, backgroundColor: UIColor) {
+        self.scrollViewHeightMultiplier = heightMultiplier
+        self.backgroundColor = backgroundColor
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white // Set the background color to white
+        setupScrollView()
+    }
+
+    
+    private func setupScrollView() {
+        scrollView = UIScrollView()
+        scrollView.delegate = self
+        scrollView.bounces = false
+        scrollView.backgroundColor = .gray // For visibility
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        let contentView = UIView()
+        contentView.backgroundColor = backgroundColor // For visibility
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, multiplier: scrollViewHeightMultiplier)
+        ])
+    }
+}
+
+extension PageViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        lastScrollOffset = scrollView.contentOffset.y
+        delegate?.pageDidScroll(scrollView)
+    }
+}
+
+
+/*
+ class TestCustomViewController: UIViewController, UIScrollViewDelegate {
+     
+     let scrollView = UIScrollView()
+     let scrollViewContent = UIView()
+     let topBox = UIView()
+     let bottomBox = UIView()
+     
+     var topBoxTopConstraint: NSLayoutConstraint!
+     
+     var topBoxHeight: CGFloat = 200
+     var bottomBoxHeight: CGFloat = 50
+     
+     override func viewDidLoad() {
+         super.viewDidLoad()
+         setupViews()
+         setupConstraints()
+         setupHorizontalPagingViewController()
+     }
+     
+     private func setupViews() {
+         
+         navigationController?.setNavigationBarHidden(true, animated: true)
+         
+         // Configure scrollView
+         scrollView.delegate = self
+         scrollView.backgroundColor = .lightGray
+         scrollView.translatesAutoresizingMaskIntoConstraints = false
+         scrollView.contentInsetAdjustmentBehavior = .never
+         scrollView.showsVerticalScrollIndicator = true
+         scrollView.showsHorizontalScrollIndicator = false
+         view.addSubview(scrollView)
+         
+         // Configure scrollViewContent
+         scrollViewContent.backgroundColor = .clear // add background blur here
+         scrollViewContent.translatesAutoresizingMaskIntoConstraints = false
+         scrollView.addSubview(scrollViewContent)
+         
+         // Configure topBox
+         topBox.backgroundColor = .blue
+         topBox.translatesAutoresizingMaskIntoConstraints = false
+         view.addSubview(topBox)
+         
+         // Configure bottomBox
+         bottomBox.backgroundColor = .red
+         bottomBox.translatesAutoresizingMaskIntoConstraints = false
+         view.addSubview(bottomBox)
+     }
+     
+     private func setupConstraints() {
+         topBoxTopConstraint = topBox.bottomAnchor.constraint(equalTo: view.topAnchor, constant: topBoxHeight)
+         
+         NSLayoutConstraint.activate([
+             topBoxTopConstraint,
+             topBox.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+             topBox.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+             topBox.heightAnchor.constraint(equalToConstant: topBoxHeight),
+             
+             bottomBox.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+             bottomBox.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+             bottomBox.heightAnchor.constraint(equalToConstant: bottomBoxHeight),
+             bottomBox.topAnchor.constraint(equalTo: topBox.bottomAnchor),
+             
+             scrollView.topAnchor.constraint(equalTo: bottomBox.bottomAnchor),
+             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+             
+             scrollViewContent.topAnchor.constraint(equalTo: scrollView.topAnchor),
+             scrollViewContent.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+             scrollViewContent.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+             scrollViewContent.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+             scrollViewContent.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+             scrollViewContent.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+         ])
+     }
+     
+     private func setupHorizontalPagingViewController() {
+         // Initialize PageContainerViewController
+         let pageContainer = PageContainerViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+         addChild(pageContainer)
+         scrollViewContent.addSubview(pageContainer.view)
+
+         // Configure constraints for PageContainerViewController's view
+         pageContainer.view.translatesAutoresizingMaskIntoConstraints = false
+
+         NSLayoutConstraint.activate([
+             pageContainer.view.topAnchor.constraint(equalTo: scrollViewContent.topAnchor),
+             pageContainer.view.bottomAnchor.constraint(equalTo: scrollViewContent.bottomAnchor),
+             pageContainer.view.leadingAnchor.constraint(equalTo: scrollViewContent.leadingAnchor),
+             pageContainer.view.trailingAnchor.constraint(equalTo: scrollViewContent.trailingAnchor)
+         ])
+
+         // Notify the pageContainer that it has been moved to a parent
+         pageContainer.didMove(toParent: self)
+         
+         // Adjust scrollViewContent height to match the pageContainer height
+         let contentHeight = pageContainer.view.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+         contentHeight.priority = .defaultLow
+         NSLayoutConstraint.activate([contentHeight])
+     }
+ }
+
+ extension TestCustomViewController: PageScrollDelegate {
+     func pageDidScroll(_ scrollView: UIScrollView) {
+         let offsetY = scrollView.contentOffset.y
+         let newTopBoxTop = max(0, topBoxHeight - offsetY)
+         topBoxTopConstraint.constant = newTopBoxTop
+         view.layoutIfNeeded()
+     }
+ }
+
+ protocol PageScrollDelegate: AnyObject {
+     func pageDidScroll(_ scrollView: UIScrollView)
+ }
+
+
+ class PageContainerViewController: UIPageViewController, UIPageViewControllerDataSource {
+     
+     lazy var subViewControllers: [UIViewController] = {
+         return [
+             PageViewController(with: 2.0, backgroundColor: .blue), // 50% of the view's height
+             PageViewController(with: 2.0, backgroundColor: .green), // 150% of the view's height
+             PageViewController(with: 2.0, backgroundColor: .red)  // 200% of the view's height
+         ]
+     }()
+     
+     override func viewDidLoad() {
+         super.viewDidLoad()
+         self.dataSource = self
+         // Set up the initial view controller
+         if let firstViewController = subViewControllers.first {
+             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+         }
+         
+         // Ensure each page has a delegate set
+         for viewController in subViewControllers {
+             if let page = viewController as? PageViewController {
+                 page.delegate = self.parent as? PageScrollDelegate
+             }
+         }
+     }
+     
+     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+         guard let viewControllerIndex = subViewControllers.firstIndex(of: viewController) else {
+             return nil
+         }
+         
+         let previousIndex = viewControllerIndex - 1
+         guard previousIndex >= 0 else { return nil }
+         return subViewControllers[previousIndex]
+     }
+     
+     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+         guard let viewControllerIndex = subViewControllers.firstIndex(of: viewController) else {
+             return nil
+         }
+         
+         let nextIndex = viewControllerIndex + 1
+         guard nextIndex < subViewControllers.count else { return nil }
+         return subViewControllers[nextIndex]
+     }
+ }
+
+
+ class PageViewController: UIViewController {
+     
+     weak var delegate: PageScrollDelegate?
+     
+     var scrollViewHeightMultiplier: CGFloat
+     var backgroundColor: UIColor
+     
+     init(with heightMultiplier: CGFloat, backgroundColor: UIColor) {
+         self.scrollViewHeightMultiplier = heightMultiplier
+         self.backgroundColor = backgroundColor
+         super.init(nibName: nil, bundle: nil)
+     }
+     
+     required init?(coder: NSCoder) {
+         fatalError("init(coder:) has not been implemented")
+     }
+     
+     override func viewDidLoad() {
+         super.viewDidLoad()
+         view.backgroundColor = .white // Set the background color to white
+         setupScrollView()
+     }
+
+     
+     private func setupScrollView() {
+         let scrollView = UIScrollView()
+         scrollView.delegate = self
+         scrollView.bounces = false
+         scrollView.backgroundColor = .gray // For visibility
+         scrollView.translatesAutoresizingMaskIntoConstraints = false
+         view.addSubview(scrollView)
+         
+         NSLayoutConstraint.activate([
+             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+         ])
+         
+         let contentView = UIView()
+         contentView.backgroundColor = backgroundColor // For visibility
+         contentView.translatesAutoresizingMaskIntoConstraints = false
+         scrollView.addSubview(contentView)
+         
+         NSLayoutConstraint.activate([
+             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, multiplier: scrollViewHeightMultiplier)
+         ])
+     }
+ }
+
+ extension PageViewController: UIScrollViewDelegate {
+     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+         delegate?.pageDidScroll(scrollView)
+     }
+ }
+
+ */
