@@ -637,94 +637,87 @@ protocol PageScrollDelegate: AnyObject {
 class PageContainerViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     private var previousPageOffset: CGFloat = 0
-    
-    lazy var subViewControllers: [UIViewController] = {
-        return [
-            PageViewController(with: 2.0, backgroundColor: .blue), // 50% of the view's height
-            PageViewController(with: 2.0, backgroundColor: .green), // 150% of the view's height
-            PageViewController(with: 2.0, backgroundColor: .red)  // 200% of the view's height
-        ]
-    }()
-    
+    var subViewControllers: [PageViewController] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
+        setupSubViewControllers()
+    }
+    
+    private func setupSubViewControllers() {
+        subViewControllers = [
+            PageViewController(heightMultiplier: 2.0, color: .blue),
+            PageViewController(heightMultiplier: 2.0, color: .green),
+            PageViewController(heightMultiplier: 2.0, color: .red)
+        ]
+        
         if let firstViewController = subViewControllers.first {
-            setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+            setViewControllers([firstViewController], direction: .forward, animated: false, completion: nil)
         }
         
         for viewController in subViewControllers {
-            if let page = viewController as? PageViewController {
-                page.delegate = self.parent as? PageScrollDelegate
-            }
+            viewController.delegate = self.parent as? PageScrollDelegate
+            prepareScrollView(for: viewController)
+        }
+    }
+    
+    private func prepareScrollView(for page: PageViewController) {
+        page.view.layoutIfNeeded()
+        if page.scrollView.contentOffset.y == 0 {
+            // Apply the previous page's offset but do not exceed 200.
+            let newOffsetY = min(previousPageOffset, 200)
+            page.scrollView.contentOffset.y = newOffsetY
         }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = subViewControllers.firstIndex(of: viewController) else {
+        guard let index = subViewControllers.firstIndex(of: viewController as! PageViewController), index > 0 else {
             return nil
         }
-        
-        let previousIndex = viewControllerIndex - 1
-        guard previousIndex >= 0 else { return nil }
-        return subViewControllers[previousIndex]
+        return subViewControllers[index - 1]
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = subViewControllers.firstIndex(of: viewController) else {
+        guard let index = subViewControllers.firstIndex(of: viewController as! PageViewController), index < subViewControllers.count - 1 else {
             return nil
         }
-        
-        let nextIndex = viewControllerIndex + 1
-        guard nextIndex < subViewControllers.count else { return nil }
-        return subViewControllers[nextIndex]
+        return subViewControllers[index + 1]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        if let currentPage = viewControllers?.first as? PageViewController {
+            previousPageOffset = currentPage.scrollView.contentOffset.y
+        }
+        // Preemptively adjust the scroll position of the page that will be transitioned to
+        if let nextPage = pendingViewControllers.first as? PageViewController {
+            prepareScrollView(for: nextPage)
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if completed, let currentViewController = viewControllers?.first as? PageViewController {
-            // Check the scroll offset of the current page before the transition
-            let currentPageOffset = (currentViewController.scrollView.contentOffset.y)
-            
-            // Determine the scroll position for the new page based on the current page's scroll position
-            if currentPageOffset >= 200 {
-                // If the current page was scrolled more than 200, set the new page to 200 as well
-                let targetOffset = CGPoint(x: 0, y: 200)
-                currentViewController.scrollView.setContentOffset(targetOffset, animated: true)
-            } else {
-                // If the current page was scrolled less than 200, set the new page to the top
-                let targetOffset = CGPoint(x: 0, y: -200)
-                currentViewController.scrollView.setContentOffset(targetOffset, animated: true)
-            }
-            
-            // Update the previous page offset for next page change
-            previousPageOffset = currentViewController.lastScrollOffset
-        }
-    }
-
-    
-    // Ensure to update previousPageOffset when scrolling
-    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        if let currentPage = viewControllers?.first as? PageViewController {
-            previousPageOffset = currentPage.lastScrollOffset
+        if completed, let currentPage = viewControllers?.first as? PageViewController {
+            previousPageOffset = currentPage.scrollView.contentOffset.y
         }
     }
 }
+
 
 class PageViewController: UIViewController {
     
     weak var delegate: PageScrollDelegate?
     
-    var scrollView: UIScrollView!
+    var scrollView: UIScrollView = UIScrollView()
+    var contentView:UIView = UIView()
+    var heightMultiplier: CGFloat
+    var color: UIColor
     
-    var scrollViewHeightMultiplier: CGFloat
-    var backgroundColor: UIColor
-    var lastScrollOffset: CGFloat = 0
+    var lastScrollPosition: CGFloat = 0
     
-    init(with heightMultiplier: CGFloat, backgroundColor: UIColor) {
-        self.scrollViewHeightMultiplier = heightMultiplier
-        self.backgroundColor = backgroundColor
+    init(heightMultiplier: CGFloat, color: UIColor) {
+        self.heightMultiplier = heightMultiplier
+        self.color = color
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -734,19 +727,15 @@ class PageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white // Set the background color to white
         setupScrollView()
     }
-
     
     private func setupScrollView() {
-        scrollView = UIScrollView()
         scrollView.delegate = self
         scrollView.bounces = false
-        scrollView.backgroundColor = .gray // For visibility
+        scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
-        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -754,28 +743,32 @@ class PageViewController: UIViewController {
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        let contentView = UIView()
-        contentView.backgroundColor = backgroundColor // For visibility
+        contentView.backgroundColor = color
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
-        
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, multiplier: scrollViewHeightMultiplier)
+            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, multiplier: heightMultiplier)
         ])
+
     }
 }
 
 extension PageViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        lastScrollOffset = scrollView.contentOffset.y
         delegate?.pageDidScroll(scrollView)
+        print(scrollView.contentOffset.y)
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        lastScrollPosition = scrollView.contentOffset.y
     }
 }
+
 
 
 /*
