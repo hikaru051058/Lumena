@@ -664,11 +664,19 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     }
     
     private func prepareScrollView(for page: PageViewController) {
+        
         page.view.layoutIfNeeded()
-        if page.scrollView.contentOffset.y == 0 {
-            // Apply the previous page's offset but do not exceed 200.
-            let newOffsetY = min(previousPageOffset, 200)
-            page.scrollView.contentOffset.y = newOffsetY
+        
+        if previousPageOffset < 200 || page.scrollView.contentOffset.y == 0{
+            page.scrollView.contentOffset.y = previousPageOffset
+        } else {
+            if page.scrollView.contentOffset.y <= 200 {
+                if previousPageOffset >= 200 {
+                    page.scrollView.contentOffset.y = 200
+                } else {
+                    page.scrollView.contentOffset.y = previousPageOffset
+                }
+            }
         }
     }
     
@@ -761,7 +769,6 @@ class PageViewController: UIViewController {
 extension PageViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.pageDidScroll(scrollView)
-        print(scrollView.contentOffset.y)
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {

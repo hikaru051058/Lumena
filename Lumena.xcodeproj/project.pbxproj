@@ -14,15 +14,16 @@
 		173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */; };
 		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
+		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
 		1798E7D42BD6233800793A2C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D32BD6233800793A2C /* MainViewController.swift */; };
 		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
 		1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D72BD6238500793A2C /* LoadingViewController.swift */; };
 		17A7C21B2BD66B57008FED83 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A7C21A2BD66B57008FED83 /* NotificationService.swift */; };
 		17A7C21F2BD66B57008FED83 /* LumenaNotificationAPNAWS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		17A7C2252BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17A7C2242BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin */; };
-		17A7C2272BD66BA3008FED83 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A7C2262BD66BA3008FED83 /* NotificationService.swift */; };
 		17B5AC422BEA0284000B2A7F /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */; };
 		17BAE1BD2BE6E85600E7C7C9 /* LumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */; };
+		17FA9F452BEE44B000CC28AC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FA9F442BEE44B000CC28AC /* NotificationService.swift */; };
 		17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA42BD616D900682EE2 /* AppDelegate.swift */; };
 		17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */; };
 		17FFBFA92BD616D900682EE2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA82BD616D900682EE2 /* ViewController.swift */; };
@@ -40,7 +41,6 @@
 		17FFC0422BD6190900682EE2 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0022BD618AC00682EE2 /* Camera.swift */; };
 		17FFC0432BD6190900682EE2 /* CosmeticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */; };
 		17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */; };
-		17FFC0452BD6190900682EE2 /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0052BD618AC00682EE2 /* GradientEffectViewController.swift */; };
 		17FFC0462BD6190900682EE2 /* ImageExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */; };
 		17FFC0472BD6190900682EE2 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0072BD618AC00682EE2 /* PostContent.swift */; };
 		17FFC0482BD6190900682EE2 /* PreviewMusic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */; };
@@ -124,6 +124,7 @@
 		173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfirmationCodeViewController.swift; sourceTree = "<group>"; };
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
+		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
 		1798E7D32BD6233800793A2C /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		1798E7D72BD6238500793A2C /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
@@ -131,9 +132,9 @@
 		17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LumenaNotificationAPNAWS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		17A7C21A2BD66B57008FED83 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17A7C21C2BD66B57008FED83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		17A7C2262BD66BA3008FED83 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumeViewController.swift; sourceTree = "<group>"; };
+		17FA9F442BEE44B000CC28AC /* NotificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17FFBFA12BD616D900682EE2 /* Lumena.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumena.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17FFBFA42BD616D900682EE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -153,7 +154,6 @@
 		17FFC0022BD618AC00682EE2 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CosmeticViewModel.swift; sourceTree = "<group>"; };
 		17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
-		17FFC0052BD618AC00682EE2 /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
 		17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtractor.swift; sourceTree = "<group>"; };
 		17FFC0072BD618AC00682EE2 /* PostContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostContent.swift; sourceTree = "<group>"; };
 		17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewMusic.swift; sourceTree = "<group>"; };
@@ -230,7 +230,7 @@
 		173AB8672BD8EF48008D76BB /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				17FFC0052BD618AC00682EE2 /* GradientEffectViewController.swift */,
+				1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */,
 				1798E7D32BD6233800793A2C /* MainViewController.swift */,
 				1798E7D52BD6237200793A2C /* LoginViewController.swift */,
 				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
@@ -347,7 +347,7 @@
 				17FFC0302BD6190900682EE2 /* LoginView.swift */,
 				17FFC0312BD6190900682EE2 /* Profile.swift */,
 				17FFC0322BD6190900682EE2 /* SkinSetting.swift */,
-				17A7C2262BD66BA3008FED83 /* NotificationService.swift */,
+				17FA9F442BEE44B000CC28AC /* NotificationService.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -528,7 +528,7 @@
 				17FFC0722BD6190900682EE2 /* Profile.swift in Sources */,
 				17FFC06F2BD6190900682EE2 /* Amplify.swift in Sources */,
 				17FFC0472BD6190900682EE2 /* PostContent.swift in Sources */,
-				17A7C2272BD66BA3008FED83 /* NotificationService.swift in Sources */,
+				1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */,
 				17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */,
 				17FFC0762BD61A3800682EE2 /* test.swift in Sources */,
 				17FFC03F2BD6190900682EE2 /* ReelModel.swift in Sources */,
@@ -536,6 +536,7 @@
 				17FFC0732BD6190900682EE2 /* SkinSetting.swift in Sources */,
 				17FFC0602BD6190900682EE2 /* Main.swift in Sources */,
 				17FFC0632BD6190900682EE2 /* ReelsView.swift in Sources */,
+				17FA9F452BEE44B000CC28AC /* NotificationService.swift in Sources */,
 				170264702BEACED5004C9444 /* SkinSettingViewController.swift in Sources */,
 				17FFC03D2BD6190900682EE2 /* MusicModel.swift in Sources */,
 				17FFC0412BD6190900682EE2 /* BarcodeScanner.swift in Sources */,
@@ -545,7 +546,6 @@
 				17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */,
 				17B5AC422BEA0284000B2A7F /* TabBarViewController.swift in Sources */,
 				17FFC03C2BD6190900682EE2 /* ModelCache.swift in Sources */,
-				17FFC0452BD6190900682EE2 /* GradientEffectViewController.swift in Sources */,
 				17FFC0702BD6190900682EE2 /* CreateAccount.swift in Sources */,
 				17FFC03A2BD6190900682EE2 /* CosmeticModel.swift in Sources */,
 				17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */,
