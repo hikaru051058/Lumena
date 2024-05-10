@@ -40,7 +40,7 @@
 		17FFC0422BD6190900682EE2 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0022BD618AC00682EE2 /* Camera.swift */; };
 		17FFC0432BD6190900682EE2 /* CosmeticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */; };
 		17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */; };
-		17FFC0452BD6190900682EE2 /* GradientEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0052BD618AC00682EE2 /* GradientEffectView.swift */; };
+		17FFC0452BD6190900682EE2 /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0052BD618AC00682EE2 /* GradientEffectViewController.swift */; };
 		17FFC0462BD6190900682EE2 /* ImageExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */; };
 		17FFC0472BD6190900682EE2 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0072BD618AC00682EE2 /* PostContent.swift */; };
 		17FFC0482BD6190900682EE2 /* PreviewMusic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */; };
@@ -153,7 +153,7 @@
 		17FFC0022BD618AC00682EE2 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CosmeticViewModel.swift; sourceTree = "<group>"; };
 		17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
-		17FFC0052BD618AC00682EE2 /* GradientEffectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectView.swift; sourceTree = "<group>"; };
+		17FFC0052BD618AC00682EE2 /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
 		17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtractor.swift; sourceTree = "<group>"; };
 		17FFC0072BD618AC00682EE2 /* PostContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostContent.swift; sourceTree = "<group>"; };
 		17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewMusic.swift; sourceTree = "<group>"; };
@@ -230,6 +230,7 @@
 		173AB8672BD8EF48008D76BB /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				17FFC0052BD618AC00682EE2 /* GradientEffectViewController.swift */,
 				1798E7D32BD6233800793A2C /* MainViewController.swift */,
 				1798E7D52BD6237200793A2C /* LoginViewController.swift */,
 				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
@@ -317,7 +318,6 @@
 				17FFC0022BD618AC00682EE2 /* Camera.swift */,
 				17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */,
 				17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */,
-				17FFC0052BD618AC00682EE2 /* GradientEffectView.swift */,
 				17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */,
 				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
 				17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */,
@@ -545,7 +545,7 @@
 				17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */,
 				17B5AC422BEA0284000B2A7F /* TabBarViewController.swift in Sources */,
 				17FFC03C2BD6190900682EE2 /* ModelCache.swift in Sources */,
-				17FFC0452BD6190900682EE2 /* GradientEffectView.swift in Sources */,
+				17FFC0452BD6190900682EE2 /* GradientEffectViewController.swift in Sources */,
 				17FFC0702BD6190900682EE2 /* CreateAccount.swift in Sources */,
 				17FFC03A2BD6190900682EE2 /* CosmeticModel.swift in Sources */,
 				17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */,

@@ -1,5 +1,50 @@
 import Combine
 import SwiftUI
+import ColorKit
+
+
+// UIViewController to host the SwiftUI view
+class GradientEffectViewController: UIViewController {
+    var gradientModel: AnimatedGradient.Model
+    var hostingController: UIHostingController<GradientEffectView>?
+
+    init(colors: [Color]) {
+        self.gradientModel = AnimatedGradient.Model(colors: colors)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
+
+    private func setupUI() {
+        let animatedGradientView = GradientEffectView(.constant(gradientModel))
+        hostingController = UIHostingController(rootView: animatedGradientView)
+        guard let hostingView = hostingController?.view else { return }
+        addChild(hostingController!)
+        view.addSubview(hostingView)
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingView.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        hostingController?.didMove(toParent: self)
+    }
+
+    func updateGradientColors(_ colors: [Color]) {
+        gradientModel.colors = colors
+        // No need to reset the entire SwiftUI view; the model update should trigger UI updates
+    }
+}
+
+
 
 struct AnimatedGradient: View {
     struct Model {
@@ -87,6 +132,8 @@ struct GradientEffectView: View {
     @State private var blots: [Blot] = (0 ..< 5).map { _ in .random }
     @Binding private var model: AnimatedGradient.Model
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
+    
+    @Environment(\.colorScheme) var colorScheme
 
     init(_ model: Binding<AnimatedGradient.Model>) {
         _model = model
@@ -102,9 +149,6 @@ struct GradientEffectView: View {
                 blot(withParams: blots[2], geometry)
                 blot(withParams: blots[3], geometry)
                 blot(withParams: blots[4], geometry)
-                
-                //VisualEffect(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-                VisualEffect(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .onAppear {
@@ -116,9 +160,14 @@ struct GradientEffectView: View {
             .onChange(of: model.isFirstGradientVisible) { _ in
                 update()
             }
+            /*
+            .overlay(content: {
+                VisualEffect(effect: UIBlurEffect(style: colorScheme == .dark ? .systemUltraThinMaterialDark : .systemUltraThinMaterial))
+            })
+             */
         }
         .edgesIgnoringSafeArea(.all)
-        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 
     private func update() {
@@ -156,8 +205,8 @@ struct GradientEffectView: View {
             .contrast(1)
             .foregroundColor(.clear)
     }
-
 }
+
 
 struct GradientEffectView_Previews: PreviewProvider {
     static var previews: some View {
@@ -176,78 +225,6 @@ struct GradientEffectView_Previews: PreviewProvider {
     }
 }
 
-
-
-import ColorKit
-
-
-//This glitches out if i dont add 0.01 seconds of other view before so that
-struct backgroundBlur: View {
-    @State var colors: [(id: Int, color: UIColor, frequency: CGFloat)] = []
-    @State var gradientModel = AnimatedGradient.Model(colors: [])
-    
-    @Binding var images: [UIImage]
-    @Binding var currentPage: Int
-    
-    @State var isLoading = true
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    var body: some View{
-        
-        ZStack{
-            
-            Spacer()
-                .background(GradientEffectView($gradientModel))
-        }
-        .onAppear{
-            updateColors()
-        }
-        .ignoresSafeArea()
-        .onChange(of: currentPage) { _ in
-            updateColors()
-        }
-    }
-}
-
-private extension backgroundBlur {
-    
-    var image: UIImage? {
-        if !images.isEmpty {
-            return images[currentPage % images.count].convertToRGBColorspace()
-        } else {
-            return nil
-        }
-    }
-    
-    func updateColors() {
-        if let validImage = image {
-            guard let dominantColors = try? validImage.dominantColorFrequencies(with: .high) else { return }
-            
-            colors = dominantColors.prefix(3).enumerated().map { ($0.offset, $0.element.color, $0.element.frequency) }
-            
-            let schemeColor = UIColor(colorScheme == .light ? .white : .black)
-            colors.append((id: 3, color: schemeColor, frequency: 1.0))
-            
-        } else {
-            // Default colors when there are no valid images
-            let defaultColors = [
-                UIColor(red: 0.723, green: 0.88, blue: 0.825, alpha: 1.0),
-                UIColor(red: 0.552, green: 0.724, blue: 0.831, alpha: 1.0),
-                UIColor(red: 0.946, green: 0.76, blue: 0.839, alpha: 1.0),
-                UIColor(colorScheme == .dark ? .black : .white)
-            ]
-            
-            colors = defaultColors.enumerated().map { (id: $0.offset, color: $0.element, frequency: 1.0) }
-        }
-        
-        DispatchQueue.main.async {
-            withAnimation(.linear.speed(0.7)) {
-                gradientModel.colors = colors.map { Color(uiColor: $0.color) }
-            }
-        }
-    }
-}
 
 
 

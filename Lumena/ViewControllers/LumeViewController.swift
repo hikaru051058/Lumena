@@ -14,128 +14,7 @@ import AVKit
 import AVFoundation
 
 
-
-class TestMainHorizontalPageViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    var pageViewController: UIPageViewController!
-    var pages: [UIViewController] = []
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupPageViewController()
-        setupPages()
-    }
-
-    func setupPageViewController() {
-        // Initialize the page view controller
-        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        pageViewController.dataSource = self
-        pageViewController.delegate = self
-        
-        // Add it to the current view controller
-        addChild(pageViewController)
-        view.addSubview(pageViewController.view)
-        pageViewController.didMove(toParent: self)
-    }
-
-    func setupPages() {
-        // Initialize your pages
-        let page1 = TestHorizontalViewController()
-        let page2 = TestHorizontalViewController()
-
-        pages = [page1, page2]
-
-        if let firstViewController = pages.first {
-            pageViewController.setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
-        }
-    }
-
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
-            return nil
-        }
-
-        let previousIndex = viewControllerIndex - 1
-        guard previousIndex >= 0 else {
-            return nil
-        }
-
-        guard pages.count > previousIndex else {
-            return nil
-        }
-
-        return pages[previousIndex]
-    }
-
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
-            return nil
-        }
-
-        let nextIndex = viewControllerIndex + 1
-        guard nextIndex < pages.count else {
-            return nil
-        }
-
-        return pages[nextIndex]
-    }
-}
-
-
-class TestHorizontalViewController: UIViewController, UIScrollViewDelegate {
-    
-    var scrollView: UIScrollView!
-    var pages: [UIViewController] = []
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupScrollView()
-        setupPages()
-    }
-    
-    func setupScrollView() {
-        scrollView = UIScrollView(frame: view.bounds)
-        scrollView.isPagingEnabled = true
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.bounces = false
-        scrollView.delegate = self
-        view.addSubview(scrollView)
-    }
-    
-    func setupPages() {
-        // Example pages
-        let page1 = UIViewController()
-        page1.view.backgroundColor = .red
-        let page2 = UIViewController()
-        page2.view.backgroundColor = .green
-        let page3 = UIViewController()
-        page3.view.backgroundColor = .blue
-        
-        pages = [page1, page2, page3]
-        
-        for page in pages {
-            addChild(page)
-            scrollView.addSubview(page.view)
-            page.didMove(toParent: self)
-        }
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        scrollView.contentSize = CGSize(width: view.frame.width * CGFloat(pages.count), height: view.frame.height)
-        for (index, page) in pages.enumerated() {
-            page.view.frame = CGRect(x: CGFloat(index) * view.frame.width, y: 0, width: view.frame.width, height: view.frame.height)
-        }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Handle scroll events or page changes if needed
-    }
-}
-
-
-
-
+// MARK: - Horizontal Pagging of Vertical Lumes viewcontroller
 class LumeHorizontalTabViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, TabBarDelegate {
     
     var pageViewController: UIPageViewController!
@@ -251,7 +130,6 @@ class LumeHorizontalTabViewController: UIViewController, UIPageViewControllerDat
     }
 }
 
-
 extension LumeHorizontalTabViewController {
     
     private func setupTabBar() {
@@ -310,8 +188,11 @@ extension LumeHorizontalTabViewController {
     }
 }
 
+// MARK: ^-
 
 
+
+// MARK: - Vertical Lumes viewcontroller
 class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDelegate {
     
     private var scrollView: UIScrollView!
@@ -402,7 +283,7 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
 
     private func addTabs() {
         for lume in lumes {
-            let lumeVC = NewLumeIndividualViewController(
+            let lumeVC = LumeIndividualViewController(
                 lume: lume,
                 currentLume: currentLume ?? UUID(),
                 mute: mute
@@ -428,14 +309,12 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Apply scale transformation during scroll
-        let scale = 0.99 // Scale down to 95%
-        UIView.animate(withDuration: 0.05) {
+        let scale: CGFloat = 0.95 // More noticeable scale down to 95%
+        UIView.animate(withDuration: 0.01, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.1, options: .allowUserInteraction, animations: {
             self.contentStackView.subviews.forEach { view in
                 view.transform = CGAffineTransform(scaleX: scale, y: scale)
             }
-        }
-        updateCurrentLume()
+        }, completion: nil)
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
@@ -453,7 +332,7 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
         var maxVisibleHeight: CGFloat = 0
         
         for (index, child) in children.enumerated() {
-            let childVC = child as! NewLumeIndividualViewController
+            let childVC = child as! LumeIndividualViewController
             let childViewRect = scrollView.convert(childVC.view.frame, from: contentStackView)
             let visibleFrame = visibleRect.intersection(childViewRect)
             let visibleHeight = visibleFrame.height
@@ -488,7 +367,7 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     }
 
     private func notifyCurrentLumeChange() {
-        for child in children as! [NewLumeIndividualViewController] {
+        for child in children as! [LumeIndividualViewController] {
             child.currentLumeChanged(to: currentLume)
         }
     }
@@ -511,16 +390,17 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     }
 
     private func updateChildViewControllersForMute() {
-        for child in children as? [NewLumeIndividualViewController] ?? [] {
+        for child in children as? [LumeIndividualViewController] ?? [] {
             child.updateMuteStatus(mute)
         }
     }
 }
 
+// MARK: ^-
 
 
-
-class NewLumeIndividualViewController: UIViewController, UIScrollViewDelegate {
+// MARK: - Individual Lume's viewcontroller
+class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     
     var scrollView: UIScrollView!
     var pages: [UIViewController] = []
@@ -644,7 +524,7 @@ class NewLumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     }
 }
 
-extension NewLumeIndividualViewController {
+extension LumeIndividualViewController {
     
     private func setupSideButtonsViewController() {
         // Initialize the side buttons view controller with the necessary data
@@ -744,7 +624,7 @@ extension NewLumeIndividualViewController {
     }
 }
 
-extension NewLumeIndividualViewController {
+extension LumeIndividualViewController {
     
     private func contentViewController(for contentUUID: UUID) -> UIViewController? {
         guard let content = lume.contents.first(where: { $0.id == contentUUID }) else {
@@ -789,7 +669,7 @@ extension NewLumeIndividualViewController {
     
 }
 
-extension NewLumeIndividualViewController {
+extension LumeIndividualViewController {
     
     private func setupGestureRecognizers() {
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap))
@@ -834,7 +714,7 @@ extension NewLumeIndividualViewController {
     }
 }
 
-extension NewLumeIndividualViewController {
+extension LumeIndividualViewController {
     
     private func resumeVideoIfNeeded() {
         if let videoVC = currentVisibleViewController() as? VideoContentViewController {
@@ -854,7 +734,7 @@ extension NewLumeIndividualViewController {
     }
 }
 
-extension NewLumeIndividualViewController {
+extension LumeIndividualViewController {
     
     func currentLumeChanged(to newCurrentLume: UUID?) {
         if let newCurrentLume = newCurrentLume, lume.id == newCurrentLume {
@@ -916,393 +796,24 @@ extension NewLumeIndividualViewController {
     }
 }
 
+// MARK: ^-
 
 
+// MARK: - Content type for Lume viewcontroller
 
+// LumeContentViewController is a base view controller for content that has an identifier
+class LumeContentViewController: UIViewController {
+    var contentID: UUID
 
-class LumeIndividualViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    
-    var lume: Lume
-    var currentLume: UUID
-    
-    var postUsername: String = ""
-    
-    // within individual Lume to identify which content is displayed
-    var currentContentID: UUID?
-    
-    var mute: Bool
-    var userLiked: Bool = false
-    
-    // UI Components
-    private var muteButton: UIButton!
-    private var loveImageView: UIImageView!
-    
-    var sideButtonsViewController: SideButtonsViewController!
-    
-    private var descriptionText = MarqueeTextViewController()
-    private var usernameText = MarqueeTextViewController()
-    
-    private var pageControl = UIPageControl(frame: .zero)
-
-    
-    // To manage user interactions similar to SwiftUI's gestures
-    private var lastTapTime: Date?
-    private var tapGestureRecognizer: UITapGestureRecognizer!
-    private var doubleTapGestureRecognizer: UITapGestureRecognizer!
-    
-    
-    private var pageViewController: UIPageViewController!
-    private var currentViewController: UIViewController?
-    
-    init(lume: Lume, currentLume: UUID, mute: Bool) {
-        self.lume = lume
-        self.currentLume = currentLume
-        self.mute = mute
-        
+    init(contentID: UUID) {
+        self.contentID = contentID
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if lume.contents.isEmpty {
-            print("No contents available in Lume.")
-        } else {
-            setupPageViewController()
-            setupGestureRecognizers()
-            setupUIComponents()
-            setupMarqueeLabel()
-            setupFetchUsername()
-            setupSideButtonsViewController()
-            setupPageIndicator()
-        }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-    
-    private func setupPageViewController() {
-        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        pageViewController.dataSource = self
-        pageViewController.delegate = self
-
-        addChild(pageViewController)
-        view.addSubview(pageViewController.view)
-        
-        // Use leading, trailing, top, and bottom anchors directly against the view's edge, ignoring safe areas
-        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            pageViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            pageViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            pageViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            pageViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        pageViewController.didMove(toParent: self)
-
-        view.backgroundColor = UIColor.black
-        view.layer.cornerRadius = 25
-        view.layer.masksToBounds = true
-        
-        if let firstContent = lume.contents.first {
-            currentContentID = firstContent.id // Set the initial current content ID
-            if let initialViewController = contentViewController(for: firstContent.id) {
-                pageViewController.setViewControllers([initialViewController], direction: .forward, animated: false)
-                currentViewController = initialViewController
-            }
-        } else {
-            print("No contents available in Lume.")
-        }
-        
-        //lock horizontal tab movement in individual when only one content
-        if lume.contents.count == 1{
-            self.pageViewController.isPagingEnabled = false
-        }
-    }
-    
-    private func setupSideButtonsViewController() {
-        // Initialize the side buttons view controller with the necessary data
-        sideButtonsViewController = SideButtonsViewController(lume: lume, userLiked: false)  // Adjust parameters as necessary
-        addChild(sideButtonsViewController)
-        view.addSubview(sideButtonsViewController.view)
-        sideButtonsViewController.didMove(toParent: self)
-        
-        // Setup constraints or frame for placing it at the trailing bottom edge
-        sideButtonsViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            sideButtonsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            sideButtonsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: (-view.bounds.height * 0.035) - 60), // safe area + username box + padding
-            sideButtonsViewController.view.widthAnchor.constraint(equalToConstant: 50),
-            sideButtonsViewController.view.heightAnchor.constraint(equalToConstant: 250)
-        ])
-
-    }
-    
-    private func setupMarqueeLabel() {
-        descriptionText = MarqueeTextViewController(
-            text: (lume.postDescription ?? ""),
-            font: UIFont.systemFont(ofSize: 16),
-            leftFade: 16,
-            rightFade: 16,
-            startDelay: 3,
-            alignment: .leading  // Adjust based on layout needs
-        )
-        
-        addChild(descriptionText)
-        view.addSubview(descriptionText.view)
-        descriptionText.didMove(toParent: self)
-        
-        descriptionText.view.translatesAutoresizingMaskIntoConstraints = false
-        descriptionText.view.backgroundColor = UIColor.clear
-        
-        NSLayoutConstraint.activate([
-            descriptionText.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            descriptionText.view.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -50),
-            descriptionText.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.bounds.height * 0.035),
-            descriptionText.view.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-
-    private func setupFetchUsername() {
-        Task {
-            do {
-                self.postUsername = try await ProfileManager.shared.getProfile(withID: lume.postUserIID).preferredUsername
-                setupUsernameLabel()
-            } catch {
-                print(error)
-            }
-        }
-    }
-    
-    private func setupUsernameLabel() {
-        usernameText = MarqueeTextViewController(
-            text: lume.returnPostUser().preferredUsername,
-            font: UIFont.systemFont(ofSize: 16),
-            leftFade: 16,
-            rightFade: 16,
-            startDelay: 3,
-            alignment: .center  // Adjust based on layout needs
-        )
-        
-        addChild(usernameText)
-        view.addSubview(usernameText.view)
-        usernameText.didMove(toParent: self)
-        
-        usernameText.view.translatesAutoresizingMaskIntoConstraints = false
-        usernameText.view.backgroundColor = UIColor.clear
-        
-        NSLayoutConstraint.activate([
-            usernameText.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            usernameText.view.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 65),
-            usernameText.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.bounds.height * 0.035),
-            usernameText.view.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-    
-    private func setupPageIndicator() {
-        pageControl = UIPageControl(frame: .zero)
-        pageControl.numberOfPages = lume.contents.count
-        pageControl.currentPage = 0
-        pageControl.tintColor = UIColor.lightGray
-        pageControl.pageIndicatorTintColor = UIColor.gray
-        pageControl.currentPageIndicatorTintColor = UIColor.white
-        view.addSubview(pageControl)
-        
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: (-view.bounds.height * 0.035) - 50),
-        ])
-        
-        pageControl.addTarget(self, action: #selector(pageControlDidChange(_:)), for: .valueChanged)
-    }
-    
-    
-    func currentLumeChanged(to newCurrentLume: UUID?) {
-        if let newCurrentLume = newCurrentLume, lume.id == newCurrentLume {
-            
-            VideoDataStore.shared.currentContentID = currentContentID
-            resumeVideoIfNeeded()
-            sideButtonsViewController.updateCurrentLume(with: newCurrentLume)
-            
-        } else {
-            pauseVideoIfNeeded()
-        }
-    }
-    
-    private func resumeVideoIfNeeded() {
-        if let videoVC = currentViewController as? VideoContentViewController {
-            videoVC.resumeVideo()
-        }
-    }
-    
-    private func pauseVideoIfNeeded() {
-        if let videoVC = currentViewController as? VideoContentViewController {
-            videoVC.pauseVideo()
-        }
-    }
-    
-    func updateMuteStatus(_ mute: Bool) {
-        self.mute = mute
-        lume.muteVideos(mute: mute)
-    }
-    
-    private func setupGestureRecognizers() {
-        tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap))
-        tapGestureRecognizer.numberOfTapsRequired = 1
-        view.addGestureRecognizer(tapGestureRecognizer)
-        
-        doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
-        doubleTapGestureRecognizer.numberOfTapsRequired = 2
-        view.addGestureRecognizer(doubleTapGestureRecognizer)
-        
-        // Ensure the single tap doesn't fire when the double tap is recognized
-        tapGestureRecognizer.require(toFail: doubleTapGestureRecognizer)
-    }
-    
-    private func setupUIComponents() {
-        // Example for setting up a mute button and love image view, similar to the SwiftUI view
-        muteButton = UIButton()
-        loveImageView = UIImageView(image: UIImage(systemName: "heart.fill"))
-        
-        // Configure and add to view...
-    }
 }
-
-extension LumeIndividualViewController {
-    
-    private func contentViewController(for contentUUID: UUID) -> UIViewController? {
-        guard let content = lume.contents.first(where: { $0.id == contentUUID }) else {
-            print("Content with UUID \(contentUUID) not found.")
-            return nil
-        }
-        
-        VideoDataStore.shared.currentContentID = contentUUID
-
-        switch content {
-        case .video(let videoContent):
-            let videoViewController = VideoContentViewController(contentID: contentUUID, videoContent: videoContent)
-            videoViewController.mute = mute
-            return videoViewController
-        case .image(let imageContent):
-            let imageViewController = ImageContentViewController(contentID: contentUUID, imageContent: imageContent)
-            return imageViewController
-        }
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let contentViewController = viewController as? LumeContentViewController,
-              let currentIndex = lume.contents.firstIndex(where: { $0.id == contentViewController.contentID }),
-              currentIndex > 0 else {
-            return nil
-        }
-        
-        let previousIndex = currentIndex - 1
-        return self.contentViewController(for: lume.contents[previousIndex].id)
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let contentViewController = viewController as? LumeContentViewController,
-              let currentIndex = lume.contents.firstIndex(where: { $0.id == contentViewController.contentID }),
-              currentIndex < lume.contents.count - 1 else {
-            return nil
-        }
-        
-        let nextIndex = currentIndex + 1
-        return self.contentViewController(for: lume.contents[nextIndex].id)
-    }
-    
-    
-    
-    @objc private func handleSingleTap() {
-        // Toggle mute and update UI accordingly
-        mute.toggle()
-        lume.muteVideos(mute: mute)
-        updateMuteStatusOnUI(mute)
-    }
-    
-    @objc private func handleDoubleTap() {
-        // Handle like action and update UI accordingly
-        lume.likedLume(userLikeInput: !lume.userLiked)
-        updateLikeStatusOnUI(lume.userLiked)
-    }
-    
-    private func updateMuteStatusOnUI(_ mute: Bool) {
-        // Update mute button UI based on mute status
-    }
-    
-    private func updateLikeStatusOnUI(_ liked: Bool) {
-        // Update love image view UI based on like status
-    }
-}
-
-extension LumeIndividualViewController {
-    
-    @objc private func pageControlDidChange(_ sender: UIPageControl) {
-        // Determine the direction based on comparing the current page index of the UIPageControl with the current content view controller index
-        let currentIndex = currentViewControllerIndex()
-        let targetIndex = sender.currentPage
-
-        guard currentIndex != targetIndex else {
-            return // No change needed if the current index is the same as the target index
-        }
-
-        let direction: UIPageViewController.NavigationDirection = targetIndex > currentIndex ? .forward : .reverse
-
-        // Assuming you have a method to get the corresponding content view controller by index
-        if let viewController = contentViewController(for: lume.contents[targetIndex].id) {
-            pageViewController.setViewControllers([viewController], direction: direction, animated: true, completion: nil)
-            pageControl.currentPage = targetIndex // Ensure the currentPage is updated after the transition
-        }
-    }
-
-    // Helper method to find the index of the current view controller displayed in the page view controller
-    private func currentViewControllerIndex() -> Int {
-        guard let viewController = pageViewController.viewControllers?.first as? LumeContentViewController,
-              let viewControllerIndex = lume.contents.firstIndex(where: { $0.id == viewController.contentID }) else {
-            return 0
-        }
-        return viewControllerIndex
-    }
-
-    
-    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        // This method is called before a transition begins.
-        if let videoVC = currentViewController as? VideoContentViewController {
-            videoVC.pauseVideo() // Pause the current video since a swipe has begun.
-        }
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if completed, let currentVC = pageViewController.viewControllers?.first as? LumeContentViewController,
-           let currentIndex = lume.contents.firstIndex(where: { $0.id == currentVC.contentID })
-        {
-            pageControl.currentPage = currentIndex
-            
-            currentContentID = currentVC.contentID
-            currentViewController = currentVC
-            lume.currentContent = currentVC.contentID
-            
-            withAnimation {
-                VideoDataStore.shared.videoPlaybackProgress = 0
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
 
 // VideoContentViewController is responsible for displaying video content
 class VideoContentViewController: LumeContentViewController {
@@ -1470,8 +981,6 @@ class VideoContentViewController: LumeContentViewController {
     }
 }
 
-
-
 // ImageContentViewController is responsible for displaying image content
 class ImageContentViewController: LumeContentViewController {
     var imageContent: LumeImage
@@ -1550,22 +1059,10 @@ class ImageContentViewController: LumeContentViewController {
 
 }
 
-
-// LumeContentViewController is a base view controller for content that has an identifier
-class LumeContentViewController: UIViewController {
-    var contentID: UUID
-
-    init(contentID: UUID) {
-        self.contentID = contentID
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
+// MARK: ^-
 
 
+// stops page from being scrolled
 extension UIPageViewController {
     var isPagingEnabled: Bool {
         get {
