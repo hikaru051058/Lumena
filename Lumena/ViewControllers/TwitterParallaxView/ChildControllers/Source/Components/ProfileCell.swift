@@ -26,8 +26,11 @@ class ProfileCell: UICollectionViewCell {
 
     // MARK: Data
 
-    func setup(with picture: Picture) {
-        imageView.setImage(from: picture.imageURL)
+    func setup(with lume: Lume) {
+        
+        if let urlString = lume.postURL.first, let imageURL = URL(string: urlString) {
+            imageView.setImage(from: imageURL)
+        }
     }
 }
 

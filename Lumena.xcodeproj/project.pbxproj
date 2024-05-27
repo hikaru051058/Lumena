@@ -22,7 +22,6 @@
 		17A7C21F2BD66B57008FED83 /* LumenaNotificationAPNAWS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 17A7C2182BD66B57008FED83 /* LumenaNotificationAPNAWS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		17A7C2252BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17A7C2242BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin */; };
 		17B5AC422BEA0284000B2A7F /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */; };
-		17B7A3B22C04104E00777CC1 /* BottomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3872C04104C00777CC1 /* BottomViewController.swift */; };
 		17B7A3B32C04104E00777CC1 /* ImageCacheSharedTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3882C04104D00777CC1 /* ImageCacheSharedTransition.swift */; };
 		17B7A3B42C04104E00777CC1 /* ImageMemoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3892C04104D00777CC1 /* ImageMemoryCache.swift */; };
 		17B7A3B52C04104E00777CC1 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A38A2C04104D00777CC1 /* ImageView.swift */; };
@@ -56,6 +55,7 @@
 		17B7A3D12C04104E00777CC1 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3AD2C04104D00777CC1 /* UICollectionView+Extensions.swift */; };
 		17B7A3D22C04104E00777CC1 /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3AE2C04104D00777CC1 /* UIScrollView+Extensions.swift */; };
 		17B7A3D32C04104E00777CC1 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3AF2C04104D00777CC1 /* UIView+Extensions.swift */; };
+		17B7A3D52C04759400777CC1 /* BottomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3D42C04759400777CC1 /* BottomViewController.swift */; };
 		17BAE1BD2BE6E85600E7C7C9 /* LumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */; };
 		17C0ABB02BFEA90100FA027A /* DescriptionBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */; };
 		17C0ABB12BFEA90100FA027A /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */; };
@@ -78,7 +78,7 @@
 		17FFC03C2BD6190900682EE2 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFA2BD6185300682EE2 /* ModelCache.swift */; };
 		17FFC03D2BD6190900682EE2 /* MusicModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFB2BD6185300682EE2 /* MusicModel.swift */; };
 		17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFC2BD6185300682EE2 /* ProfileModel.swift */; };
-		17FFC03F2BD6190900682EE2 /* ReelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFD2BD6185300682EE2 /* ReelModel.swift */; };
+		17FFC03F2BD6190900682EE2 /* LumeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFD2BD6185300682EE2 /* LumeModel.swift */; };
 		17FFC0402BD6190900682EE2 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFFE2BD6185300682EE2 /* SearchModel.swift */; };
 		17FFC0412BD6190900682EE2 /* BarcodeScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0012BD618AC00682EE2 /* BarcodeScanner.swift */; };
 		17FFC0422BD6190900682EE2 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFC0022BD618AC00682EE2 /* Camera.swift */; };
@@ -178,7 +178,6 @@
 		17A7C21A2BD66B57008FED83 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17A7C21C2BD66B57008FED83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
-		17B7A3872C04104C00777CC1 /* BottomViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BottomViewController.swift; path = ../../../../../test/test/TwitterParallaxView/ChildControllers/BottomViewController.swift; sourceTree = "<group>"; };
 		17B7A3882C04104D00777CC1 /* ImageCacheSharedTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheSharedTransition.swift; sourceTree = "<group>"; };
 		17B7A3892C04104D00777CC1 /* ImageMemoryCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageMemoryCache.swift; sourceTree = "<group>"; };
 		17B7A38A2C04104D00777CC1 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
@@ -212,6 +211,7 @@
 		17B7A3AD2C04104D00777CC1 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
 		17B7A3AE2C04104D00777CC1 /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		17B7A3AF2C04104D00777CC1 /* UIView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		17B7A3D42C04759400777CC1 /* BottomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomViewController.swift; sourceTree = "<group>"; };
 		17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumeViewController.swift; sourceTree = "<group>"; };
 		17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DescriptionBoxViewController.swift; sourceTree = "<group>"; };
 		17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
@@ -236,7 +236,7 @@
 		17FFBFFA2BD6185300682EE2 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
 		17FFBFFB2BD6185300682EE2 /* MusicModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicModel.swift; sourceTree = "<group>"; };
 		17FFBFFC2BD6185300682EE2 /* ProfileModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
-		17FFBFFD2BD6185300682EE2 /* ReelModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReelModel.swift; sourceTree = "<group>"; };
+		17FFBFFD2BD6185300682EE2 /* LumeModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LumeModel.swift; sourceTree = "<group>"; };
 		17FFBFFE2BD6185300682EE2 /* SearchModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchModel.swift; sourceTree = "<group>"; };
 		17FFC0012BD618AC00682EE2 /* BarcodeScanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScanner.swift; sourceTree = "<group>"; };
 		17FFC0022BD618AC00682EE2 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
@@ -459,9 +459,9 @@
 			isa = PBXGroup;
 			children = (
 				17B7A3B12C04104D00777CC1 /* Source */,
-				17B7A3872C04104C00777CC1 /* BottomViewController.swift */,
 				17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */,
 				17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */,
+				17B7A3D42C04759400777CC1 /* BottomViewController.swift */,
 				17C0ABA62BFEA90000FA027A /* HeaderViewController.swift */,
 				17C0ABA72BFEA90000FA027A /* LabelCell.swift */,
 				17C0ABA82BFEA90000FA027A /* XLPagerTabStripExampleViewController.swift */,
@@ -517,9 +517,9 @@
 				17FFBFAF2BD616DC00682EE2 /* LaunchScreen.storyboard */,
 				17FFBFB22BD616DC00682EE2 /* Info.plist */,
 				17FFC0752BD61A3800682EE2 /* test.swift */,
+				17FFBFFF2BD6185300682EE2 /* Models */,
 				17FFC0332BD6190900682EE2 /* Account */,
 				17FFC01B2BD618CB00682EE2 /* Main */,
-				17FFBFFF2BD6185300682EE2 /* Models */,
 				17FFC00C2BD618AC00682EE2 /* SubFunctions */,
 				173AB8672BD8EF48008D76BB /* ViewControllers */,
 			);
@@ -534,8 +534,8 @@
 				17FFBFFA2BD6185300682EE2 /* ModelCache.swift */,
 				17FFBFFB2BD6185300682EE2 /* MusicModel.swift */,
 				17FFBFFC2BD6185300682EE2 /* ProfileModel.swift */,
-				17FFBFFD2BD6185300682EE2 /* ReelModel.swift */,
 				17FFBFFE2BD6185300682EE2 /* SearchModel.swift */,
+				17FFBFFD2BD6185300682EE2 /* LumeModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -847,7 +847,7 @@
 				1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */,
 				17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */,
 				17FFC0762BD61A3800682EE2 /* test.swift in Sources */,
-				17FFC03F2BD6190900682EE2 /* ReelModel.swift in Sources */,
+				17FFC03F2BD6190900682EE2 /* LumeModel.swift in Sources */,
 				17B7A3C72C04104E00777CC1 /* LayoutOperators.swift in Sources */,
 				17FFBFA92BD616D900682EE2 /* ViewController.swift in Sources */,
 				17FFC0732BD6190900682EE2 /* SkinSetting.swift in Sources */,
@@ -870,7 +870,7 @@
 				17FFC0702BD6190900682EE2 /* CreateAccount.swift in Sources */,
 				17B7A3C22C04104E00777CC1 /* SharedTransitioning.swift in Sources */,
 				17FFC03A2BD6190900682EE2 /* CosmeticModel.swift in Sources */,
-				17B7A3B22C04104E00777CC1 /* BottomViewController.swift in Sources */,
+				17B7A3D52C04759400777CC1 /* BottomViewController.swift in Sources */,
 				17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */,
 				17B7A3B52C04104E00777CC1 /* ImageView.swift in Sources */,
 				17B7A3B72C04104E00777CC1 /* ImageFooter.swift in Sources */,

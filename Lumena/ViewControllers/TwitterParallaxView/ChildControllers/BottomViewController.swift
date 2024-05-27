@@ -1,13 +1,14 @@
 //
-//  ProfileScreen.swift
-//  InstagramTransition
+//  BottomViewController.swift
+//  Lumena
 //
-//  Created by Kolos Foltanyi on 2023. 07. 22..
+//  Created by 島田晃 on 2024/05/27.
 //
 
 import UIKit
-/*
-class ProfileScreen: UIViewController {
+import XLPagerTabStrip
+
+class BottomViewController: UIViewController, UINavigationControllerDelegate {
 
     // MARK: Constants
 
@@ -20,15 +21,14 @@ class ProfileScreen: UIViewController {
 
     // MARK: Typealiases
 
-    typealias DataSource = UICollectionViewDiffableDataSource<Int, Picture>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Picture>
+    typealias DataSource = UICollectionViewDiffableDataSource<Int, Lume>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Lume>
 
     // MARK: UI properties
 
     private let transitionAnimator = SharedTransitionAnimator()
-//    private let header = ProfileHeader(title: "user")
     private lazy var dataSource = DataSource(collectionView: collectionView, cellProvider: cellProvider)
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     private lazy var layout = UICollectionViewFlowLayout().then {
         $0.sectionInset = Constants.sectionInset
         $0.minimumLineSpacing = Constants.lineSpacing
@@ -37,40 +37,60 @@ class ProfileScreen: UIViewController {
 
     // MARK: Private properties
 
-    private var selectedIndexPath: IndexPath? = nil
-    private var pictures = [Picture]() {
+    var selectedIndexPath: IndexPath? = nil
+    private var lumes = [Lume]() {
         didSet { updateCollectionView() }
+    }
+
+    var pageIndex: Int = 0
+    var pageTitle: String?
+    var currentTabIndex: Int = 0
+    var profile: ProfileSettings!
+    
+    
+    init(profile: ProfileSettings?) {
+        self.profile = profile
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: View lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("BottomViewController - viewDidLoad")
         navigationController?.navigationBar.isHidden = true
         setupUI()
-        pictures = Picture.list
+        fetchData()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.delegate = self
+        fetchData()
     }
+
 }
 
 // MARK: - Helpers
 
-extension ProfileScreen {
+extension BottomViewController {
     private func setupUI() {
+        print("BottomViewController - setupUI")
         setupView()
-        //setupHeader()
         setupCollectionView()
     }
 
     private func setupView() {
+        print("BottomViewController - setupView")
         view.backgroundColor = .white
     }
 
     private func setupCollectionView() {
+        print("BottomViewController - setupCollectionView")
         collectionView.then {
             view.addSubview($0)
             $0.register(ProfileCell.self)
@@ -84,23 +104,36 @@ extension ProfileScreen {
             $0.bottom == view.bottomAnchor
         }
     }
+    
+    private func fetchData() {
+        switch pageIndex {
+        case 0:
+            lumes = profile.returnUserLumes()
+        case 1:
+            lumes = profile.returnUserLikedLumes()
+        default:
+            break
+        }
+        updateCollectionView()
+    }
 }
 
 // MARK: - UICollectionView helpers
 
-extension ProfileScreen {
+extension BottomViewController {
     private func updateCollectionView() {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(pictures, toSection: 0)
+        snapshot.appendItems(lumes, toSection: 0)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
 
     private var cellProvider: DataSource.CellProvider {
         { [unowned self] collectionView, indexPath, _ in
+            print("BottomViewController - cellProvider for indexPath: \(indexPath.row)")
             let cell = collectionView.dequeuCellOfType(ProfileCell.self, for: indexPath)
-            let picture = pictures[indexPath.row]
-            cell.setup(with: picture)
+            let lume = lumes[indexPath.row]
+            cell.setup(with: lume)
             return cell
         }
     }
@@ -108,21 +141,22 @@ extension ProfileScreen {
 
 // MARK: - UICollectionViewDelegate
 
-extension ProfileScreen: UICollectionViewDelegate {
+extension BottomViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedIndexPath = indexPath
-        let picture = pictures[indexPath.item]
-        let viewController = DetailScreen(picture: picture)
+        let lume = lumes[indexPath.item]
+        let viewController = DetailScreen()//lume: lume)
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout methods
 
-extension ProfileScreen: UICollectionViewDelegateFlowLayout {
+extension BottomViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
+        print("BottomViewController - collectionView layout sizeForItemAt indexPath: \(indexPath.row)")
         let spacingWidth = CGFloat(Constants.numberOfRows - 1) * Constants.interItemSpacing
         let contentWidth = collectionView.frame.inset(by: Constants.sectionInset).width
         let availableWidth = contentWidth - spacingWidth
@@ -133,27 +167,32 @@ extension ProfileScreen: UICollectionViewDelegateFlowLayout {
 
 // MARK: - UINavigationControllerDelegate
 
-extension ProfileScreen: UINavigationControllerDelegate {
+extension BottomViewController {
     func navigationController(_ navigationController: UINavigationController,
                               animationControllerFor operation: UINavigationController.Operation,
                               from fromVC: UIViewController,
                               to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if fromVC is Self, toVC is DetailScreen {
-            transitionAnimator.transition = .push
+        print("BottomViewController - navigationController animationControllerFor operation: \(operation.rawValue)")
+        if operation == .push || operation == .pop {
+            print("BottomViewController - Returning transition animator for operation: \(operation.rawValue)")
             return transitionAnimator
         }
-        if toVC is Self, fromVC is DetailScreen {
-            transitionAnimator.transition = .pop
-            return transitionAnimator
-        }
+        print("BottomViewController - Returned nil in navigationController")
+        return nil
+    }
+
+    func navigationController(_ navigationController: UINavigationController,
+                              interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        // Handle interactive transitions if necessary
         return nil
     }
 }
 
 // MARK: - SharedTransitioning
 
-extension ProfileScreen: SharedTransitioning {
+extension BottomViewController: SharedTransitioning {
     var sharedFrame: CGRect {
+        print("BottomViewController - sharedFrame")
         guard let selectedIndexPath,
               let cell = collectionView.cellForItem(at: selectedIndexPath),
               let frame = cell.frameInWindow else { return .zero }
@@ -161,8 +200,18 @@ extension ProfileScreen: SharedTransitioning {
     }
 
     func prepare(for transition: SharedTransitionAnimator.Transition) {
+        print("BottomViewController - prepare for transition: \(transition)")
         guard transition == .pop, let selectedIndexPath else { return }
         collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
     }
 }
-*/
+
+// MARK: - IndicatorInfoProvider
+
+extension BottomViewController: IndicatorInfoProvider {
+    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
+        print("BottomViewController - indicatorInfo for pagerTabStripController")
+        return IndicatorInfo(title: pageTitle ?? "Tab \(pageIndex)")
+    }
+}
+

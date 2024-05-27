@@ -42,6 +42,17 @@ class HeaderViewController: UIViewController {
     var lastMinHeaderHeight: CGFloat = .zero
     
     var initialValuesSet = false
+    
+    var profile: ProfileSettings!
+    
+    init(profile: ProfileSettings?) {
+        self.profile = profile
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -245,7 +256,7 @@ class HeaderViewController: UIViewController {
     }
     
     private func addBottomViewController() {
-        bottomViewController = BottomViewController()
+        bottomViewController = BottomViewController(profile: profile)
         addChild(bottomViewController)
         view.addSubview(bottomViewController.view)
         bottomViewController.view.translatesAutoresizingMaskIntoConstraints = false

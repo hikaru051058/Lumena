@@ -16,9 +16,22 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     var bottomVC: XLPagerTabStripExampleViewController!
     var backgroundGradient: GradientEffectViewController!
     
+    var userIdentityID: String!
+    var profile: ProfileSettings = ProfileSettings()
+    
     private let transitionAnimator = SharedTransitionAnimator()
     
     let refresh = UIRefreshControl()
+    
+    init(userIdentityID: String) {
+        self.userIdentityID = userIdentityID
+        super.init(nibName: nil, bundle: nil)
+        fetchUserProfile()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,14 +57,18 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         return .lightContent
     }
     
+    func fetchUserProfile() {
+        self.profile = ProfileManager.shared.getProfile(withID: userIdentityID)
+    }
+    
     // MARK: TPDataSource
     func headerViewController() -> UIViewController {
-        headerVC = HeaderViewController()
+        headerVC = HeaderViewController(profile: profile)
         return headerVC!
     }
     
     func bottomViewController() -> UIViewController & PagerAwareProtocol {
-        bottomVC = XLPagerTabStripExampleViewController()
+        bottomVC = XLPagerTabStripExampleViewController(profile: profile)
         setupBackgroundGradient() // for blur background animation
         return bottomVC
     }

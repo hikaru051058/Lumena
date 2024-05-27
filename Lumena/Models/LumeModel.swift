@@ -1,5 +1,5 @@
 //
-//  ReelModel.swift
+//  LumeModel.swift
 //  MyPalette
 //
 //  Created by 島田晃 on 2023/09/27.
@@ -281,8 +281,7 @@ extension Lume {
     }
 }
 
-
-class Lume: Identifiable, ObservableObject {
+class Lume: Identifiable, ObservableObject, Hashable {
     
     var id: UUID = UUID()
     
@@ -295,6 +294,15 @@ class Lume: Identifiable, ObservableObject {
     var awsTimestamp: Double {
         return timestamp.timeIntervalSince1970
     }
+    
+    static func == (lhs: Lume, rhs: Lume) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
 
     @Published var likedUsers: [String] = [] {
         didSet {

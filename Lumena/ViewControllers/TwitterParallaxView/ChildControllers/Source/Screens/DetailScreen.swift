@@ -4,7 +4,7 @@ class DetailScreen: UIViewController {
 
     // MARK: Private properties
 
-    private var picture: Picture
+    //private var picture: Picture
 
     // MARK: UI Properties
 
@@ -20,8 +20,9 @@ class DetailScreen: UIViewController {
 
     // MARK: Init
 
-    init(picture: Picture) {
-        self.picture = picture
+    //init(picture: Picture) {
+    init() {
+        //self.picture = picture
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -117,7 +118,7 @@ extension DetailScreen {
             contentView.addSubview($0)
             $0.contentMode = .scaleAspectFit
             $0.layer.masksToBounds = true
-            $0.setImage(from: picture.imageURL)
+            //$0.setImage(from: picture.imageURL)
         }.layout {
             $0.leading == contentView.leadingAnchor
             $0.trailing == contentView.trailingAnchor

@@ -5,6 +5,9 @@ import XLPagerTabStrip
 class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController, PagerAwareProtocol, UINavigationControllerDelegate {
     
     // MARK: PagerAwareProtocol
+    
+    var profile: ProfileSettings!
+    
     weak var pageDelegate: BottomPageDelegate?
     
     var currentViewController: UIViewController? {
@@ -18,6 +21,15 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     // MARK: Properties
     var isReload = false
     var transitionAnimator = SharedTransitionAnimator()
+    
+    init(profile: ProfileSettings?) {
+        self.profile = profile
+        super.init(nibName: nil, bundle: nil)
+    }
+        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         print("XLPagerTabStripExampleViewController - viewDidLoad")
@@ -68,10 +80,9 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     // Helper method to create bottom view controllers
     private func createBottomViewController(pageIndex: Int, title: String, count: Int) -> BottomViewController {
         print("XLPagerTabStripExampleViewController - createBottomViewController for pageIndex: \(pageIndex), title: \(title)")
-        let bottomVC = BottomViewController()
+        let bottomVC = BottomViewController(profile: profile)
         bottomVC.pageIndex = pageIndex
         bottomVC.pageTitle = title
-        //bottomVC.count = count
         return bottomVC
     }
     

@@ -36,7 +36,7 @@ class MainViewController: UIViewController {
 
     func navigateToProfile() {
         //let profileVC = ProfileViewController()
-        let profileVC = TwitterParallaxViewController()
+        let profileVC = TwitterParallaxViewController(userIdentityID: GI.shared.identityID!)
         navigationController?.pushViewController(profileVC, animated: true)
     }
     
