@@ -22,14 +22,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //_ = AuthenticationManager.shared
         
         
-//        window.rootViewController = UINavigationController(rootViewController: LoadingViewController())
+        window.rootViewController = UINavigationController(rootViewController: LoadingViewController())
         
         
 //        let pageContainerViewController = PageContainerViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 //        
 //        window.rootViewController = pageContainerViewController
         
-        window.rootViewController = UINavigationController(rootViewController: TestCustomViewController())
+//        window.rootViewController = UINavigationController(rootViewController: TwitterParallaxViewController())
         
         
         self.window = window

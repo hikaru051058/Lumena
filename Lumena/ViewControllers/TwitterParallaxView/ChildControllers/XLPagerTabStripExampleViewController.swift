@@ -1,32 +1,8 @@
-//  ButtonBarExampleViewController.swift
-//  XLPagerTabStrip ( https://github.com/xmartlabs/XLPagerTabStrip )
-//
-//  Copyright (c) 2017 Xmartlabs ( http://xmartlabs.com )
-//
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 import UIKit
 import TwitterProfile
 import XLPagerTabStrip
 
-class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController, PagerAwareProtocol {
+class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController, PagerAwareProtocol, UINavigationControllerDelegate {
     
     // MARK: PagerAwareProtocol
     weak var pageDelegate: BottomPageDelegate?
@@ -41,9 +17,10 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
 
     // MARK: Properties
     var isReload = false
+    var transitionAnimator = SharedTransitionAnimator()
     
     override func viewDidLoad() {
-        
+        print("XLPagerTabStripExampleViewController - viewDidLoad")
         settings.style.buttonBarBackgroundColor = .background
         settings.style.buttonBarItemBackgroundColor = .background
         settings.style.selectedBarBackgroundColor = Colors.twitterBlue
@@ -58,10 +35,13 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
             oldCell?.label.textColor = Colors.twitterGray
             newCell?.label.textColor = Colors.twitterBlue
         }
+        
+        navigationController?.delegate = self
     }
 
     // MARK: - PagerTabStripDataSource
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
+        print("XLPagerTabStripExampleViewController - viewControllers for pagerTabStripController")
         let child_1 = createBottomViewController(pageIndex: 0, title: "Post", count: 30)
         let child_2 = createBottomViewController(pageIndex: 1, title: "Likes", count: 1)
         let child_3 = createBottomViewController(pageIndex: 2, title: "Saved", count: 40)
@@ -70,13 +50,15 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     }
 
     override func reloadPagerTabStripView() {
+        print("XLPagerTabStripExampleViewController - reloadPagerTabStripView")
         pagerBehaviour = .progressive(skipIntermediateViewControllers: arc4random() % 2 == 0, elasticIndicatorLimit: arc4random() % 2 == 0)
         super.reloadPagerTabStripView()
     }
     
     override func updateIndicator(for viewController: PagerTabStripViewController, fromIndex: Int, toIndex: Int, withProgressPercentage progressPercentage: CGFloat, indexWasChanged: Bool) {
+        print("XLPagerTabStripExampleViewController - updateIndicator")
         super.updateIndicator(for: viewController, fromIndex: fromIndex, toIndex: toIndex, withProgressPercentage: progressPercentage, indexWasChanged: indexWasChanged)
-        
+
         guard indexWasChanged else { return }
 
         // Notify the master scroll controller which view to control in the bottom section
@@ -85,10 +67,27 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     
     // Helper method to create bottom view controllers
     private func createBottomViewController(pageIndex: Int, title: String, count: Int) -> BottomViewController {
+        print("XLPagerTabStripExampleViewController - createBottomViewController for pageIndex: \(pageIndex), title: \(title)")
         let bottomVC = BottomViewController()
         bottomVC.pageIndex = pageIndex
         bottomVC.pageTitle = title
-        bottomVC.count = count
+        //bottomVC.count = count
         return bottomVC
     }
+    
+    // MARK: - UINavigationControllerDelegate
+
+    func navigationController(_ navigationController: UINavigationController,
+                              animationControllerFor operation: UINavigationController.Operation,
+                              from fromVC: UIViewController,
+                              to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        print("XLPagerTabStripExampleViewController - Parent Navigation Controller delegate method called.")
+        
+        // Forward the delegate calls to the current view controller if it conforms to UINavigationControllerDelegate
+        if let bottomVC = currentViewController as? BottomViewController {
+            return bottomVC.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
+        }
+        return nil
+    }
 }
+

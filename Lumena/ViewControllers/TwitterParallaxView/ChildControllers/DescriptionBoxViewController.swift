@@ -8,101 +8,130 @@
 import UIKit
 
 class ExpandableTextViewController: UIViewController {
-
-    var descriptionLabel: UILabel!
-    var readMoreButton: UIButton!
-    var isExpanded: Bool = false
     
-    var descriptionLabelHeightConstraint: NSLayoutConstraint!
-    var readMoreButtonBottomConstraint: NSLayoutConstraint!
-    
-    let text = """
+    let yourLabel = UILabel()
+    let originalText = """
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
         """
+    var isExpanded = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupUI()
-    }
-    
-    private func setupUI() {
-        descriptionLabel = UILabel()
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        descriptionLabel.numberOfLines = 2
-        descriptionLabel.text = text
-        descriptionLabel.font = UIFont.systemFont(ofSize: 16)
-        view.addSubview(descriptionLabel)
+        setupLabel()
         
-        descriptionLabelHeightConstraint = descriptionLabel.heightAnchor.constraint(equalToConstant: 40) // Initial height for 2 lines of text
+        // Set initial text
+        yourLabel.text = originalText
         
-        NSLayoutConstraint.activate([
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            descriptionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            descriptionLabelHeightConstraint,
-            descriptionLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
-        ])
-        
-        readMoreButton = UIButton(type: .system)
-        readMoreButton.setTitle("  more", for: .normal)
-        readMoreButton.tintColor = .secondaryLabel
-        readMoreButton.addTarget(self, action: #selector(didTapReadMore), for: .touchUpInside)
-        readMoreButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(readMoreButton)
-        
-        readMoreButtonBottomConstraint = readMoreButton.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 6)
-        
-        NSLayoutConstraint.activate([
-            readMoreButton.trailingAnchor.constraint(equalTo: descriptionLabel.trailingAnchor),
-            readMoreButtonBottomConstraint
-        ])
-        
-        addGradientToButton(readMoreButton)
-    }
-    
-    private func addGradientToButton(_ button: UIButton) {
-        let gradientLayer = CAGradientLayer()
-        let edgeColor = UIColor.white.cgColor.copy(alpha: 0.01)
-        gradientLayer.colors = [edgeColor!, UIColor.gray.cgColor]
-        gradientLayer.locations = [0.0, 0.4]
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 0.4, y: 0.5)
-        gradientLayer.frame = button.bounds
-        
-        button.layer.insertSublayer(gradientLayer, at: 0)
-    }
-    
-    @objc private func didTapReadMore() {
-        isExpanded.toggle()
-        
-        if isExpanded {
-            descriptionLabel.numberOfLines = 0
-            readMoreButton.setTitle("  close", for: .normal)
-            
-            let height = descriptionLabel.sizeThatFits(CGSize(width: descriptionLabel.frame.width, height: CGFloat.greatestFiniteMagnitude)).height
-            descriptionLabelHeightConstraint.constant = height
-        } else {
-            descriptionLabel.numberOfLines = 2
-            readMoreButton.setTitle("  more", for: .normal)
-            
-            let height = descriptionLabel.sizeThatFits(CGSize(width: descriptionLabel.frame.width, height: CGFloat.greatestFiniteMagnitude)).height
-            descriptionLabelHeightConstraint.constant = height > 40 ? 40 : height // Reset to initial height for 2 lines of text
+        let readmoreFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.thin)
+        let readmoreFontColor = UIColor.secondaryLabel
+        DispatchQueue.main.async {
+            self.yourLabel.addTrailing(with: "... ", moreText: "more", moreTextFont: readmoreFont, moreTextColor: readmoreFontColor)
         }
         
-//        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-//        }
+        // Add tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapLabel))
+        yourLabel.isUserInteractionEnabled = true
+        yourLabel.addGestureRecognizer(tapGesture)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        updateGradientFrame()
+    private func setupLabel() {
+        yourLabel.translatesAutoresizingMaskIntoConstraints = false
+        yourLabel.numberOfLines = 2
+        yourLabel.lineBreakMode = .byTruncatingTail
+        view.addSubview(yourLabel)
+        
+        NSLayoutConstraint.activate([
+            yourLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            yourLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            yourLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            yourLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
+        ])
     }
     
-    private func updateGradientFrame() {
-        if let gradientLayer = readMoreButton.layer.sublayers?.first as? CAGradientLayer {
-            gradientLayer.frame = readMoreButton.bounds
+    @objc private func tapLabel() {
+        if isExpanded {
+            UIView.animate(withDuration: 0.3) {
+                self.yourLabel.numberOfLines = 2
+                self.yourLabel.text = self.originalText
+                DispatchQueue.main.async {
+                    let readmoreFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.thin)
+                    let readmoreFontColor = UIColor.secondaryLabel
+                    self.yourLabel.addTrailing(with: "... ", moreText: "more", moreTextFont: readmoreFont, moreTextColor: readmoreFontColor)
+                }
+                self.view.layoutIfNeeded()
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.yourLabel.numberOfLines = 0
+                self.yourLabel.text = self.originalText
+                self.view.layoutIfNeeded()
+            }
+        }
+        isExpanded.toggle()
+    }
+}
+
+extension UILabel {
+    func addTrailing(with trailingText: String, moreText: String, moreTextFont: UIFont, moreTextColor: UIColor) {
+        let readMoreText: String = trailingText + moreText
+        
+        if self.visibleTextLength == 0 { return }
+        
+        let lengthForVisibleString: Int = self.visibleTextLength
+        
+        if let myText = self.text {
+            let mutableString: String = myText
+            
+            let trimmedString: String? = (mutableString as NSString).replacingCharacters(in: NSRange(location: lengthForVisibleString, length: myText.count - lengthForVisibleString), with: "")
+            
+            let readMoreLength: Int = (readMoreText.count)
+            
+            guard let safeTrimmedString = trimmedString else { return }
+            
+            if safeTrimmedString.count <= readMoreLength { return }
+            
+            let trimmedForReadMore: String = (safeTrimmedString as NSString).replacingCharacters(in: NSRange(location: safeTrimmedString.count - readMoreLength, length: readMoreLength), with: "") + trailingText
+            
+            let answerAttributed = NSMutableAttributedString(string: trimmedForReadMore, attributes: [NSAttributedString.Key.font: self.font as Any])
+            let readMoreAttributed = NSMutableAttributedString(string: moreText, attributes: [NSAttributedString.Key.font: moreTextFont, NSAttributedString.Key.foregroundColor: moreTextColor])
+            answerAttributed.append(readMoreAttributed)
+            self.attributedText = answerAttributed
+        }
+    }
+    
+    var visibleTextLength: Int {
+        let font: UIFont = self.font
+        let mode: NSLineBreakMode = self.lineBreakMode
+        let labelWidth: CGFloat = self.frame.size.width
+        let labelHeight: CGFloat = self.frame.size.height
+        let sizeConstraint = CGSize(width: labelWidth, height: CGFloat.greatestFiniteMagnitude)
+        
+        if let myText = self.text {
+            let attributes: [AnyHashable: Any] = [NSAttributedString.Key.font: font]
+            let attributedText = NSAttributedString(string: myText, attributes: attributes as? [NSAttributedString.Key : Any])
+            let boundingRect: CGRect = attributedText.boundingRect(with: sizeConstraint, options: .usesLineFragmentOrigin, context: nil)
+            
+            if boundingRect.size.height > labelHeight {
+                var index: Int = 0
+                var prev: Int = 0
+                let characterSet = CharacterSet.whitespacesAndNewlines
+                repeat {
+                    prev = index
+                    if mode == NSLineBreakMode.byCharWrapping {
+                        index += 1
+                    } else {
+                        index = (myText as NSString).rangeOfCharacter(from: characterSet, options: [], range: NSRange(location: index + 1, length: myText.count - index - 1)).location
+                    }
+                } while index != NSNotFound && index < myText.count && (myText as NSString).substring(to: index).boundingRect(with: sizeConstraint, options: .usesLineFragmentOrigin, attributes: attributes as? [NSAttributedString.Key : Any], context: nil).size.height <= labelHeight
+                return prev
+            }
+        }
+        
+        if self.text == nil {
+            return 0
+        } else {
+            return self.text!.count
         }
     }
 }

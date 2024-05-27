@@ -10,11 +10,13 @@ import TwitterProfile
 import XLPagerTabStrip
 import SwiftUI
 
-class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressDelegate {
+class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressDelegate, UINavigationControllerDelegate {
     
     var headerVC: HeaderViewController?
     var bottomVC: XLPagerTabStripExampleViewController!
     var backgroundGradient: GradientEffectViewController!
+    
+    private let transitionAnimator = SharedTransitionAnimator()
     
     let refresh = UIRefreshControl()
 
@@ -22,11 +24,13 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         super.viewDidLoad()
         
         self.tp_configure(with: self, delegate: self)
+        self.navigationController?.interactivePopGestureRecognizer!.delegate = self;
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.delegate = self
     }
     
     @objc func handleRefreshControl() {
@@ -81,6 +85,31 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         backgroundGradient.view.translatesAutoresizingMaskIntoConstraints = false
     }
     
+    // MARK: UINavigationControllerDelegate
+    func navigationController(_ navigationController: UINavigationController,
+                              animationControllerFor operation: UINavigationController.Operation,
+                              from fromVC: UIViewController,
+                              to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        print("TwitterParallaxViewController - navigationController animationControllerFor operation: \(operation.rawValue)")
+
+        if let bottomVC = bottomVC.currentViewController as? BottomViewController {
+            return bottomVC.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
+        }
+        
+        if fromVC is TwitterParallaxViewController, toVC is DetailScreen {
+            transitionAnimator.transition = .push
+            print("TwitterParallaxViewController - Transition Animator for push")
+            return transitionAnimator
+        }
+        if toVC is TwitterParallaxViewController, fromVC is DetailScreen {
+            transitionAnimator.transition = .pop
+            print("TwitterParallaxViewController - Transition Animator for pop")
+            return transitionAnimator
+        }
+
+        print("TwitterParallaxViewController - Returned nil in navigationController")
+        return nil
+    }
 }
 
 
@@ -90,5 +119,31 @@ extension UIView {
         layer.borderWidth = width
         layer.cornerRadius = cornerRadius
         layer.masksToBounds = true
+    }
+}
+
+// MARK: - SharedTransitioning
+
+extension TwitterParallaxViewController: SharedTransitioning {
+    var sharedFrame: CGRect {
+        print("TwitterParallaxViewController - sharedFrame")
+        guard let bottomVC = bottomVC,
+              let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath,
+              let cell = (bottomVC.currentViewController as? BottomViewController)?.collectionView.cellForItem(at: selectedIndexPath),
+              let frame = cell.frameInWindow else { return .zero }
+        return frame
+    }
+
+    func prepare(for transition: SharedTransitionAnimator.Transition) {
+        print("TwitterParallaxViewController - prepare for transition: \(transition)")
+        guard let bottomVC = bottomVC,
+              let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath else { return }
+        (bottomVC.currentViewController as? BottomViewController)?.collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
+    }
+}
+
+extension TwitterParallaxViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }

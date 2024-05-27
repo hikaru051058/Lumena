@@ -33,7 +33,7 @@ class GradientEffectViewController: UIViewController {
             hostingView.topAnchor.constraint(equalTo: view.topAnchor),
             hostingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             hostingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            hostingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
         hostingController?.didMove(toParent: self)
     }
@@ -43,8 +43,6 @@ class GradientEffectViewController: UIViewController {
         // No need to reset the entire SwiftUI view; the model update should trigger UI updates
     }
 }
-
-
 
 struct AnimatedGradient: View {
     struct Model {
@@ -94,7 +92,6 @@ struct AnimatedGradient: View {
 }
 
 struct VisualEffect: UIViewRepresentable {
-    
     var effect: UIVisualEffect?
     let effectView = UIVisualEffectView(effect: nil)
 
@@ -141,37 +138,37 @@ struct GradientEffectView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                background(geometry)
-                blot(withParams: blots[0], geometry)
-                blot(withParams: blots[1], geometry)
-                blot(withParams: blots[2], geometry)
-                blot(withParams: blots[3], geometry)
-                blot(withParams: blots[4], geometry)
+        ZStack {
+            GeometryReader { geometry in
+                ZStack {
+                    background(geometry)
+                    blot(withParams: blots[0], geometry)
+                    blot(withParams: blots[1], geometry)
+                    blot(withParams: blots[2], geometry)
+                    blot(withParams: blots[3], geometry)
+                    blot(withParams: blots[4], geometry)
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .clipped()
+                .onAppear {
+                    update()
+                }
+                .onReceive(timer) { _ in
+                    update()
+                }
+                .onChange(of: model.isFirstGradientVisible) { _ in
+                    update()
+                }
+                .overlay {
+                    VisualEffect(effect: UIBlurEffect(style: colorScheme == .dark ? .systemUltraThinMaterialDark : .systemUltraThinMaterial))
+                }
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .onAppear {
-                update()
-            }
-            .onReceive(timer) { _ in
-                update()
-            }
-            .onChange(of: model.isFirstGradientVisible) { _ in
-                update()
-            }
-            /*
-            .overlay(content: {
-                VisualEffect(effect: UIBlurEffect(style: colorScheme == .dark ? .systemUltraThinMaterialDark : .systemUltraThinMaterial))
-            })
-             */
         }
         .edgesIgnoringSafeArea(.all)
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 
     private func update() {
-        
         DispatchQueue.main.async {
             withAnimation(.easeInOut(duration: timeUpdate).speed(0.3)) {
                 backgroundAngle = .degrees(.random(in: 0 ... 360))
@@ -207,18 +204,16 @@ struct GradientEffectView: View {
     }
 }
 
-
 struct GradientEffectView_Previews: PreviewProvider {
     static var previews: some View {
         GradientEffectView(
             .constant(
                 AnimatedGradient.Model(
                     colors: [
-                         Color(red: 0.723, green: 0.88, blue: 0.825),
-                         Color(red: 0.552, green: 0.724, blue: 0.831),
-                         Color(red: 0.946, green: 0.76, blue: 0.839),
+                        Color(red: 0.723, green: 0.88, blue: 0.825),
+                        Color(red: 0.552, green: 0.724, blue: 0.831),
+                        Color(red: 0.946, green: 0.76, blue: 0.839),
                     ]
-                        //.map { Color(uiColor: $0) }
                 )
             )
         )

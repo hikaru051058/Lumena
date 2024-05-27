@@ -309,8 +309,8 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let scale: CGFloat = 0.95 // More noticeable scale down to 95%
-        UIView.animate(withDuration: 0.01, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.1, options: .allowUserInteraction, animations: {
+        let scale: CGFloat = 0.99 // More noticeable scale down to 98%
+        UIView.animate(withDuration: 0.008, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.1, options: .allowUserInteraction, animations: {
             self.contentStackView.subviews.forEach { view in
                 view.transform = CGAffineTransform(scaleX: scale, y: scale)
             }

@@ -129,7 +129,7 @@ class HeaderViewController: UIViewController {
             visualEffectView.topAnchor.constraint(equalTo: covermageView.topAnchor),
             visualEffectView.leadingAnchor.constraint(equalTo: covermageView.leadingAnchor),
             visualEffectView.trailingAnchor.constraint(equalTo: covermageView.trailingAnchor),
-            visualEffectView.bottomAnchor.constraint(equalTo: covermageView.bottomAnchor)
+            visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -176,7 +176,7 @@ class HeaderViewController: UIViewController {
         profileBackground.backgroundColor = .background
         profileBackground.layer.masksToBounds = true
         profileBackground.layer.zPosition = profileInfoZPosition - 5
-        profileBackground.layer.cornerRadius = 59 // Set the corner radius
+        profileBackground.layer.cornerRadius = 40 // Set the corner radius
         if #available(iOS 13.0, *) {
             profileBackground.layer.cornerCurve = .continuous // Use continuous corner curve for a smoother look
         }
@@ -323,6 +323,9 @@ class HeaderViewController: UIViewController {
         }
         visualEffectView.center.y = covermageView.center.y
         titleView.center.y = covermageView.frame.maxY - titleView.frame.height / 2
+        
+        // 40 -> 57
+        profileBackground.layer.cornerRadius = (progress*17)+40 // Set the corner radius
     }
 
     
