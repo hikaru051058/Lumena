@@ -63,6 +63,7 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
         super.viewDidLoad()
         print("BottomViewController - viewDidLoad")
         navigationController?.navigationBar.isHidden = true
+        view.backgroundColor = .background
         setupUI()
         fetchData()
     }
@@ -145,7 +146,7 @@ extension BottomViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedIndexPath = indexPath
         let lume = lumes[indexPath.item]
-        let viewController = DetailScreen()//lume: lume)
+        let viewController = DetailScreen(lumes: lumes, currentLumePostID: lume.postID)
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
@@ -172,39 +173,38 @@ extension BottomViewController {
                               animationControllerFor operation: UINavigationController.Operation,
                               from fromVC: UIViewController,
                               to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        print("BottomViewController - navigationController animationControllerFor operation: \(operation.rawValue)")
         if operation == .push || operation == .pop {
-            print("BottomViewController - Returning transition animator for operation: \(operation.rawValue)")
             return transitionAnimator
         }
-        print("BottomViewController - Returned nil in navigationController")
         return nil
     }
 
     func navigationController(_ navigationController: UINavigationController,
                               interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        // Handle interactive transitions if necessary
         return nil
     }
 }
+
 
 // MARK: - SharedTransitioning
 
 extension BottomViewController: SharedTransitioning {
     var sharedFrame: CGRect {
-        print("BottomViewController - sharedFrame")
-        guard let selectedIndexPath,
+        guard let selectedIndexPath = selectedIndexPath,
               let cell = collectionView.cellForItem(at: selectedIndexPath),
-              let frame = cell.frameInWindow else { return .zero }
+              let frame = cell.frameInWindow else {
+            return .zero
+        }
         return frame
     }
 
     func prepare(for transition: SharedTransitionAnimator.Transition) {
-        print("BottomViewController - prepare for transition: \(transition)")
         guard transition == .pop, let selectedIndexPath else { return }
-        collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
+        collectionView.scrollToItem(at: selectedIndexPath, at: .centeredVertically, animated: false)
+        collectionView.layoutIfNeeded()
     }
 }
+
 
 // MARK: - IndicatorInfoProvider
 

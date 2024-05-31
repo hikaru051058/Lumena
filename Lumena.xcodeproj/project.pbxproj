@@ -10,12 +10,13 @@
 		0983FCC09C5D3B2F0B2B8B51 /* FollowQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1CA30015C2F5509B072489 /* FollowQL+Schema.swift */; };
 		170264702BEACED5004C9444 /* SkinSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */; };
 		170264722BEB0C30004C9444 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170264712BEB0C30004C9444 /* Notifications.swift */; };
-		173AB8692BD8EF70008D76BB /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB8682BD8EF70008D76BB /* ProfileViewController.swift */; };
+		171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */; };
 		173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */; };
 		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
 		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
-		1798E7D42BD6233800793A2C /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D32BD6233800793A2C /* MainViewController.swift */; };
+		179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */; };
+		179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */; };
 		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
 		1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D72BD6238500793A2C /* LoadingViewController.swift */; };
 		17A7C21B2BD66B57008FED83 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A7C21A2BD66B57008FED83 /* NotificationService.swift */; };
@@ -25,16 +26,8 @@
 		17B7A3B32C04104E00777CC1 /* ImageCacheSharedTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3882C04104D00777CC1 /* ImageCacheSharedTransition.swift */; };
 		17B7A3B42C04104E00777CC1 /* ImageMemoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3892C04104D00777CC1 /* ImageMemoryCache.swift */; };
 		17B7A3B52C04104E00777CC1 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A38A2C04104D00777CC1 /* ImageView.swift */; };
-		17B7A3B62C04104E00777CC1 /* DetailHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A38C2C04104D00777CC1 /* DetailHeader.swift */; };
-		17B7A3B72C04104E00777CC1 /* ImageFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A38D2C04104D00777CC1 /* ImageFooter.swift */; };
-		17B7A3B82C04104E00777CC1 /* ImageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A38E2C04104D00777CC1 /* ImageHeader.swift */; };
 		17B7A3B92C04104E00777CC1 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A38F2C04104D00777CC1 /* ProfileCell.swift */; };
-		17B7A3BA2C04104E00777CC1 /* ProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3902C04104D00777CC1 /* ProfileHeader.swift */; };
-		17B7A3BB2C04104E00777CC1 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3922C04104D00777CC1 /* Images.swift */; };
-		17B7A3BC2C04104E00777CC1 /* Picture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3932C04104D00777CC1 /* Picture.swift */; };
 		17B7A3BD2C04104E00777CC1 /* DetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3952C04104D00777CC1 /* DetailScreen.swift */; };
-		17B7A3BE2C04104E00777CC1 /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3962C04104D00777CC1 /* ProfileScreen.swift */; };
-		17B7A3BF2C04104E00777CC1 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3982C04104D00777CC1 /* TestViewController.swift */; };
 		17B7A3C02C04104E00777CC1 /* SharedTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A39A2C04104D00777CC1 /* SharedTransitionAnimator.swift */; };
 		17B7A3C12C04104E00777CC1 /* SharedTransitionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A39B2C04104D00777CC1 /* SharedTransitionConfig.swift */; };
 		17B7A3C22C04104E00777CC1 /* SharedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A39C2C04104D00777CC1 /* SharedTransitioning.swift */; };
@@ -56,6 +49,7 @@
 		17B7A3D22C04104E00777CC1 /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3AE2C04104D00777CC1 /* UIScrollView+Extensions.swift */; };
 		17B7A3D32C04104E00777CC1 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3AF2C04104D00777CC1 /* UIView+Extensions.swift */; };
 		17B7A3D52C04759400777CC1 /* BottomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3D42C04759400777CC1 /* BottomViewController.swift */; };
+		17B7A3D82C05865900777CC1 /* ProfileStatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B7A3D72C05865900777CC1 /* ProfileStatsViewController.swift */; };
 		17BAE1BD2BE6E85600E7C7C9 /* LumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */; };
 		17C0ABB02BFEA90100FA027A /* DescriptionBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */; };
 		17C0ABB12BFEA90100FA027A /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */; };
@@ -164,13 +158,14 @@
 /* Begin PBXFileReference section */
 		1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingViewController.swift; sourceTree = "<group>"; };
 		170264712BEB0C30004C9444 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
-		173AB8682BD8EF70008D76BB /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
 		173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfirmationCodeViewController.swift; sourceTree = "<group>"; };
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
-		1798E7D32BD6233800793A2C /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
+		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		1798E7D72BD6238500793A2C /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		17A7C2132BD64F52008FED83 /* Lumena.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lumena.entitlements; sourceTree = "<group>"; };
@@ -181,16 +176,8 @@
 		17B7A3882C04104D00777CC1 /* ImageCacheSharedTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheSharedTransition.swift; sourceTree = "<group>"; };
 		17B7A3892C04104D00777CC1 /* ImageMemoryCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageMemoryCache.swift; sourceTree = "<group>"; };
 		17B7A38A2C04104D00777CC1 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
-		17B7A38C2C04104D00777CC1 /* DetailHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailHeader.swift; sourceTree = "<group>"; };
-		17B7A38D2C04104D00777CC1 /* ImageFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageFooter.swift; sourceTree = "<group>"; };
-		17B7A38E2C04104D00777CC1 /* ImageHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageHeader.swift; sourceTree = "<group>"; };
 		17B7A38F2C04104D00777CC1 /* ProfileCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
-		17B7A3902C04104D00777CC1 /* ProfileHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeader.swift; sourceTree = "<group>"; };
-		17B7A3922C04104D00777CC1 /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
-		17B7A3932C04104D00777CC1 /* Picture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Picture.swift; sourceTree = "<group>"; };
 		17B7A3952C04104D00777CC1 /* DetailScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailScreen.swift; sourceTree = "<group>"; };
-		17B7A3962C04104D00777CC1 /* ProfileScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
-		17B7A3982C04104D00777CC1 /* TestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		17B7A39A2C04104D00777CC1 /* SharedTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedTransitionAnimator.swift; sourceTree = "<group>"; };
 		17B7A39B2C04104D00777CC1 /* SharedTransitionConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedTransitionConfig.swift; sourceTree = "<group>"; };
 		17B7A39C2C04104D00777CC1 /* SharedTransitioning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedTransitioning.swift; sourceTree = "<group>"; };
@@ -212,6 +199,7 @@
 		17B7A3AE2C04104D00777CC1 /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		17B7A3AF2C04104D00777CC1 /* UIView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		17B7A3D42C04759400777CC1 /* BottomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomViewController.swift; sourceTree = "<group>"; };
+		17B7A3D72C05865900777CC1 /* ProfileStatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStatsViewController.swift; sourceTree = "<group>"; };
 		17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumeViewController.swift; sourceTree = "<group>"; };
 		17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DescriptionBoxViewController.swift; sourceTree = "<group>"; };
 		17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
@@ -323,23 +311,56 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		171761CE2C096323000268A6 /* ProfileMainPageViewController */ = {
+			isa = PBXGroup;
+			children = (
+				17C0ABA92BFEA90000FA027A /* ChildControllers */,
+				17C0ABAA2BFEA90000FA027A /* Colors.swift */,
+				17C0ABAB2BFEA90000FA027A /* Extensions.swift */,
+				17C0ABAC2BFEA90000FA027A /* GradientView.swift */,
+				17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */,
+			);
+			path = ProfileMainPageViewController;
+			sourceTree = "<group>";
+		};
+		171761CF2C0963B8000268A6 /* AccountCreation */ = {
+			isa = PBXGroup;
+			children = (
+				1798E7D52BD6237200793A2C /* LoginViewController.swift */,
+				173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */,
+				173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */,
+			);
+			path = AccountCreation;
+			sourceTree = "<group>";
+		};
+		171761D02C0963E2000268A6 /* MainLumeViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */,
+				17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */,
+				175709A82BE78F4400643C40 /* SideButtonViewController.swift */,
+			);
+			path = MainLumeViewControllers;
+			sourceTree = "<group>";
+		};
 		173AB8672BD8EF48008D76BB /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				17C0ABAE2BFEA90000FA027A /* TwitterParallaxView */,
+				17C0ABAE2BFEA90000FA027A /* ProfileViewController */,
+				171761D02C0963E2000268A6 /* MainLumeViewControllers */,
+				171761CF2C0963B8000268A6 /* AccountCreation */,
 				1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */,
-				1798E7D32BD6233800793A2C /* MainViewController.swift */,
-				1798E7D52BD6237200793A2C /* LoginViewController.swift */,
 				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
-				173AB8682BD8EF70008D76BB /* ProfileViewController.swift */,
-				173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */,
-				173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */,
-				17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */,
-				175709A82BE78F4400643C40 /* SideButtonViewController.swift */,
-				17B5AC412BEA0284000B2A7F /* TabBarViewController.swift */,
-				1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		17439CAD2C05B05000B94B23 /* DescriptionBox */ = {
+			isa = PBXGroup;
+			children = (
+				17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */,
+			);
+			path = DescriptionBox;
 			sourceTree = "<group>";
 		};
 		17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */ = {
@@ -365,39 +386,17 @@
 			isa = PBXGroup;
 			children = (
 				17B7A38B2C04104D00777CC1 /* ImageView */,
-				17B7A38C2C04104D00777CC1 /* DetailHeader.swift */,
-				17B7A38D2C04104D00777CC1 /* ImageFooter.swift */,
-				17B7A38E2C04104D00777CC1 /* ImageHeader.swift */,
 				17B7A38F2C04104D00777CC1 /* ProfileCell.swift */,
-				17B7A3902C04104D00777CC1 /* ProfileHeader.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		17B7A3942C04104D00777CC1 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				17B7A3922C04104D00777CC1 /* Images.swift */,
-				17B7A3932C04104D00777CC1 /* Picture.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		17B7A3972C04104D00777CC1 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
 				17B7A3952C04104D00777CC1 /* DetailScreen.swift */,
-				17B7A3962C04104D00777CC1 /* ProfileScreen.swift */,
 			);
 			path = Screens;
-			sourceTree = "<group>";
-		};
-		17B7A3992C04104D00777CC1 /* Test */ = {
-			isa = PBXGroup;
-			children = (
-				17B7A3982C04104D00777CC1 /* TestViewController.swift */,
-			);
-			path = Test;
 			sourceTree = "<group>";
 		};
 		17B7A39E2C04104D00777CC1 /* Transition */ = {
@@ -446,9 +445,7 @@
 			isa = PBXGroup;
 			children = (
 				17B7A3912C04104D00777CC1 /* Components */,
-				17B7A3942C04104D00777CC1 /* Models */,
 				17B7A3972C04104D00777CC1 /* Screens */,
-				17B7A3992C04104D00777CC1 /* Test */,
 				17B7A39E2C04104D00777CC1 /* Transition */,
 				17B7A3B02C04104D00777CC1 /* Utils */,
 			);
@@ -459,9 +456,12 @@
 			isa = PBXGroup;
 			children = (
 				17B7A3B12C04104D00777CC1 /* Source */,
-				17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */,
+				17439CAD2C05B05000B94B23 /* DescriptionBox */,
+				17B7A3D72C05865900777CC1 /* ProfileStatsViewController.swift */,
+				179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */,
 				17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */,
 				17B7A3D42C04759400777CC1 /* BottomViewController.swift */,
+				179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */,
 				17C0ABA62BFEA90000FA027A /* HeaderViewController.swift */,
 				17C0ABA72BFEA90000FA027A /* LabelCell.swift */,
 				17C0ABA82BFEA90000FA027A /* XLPagerTabStripExampleViewController.swift */,
@@ -469,16 +469,14 @@
 			path = ChildControllers;
 			sourceTree = "<group>";
 		};
-		17C0ABAE2BFEA90000FA027A /* TwitterParallaxView */ = {
+		17C0ABAE2BFEA90000FA027A /* ProfileViewController */ = {
 			isa = PBXGroup;
 			children = (
-				17C0ABA92BFEA90000FA027A /* ChildControllers */,
-				17C0ABAA2BFEA90000FA027A /* Colors.swift */,
-				17C0ABAB2BFEA90000FA027A /* Extensions.swift */,
-				17C0ABAC2BFEA90000FA027A /* GradientView.swift */,
-				17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */,
+				171761CE2C096323000268A6 /* ProfileMainPageViewController */,
+				171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */,
+				1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */,
 			);
-			path = TwitterParallaxView;
+			path = ProfileViewController;
 			sourceTree = "<group>";
 		};
 		17FFBF982BD616D900682EE2 = {
@@ -853,15 +851,14 @@
 				17FFC0732BD6190900682EE2 /* SkinSetting.swift in Sources */,
 				17FFC0602BD6190900682EE2 /* Main.swift in Sources */,
 				17FFC0632BD6190900682EE2 /* ReelsView.swift in Sources */,
-				17B7A3B62C04104E00777CC1 /* DetailHeader.swift in Sources */,
 				17FA9F452BEE44B000CC28AC /* NotificationService.swift in Sources */,
 				170264702BEACED5004C9444 /* SkinSettingViewController.swift in Sources */,
+				17B7A3D82C05865900777CC1 /* ProfileStatsViewController.swift in Sources */,
 				17FFC03D2BD6190900682EE2 /* MusicModel.swift in Sources */,
 				17B7A3C62C04104E00777CC1 /* LayoutDimension.swift in Sources */,
 				17B7A3C82C04104E00777CC1 /* LayoutProperty.swift in Sources */,
 				17FFC0412BD6190900682EE2 /* BarcodeScanner.swift in Sources */,
 				17FFC0402BD6190900682EE2 /* SearchModel.swift in Sources */,
-				173AB8692BD8EF70008D76BB /* ProfileViewController.swift in Sources */,
 				17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */,
 				17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */,
 				17C0ABB02BFEA90100FA027A /* DescriptionBoxViewController.swift in Sources */,
@@ -873,21 +870,18 @@
 				17B7A3D52C04759400777CC1 /* BottomViewController.swift in Sources */,
 				17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */,
 				17B7A3B52C04104E00777CC1 /* ImageView.swift in Sources */,
-				17B7A3B72C04104E00777CC1 /* ImageFooter.swift in Sources */,
 				17B7A3C02C04104E00777CC1 /* SharedTransitionAnimator.swift in Sources */,
 				17FFC0422BD6190900682EE2 /* Camera.swift in Sources */,
 				1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */,
 				17B7A3B42C04104E00777CC1 /* ImageMemoryCache.swift in Sources */,
-				1798E7D42BD6233800793A2C /* MainViewController.swift in Sources */,
 				17FFC04B2BD6190900682EE2 /* SubComponents.swift in Sources */,
 				17C0ABB62BFEA90100FA027A /* Extensions.swift in Sources */,
 				17B7A3C52C04104E00777CC1 /* LayoutClosure.swift in Sources */,
 				17FFC03B2BD6190900682EE2 /* GI.swift in Sources */,
-				17B7A3BA2C04104E00777CC1 /* ProfileHeader.swift in Sources */,
 				17B7A3D22C04104E00777CC1 /* UIScrollView+Extensions.swift in Sources */,
 				17FFC0492BD6190900682EE2 /* ProductSubmission.swift in Sources */,
 				17B7A3BD2C04104E00777CC1 /* DetailScreen.swift in Sources */,
-				17B7A3BE2C04104E00777CC1 /* ProfileScreen.swift in Sources */,
+				171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */,
 				17B7A3CC2C04104E00777CC1 /* CellReuse.swift in Sources */,
 				17B7A3B92C04104E00777CC1 /* ProfileCell.swift in Sources */,
 				17C0ABB12BFEA90100FA027A /* EmptyViewController.swift in Sources */,
@@ -895,13 +889,12 @@
 				17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */,
 				17B7A3CD2C04104E00777CC1 /* CGAffineTransform+Extensions.swift in Sources */,
 				17FFC0432BD6190900682EE2 /* CosmeticViewModel.swift in Sources */,
-				17B7A3BC2C04104E00777CC1 /* Picture.swift in Sources */,
 				17FFC04A2BD6190900682EE2 /* Search.swift in Sources */,
 				17B7A3CB2C04104E00777CC1 /* UIView+Fill.swift in Sources */,
 				17FFC0462BD6190900682EE2 /* ImageExtractor.swift in Sources */,
 				17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */,
+				179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */,
 				17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */,
-				17B7A3B82C04104E00777CC1 /* ImageHeader.swift in Sources */,
 				1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */,
 				173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */,
 				B9B42B22EAF04524FC174A62 /* AmplifyModels.swift in Sources */,
@@ -925,7 +918,6 @@
 				17B7A3CE2C04104E00777CC1 /* CGRect+Extensions.swift in Sources */,
 				17B7A3D02C04104E00777CC1 /* UIApplication+KeyWindow.swift in Sources */,
 				C9D8475A5F4AD51606ACDDD5 /* LumeQL+Schema.swift in Sources */,
-				17B7A3BF2C04104E00777CC1 /* TestViewController.swift in Sources */,
 				17B7A3D12C04104E00777CC1 /* UICollectionView+Extensions.swift in Sources */,
 				596FCA3363C220C8113CC5F6 /* LumeQL.swift in Sources */,
 				17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */,
@@ -934,11 +926,11 @@
 				17C0ABB42BFEA90100FA027A /* XLPagerTabStripExampleViewController.swift in Sources */,
 				C717920F97CE0A122BC32F1E /* TagCosmeticQL.swift in Sources */,
 				51A87C82B8F1E677A7956BD1 /* TagTrackQL+Schema.swift in Sources */,
+				179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */,
 				17B7A3B32C04104E00777CC1 /* ImageCacheSharedTransition.swift in Sources */,
 				289A3AD1AD4D2FC8D2B18CCC /* TagTrackQL.swift in Sources */,
 				173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */,
 				17C0ABB22BFEA90100FA027A /* HeaderViewController.swift in Sources */,
-				17B7A3BB2C04104E00777CC1 /* Images.swift in Sources */,
 				17B7A3C12C04104E00777CC1 /* SharedTransitionConfig.swift in Sources */,
 				3F895ABB9903C95C21ECADA9 /* UserProfileQL+Schema.swift in Sources */,
 				BBF0E7299FCA3112E33DC9A9 /* UserProfileQL.swift in Sources */,

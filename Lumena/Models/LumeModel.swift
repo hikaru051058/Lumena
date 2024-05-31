@@ -140,6 +140,36 @@ class LumeImage: Identifiable, ObservableObject {
             })
     }
     
+    func loadAgain() async -> UIImage? {
+        guard let url = url else { return nil }
+        
+        let normalizedUrl = normalizeUrl(url: url)
+        
+        // Check cache first
+        if let cachedImage = ImageCache.shared.image(forId: normalizedUrl) {
+            return adjustImageOrientationIfNeeded(cachedImage)
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                print("HTTP Error: Status code is not 200 for URL: \(url)")
+                return nil
+            }
+            
+            if let image = UIImage(data: data) {
+                let adjustedImage = adjustImageOrientationIfNeeded(image)
+                ImageCache.shared.store(image: adjustedImage, forId: normalizedUrl)
+                return adjustedImage
+            } else {
+                return nil
+            }
+        } catch {
+            print("Network Error: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
     deinit {
         cancellable?.cancel()
     }

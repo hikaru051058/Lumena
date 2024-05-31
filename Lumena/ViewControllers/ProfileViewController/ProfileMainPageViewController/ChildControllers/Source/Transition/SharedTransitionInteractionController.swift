@@ -29,6 +29,7 @@ class SharedTransitionInteractionController: NSObject {
     private var alreadyCancelled = false
     private var config: SharedTransitionConfig = .interactive
     private var context: Context?
+    
 }
 
 // MARK: - UIViewControllerInteractiveTransitioning
@@ -153,7 +154,8 @@ extension SharedTransitionInteractionController {
         let toVC = context.viewController(forKey: .to) as? SharedTransitioning
         toVC?.prepare(for: .pop)
     }
-
+    
+    /*
     private func setup(with context: UIViewControllerContextTransitioning) -> (UIView, CGRect, UIView, CGRect)? {
         guard let toView = context.view(forKey: .to),
               let fromView = context.view(forKey: .from) else {
@@ -164,6 +166,61 @@ extension SharedTransitionInteractionController {
               let fromFrame = context.sharedFrame(forKey: .from) else {
             return nil
         }
+        
+        print("Transition setup transition from frame: \(fromFrame) to frame: \(toFrame)")
         return (fromView, fromFrame, toView, toFrame)
+    }
+    */
+     
+    private func setup(with context: UIViewControllerContextTransitioning) -> (UIView, CGRect, UIView, CGRect)? {
+        guard let toView = context.view(forKey: .to),
+              let fromView = context.view(forKey: .from) else {
+            print("Error: Unable to retrieve fromView or toView from the transition context")
+            return nil
+        }
+
+        context.containerView.insertSubview(toView, belowSubview: fromView)
+
+        guard let fromFrame = context.sharedFrame(forKey: .from) else {
+            print("Error: Unable to retrieve fromFrame from the transition context")
+            return nil
+        }
+
+        // Get the current visible index path from the LumeVerticalInfiniteScrollViewController in DetailScreen
+        if let fromVC = context.viewController(forKey: .from) as? DetailScreen,
+           let lumeVerticalInDetail = fromVC.lumeVerticalScroll,
+           let visibleIndexPath = lumeVerticalInDetail.getCurrentVisibleIndexPath() {
+            
+            let cellWidth: CGFloat = SharedTransitionAnimator.cellFrame.width
+            let cellHeight: CGFloat = SharedTransitionAnimator.cellFrame.height
+            let horizontalSpacing: CGFloat = 2.0
+            let verticalSpacing: CGFloat = 2.0
+            let verticalOffset = SharedTransitionAnimator.fromFrameYOffset // Use the stored y offset
+            
+            let toFrame = calculateReturningFrame(for: visibleIndexPath.item, cellWidth: cellWidth, cellHeight: cellHeight, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing, verticalOffset: verticalOffset)
+            
+            print("Calculated toFrame: \(toFrame)")
+            return (fromView, fromFrame, toView, toFrame)
+        }
+
+        // Fallback to a default frame if the above calculation fails
+        guard let toFrame = context.sharedFrame(forKey: .to) else {
+            print("Error: Unable to retrieve toFrame from the transition context")
+            return nil
+        }
+
+        return (fromView, fromFrame, toView, toFrame)
+    }
+    
+    func calculateReturningFrame(for index: Int, cellWidth: CGFloat, cellHeight: CGFloat, horizontalSpacing: CGFloat, verticalSpacing: CGFloat, verticalOffset: CGFloat) -> CGRect {
+        let rowIndex = index / 3 // Calculate which row the cell is in
+        let columnIndex = index % 3 // Calculate the column within the row
+
+        // Calculate the frame for the cell
+        let xPosition = CGFloat(columnIndex) * (cellWidth + horizontalSpacing)
+        let yPosition = CGFloat(rowIndex) * (cellHeight + verticalSpacing) + verticalOffset
+        let frame = CGRect(x: xPosition, y: yPosition, width: cellWidth, height: cellHeight)
+        
+        return frame
     }
 }

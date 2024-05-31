@@ -8,13 +8,12 @@
 import UIKit
 import TwitterProfile
 import XLPagerTabStrip
-import SwiftUI
 
 class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressDelegate, UINavigationControllerDelegate {
     
     var headerVC: HeaderViewController?
     var bottomVC: XLPagerTabStripExampleViewController!
-    var backgroundGradient: GradientEffectViewController!
+    var backgroundVC: ProfileBackgroundViewController!
     
     var userIdentityID: String!
     var profile: ProfileSettings = ProfileSettings()
@@ -32,12 +31,14 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tp_configure(with: self, delegate: self)
         self.navigationController?.interactivePopGestureRecognizer!.delegate = self;
+        
+        setupBackgroundViewController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -69,7 +70,6 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     
     func bottomViewController() -> UIViewController & PagerAwareProtocol {
         bottomVC = XLPagerTabStripExampleViewController(profile: profile)
-        setupBackgroundGradient() // for blur background animation
         return bottomVC
     }
     
@@ -84,22 +84,12 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     }
     
     func tp_scrollViewDidLoad(_ scrollView: UIScrollView) {
-        refresh.tintColor = .white
+        //refresh.tintColor = .background
         refresh.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
         
         let refreshView = UIView(frame: CGRect(x: 0, y: 44, width: 0, height: 0))
         scrollView.addSubview(refreshView)
         refreshView.addSubview(refresh)
-    }
-    
-    
-    private func setupBackgroundGradient() {
-        
-        backgroundGradient = GradientEffectViewController(colors: [Color(red: 0.723, green: 0.88, blue: 0.825), Color(red: 0.552, green: 0.724, blue: 0.831), Color(red: 0.946, green: 0.76, blue: 0.839),])
-        
-        view.addSubview(backgroundGradient.view)
-        backgroundGradient.view.frame = view.bounds
-        backgroundGradient.view.translatesAutoresizingMaskIntoConstraints = false
     }
     
     // MARK: UINavigationControllerDelegate
@@ -108,7 +98,7 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
                               from fromVC: UIViewController,
                               to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         print("TwitterParallaxViewController - navigationController animationControllerFor operation: \(operation.rawValue)")
-
+        
         if let bottomVC = bottomVC.currentViewController as? BottomViewController {
             return bottomVC.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
         }
@@ -123,19 +113,33 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
             print("TwitterParallaxViewController - Transition Animator for pop")
             return transitionAnimator
         }
-
+        
         print("TwitterParallaxViewController - Returned nil in navigationController")
         return nil
     }
-}
-
-
-extension UIView {
-    func addBorder(borderColor: UIColor, width: CGFloat, cornerRadius: CGFloat) {
-        layer.borderColor = borderColor.cgColor
-        layer.borderWidth = width
-        layer.cornerRadius = cornerRadius
-        layer.masksToBounds = true
+    
+    private func setupBackgroundViewController() {
+        backgroundVC = ProfileBackgroundViewController(profile: profile)
+        addChild(backgroundVC)
+        view.insertSubview(backgroundVC.view, at: 0)
+        backgroundVC.didMove(toParent: self)
+        
+        backgroundVC.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            backgroundVC.view.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
+    @objc func returnButton() {
+        if let navigationController = self.view.window?.rootViewController as? UINavigationController {
+            navigationController.popViewController(animated: true)
+        } else {
+            // Handle the case where there is no navigation controller
+            print("No navigation controller found")
+        }
     }
 }
 

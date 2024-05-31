@@ -7,32 +7,45 @@
 
 import UIKit
 
+
 class ExpandableTextViewController: UIViewController {
     
     let yourLabel = UILabel()
-    let originalText = """
+    var text = """
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
         """
     var isExpanded = false
     
+    init(text: String) {
+        self.text = text
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupLabel()
-        
-        // Set initial text
-        yourLabel.text = originalText
-        
-        let readmoreFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.thin)
-        let readmoreFontColor = UIColor.secondaryLabel
-        DispatchQueue.main.async {
-            self.yourLabel.addTrailing(with: "... ", moreText: "more", moreTextFont: readmoreFont, moreTextColor: readmoreFontColor)
+        if !text.isEmpty {
+            
+            setupLabel()
+            
+            // Set initial text
+            yourLabel.text = text
+            
+            let readmoreFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.thin)
+            let readmoreFontColor = UIColor.secondaryLabel
+            DispatchQueue.main.async {
+                self.yourLabel.addTrailing(with: "... ", moreText: "more", moreTextFont: readmoreFont, moreTextColor: readmoreFontColor)
+            }
+            
+            // Add tap gesture recognizer
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapLabel))
+            yourLabel.isUserInteractionEnabled = true
+            yourLabel.addGestureRecognizer(tapGesture)
         }
-        
-        // Add tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapLabel))
-        yourLabel.isUserInteractionEnabled = true
-        yourLabel.addGestureRecognizer(tapGesture)
     }
     
     private func setupLabel() {
@@ -53,7 +66,7 @@ class ExpandableTextViewController: UIViewController {
         if isExpanded {
             UIView.animate(withDuration: 0.3) {
                 self.yourLabel.numberOfLines = 2
-                self.yourLabel.text = self.originalText
+                self.yourLabel.text = self.text
                 DispatchQueue.main.async {
                     let readmoreFont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.thin)
                     let readmoreFontColor = UIColor.secondaryLabel
@@ -64,7 +77,7 @@ class ExpandableTextViewController: UIViewController {
         } else {
             UIView.animate(withDuration: 0.3) {
                 self.yourLabel.numberOfLines = 0
-                self.yourLabel.text = self.originalText
+                self.yourLabel.text = self.text
                 self.view.layoutIfNeeded()
             }
         }

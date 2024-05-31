@@ -1,28 +1,30 @@
 import UIKit
 
+
 class DetailScreen: UIViewController {
 
     // MARK: Private properties
 
-    //private var picture: Picture
+    private var lumes: [Lume]
+    private var currentLumePostID: String = ""
+    var selectedIndexPath: IndexPath?
 
     // MARK: UI Properties
 
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let header = DetailHeader(title: "Posts", userName: "USER")
-    private let imageHeader = ImageHeader(userName: "user", location: "Budapest")
     private let imageView = ImageView()
-    private let imageFooter = ImageFooter(date: "6 days ago")
+    
+    var lumeVerticalScroll: LumeVerticalInfiniteScrollViewController!
     private lazy var recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
     var transitionAnimator = SharedTransitionAnimator()
     private var interactionController: SharedTransitionInteractionController?
 
     // MARK: Init
 
-    //init(picture: Picture) {
-    init() {
-        //self.picture = picture
+    init(lumes: [Lume], currentLumePostID: String) {
+        self.lumes = lumes
+        self.currentLumePostID = currentLumePostID
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -36,6 +38,7 @@ class DetailScreen: UIViewController {
         super.viewDidLoad()
         print("DetailScreen - viewDidLoad")
         navigationController?.navigationBar.isHidden = true
+        view.backgroundColor = .background
         setupUI()
     }
 
@@ -43,6 +46,16 @@ class DetailScreen: UIViewController {
         super.viewDidAppear(animated)
         print("DetailScreen - viewDidAppear")
         navigationController?.delegate = self
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent {
+            if let bottomVC = navigationController?.viewControllers.last as? BottomViewController {
+                let currentVisibleIndexPath = lumeVerticalScroll.getCurrentVisibleIndexPath()
+                bottomVC.selectedIndexPath = currentVisibleIndexPath
+            }
+        }
     }
 }
 
@@ -52,93 +65,57 @@ extension DetailScreen {
     private func setupUI() {
         print("DetailScreen - setupUI")
         setupView()
-        setupHeader()
-        setupScrollView()
-        setupImageHeader()
         setupImageView()
-        setupImageFooter()
+        setupLumeVerticalSrollViewController()
     }
 
     private func setupView() {
         print("DetailScreen - setupView")
-        view.backgroundColor = .white
+        view.backgroundColor = .background
         view.addGestureRecognizer(recognizer)
         recognizer.delegate = self
     }
-
-    private func setupHeader() {
-        print("DetailScreen - setupHeader")
-        header.then {
-            view.addSubview($0)
-            $0.backNavigation = { [weak self] in
-                self?.navigationController?.popViewController(animated: true)
-            }
-        }.layout {
-            $0.top == view.safeAreaLayoutGuide.topAnchor
-            $0.leading == view.leadingAnchor
-            $0.trailing == view.trailingAnchor
-        }
-    }
-
-    private func setupScrollView() {
-        print("DetailScreen - setupScrollView")
-        scrollView.then {
-            $0.alwaysBounceVertical = true
+    
+    private func setupLumeVerticalSrollViewController() {
+        lumeVerticalScroll = LumeVerticalInfiniteScrollViewController(lumes: lumes, loadAutomatically: false, currentLumePostID: currentLumePostID)
+        lumeVerticalScroll.view.then {
             view.addSubview($0)
         }.layout {
-            $0.top == header.bottomAnchor
-            $0.leading == view.leadingAnchor
-            $0.trailing == view.trailingAnchor
-            $0.bottom == view.safeAreaLayoutGuide.bottomAnchor
-        }
-
-        contentView.then {
-            scrollView.addSubview($0)
-            scrollView.fillWith($0)
-        }.layout {
-            $0.width == scrollView.widthAnchor
-            $0.height >= scrollView.heightAnchor
-        }
-    }
-
-    private func setupImageHeader() {
-        print("DetailScreen - setupImageHeader")
-        imageHeader.then {
-            contentView.addSubview($0)
-        }.layout {
-            $0.top == contentView.topAnchor + 8
+            $0.top == view.topAnchor
+            $0.bottom == view.bottomAnchor
             $0.leading == view.leadingAnchor
             $0.trailing == view.trailingAnchor
         }
     }
-
+    
     private func setupImageView() {
-        print("DetailScreen - setupImageView")
-        imageView.then {
-            contentView.addSubview($0)
-            $0.contentMode = .scaleAspectFit
-            $0.layer.masksToBounds = true
-            //$0.setImage(from: picture.imageURL)
-        }.layout {
-            $0.leading == contentView.leadingAnchor
-            $0.trailing == contentView.trailingAnchor
-            $0.top == imageHeader.bottomAnchor + 10
-        }
-
-        imageView.heightAnchor.constraint(
-            equalTo: imageView.widthAnchor,
-            multiplier: 1.25
-        ).isActive = true
-    }
-
-    private func setupImageFooter() {
-        print("DetailScreen - setupImageFooter")
-        imageFooter.then {
-            contentView.addSubview($0)
-        }.layout {
-            $0.top == imageView.bottomAnchor + 10
-            $0.leading == contentView.leadingAnchor
-            $0.trailing == contentView.trailingAnchor
+        if let lume = lumes.first(where: {$0.postID == currentLumePostID}) {
+            if let urlString = lume.postURL.first, let url = URL(string: urlString) {
+                imageView.then {
+                    view.addSubview($0)
+                    $0.contentMode = .scaleAspectFill
+                    $0.layer.masksToBounds = true
+                    $0.setImage(from: url)
+                }.layout {
+                    $0.leading == view.leadingAnchor
+                    $0.trailing == view.trailingAnchor
+                    $0.top == view.topAnchor
+                    $0.bottom == view.bottomAnchor
+                    $0.centerX == view.centerXAnchor
+                    $0.centerY == view.centerYAnchor
+                }
+                
+                imageView.heightAnchor.constraint(
+                    equalTo: imageView.widthAnchor,
+                    multiplier: 1.25
+                ).isActive = true
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    UIView.animate(withDuration: 0.5) {
+                        self.imageView.alpha = 0.0
+                    }
+                }
+            }
         }
     }
 }
@@ -148,7 +125,6 @@ extension DetailScreen {
 extension DetailScreen: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        print("DetailScreen - gestureRecognizer shouldRecognizeSimultaneouslyWith")
         return scrollView.isBouncing
     }
 }
@@ -182,7 +158,6 @@ extension DetailScreen: UINavigationControllerDelegate {
 extension DetailScreen {
     @objc
     func handlePan(_ recognizer: UIPanGestureRecognizer) {
-        print("DetailScreen - handlePan")
         let window = UIApplication.keyWindow!
         switch recognizer.state {
         case .began:
@@ -210,7 +185,6 @@ extension DetailScreen {
 
 extension DetailScreen: SharedTransitioning {
     var sharedFrame: CGRect {
-        print("DetailScreen - sharedFrame")
         return imageView.frameInWindow ?? .zero
     }
 }

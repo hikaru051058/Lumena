@@ -35,9 +35,9 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
         print("XLPagerTabStripExampleViewController - viewDidLoad")
         settings.style.buttonBarBackgroundColor = .background
         settings.style.buttonBarItemBackgroundColor = .background
-        settings.style.selectedBarBackgroundColor = Colors.twitterBlue
-        settings.style.buttonBarItemTitleColor = Colors.twitterBlue
-        settings.style.selectedBarHeight = 3
+        settings.style.selectedBarBackgroundColor = Colors.arinBlue
+        settings.style.buttonBarItemTitleColor = Colors.arinBlue
+        settings.style.selectedBarHeight = 2
 
         super.viewDidLoad()
         
@@ -45,7 +45,7 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
         
         self.changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             oldCell?.label.textColor = Colors.twitterGray
-            newCell?.label.textColor = Colors.twitterBlue
+            newCell?.label.textColor = Colors.arinBlue
         }
         
         navigationController?.delegate = self
@@ -54,9 +54,9 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     // MARK: - PagerTabStripDataSource
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         print("XLPagerTabStripExampleViewController - viewControllers for pagerTabStripController")
-        let child_1 = createBottomViewController(pageIndex: 0, title: "Post", count: 30)
-        let child_2 = createBottomViewController(pageIndex: 1, title: "Likes", count: 1)
-        let child_3 = createBottomViewController(pageIndex: 2, title: "Saved", count: 40)
+        let child_1 = createBottomViewController(pageIndex: 0, title: "Post")
+        let child_2 = createBottomViewController(pageIndex: 1, title: "Likes")
+        let child_3 = createBottomViewController(pageIndex: 2, title: "Saved")
         
         return [child_1, child_2, child_3]
     }
@@ -78,7 +78,7 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     }
     
     // Helper method to create bottom view controllers
-    private func createBottomViewController(pageIndex: Int, title: String, count: Int) -> BottomViewController {
+    private func createBottomViewController(pageIndex: Int, title: String) -> BottomViewController {
         print("XLPagerTabStripExampleViewController - createBottomViewController for pageIndex: \(pageIndex), title: \(title)")
         let bottomVC = BottomViewController(profile: profile)
         bottomVC.pageIndex = pageIndex

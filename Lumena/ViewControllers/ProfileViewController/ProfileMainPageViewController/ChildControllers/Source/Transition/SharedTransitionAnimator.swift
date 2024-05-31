@@ -23,6 +23,8 @@ class SharedTransitionAnimator: NSObject {
     // MARK: Private properties
 
     private var config: SharedTransitionConfig = .default
+    static var fromFrameYOffset: CGFloat = 0 // Store the y offset
+    static var cellFrame: CGRect = CGRect(x: 0, y: 0, width: 129.66666, height: 129.66666)
 }
 
 // MARK: - UIViewControllerAnimatedTransitioning
@@ -58,6 +60,10 @@ extension SharedTransitionAnimator {
             print("Error in push guard")
             return
         }
+        
+        SharedTransitionAnimator.fromFrameYOffset = fromFrame.origin.y
+        calculateYOffset(with: context)
+        SharedTransitionAnimator.cellFrame = fromFrame
 
         let transform: CGAffineTransform = .transform(
             parent: toView.frame,
@@ -160,24 +166,45 @@ extension SharedTransitionAnimator {
         fromVC?.prepare(for: transition)
         toVC?.prepare(for: transition)
     }
-
+    
     private func setup(with context: UIViewControllerContextTransitioning) -> (UIView, CGRect, UIView, CGRect)? {
-        print("SharedTransitionAnimator - setup with context")
         guard let toView = context.view(forKey: .to),
               let fromView = context.view(forKey: .from) else {
-            print("Error: Unable to get toView or fromView")
             return nil
         }
+
         if transition == .push {
             context.containerView.addSubview(toView)
         } else {
             context.containerView.insertSubview(toView, belowSubview: fromView)
         }
+
         guard let toFrame = context.sharedFrame(forKey: .to),
               let fromFrame = context.sharedFrame(forKey: .from) else {
-            print("Error: Unable to get toFrame or fromFrame")
             return nil
         }
+        
         return (fromView, fromFrame, toView, toFrame)
+    }
+    
+    private func calculateYOffset(with context: UIViewControllerContextTransitioning) {
+        
+        // Get the current visible index path from the LumeVerticalInfiniteScrollViewController in DetailScreen
+        if let fromVC = context.viewController(forKey: .to) as? DetailScreen,
+           let lumeVerticalInDetail = fromVC.lumeVerticalScroll,
+           let visibleIndexPath = lumeVerticalInDetail.getCurrentVisibleIndexPath() {
+            
+            let cellWidth: CGFloat = SharedTransitionAnimator.cellFrame.width
+            let cellHeight: CGFloat = SharedTransitionAnimator.cellFrame.height
+            let horizontalSpacing: CGFloat = 2.0
+            let verticalSpacing: CGFloat = 2.0
+            let verticalOffset = SharedTransitionAnimator.fromFrameYOffset // Use the stored y offset
+            
+            let rowIndex = visibleIndexPath.item / 3 // Calculate which row the cell is in
+            let columnIndex = visibleIndexPath.item % 3 // Calculate the column within the row
+
+            // Calculate the position for the first row, first cell based on fromFrameYOffset
+            SharedTransitionAnimator.fromFrameYOffset = verticalOffset - CGFloat(rowIndex) * (cellHeight + verticalSpacing)
+        }
     }
 }

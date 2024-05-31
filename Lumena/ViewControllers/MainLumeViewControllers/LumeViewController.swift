@@ -193,19 +193,30 @@ extension LumeHorizontalTabViewController {
 
 
 // MARK: - Vertical Lumes viewcontroller
-class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDelegate {
+
+class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     
-    private var scrollView: UIScrollView!
-    private var contentStackView: UIStackView!
+    var scrollView: UIScrollView!
+    var contentStackView: UIStackView!
     private var refreshControl: UIRefreshControl!
     private var lumes: [Lume] = []
+    
+    private var loadAutomatically: Bool = true
 
     // Mimic SwiftUI's currentReel
     private var currentLume: UUID?
+    private var currentLumePostID: String?
     
     var mute: Bool = false
     
     init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init(lumes: [Lume], loadAutomatically: Bool = true, currentLumePostID: String = "") {
+        self.lumes = lumes
+        self.loadAutomatically = loadAutomatically
+        self.currentLumePostID = currentLumePostID
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -216,8 +227,24 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        loadInitialLumes()
+        if loadAutomatically {
+            loadInitialLumes()
+        } else {
+            self.addTabs()
+        }
+        scrollToCurrentLumeIfNeeded()
+        scrollView.layoutIfNeeded()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        scrollToCurrentLumeIfNeeded()
+    }
+
     
     private func setupUI() {
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -255,6 +282,11 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
         
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.delegate = self
+        
+        // Add gesture recognizer for interactive transition
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        panGesture.delegate = self
+        scrollView.addGestureRecognizer(panGesture)
     }
     
     private func fetchLumes(completion: @escaping (_ success: Bool) -> Void) {
@@ -298,6 +330,7 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
             ])
             lumeVC.didMove(toParent: self)
         }
+        scrollView.layoutIfNeeded()
     }
 
     @objc private func refreshAction() {
@@ -305,14 +338,19 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
         // Simulate network fetch
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.refreshControl.endRefreshing()
+            self.scaleToOriginalSize()
         }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let scale: CGFloat = 0.99 // More noticeable scale down to 98%
+        let scale: CGFloat = 0.99 // More noticeable scale down to 99%
         UIView.animate(withDuration: 0.008, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.1, options: .allowUserInteraction, animations: {
             self.contentStackView.subviews.forEach { view in
-                view.transform = CGAffineTransform(scaleX: scale, y: scale)
+                if view.frame.intersects(scrollView.bounds) {
+                    view.transform = CGAffineTransform(scaleX: scale, y: scale)
+                } else {
+                    view.transform = CGAffineTransform.identity
+                }
             }
         }, completion: nil)
     }
@@ -320,30 +358,18 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         // Reset scale transformation when user stops scrolling
         UIView.animate(withDuration: 0.05) {
-            self.contentStackView.subviews.forEach { view in
-                view.transform = CGAffineTransform.identity
-            }
+            self.scaleToOriginalSize()
+        }
+    }
+    
+    private func scaleToOriginalSize() {
+        self.contentStackView.subviews.forEach { view in
+            view.transform = CGAffineTransform.identity
         }
     }
     
     private func updateCurrentLume() {
-        let visibleRect = CGRect(x: 0, y: scrollView.contentOffset.y, width: scrollView.bounds.width, height: scrollView.bounds.height)
-        var mostVisibleIndex: Int? = nil
-        var maxVisibleHeight: CGFloat = 0
-        
-        for (index, child) in children.enumerated() {
-            let childVC = child as! LumeIndividualViewController
-            let childViewRect = scrollView.convert(childVC.view.frame, from: contentStackView)
-            let visibleFrame = visibleRect.intersection(childViewRect)
-            let visibleHeight = visibleFrame.height
-            
-            if visibleHeight > maxVisibleHeight {
-                maxVisibleHeight = visibleHeight
-                mostVisibleIndex = index
-            }
-        }
-        
-        if let visibleIndex = mostVisibleIndex {
+        if let visibleIndex = getCurrentVisibleLumeIndex() {
             let newCurrentLume = lumes[visibleIndex].id
             
             newLumeAppearSetup()
@@ -352,14 +378,13 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
                 currentLume = newCurrentLume
                 notifyCurrentLumeChange()
                 
-                // load more contents at the very end
-                if lumes.count-1 == visibleIndex {
+                // Load more contents at the very end
+                if lumes.count - 1 == visibleIndex {
                     loadMoreLumes()
                 }
             }
         }
     }
-    
     
     private func newLumeAppearSetup() {
         
@@ -394,7 +419,60 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
             child.updateMuteStatus(mute)
         }
     }
+    
+    private func scrollToCurrentLumeIfNeeded() {
+        guard let currentLumePostID = currentLumePostID else { return }
+        if let index = lumes.firstIndex(where: { $0.postID == currentLumePostID }) {
+            let offsetY = CGFloat(index) * view.bounds.height
+            scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: false)
+            self.currentLume = lumes[index].id
+            scaleToOriginalSize()
+        }
+    }
+    
+    private func getCurrentVisibleLumeIndex() -> Int? {
+        let visibleRect = CGRect(x: 0, y: scrollView.contentOffset.y, width: scrollView.bounds.width, height: scrollView.bounds.height)
+        for (index, child) in children.enumerated() {
+            let childVC = child as! LumeIndividualViewController
+            let childViewRect = scrollView.convert(childVC.view.frame, from: contentStackView)
+            if visibleRect.intersects(childViewRect) {
+                return index
+            }
+        }
+        return nil
+    }
+    
+    @objc private func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
+        // Delegate the pan gesture to the interaction controller
+        if let interactionController = navigationController?.delegate as? SharedTransitionInteractionController {
+            interactionController.update(recognizer)
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
 }
+
+extension LumeVerticalInfiniteScrollViewController {
+    func getCurrentVisibleIndexPath() -> IndexPath? {
+        let visibleRect = CGRect(origin: scrollView.contentOffset, size: scrollView.bounds.size)
+        let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+        for (index, _) in lumes.enumerated() {
+            let lumeView = contentStackView.arrangedSubviews[index]
+            if lumeView.frame.contains(visiblePoint) {
+                return IndexPath(item: index, section: 0)
+            }
+        }
+        return nil
+    }
+    
+    func getCurrentVisibileIndex() -> Int? {
+        return lumes.firstIndex(where: {$0.postID == currentLumePostID})!
+    }
+}
+
+
 
 // MARK: ^-
 
@@ -424,6 +502,8 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     
     private var descriptionText = MarqueeTextViewController()
     private var usernameText = MarqueeTextViewController()
+    private var invisibleRectangleLeft: UIView!
+    private var invisibleRectangleRight: UIView!
     
     private var pageControl = UIPageControl(frame: .zero)
 
@@ -479,13 +559,11 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
         view.backgroundColor = UIColor.black
         view.layer.cornerRadius = 25
         view.layer.masksToBounds = true
-        
-        
     }
     
     private func setupPages() {
         var contentWidth: CGFloat = 0
-
+        
         for content in lume.contents {
             guard let contentVC = contentViewController(for: content.id) else {
                 print("Error in LumeIndividualViewController SetupPages: Could not add \(content.id) for \(lume.postID) as a child")
@@ -504,7 +582,36 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
         scrollView.contentSize = CGSize(width: contentWidth, height: view.bounds.height)
         updateCurrentPage()  // Set initial page based on first content
         handleSingleContentScenario()
+        setupInvisibleBar()
     }
+    
+    private func setupInvisibleBar() {
+        
+        invisibleRectangleLeft = UIView()
+        invisibleRectangleLeft.backgroundColor = UIColor.clear
+        view.addSubview(invisibleRectangleLeft)
+        
+        invisibleRectangleLeft.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            invisibleRectangleLeft.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            invisibleRectangleLeft.topAnchor.constraint(equalTo: view.topAnchor),
+            invisibleRectangleLeft.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            invisibleRectangleLeft.widthAnchor.constraint(equalToConstant: 60)
+        ])
+        
+        invisibleRectangleRight = UIView()
+        invisibleRectangleRight.backgroundColor = UIColor.clear
+        view.addSubview(invisibleRectangleRight)
+        
+        invisibleRectangleRight.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            invisibleRectangleRight.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            invisibleRectangleRight.topAnchor.constraint(equalTo: view.topAnchor),
+            invisibleRectangleRight.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            invisibleRectangleRight.widthAnchor.constraint(equalToConstant: 60)
+        ])
+    }
+
 
     private func updateCurrentPage() {
         if let firstContent = lume.contents.first {
@@ -1024,34 +1131,55 @@ class ImageContentViewController: LumeContentViewController {
     }
 
     private func loadImage() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-
-            if let image = self.imageContent.image {
-                DispatchQueue.main.async {
-                    self.imageView.image = image
-                    // Calculate the aspect ratio of the image
-                    let imageAspectRatio = image.size.width / image.size.height
-                    
-                    if imageAspectRatio > 1.0 {
-                        // Image is wider than the view
-                        self.imageView.contentMode = .scaleAspectFit
-                    } else {
-                        // Image is taller than the view or square
-                        self.imageView.contentMode = .scaleAspectFill
-                    }
-                }
-            } else {
+        // Using Task to run async code
+        Task {
+            guard let image = self.imageContent.image else {
                 self.spinner.startAnimating()
-                // Assuming imageContent.imageURL is the URL
-                if let _ = self.imageContent.url {
-                    print("image could not be downloaded")
+                
+                // Load image asynchronously
+                if let loadedImage = await self.imageContent.loadAgain() {
                     DispatchQueue.main.async {
+                        self.imageView.image = loadedImage
                         self.spinner.stopAnimating()
+                        
+                        // Calculate the aspect ratio of the image
+                        let imageAspectRatio = loadedImage.size.width / loadedImage.size.height
+                        
+                        if imageAspectRatio > 1.0 {
+                            // Image is wider than the view
+                            self.imageView.contentMode = .scaleAspectFit
+                        } else {
+                            // Image is taller than the view or square
+                            self.imageView.contentMode = .scaleAspectFill
+                        }
                     }
                 } else {
-                    print("Image URL is not available.")
-                    self.spinner.stopAnimating()
+                    DispatchQueue.main.async {
+                        if let _ = self.imageContent.url {
+                            print("Image could not be downloaded")
+                        } else {
+                            print("Image URL is not available.")
+                        }
+                        self.spinner.stopAnimating()
+                    }
+                }
+                return
+            }
+
+            // Image is already available
+            DispatchQueue.main.async {
+                self.imageView.image = image
+                self.spinner.stopAnimating()
+                
+                // Calculate the aspect ratio of the image
+                let imageAspectRatio = image.size.width / image.size.height
+                
+                if imageAspectRatio > 1.0 {
+                    // Image is wider than the view
+                    self.imageView.contentMode = .scaleAspectFit
+                } else {
+                    // Image is taller than the view or square
+                    self.imageView.contentMode = .scaleAspectFill
                 }
             }
         }
