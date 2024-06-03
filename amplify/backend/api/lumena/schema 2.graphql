@@ -1,0 +1,853 @@
+enum FollowStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type FollowQL @aws_iam @aws_api_key {
+  id: ID!
+  timestamp: AWSTimestamp
+  followingID: ID!
+  following: UserProfileQL
+  followerID: ID
+  status: FollowStatus
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type LikedLumeQL @aws_iam @aws_api_key {
+  id: ID!
+  timestamp: AWSTimestamp
+  lumeQLID: ID!
+  lume: LumeQL
+  userprofileqlID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type CommentQL @aws_iam @aws_api_key {
+  id: ID!
+  timestamp: AWSTimestamp!
+  comment: String!
+  lumeQLID: ID!
+  lume: LumeQL
+  userprofileqlID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type CosmeticQL @aws_iam @aws_api_key {
+  id: ID!
+  productName: String!
+  companyID: String!
+  price: String
+  amount: String
+  totTagCount: Int
+  authenticated: Boolean!
+  link: [String]
+  tagCnt: Int
+  type: String
+  zipURL: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type TagTrackQL @aws_iam @aws_api_key {
+  trackID: String!
+  tagMusicRange: [Float!]
+}
+
+type TagCosmeticQL @aws_iam @aws_api_key {
+  cosmeticID: String!
+  authProduct: Boolean!
+  recommend: Float
+  effect: Float
+  fading: Float
+  feeling: Float
+  attachedURL: String
+}
+
+type LumeQL @aws_iam @aws_api_key {
+  id: ID!
+  postURL: [AWSURL]
+  timestamp: AWSTimestamp!
+  tagProducts: [TagCosmeticQL]
+  tagMusic: TagTrackQL
+  description: String
+  userprofileqlID: ID!
+  userprofile: UserProfileQL
+  likeCount: Int
+  commentCount: Int
+  hashTags: [String]
+  zipURL: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type UserProfileQL @aws_iam @aws_api_key {
+  id: ID!
+  followingUsers: [String]
+  followerUsers: [String]
+  username: String!
+  DOB: AWSTimestamp
+  firstName: String!
+  Sensitivity: Float
+  SunBathing: Float
+  SkinType: Float
+  postContents(filter: ModelLumeQLFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelLumeQLConnection
+  likedContents(filter: ModelLikedLumeQLFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelLikedLumeQLConnection
+  comments(filter: ModelCommentQLFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelCommentQLConnection
+  lockState: Boolean
+  profileImage: String
+  backgroundImage: String
+  followerCount: Int
+  followingCount: Int
+  bio: String
+  zipURL: String
+  following(filter: ModelFollowQLFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelFollowQLConnection
+  postCount: Int
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelFollowQLConnection @aws_api_key @aws_iam {
+  items: [FollowQL]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelFollowStatusInput {
+  eq: FollowStatus
+  ne: FollowStatus
+}
+
+input ModelFollowQLFilterInput {
+  id: ModelIDInput
+  timestamp: ModelIntInput
+  followingID: ModelIDInput
+  followerID: ModelIDInput
+  status: ModelFollowStatusInput
+  and: [ModelFollowQLFilterInput]
+  or: [ModelFollowQLFilterInput]
+  not: ModelFollowQLFilterInput
+  _deleted: ModelBooleanInput
+}
+
+type Query {
+  getFollowQL(id: ID!): FollowQL @aws_api_key @aws_iam
+  listFollowQLS(filter: ModelFollowQLFilterInput, limit: Int, nextToken: String): ModelFollowQLConnection @aws_api_key @aws_iam
+  syncFollowQLS(filter: ModelFollowQLFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelFollowQLConnection @aws_api_key @aws_iam
+  followQLSByFollowingID(followingID: ID!, sortDirection: ModelSortDirection, filter: ModelFollowQLFilterInput, limit: Int, nextToken: String): ModelFollowQLConnection @aws_api_key @aws_iam
+  getLikedLumeQL(id: ID!): LikedLumeQL @aws_api_key @aws_iam
+  listLikedLumeQLS(filter: ModelLikedLumeQLFilterInput, limit: Int, nextToken: String): ModelLikedLumeQLConnection @aws_api_key @aws_iam
+  syncLikedLumeQLS(filter: ModelLikedLumeQLFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelLikedLumeQLConnection @aws_api_key @aws_iam
+  likedLumeQLSByUserprofileqlID(userprofileqlID: ID!, sortDirection: ModelSortDirection, filter: ModelLikedLumeQLFilterInput, limit: Int, nextToken: String): ModelLikedLumeQLConnection @aws_api_key @aws_iam
+  getCommentQL(id: ID!): CommentQL @aws_api_key @aws_iam
+  listCommentQLS(filter: ModelCommentQLFilterInput, limit: Int, nextToken: String): ModelCommentQLConnection @aws_api_key @aws_iam
+  syncCommentQLS(filter: ModelCommentQLFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelCommentQLConnection @aws_api_key @aws_iam
+  commentQLSByUserprofileqlID(userprofileqlID: ID!, sortDirection: ModelSortDirection, filter: ModelCommentQLFilterInput, limit: Int, nextToken: String): ModelCommentQLConnection @aws_api_key @aws_iam
+  getCosmeticQL(id: ID!): CosmeticQL @aws_api_key @aws_iam
+  listCosmeticQLS(filter: ModelCosmeticQLFilterInput, limit: Int, nextToken: String): ModelCosmeticQLConnection @aws_api_key @aws_iam
+  syncCosmeticQLS(filter: ModelCosmeticQLFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelCosmeticQLConnection @aws_api_key @aws_iam
+  getLumeQL(id: ID!): LumeQL @aws_api_key @aws_iam
+  listLumeQLS(filter: ModelLumeQLFilterInput, limit: Int, nextToken: String): ModelLumeQLConnection @aws_api_key @aws_iam
+  syncLumeQLS(filter: ModelLumeQLFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelLumeQLConnection @aws_api_key @aws_iam
+  lumeQLSByUserprofileqlID(userprofileqlID: ID!, sortDirection: ModelSortDirection, filter: ModelLumeQLFilterInput, limit: Int, nextToken: String): ModelLumeQLConnection @aws_api_key @aws_iam
+  getUserProfileQL(id: ID!): UserProfileQL @aws_api_key @aws_iam
+  listUserProfileQLS(filter: ModelUserProfileQLFilterInput, limit: Int, nextToken: String): ModelUserProfileQLConnection @aws_api_key @aws_iam
+  syncUserProfileQLS(filter: ModelUserProfileQLFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelUserProfileQLConnection @aws_api_key @aws_iam
+}
+
+input ModelFollowQLConditionInput {
+  timestamp: ModelIntInput
+  followingID: ModelIDInput
+  followerID: ModelIDInput
+  status: ModelFollowStatusInput
+  and: [ModelFollowQLConditionInput]
+  or: [ModelFollowQLConditionInput]
+  not: ModelFollowQLConditionInput
+  _deleted: ModelBooleanInput
+}
+
+input CreateFollowQLInput {
+  id: ID
+  timestamp: AWSTimestamp
+  followingID: ID!
+  followerID: ID
+  status: FollowStatus
+  _version: Int
+}
+
+input UpdateFollowQLInput {
+  id: ID!
+  timestamp: AWSTimestamp
+  followingID: ID
+  followerID: ID
+  status: FollowStatus
+  _version: Int
+}
+
+input DeleteFollowQLInput {
+  id: ID!
+  _version: Int
+}
+
+type Mutation {
+  createFollowQL(input: CreateFollowQLInput!, condition: ModelFollowQLConditionInput): FollowQL @aws_api_key @aws_iam
+  updateFollowQL(input: UpdateFollowQLInput!, condition: ModelFollowQLConditionInput): FollowQL @aws_api_key @aws_iam
+  deleteFollowQL(input: DeleteFollowQLInput!, condition: ModelFollowQLConditionInput): FollowQL @aws_api_key @aws_iam
+  createLikedLumeQL(input: CreateLikedLumeQLInput!, condition: ModelLikedLumeQLConditionInput): LikedLumeQL @aws_api_key @aws_iam
+  updateLikedLumeQL(input: UpdateLikedLumeQLInput!, condition: ModelLikedLumeQLConditionInput): LikedLumeQL @aws_api_key @aws_iam
+  deleteLikedLumeQL(input: DeleteLikedLumeQLInput!, condition: ModelLikedLumeQLConditionInput): LikedLumeQL @aws_api_key @aws_iam
+  createCommentQL(input: CreateCommentQLInput!, condition: ModelCommentQLConditionInput): CommentQL @aws_api_key @aws_iam
+  updateCommentQL(input: UpdateCommentQLInput!, condition: ModelCommentQLConditionInput): CommentQL @aws_api_key @aws_iam
+  deleteCommentQL(input: DeleteCommentQLInput!, condition: ModelCommentQLConditionInput): CommentQL @aws_api_key @aws_iam
+  createCosmeticQL(input: CreateCosmeticQLInput!, condition: ModelCosmeticQLConditionInput): CosmeticQL @aws_api_key @aws_iam
+  updateCosmeticQL(input: UpdateCosmeticQLInput!, condition: ModelCosmeticQLConditionInput): CosmeticQL @aws_api_key @aws_iam
+  deleteCosmeticQL(input: DeleteCosmeticQLInput!, condition: ModelCosmeticQLConditionInput): CosmeticQL @aws_api_key @aws_iam
+  createLumeQL(input: CreateLumeQLInput!, condition: ModelLumeQLConditionInput): LumeQL @aws_api_key @aws_iam
+  updateLumeQL(input: UpdateLumeQLInput!, condition: ModelLumeQLConditionInput): LumeQL @aws_api_key @aws_iam
+  deleteLumeQL(input: DeleteLumeQLInput!, condition: ModelLumeQLConditionInput): LumeQL @aws_api_key @aws_iam
+  createUserProfileQL(input: CreateUserProfileQLInput!, condition: ModelUserProfileQLConditionInput): UserProfileQL @aws_api_key @aws_iam
+  updateUserProfileQL(input: UpdateUserProfileQLInput!, condition: ModelUserProfileQLConditionInput): UserProfileQL @aws_api_key @aws_iam
+  deleteUserProfileQL(input: DeleteUserProfileQLInput!, condition: ModelUserProfileQLConditionInput): UserProfileQL @aws_api_key @aws_iam
+}
+
+input ModelSubscriptionFollowQLFilterInput {
+  id: ModelSubscriptionIDInput
+  timestamp: ModelSubscriptionIntInput
+  followingID: ModelSubscriptionIDInput
+  followerID: ModelSubscriptionIDInput
+  status: ModelSubscriptionStringInput
+  and: [ModelSubscriptionFollowQLFilterInput]
+  or: [ModelSubscriptionFollowQLFilterInput]
+  _deleted: ModelBooleanInput
+}
+
+type Subscription {
+  onCreateFollowQL(filter: ModelSubscriptionFollowQLFilterInput): FollowQL @aws_subscribe(mutations: ["createFollowQL"]) @aws_api_key @aws_iam
+  onUpdateFollowQL(filter: ModelSubscriptionFollowQLFilterInput): FollowQL @aws_subscribe(mutations: ["updateFollowQL"]) @aws_api_key @aws_iam
+  onDeleteFollowQL(filter: ModelSubscriptionFollowQLFilterInput): FollowQL @aws_subscribe(mutations: ["deleteFollowQL"]) @aws_api_key @aws_iam
+  onCreateLikedLumeQL(filter: ModelSubscriptionLikedLumeQLFilterInput): LikedLumeQL @aws_subscribe(mutations: ["createLikedLumeQL"]) @aws_api_key @aws_iam
+  onUpdateLikedLumeQL(filter: ModelSubscriptionLikedLumeQLFilterInput): LikedLumeQL @aws_subscribe(mutations: ["updateLikedLumeQL"]) @aws_api_key @aws_iam
+  onDeleteLikedLumeQL(filter: ModelSubscriptionLikedLumeQLFilterInput): LikedLumeQL @aws_subscribe(mutations: ["deleteLikedLumeQL"]) @aws_api_key @aws_iam
+  onCreateCommentQL(filter: ModelSubscriptionCommentQLFilterInput): CommentQL @aws_subscribe(mutations: ["createCommentQL"]) @aws_api_key @aws_iam
+  onUpdateCommentQL(filter: ModelSubscriptionCommentQLFilterInput): CommentQL @aws_subscribe(mutations: ["updateCommentQL"]) @aws_api_key @aws_iam
+  onDeleteCommentQL(filter: ModelSubscriptionCommentQLFilterInput): CommentQL @aws_subscribe(mutations: ["deleteCommentQL"]) @aws_api_key @aws_iam
+  onCreateCosmeticQL(filter: ModelSubscriptionCosmeticQLFilterInput): CosmeticQL @aws_subscribe(mutations: ["createCosmeticQL"]) @aws_api_key @aws_iam
+  onUpdateCosmeticQL(filter: ModelSubscriptionCosmeticQLFilterInput): CosmeticQL @aws_subscribe(mutations: ["updateCosmeticQL"]) @aws_api_key @aws_iam
+  onDeleteCosmeticQL(filter: ModelSubscriptionCosmeticQLFilterInput): CosmeticQL @aws_subscribe(mutations: ["deleteCosmeticQL"]) @aws_api_key @aws_iam
+  onCreateLumeQL(filter: ModelSubscriptionLumeQLFilterInput): LumeQL @aws_subscribe(mutations: ["createLumeQL"]) @aws_api_key @aws_iam
+  onUpdateLumeQL(filter: ModelSubscriptionLumeQLFilterInput): LumeQL @aws_subscribe(mutations: ["updateLumeQL"]) @aws_api_key @aws_iam
+  onDeleteLumeQL(filter: ModelSubscriptionLumeQLFilterInput): LumeQL @aws_subscribe(mutations: ["deleteLumeQL"]) @aws_api_key @aws_iam
+  onCreateUserProfileQL(filter: ModelSubscriptionUserProfileQLFilterInput): UserProfileQL @aws_subscribe(mutations: ["createUserProfileQL"]) @aws_api_key @aws_iam
+  onUpdateUserProfileQL(filter: ModelSubscriptionUserProfileQLFilterInput): UserProfileQL @aws_subscribe(mutations: ["updateUserProfileQL"]) @aws_api_key @aws_iam
+  onDeleteUserProfileQL(filter: ModelSubscriptionUserProfileQLFilterInput): UserProfileQL @aws_subscribe(mutations: ["deleteUserProfileQL"]) @aws_api_key @aws_iam
+}
+
+type ModelLikedLumeQLConnection @aws_api_key @aws_iam {
+  items: [LikedLumeQL]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelLikedLumeQLFilterInput {
+  id: ModelIDInput
+  timestamp: ModelIntInput
+  lumeQLID: ModelIDInput
+  userprofileqlID: ModelIDInput
+  and: [ModelLikedLumeQLFilterInput]
+  or: [ModelLikedLumeQLFilterInput]
+  not: ModelLikedLumeQLFilterInput
+  _deleted: ModelBooleanInput
+}
+
+input ModelLikedLumeQLConditionInput {
+  timestamp: ModelIntInput
+  lumeQLID: ModelIDInput
+  userprofileqlID: ModelIDInput
+  and: [ModelLikedLumeQLConditionInput]
+  or: [ModelLikedLumeQLConditionInput]
+  not: ModelLikedLumeQLConditionInput
+  _deleted: ModelBooleanInput
+}
+
+input CreateLikedLumeQLInput {
+  id: ID
+  timestamp: AWSTimestamp
+  lumeQLID: ID!
+  userprofileqlID: ID!
+  _version: Int
+}
+
+input UpdateLikedLumeQLInput {
+  id: ID!
+  timestamp: AWSTimestamp
+  lumeQLID: ID
+  userprofileqlID: ID
+  _version: Int
+}
+
+input DeleteLikedLumeQLInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionLikedLumeQLFilterInput {
+  id: ModelSubscriptionIDInput
+  timestamp: ModelSubscriptionIntInput
+  lumeQLID: ModelSubscriptionIDInput
+  userprofileqlID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionLikedLumeQLFilterInput]
+  or: [ModelSubscriptionLikedLumeQLFilterInput]
+  _deleted: ModelBooleanInput
+}
+
+type ModelCommentQLConnection @aws_api_key @aws_iam {
+  items: [CommentQL]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelCommentQLFilterInput {
+  id: ModelIDInput
+  timestamp: ModelIntInput
+  comment: ModelStringInput
+  lumeQLID: ModelIDInput
+  userprofileqlID: ModelIDInput
+  and: [ModelCommentQLFilterInput]
+  or: [ModelCommentQLFilterInput]
+  not: ModelCommentQLFilterInput
+  _deleted: ModelBooleanInput
+}
+
+input ModelCommentQLConditionInput {
+  timestamp: ModelIntInput
+  comment: ModelStringInput
+  lumeQLID: ModelIDInput
+  userprofileqlID: ModelIDInput
+  and: [ModelCommentQLConditionInput]
+  or: [ModelCommentQLConditionInput]
+  not: ModelCommentQLConditionInput
+  _deleted: ModelBooleanInput
+}
+
+input CreateCommentQLInput {
+  id: ID
+  timestamp: AWSTimestamp!
+  comment: String!
+  lumeQLID: ID!
+  userprofileqlID: ID!
+  _version: Int
+}
+
+input UpdateCommentQLInput {
+  id: ID!
+  timestamp: AWSTimestamp
+  comment: String
+  lumeQLID: ID
+  userprofileqlID: ID
+  _version: Int
+}
+
+input DeleteCommentQLInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionCommentQLFilterInput {
+  id: ModelSubscriptionIDInput
+  timestamp: ModelSubscriptionIntInput
+  comment: ModelSubscriptionStringInput
+  lumeQLID: ModelSubscriptionIDInput
+  userprofileqlID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionCommentQLFilterInput]
+  or: [ModelSubscriptionCommentQLFilterInput]
+  _deleted: ModelBooleanInput
+}
+
+type ModelCosmeticQLConnection @aws_api_key @aws_iam {
+  items: [CosmeticQL]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelCosmeticQLFilterInput {
+  id: ModelIDInput
+  productName: ModelStringInput
+  companyID: ModelStringInput
+  price: ModelStringInput
+  amount: ModelStringInput
+  totTagCount: ModelIntInput
+  authenticated: ModelBooleanInput
+  link: ModelStringInput
+  tagCnt: ModelIntInput
+  type: ModelStringInput
+  zipURL: ModelStringInput
+  and: [ModelCosmeticQLFilterInput]
+  or: [ModelCosmeticQLFilterInput]
+  not: ModelCosmeticQLFilterInput
+  _deleted: ModelBooleanInput
+}
+
+input ModelCosmeticQLConditionInput {
+  productName: ModelStringInput
+  companyID: ModelStringInput
+  price: ModelStringInput
+  amount: ModelStringInput
+  totTagCount: ModelIntInput
+  authenticated: ModelBooleanInput
+  link: ModelStringInput
+  tagCnt: ModelIntInput
+  type: ModelStringInput
+  zipURL: ModelStringInput
+  and: [ModelCosmeticQLConditionInput]
+  or: [ModelCosmeticQLConditionInput]
+  not: ModelCosmeticQLConditionInput
+  _deleted: ModelBooleanInput
+}
+
+input CreateCosmeticQLInput {
+  id: ID
+  productName: String!
+  companyID: String!
+  price: String
+  amount: String
+  totTagCount: Int
+  authenticated: Boolean!
+  link: [String]
+  tagCnt: Int
+  type: String
+  zipURL: String
+  _version: Int
+}
+
+input UpdateCosmeticQLInput {
+  id: ID!
+  productName: String
+  companyID: String
+  price: String
+  amount: String
+  totTagCount: Int
+  authenticated: Boolean
+  link: [String]
+  tagCnt: Int
+  type: String
+  zipURL: String
+  _version: Int
+}
+
+input DeleteCosmeticQLInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionCosmeticQLFilterInput {
+  id: ModelSubscriptionIDInput
+  productName: ModelSubscriptionStringInput
+  companyID: ModelSubscriptionStringInput
+  price: ModelSubscriptionStringInput
+  amount: ModelSubscriptionStringInput
+  totTagCount: ModelSubscriptionIntInput
+  authenticated: ModelSubscriptionBooleanInput
+  link: ModelSubscriptionStringInput
+  tagCnt: ModelSubscriptionIntInput
+  type: ModelSubscriptionStringInput
+  zipURL: ModelSubscriptionStringInput
+  and: [ModelSubscriptionCosmeticQLFilterInput]
+  or: [ModelSubscriptionCosmeticQLFilterInput]
+  _deleted: ModelBooleanInput
+}
+
+input TagCosmeticQLInput {
+  cosmeticID: String!
+  authProduct: Boolean!
+  recommend: Float
+  effect: Float
+  fading: Float
+  feeling: Float
+  attachedURL: String
+}
+
+input TagTrackQLInput {
+  trackID: String!
+  tagMusicRange: [Float!]
+}
+
+type ModelLumeQLConnection @aws_api_key @aws_iam {
+  items: [LumeQL]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelLumeQLFilterInput {
+  id: ModelIDInput
+  postURL: ModelStringInput
+  timestamp: ModelIntInput
+  description: ModelStringInput
+  userprofileqlID: ModelIDInput
+  likeCount: ModelIntInput
+  commentCount: ModelIntInput
+  hashTags: ModelStringInput
+  zipURL: ModelStringInput
+  and: [ModelLumeQLFilterInput]
+  or: [ModelLumeQLFilterInput]
+  not: ModelLumeQLFilterInput
+  _deleted: ModelBooleanInput
+}
+
+input ModelLumeQLConditionInput {
+  postURL: ModelStringInput
+  timestamp: ModelIntInput
+  description: ModelStringInput
+  userprofileqlID: ModelIDInput
+  likeCount: ModelIntInput
+  commentCount: ModelIntInput
+  hashTags: ModelStringInput
+  zipURL: ModelStringInput
+  and: [ModelLumeQLConditionInput]
+  or: [ModelLumeQLConditionInput]
+  not: ModelLumeQLConditionInput
+  _deleted: ModelBooleanInput
+}
+
+input CreateLumeQLInput {
+  id: ID
+  postURL: [AWSURL]
+  timestamp: AWSTimestamp!
+  tagProducts: [TagCosmeticQLInput]
+  tagMusic: TagTrackQLInput
+  description: String
+  userprofileqlID: ID!
+  likeCount: Int
+  commentCount: Int
+  hashTags: [String]
+  zipURL: String
+  _version: Int
+}
+
+input UpdateLumeQLInput {
+  id: ID!
+  postURL: [AWSURL]
+  timestamp: AWSTimestamp
+  tagProducts: [TagCosmeticQLInput]
+  tagMusic: TagTrackQLInput
+  description: String
+  userprofileqlID: ID
+  likeCount: Int
+  commentCount: Int
+  hashTags: [String]
+  zipURL: String
+  _version: Int
+}
+
+input DeleteLumeQLInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionLumeQLFilterInput {
+  id: ModelSubscriptionIDInput
+  postURL: ModelSubscriptionStringInput
+  timestamp: ModelSubscriptionIntInput
+  description: ModelSubscriptionStringInput
+  userprofileqlID: ModelSubscriptionIDInput
+  likeCount: ModelSubscriptionIntInput
+  commentCount: ModelSubscriptionIntInput
+  hashTags: ModelSubscriptionStringInput
+  zipURL: ModelSubscriptionStringInput
+  and: [ModelSubscriptionLumeQLFilterInput]
+  or: [ModelSubscriptionLumeQLFilterInput]
+  _deleted: ModelBooleanInput
+}
+
+type ModelUserProfileQLConnection @aws_api_key @aws_iam {
+  items: [UserProfileQL]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelUserProfileQLFilterInput {
+  id: ModelIDInput
+  followingUsers: ModelStringInput
+  followerUsers: ModelStringInput
+  username: ModelStringInput
+  DOB: ModelIntInput
+  firstName: ModelStringInput
+  Sensitivity: ModelFloatInput
+  SunBathing: ModelFloatInput
+  SkinType: ModelFloatInput
+  lockState: ModelBooleanInput
+  profileImage: ModelStringInput
+  backgroundImage: ModelStringInput
+  followerCount: ModelIntInput
+  followingCount: ModelIntInput
+  bio: ModelStringInput
+  zipURL: ModelStringInput
+  postCount: ModelIntInput
+  and: [ModelUserProfileQLFilterInput]
+  or: [ModelUserProfileQLFilterInput]
+  not: ModelUserProfileQLFilterInput
+  _deleted: ModelBooleanInput
+}
+
+input ModelUserProfileQLConditionInput {
+  followingUsers: ModelStringInput
+  followerUsers: ModelStringInput
+  username: ModelStringInput
+  DOB: ModelIntInput
+  firstName: ModelStringInput
+  Sensitivity: ModelFloatInput
+  SunBathing: ModelFloatInput
+  SkinType: ModelFloatInput
+  lockState: ModelBooleanInput
+  profileImage: ModelStringInput
+  backgroundImage: ModelStringInput
+  followerCount: ModelIntInput
+  followingCount: ModelIntInput
+  bio: ModelStringInput
+  zipURL: ModelStringInput
+  postCount: ModelIntInput
+  and: [ModelUserProfileQLConditionInput]
+  or: [ModelUserProfileQLConditionInput]
+  not: ModelUserProfileQLConditionInput
+  _deleted: ModelBooleanInput
+}
+
+input CreateUserProfileQLInput {
+  id: ID
+  followingUsers: [String]
+  followerUsers: [String]
+  username: String!
+  DOB: AWSTimestamp
+  firstName: String!
+  Sensitivity: Float
+  SunBathing: Float
+  SkinType: Float
+  lockState: Boolean
+  profileImage: String
+  backgroundImage: String
+  followerCount: Int
+  followingCount: Int
+  bio: String
+  zipURL: String
+  postCount: Int
+  _version: Int
+}
+
+input UpdateUserProfileQLInput {
+  id: ID!
+  followingUsers: [String]
+  followerUsers: [String]
+  username: String
+  DOB: AWSTimestamp
+  firstName: String
+  Sensitivity: Float
+  SunBathing: Float
+  SkinType: Float
+  lockState: Boolean
+  profileImage: String
+  backgroundImage: String
+  followerCount: Int
+  followingCount: Int
+  bio: String
+  zipURL: String
+  postCount: Int
+  _version: Int
+}
+
+input DeleteUserProfileQLInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionUserProfileQLFilterInput {
+  id: ModelSubscriptionIDInput
+  followingUsers: ModelSubscriptionStringInput
+  followerUsers: ModelSubscriptionStringInput
+  username: ModelSubscriptionStringInput
+  DOB: ModelSubscriptionIntInput
+  firstName: ModelSubscriptionStringInput
+  Sensitivity: ModelSubscriptionFloatInput
+  SunBathing: ModelSubscriptionFloatInput
+  SkinType: ModelSubscriptionFloatInput
+  lockState: ModelSubscriptionBooleanInput
+  profileImage: ModelSubscriptionStringInput
+  backgroundImage: ModelSubscriptionStringInput
+  followerCount: ModelSubscriptionIntInput
+  followingCount: ModelSubscriptionIntInput
+  bio: ModelSubscriptionStringInput
+  zipURL: ModelSubscriptionStringInput
+  postCount: ModelSubscriptionIntInput
+  and: [ModelSubscriptionUserProfileQLFilterInput]
+  or: [ModelSubscriptionUserProfileQLFilterInput]
+  _deleted: ModelBooleanInput
+}
