@@ -17,9 +17,11 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     var backgroundVC: ProfileBackgroundViewController!
     
     var isBackButtonTapped = false
+    var isSettingsButtonTapped = false
     
     var userIdentityID: String!
     var profile: ProfileSettings = ProfileSettings()
+    var profileSettings: ProfileSettingsViewController!
     
     private let transitionAnimator = SharedTransitionAnimator()
     private var originalDelegate: UINavigationControllerDelegate?
@@ -38,7 +40,6 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.tp_configure(with: self, delegate: self)
         self.navigationController?.interactivePopGestureRecognizer!.delegate = self;
         originalDelegate = self
@@ -49,6 +50,11 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -107,13 +113,11 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
                               animationControllerFor operation: UINavigationController.Operation,
                               from fromVC: UIViewController,
                               to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        print("TwitterParallaxViewController - navigationController animationControllerFor operation: \(operation.rawValue)")
-        
         // Bypass transition animation if back button was tapped
-        if isBackButtonTapped {
+        if isBackButtonTapped || isSettingsButtonTapped{
             // Reset the flag
             isBackButtonTapped = false
-            print("Bypassing transition animation due to back button tap")
+            isSettingsButtonTapped = false
             return nil
         }
         
@@ -123,16 +127,13 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         
         if fromVC is TwitterParallaxViewController, toVC is DetailScreen {
             transitionAnimator.transition = .push
-            print("TwitterParallaxViewController - Transition Animator for push")
             return transitionAnimator
         }
         if toVC is TwitterParallaxViewController, fromVC is DetailScreen {
             transitionAnimator.transition = .pop
-            print("TwitterParallaxViewController - Transition Animator for pop")
             return transitionAnimator
         }
         
-        print("TwitterParallaxViewController - Returned nil in navigationController")
         return nil
     }
     
@@ -165,7 +166,6 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
 
 extension TwitterParallaxViewController: SharedTransitioning {
     var sharedFrame: CGRect {
-        print("TwitterParallaxViewController - sharedFrame")
         guard let bottomVC = bottomVC,
               let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath,
               let cell = (bottomVC.currentViewController as? BottomViewController)?.collectionView.cellForItem(at: selectedIndexPath),
@@ -174,7 +174,6 @@ extension TwitterParallaxViewController: SharedTransitioning {
     }
 
     func prepare(for transition: SharedTransitionAnimator.Transition) {
-        print("TwitterParallaxViewController - prepare for transition: \(transition)")
         guard let bottomVC = bottomVC,
               let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath else { return }
         (bottomVC.currentViewController as? BottomViewController)?.collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
@@ -199,7 +198,13 @@ extension TwitterParallaxViewController: ProfileToolButtonDelegate {
         print("tapped follow request")
     }
     
-    func didTapSttingsButton() {
-        print("tapped settings")
+    func didTapSettingsButton() {
+        self.isSettingsButtonTapped = true
+        if profileSettings == nil {
+            profileSettings = ProfileSettingsViewController()
+        }
+        profileSettings.profile = profile
+        self.navigationController?.delegate = originalDelegate
+        self.navigationController?.pushViewController(profileSettings, animated: true)
     }
 }

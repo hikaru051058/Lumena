@@ -8,21 +8,21 @@
 import UIKit
 
 class ImageView: UIImageView {
-
+    
     // MARK: Inner types
-
+    
     enum ImageDownloadError: Error {
         case badURL
         case invalidData
     }
-
+    
     // MARK: Private properties
-
+    
     private var imageTask: Task<Void, Error>?
     private var defaultImageCache: ImageCacheSharedTransition { ImageMemoryCache.shared }
-
+    
     // MARK: Methods
-
+    
     func setImage(from url: URL,
                   with placeholder: UIImage? = nil,
                   using imageCache: ImageCacheSharedTransition? = nil) {
@@ -37,7 +37,7 @@ class ImageView: UIImageView {
             try await setRemoteImageAsync(from: url, saveTo: imageCache)
         }
     }
-
+    
     private func setRemoteImageAsync(from url: URL, saveTo imageCache: ImageCacheSharedTransition? = nil) async throws {
         let request = URLRequest(url: url)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -48,7 +48,7 @@ class ImageView: UIImageView {
         try Task.checkCancellation()
         setImage(image)
     }
-
+    
     @MainActor
     private func setImage(_ image: UIImage?) {
         self.image = image

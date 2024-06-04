@@ -303,7 +303,7 @@ class HeaderViewController: UIViewController {
         NSLayoutConstraint.activate([
             expandableTextViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             expandableTextViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            expandableTextViewController.view.topAnchor.constraint(equalTo: profileStatFollowNumber.view.bottomAnchor, constant: 10),
+            expandableTextViewController.view.topAnchor.constraint(equalTo: profileStatFollowNumber.view.bottomAnchor, constant: 16),
         ])
         expandableTextViewController.didMove(toParent: self)
     }
@@ -314,7 +314,7 @@ class HeaderViewController: UIViewController {
         view.addSubview(bottomViewController.view)
         bottomViewController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            bottomViewController.view.topAnchor.constraint(equalTo: expandableTextViewController.view.bottomAnchor),
+            bottomViewController.view.topAnchor.constraint(equalTo: profileBackground.bottomAnchor),
             bottomViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)

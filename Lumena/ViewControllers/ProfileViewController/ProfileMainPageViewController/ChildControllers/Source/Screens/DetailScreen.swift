@@ -19,12 +19,17 @@ class DetailScreen: UIViewController {
     private lazy var recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
     var transitionAnimator = SharedTransitionAnimator()
     private var interactionController: SharedTransitionInteractionController?
+    
+    var thumbnailURL: URL?
+    var fitOrFill: UIView.ContentMode
 
     // MARK: Init
 
-    init(lumes: [Lume], currentLumePostID: String) {
+    init(lumes: [Lume], currentLumePostID: String, thumbnailURL: URL, fitOrFill: UIView.ContentMode) { // Updated
         self.lumes = lumes
         self.currentLumePostID = currentLumePostID
+        self.thumbnailURL = thumbnailURL // Updated
+        self.fitOrFill = fitOrFill // Updated
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -46,6 +51,7 @@ class DetailScreen: UIViewController {
         super.viewDidAppear(animated)
         print("DetailScreen - viewDidAppear")
         navigationController?.delegate = self
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -66,7 +72,7 @@ extension DetailScreen {
         print("DetailScreen - setupUI")
         setupView()
         setupImageView()
-        setupLumeVerticalSrollViewController()
+//        setupLumeVerticalSrollViewController()
     }
 
     private func setupView() {
@@ -89,31 +95,31 @@ extension DetailScreen {
     }
     
     private func setupImageView() {
-        if let lume = lumes.first(where: {$0.postID == currentLumePostID}) {
-            if let urlString = lume.postURL.first, let url = URL(string: urlString) {
-                imageView.then {
-                    view.addSubview($0)
-                    $0.contentMode = .scaleAspectFill
-                    $0.layer.masksToBounds = true
-                    $0.setImage(from: url)
-                }.layout {
-                    $0.leading == view.leadingAnchor
-                    $0.trailing == view.trailingAnchor
+        if let thumbnailURL = thumbnailURL {
+            imageView.then {
+                view.addSubview($0)
+                $0.contentMode = fitOrFill
+                $0.layer.masksToBounds = true
+                $0.setImage(from: thumbnailURL)
+            }.layout {
+                $0.leading == view.leadingAnchor
+                $0.trailing == view.trailingAnchor
+                if fitOrFill == .scaleAspectFill {
                     $0.top == view.topAnchor
                     $0.bottom == view.bottomAnchor
-                    $0.centerX == view.centerXAnchor
-                    $0.centerY == view.centerYAnchor
                 }
-                
-                imageView.heightAnchor.constraint(
-                    equalTo: imageView.widthAnchor,
-                    multiplier: 1.25
-                ).isActive = true
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    UIView.animate(withDuration: 0.5) {
-                        self.imageView.alpha = 0.0
-                    }
+                $0.centerX == view.centerXAnchor
+                $0.centerY == view.centerYAnchor
+            }
+            
+            imageView.heightAnchor.constraint(
+                equalTo: imageView.widthAnchor,
+                multiplier: 1.25
+            ).isActive = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                UIView.animate(withDuration: 0.5) {
+                    self.imageView.alpha = 0.0
                 }
             }
         }

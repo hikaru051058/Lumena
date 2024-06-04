@@ -440,22 +440,18 @@ class Lume: Identifiable, ObservableObject, Hashable {
     }
     
     convenience init(ql: LumeQL, autoDownload: Bool = true) {
-        
         let postID = UUID(uuidString: ql.id) ?? UUID()
-        
         let tagProducts = ql.tagProducts?.compactMap { $0 != nil ? TagCosmetic(ql: $0!) : nil } ?? []
-        
-        //let tagProducts:[TagCosmetic] = []
-        
         let tagMusic = Track(trackID: ql.tagMusic?.trackID ?? "")
-
-        let postDescription = ql.description!
+        let postDescription = ql.description ?? ""
+        
+        // Handle optional timestamp
         let timestamp = Date(timeIntervalSince1970: Double(ql.timestamp))
+        
         let likeCnt = ql.likeCount ?? 0
         let likedUsers: [String] = []
         
         var postUserID = ""
-        
         let postUserIDParts = ql.id.split(separator: ":")
         if postUserIDParts.count >= 2 {
             postUserID = "\(postUserIDParts[0]):\(postUserIDParts[1])"
@@ -472,9 +468,9 @@ class Lume: Identifiable, ObservableObject, Hashable {
             postUserIID: postUserID,
             postURL: ql.postURL?.compactMap { $0 } ?? [],
             likedUsers: likedUsers,
-            postDescription: postDescription, 
+            postDescription: postDescription,
             userComments: [],
-            tagProducts: tagProducts, 
+            tagProducts: tagProducts,
             tagMusic: tagMusic,
             userLiked: userLiked,
             likeCnt: likeCnt,
@@ -498,9 +494,6 @@ class Lume: Identifiable, ObservableObject, Hashable {
         
         Task {
             let _ = await self.generateThumbnail()
-            
-//            fetchComment(commentLimit: 10)
-            
             LumeManager.shared.updateLume(self)
         }
     }
@@ -1004,6 +997,10 @@ class Lume: Identifiable, ObservableObject, Hashable {
                 print(error)
             }
         }
+    }
+    
+    private func dateFromTimestamp(_ timestamp: Int) -> Date {
+        return Date(timeIntervalSince1970: TimeInterval(timestamp))
     }
 }
 

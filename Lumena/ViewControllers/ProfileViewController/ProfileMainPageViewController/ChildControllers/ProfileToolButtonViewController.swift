@@ -12,7 +12,7 @@ import SwiftUI
 protocol ProfileToolButtonDelegate: AnyObject {
     func didTapBackButton()
     func didTapFollowRequestButton()
-    func didTapSttingsButton()
+    func didTapSettingsButton()
 }
 
 
@@ -110,9 +110,15 @@ class ProfileToolButtonViewController: UIView {
     }
     
     private func updateButtonColors() {
-        backButton.tintColor = buttonTintColor()
-        followRequestButton?.tintColor = buttonTintColor()
-        settingsButton.tintColor = buttonTintColor()
+        if backButton != nil {
+            backButton.tintColor = buttonTintColor()
+        }
+        if followRequestButton != nil {
+            followRequestButton?.tintColor = buttonTintColor()
+        }
+        if settingsButton != nil {
+            settingsButton.tintColor = buttonTintColor()
+        }
     }
     
     private func buttonTintColor() -> UIColor {
@@ -128,7 +134,7 @@ class ProfileToolButtonViewController: UIView {
     }
     
     @objc private func settingsButtonTapped() {
-        delegate?.didTapSttingsButton()
+        delegate?.didTapSettingsButton()
     }
     
     private func createFlexibleSpace() -> UIView {

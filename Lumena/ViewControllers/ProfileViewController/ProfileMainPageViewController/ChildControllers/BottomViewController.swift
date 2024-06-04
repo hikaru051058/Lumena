@@ -61,7 +61,6 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("BottomViewController - viewDidLoad")
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .background
         setupUI()
@@ -81,18 +80,15 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
 
 extension BottomViewController {
     private func setupUI() {
-        print("BottomViewController - setupUI")
         setupView()
         setupCollectionView()
     }
 
     private func setupView() {
-        print("BottomViewController - setupView")
         view.backgroundColor = .white
     }
 
     private func setupCollectionView() {
-        print("BottomViewController - setupCollectionView")
         collectionView.then {
             view.addSubview($0)
             $0.register(ProfileCell.self)
@@ -132,7 +128,6 @@ extension BottomViewController {
 
     private var cellProvider: DataSource.CellProvider {
         { [unowned self] collectionView, indexPath, _ in
-            print("BottomViewController - cellProvider for indexPath: \(indexPath.row)")
             let cell = collectionView.dequeuCellOfType(ProfileCell.self, for: indexPath)
             let lume = lumes[indexPath.row]
             cell.setup(with: lume)
@@ -147,8 +142,11 @@ extension BottomViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedIndexPath = indexPath
         let lume = lumes[indexPath.item]
-        let viewController = DetailScreen(lumes: lumes, currentLumePostID: lume.postID)
-        navigationController?.pushViewController(viewController, animated: true)
+        if let cell = collectionView.cellForItem(at: indexPath) as? ProfileCell,
+           let thumbnailURL = cell.thumbnailURL {
+            let viewController = DetailScreen(lumes: lumes, currentLumePostID: lume.postID, thumbnailURL: thumbnailURL, fitOrFill: cell.fitOrFill)
+            navigationController?.pushViewController(viewController, animated: true)
+        }
     }
 }
 
@@ -158,7 +156,6 @@ extension BottomViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        print("BottomViewController - collectionView layout sizeForItemAt indexPath: \(indexPath.row)")
         let spacingWidth = CGFloat(Constants.numberOfRows - 1) * Constants.interItemSpacing
         let contentWidth = collectionView.frame.inset(by: Constants.sectionInset).width
         let availableWidth = contentWidth - spacingWidth
@@ -220,7 +217,6 @@ extension BottomViewController: SharedTransitioning {
 
 extension BottomViewController: IndicatorInfoProvider {
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        print("BottomViewController - indicatorInfo for pagerTabStripController")
         return IndicatorInfo(title: pageTitle ?? "Tab \(pageIndex)")
     }
 }

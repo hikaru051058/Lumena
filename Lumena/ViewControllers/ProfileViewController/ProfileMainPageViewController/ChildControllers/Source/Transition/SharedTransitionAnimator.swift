@@ -33,12 +33,10 @@ extension SharedTransitionAnimator: UIViewControllerAnimatedTransitioning {
     func transitionDuration(
         using transitionContext: UIViewControllerContextTransitioning?
     ) -> TimeInterval {
-        print("SharedTransitionAnimator - transitionDuration")
         return config.duration
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        print("SharedTransitionAnimator - animateTransition")
         prepareViewControllers(from: transitionContext, for: transition)
 
         switch transition {
@@ -54,7 +52,6 @@ extension SharedTransitionAnimator: UIViewControllerAnimatedTransitioning {
 
 extension SharedTransitionAnimator {
     private func pushAnimation(context: UIViewControllerContextTransitioning) {
-        print("SharedTransitionAnimator - pushAnimation")
         guard let (fromView, fromFrame, toView, toFrame) = setup(with: context) else {
             context.completeTransition(false)
             print("Error in push guard")
@@ -105,7 +102,6 @@ extension SharedTransitionAnimator {
     }
 
     private func popAnimation(context: UIViewControllerContextTransitioning) {
-        print("SharedTransitionAnimator - popAnimation")
         guard let (fromView, fromFrame, toView, toFrame) = setup(with: context) else {
             context.completeTransition(false)
             print("Error in pop guard")
@@ -157,7 +153,6 @@ extension SharedTransitionAnimator {
 extension SharedTransitionAnimator {
     private func prepareViewControllers(from context: UIViewControllerContextTransitioning,
                                         for transition: Transition) {
-        print("SharedTransitionAnimator - prepareViewControllers for transition: \(transition)")
         let fromVC = context.viewController(forKey: .from) as? SharedTransitioning
         let toVC = context.viewController(forKey: .to) as? SharedTransitioning
         if let customConfig = fromVC?.config {
@@ -186,7 +181,6 @@ extension SharedTransitionAnimator {
             return nil
         }
         
-        print("Transition setup with frames: fromFrame: \(fromFrame), toFrame: \(toFrame)")
         return (fromView, fromFrame, toView, toFrame)
     }
     
@@ -197,14 +191,14 @@ extension SharedTransitionAnimator {
            let lumeVerticalInDetail = fromVC.lumeVerticalScroll,
            let visibleIndexPath = lumeVerticalInDetail.getCurrentVisibleIndexPath() {
             
-            let cellWidth: CGFloat = SharedTransitionAnimator.cellFrame.width
+//            let cellWidth: CGFloat = SharedTransitionAnimator.cellFrame.width
             let cellHeight: CGFloat = SharedTransitionAnimator.cellFrame.height
-            let horizontalSpacing: CGFloat = 2.0
+//            let horizontalSpacing: CGFloat = 2.0
             let verticalSpacing: CGFloat = 2.0
             let verticalOffset = SharedTransitionAnimator.fromFrameYOffset // Use the stored y offset
             
             let rowIndex = visibleIndexPath.item / 3 // Calculate which row the cell is in
-            let columnIndex = visibleIndexPath.item % 3 // Calculate the column within the row
+//            let columnIndex = visibleIndexPath.item % 3 // Calculate the column within the row
 
             // Calculate the position for the first row, first cell based on fromFrameYOffset
             SharedTransitionAnimator.fromFrameYOffset = verticalOffset - CGFloat(rowIndex) * (cellHeight + verticalSpacing)
