@@ -2,6 +2,12 @@ import UIKit
 import TwitterProfile
 import XLPagerTabStrip
 
+enum profilePage: String {
+    case post = "Post"
+    case likes = "Likes"
+    case saved = "Saved"
+}
+
 class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController, PagerAwareProtocol, UINavigationControllerDelegate {
     
     // MARK: PagerAwareProtocol
@@ -9,6 +15,7 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     var profile: ProfileSettings!
     
     weak var pageDelegate: BottomPageDelegate?
+    weak var refreshDelegate: RefreshDelegate?
     
     var currentViewController: UIViewController? {
         return viewControllers[currentIndex]
@@ -47,16 +54,17 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
             newCell?.label.textColor = .arinBlue
         }
         
+        view.backgroundColor = .background
         navigationController?.delegate = self
     }
 
     // MARK: - PagerTabStripDataSource
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-        let child_1 = createBottomViewController(pageIndex: 0, title: "Post")
-        let child_2 = createBottomViewController(pageIndex: 1, title: "Likes")
-        let child_3 = createBottomViewController(pageIndex: 2, title: "Saved")
+        let child_1 = createBottomViewController(pageIndex: 0, title: .post)
+        let child_2 = createBottomViewController(pageIndex: 1, title: .likes)
+//        let child_3 = createBottomViewController(pageIndex: 2, title: .saved)
         
-        return [child_1, child_2, child_3]
+        return [child_1, child_2]//, child_3]
     }
 
     override func reloadPagerTabStripView() {
@@ -73,11 +81,23 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
         self.pageDelegate?.tp_pageViewController(self.currentViewController, didSelectPageAt: toIndex)
     }
     
+    func updateProfile(profile: ProfileSettings) {
+        
+        DispatchQueue.main.async { [self] in
+            self.profile = profile
+            for vc in viewControllers {
+                if let bottomVC = vc as? BottomViewController {
+                    bottomVC.updateProfile(profile: profile)
+                }
+            }
+        }
+    }
+    
     // Helper method to create bottom view controllers
-    private func createBottomViewController(pageIndex: Int, title: String) -> BottomViewController {
+    private func createBottomViewController(pageIndex: Int, title: profilePage) -> BottomViewController {
         let bottomVC = BottomViewController(profile: profile)
         bottomVC.pageIndex = pageIndex
-        bottomVC.pageTitle = title
+        bottomVC.pageTitle = title.rawValue
         return bottomVC
     }
     
@@ -96,3 +116,19 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     }
 }
 
+extension XLPagerTabStripExampleViewController: RefreshDelegate {
+    
+    func didStartRefreshing() {
+        print("Started refreshing in XLPagerTabStripExampleViewController")
+        if let bottomVC = currentViewController as? BottomViewController {
+            bottomVC.didStartRefreshing()
+        }
+    }
+    
+    func didEndRefreshing() {
+        print("Ended refreshing in XLPagerTabStripExampleViewController")
+        if let bottomVC = currentViewController as? BottomViewController {
+            bottomVC.didEndRefreshing()
+        }
+    }
+}

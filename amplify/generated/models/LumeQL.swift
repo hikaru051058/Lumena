@@ -9,11 +9,13 @@ public struct LumeQL: Model {
   public var tagProducts: [TagCosmeticQL?]?
   public var tagMusic: TagTrackQL?
   public var description: String?
-  public var userprofile: UserProfileQL?
+  public var userprofileqlID: String
   public var likeCount: Int?
   public var commentCount: Int?
   public var hashTags: [String?]?
   public var zipURL: String?
+  public var lumeState: List<LumeStateQL>?
+  public var lumeAuth: Bool?
   public var createdAt: Temporal.DateTime?
   public var updatedAt: Temporal.DateTime?
   
@@ -23,22 +25,26 @@ public struct LumeQL: Model {
       tagProducts: [TagCosmeticQL?]? = nil,
       tagMusic: TagTrackQL? = nil,
       description: String? = nil,
-      userprofile: UserProfileQL? = nil,
+      userprofileqlID: String,
       likeCount: Int? = nil,
       commentCount: Int? = nil,
       hashTags: [String?]? = nil,
-      zipURL: String? = nil) {
+      zipURL: String? = nil,
+      lumeState: List<LumeStateQL>? = [],
+      lumeAuth: Bool? = nil) {
     self.init(id: id,
       postURL: postURL,
       timestamp: timestamp,
       tagProducts: tagProducts,
       tagMusic: tagMusic,
       description: description,
-      userprofile: userprofile,
+      userprofileqlID: userprofileqlID,
       likeCount: likeCount,
       commentCount: commentCount,
       hashTags: hashTags,
       zipURL: zipURL,
+      lumeState: lumeState,
+      lumeAuth: lumeAuth,
       createdAt: nil,
       updatedAt: nil)
   }
@@ -48,11 +54,13 @@ public struct LumeQL: Model {
       tagProducts: [TagCosmeticQL?]? = nil,
       tagMusic: TagTrackQL? = nil,
       description: String? = nil,
-      userprofile: UserProfileQL? = nil,
+      userprofileqlID: String,
       likeCount: Int? = nil,
       commentCount: Int? = nil,
       hashTags: [String?]? = nil,
       zipURL: String? = nil,
+      lumeState: List<LumeStateQL>? = [],
+      lumeAuth: Bool? = nil,
       createdAt: Temporal.DateTime? = nil,
       updatedAt: Temporal.DateTime? = nil) {
       self.id = id
@@ -61,11 +69,13 @@ public struct LumeQL: Model {
       self.tagProducts = tagProducts
       self.tagMusic = tagMusic
       self.description = description
-      self.userprofile = userprofile
+      self.userprofileqlID = userprofileqlID
       self.likeCount = likeCount
       self.commentCount = commentCount
       self.hashTags = hashTags
       self.zipURL = zipURL
+      self.lumeState = lumeState
+      self.lumeAuth = lumeAuth
       self.createdAt = createdAt
       self.updatedAt = updatedAt
   }

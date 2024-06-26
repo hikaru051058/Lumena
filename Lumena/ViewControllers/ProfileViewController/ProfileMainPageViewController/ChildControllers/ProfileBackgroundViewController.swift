@@ -13,7 +13,7 @@ import ColorKit
 class ProfileBackgroundViewController: UIViewController {
     var backgroundView: UIView!
     var imageView: UIImageView!
-    var backgroundGradient: GradientEffectViewController!
+    var backgroundGradient: GradientEffectViewController?
     var profile: ProfileSettings!
     
     init(profile: ProfileSettings?) {
@@ -27,7 +27,16 @@ class ProfileBackgroundViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .primary
         setupBackgroundGradientOrImage()
+    }
+    
+    func updateProfile(profile: ProfileSettings) {
+        DispatchQueue.main.async { [self] in
+            self.profile = profile
+            imageView.image = profile.backgroundImage?.image
+            backgroundGradient?.updateColors(from: profile.backgroundImage?.image)
+        }
     }
 
     private func setupBackgroundGradientOrImage() {
@@ -68,16 +77,16 @@ class ProfileBackgroundViewController: UIViewController {
     private func setGradientBackground(colors: [Color]) {
         backgroundGradient = GradientEffectViewController(colors: colors)
         
-        addChild(backgroundGradient)
-        backgroundView.addSubview(backgroundGradient.view)
-        backgroundGradient.didMove(toParent: self)
+        addChild(backgroundGradient!)
+        backgroundView.addSubview(backgroundGradient!.view)
+        backgroundGradient!.didMove(toParent: self)
         
-        backgroundGradient.view.translatesAutoresizingMaskIntoConstraints = false
+        backgroundGradient!.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            backgroundGradient.view.topAnchor.constraint(equalTo: backgroundView.topAnchor),
-            backgroundGradient.view.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor),
-            backgroundGradient.view.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
-            backgroundGradient.view.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
+            backgroundGradient!.view.topAnchor.constraint(equalTo: backgroundView.topAnchor),
+            backgroundGradient!.view.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor),
+            backgroundGradient!.view.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+            backgroundGradient!.view.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
         ])
     }
     

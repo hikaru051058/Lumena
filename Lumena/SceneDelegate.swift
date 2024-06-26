@@ -20,18 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         //_ = AuthenticationManager.shared
-        
-        
         window.rootViewController = UINavigationController(rootViewController: LoadingViewController())
-        
-        
-//        let pageContainerViewController = PageContainerViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-//        
-//        window.rootViewController = pageContainerViewController
-        
-//        window.rootViewController = UINavigationController(rootViewController: TwitterParallaxViewController())
-        
-        
         self.window = window
         window.makeKeyAndVisible()
     }

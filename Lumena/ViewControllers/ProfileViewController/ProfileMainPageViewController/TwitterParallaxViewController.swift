@@ -10,12 +10,20 @@ import TwitterProfile
 import XLPagerTabStrip
 import SwiftUI
 
+
+protocol RefreshDelegate: AnyObject {
+    func didStartRefreshing()
+    func didEndRefreshing()
+}
+
+
 class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressDelegate, UINavigationControllerDelegate {
     
     var headerVC: HeaderViewController?
     var bottomVC: XLPagerTabStripExampleViewController!
     var backgroundVC: ProfileBackgroundViewController!
     
+    private var viewLoading: Bool = true
     var isBackButtonTapped = false
     var isSettingsButtonTapped = false
     
@@ -26,10 +34,12 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     private let transitionAnimator = SharedTransitionAnimator()
     private var originalDelegate: UINavigationControllerDelegate?
     
+    weak var refreshDelegate: RefreshDelegate?
     let refresh = UIRefreshControl()
     
-    init(userIdentityID: String) {
+    init(userIdentityID: String, profile: ProfileSettings = ProfileSettings()) {
         self.userIdentityID = userIdentityID
+        self.profile = profile
         super.init(nibName: nil, bundle: nil)
         fetchUserProfile()
     }
@@ -40,16 +50,19 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .primary
         self.tp_configure(with: self, delegate: self)
         self.navigationController?.interactivePopGestureRecognizer!.delegate = self;
         originalDelegate = self
         setupBackgroundViewController()
+        viewLoading = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.delegate = self
+        fetchUserProfile()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -61,20 +74,16 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         super.viewWillDisappear(animated)
         navigationController?.delegate = nil
     }
-
-    @objc func handleRefreshControl() {
-        print("refreshing")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.refresh.endRefreshing()
-        }
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
     
     func fetchUserProfile() {
-        self.profile = ProfileManager.shared.getProfile(withID: userIdentityID)
+//        DispatchQueue.main.async { [self] in
+            self.profile = ProfileManager.shared.getProfile(withID: userIdentityID)
+            if viewLoading {
+                self.headerVC?.updateProfile(profile: profile)
+                self.bottomVC?.updateProfile(profile: profile)
+                self.backgroundVC?.updateProfile(profile: profile)
+            }
+//        }
     }
     
     // MARK: TPDataSource
@@ -86,6 +95,7 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     
     func bottomViewController() -> UIViewController & PagerAwareProtocol {
         bottomVC = XLPagerTabStripExampleViewController(profile: profile)
+        bottomVC.refreshDelegate = self
         return bottomVC
     }
     
@@ -102,7 +112,6 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     func tp_scrollViewDidLoad(_ scrollView: UIScrollView) {
         //refresh.tintColor = .background
         refresh.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
-        
         let refreshView = UIView(frame: CGRect(x: 0, y: 44, width: 0, height: 0))
         scrollView.addSubview(refreshView)
         refreshView.addSubview(refresh)
@@ -162,6 +171,34 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     }
 }
 
+// MARK: - RefreshDelegate
+
+extension TwitterParallaxViewController: RefreshDelegate {
+    
+    @objc func handleRefreshControl() {
+        print("refreshing")
+        refreshDelegate = bottomVC
+        refreshDelegate?.didStartRefreshing()
+        
+        self.fetchUserProfile()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.refresh.endRefreshing()
+            self.refreshDelegate?.didEndRefreshing()
+        }
+    }
+    
+    func didStartRefreshing() {
+        print("Started refreshing in TwitterParallaxViewController")
+        // Add any specific logic you want to execute when refresh starts
+    }
+    
+    func didEndRefreshing() {
+        print("Ended refreshing in TwitterParallaxViewController")
+        // Add any specific logic you want to execute when refresh ends
+    }
+}
+
 // MARK: - SharedTransitioning
 
 extension TwitterParallaxViewController: SharedTransitioning {
@@ -176,7 +213,29 @@ extension TwitterParallaxViewController: SharedTransitioning {
     func prepare(for transition: SharedTransitionAnimator.Transition) {
         guard let bottomVC = bottomVC,
               let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath else { return }
+        
         (bottomVC.currentViewController as? BottomViewController)?.collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
+        
+//        switch transition {
+//        case .push:
+//            // Entering the detail view
+//            reduceViewSize()
+//        case .pop:
+//            // Exiting the detail view
+//            break
+//        }
+    }
+    
+    func reduceViewSize() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        })
+    }
+    
+    func restoreViewSize() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.transform = CGAffineTransform.identity
+        })
     }
 }
 

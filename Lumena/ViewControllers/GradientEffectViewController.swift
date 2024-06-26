@@ -40,7 +40,30 @@ class GradientEffectViewController: UIViewController {
 
     func updateGradientColors(_ colors: [Color]) {
         gradientModel.colors = colors
-        // No need to reset the entire SwiftUI view; the model update should trigger UI updates
+    }
+
+    func updateColors(from image: UIImage?) {
+        guard let image = image else { return }
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let dominantColors = try? image.dominantColorFrequencies(with: .high) {
+                let colors = dominantColors.prefix(3).map { Color(uiColor: $0.color) }
+                DispatchQueue.main.async {
+                    self.updateGradientColors(colors)
+                }
+            } else {
+                // Default colors when there are no valid images
+                let defaultColors = [
+                    UIColor(red: 0.723, green: 0.88, blue: 0.825, alpha: 1.0),
+                    UIColor(red: 0.552, green: 0.724, blue: 0.831, alpha: 1.0),
+                    UIColor(red: 0.946, green: 0.76, blue: 0.839, alpha: 1.0),
+                    UIColor(self.traitCollection.userInterfaceStyle == .dark ? .black : .white)
+                ]
+                let colors = defaultColors.map { Color(uiColor: $0) }
+                DispatchQueue.main.async {
+                    self.updateGradientColors(colors)
+                }
+            }
+        }
     }
 }
 

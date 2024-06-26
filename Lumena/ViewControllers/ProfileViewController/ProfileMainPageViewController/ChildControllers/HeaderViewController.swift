@@ -32,12 +32,12 @@ class HeaderViewController: UIViewController {
     
     var visualEffectView: UIVisualEffectView!
     var descriptionContainer: UIView!
-    var bottomViewController: UIViewController!
+    var bottomViewController: BottomViewController!
     var profileStatFollowNumber: ProfileStatsViewController!
     var expandableTextViewController: ExpandableTextViewController!
-
+    
     private var animator: UIViewPropertyAnimator?
-
+    
     var titleInitialCenterY: CGFloat!
     var covernitialCenterY: CGFloat!
     var covernitialHeight: CGFloat!
@@ -61,31 +61,11 @@ class HeaderViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
-        
-        animator = blurAnimator()
-
-        // Set initial zPosition values
-        coverImageView.layer.zPosition = 10
-        visualEffectView.layer.zPosition = 20
-        titleView.layer.zPosition = 30
-        
-        userImageView.layer.zPosition = profileInfoZPosition
-        userNameLabel.layer.zPosition = profileInfoZPosition
-        userGivenNameLabel.layer.zPosition = profileInfoZPosition
-        profileStatFollowNumber.view.layer.zPosition = profileInfoZPosition
-        expandableTextViewController.view.layer.zPosition = profileInfoZPosition
-        titleView.layer.zPosition = profileInfoZPosition
-        profileBackground.layer.zPosition = profileInfoZPosition-5
-        
-        view.bringSubviewToFront(expandableTextViewController.view)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -94,6 +74,11 @@ class HeaderViewController: UIViewController {
         if initialValuesSet {
             update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -111,6 +96,32 @@ class HeaderViewController: UIViewController {
             adaptCoverImageHeight()
             update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
         }
+    }
+    
+}
+
+extension HeaderViewController {
+    
+    private func setupConstraints() {
+        animator = blurAnimator()
+        
+        // Set initial zPosition values
+        coverImageView.layer.zPosition = 10
+        visualEffectView.layer.zPosition = 20
+        titleView.layer.zPosition = 30
+        
+        userImageView.layer.zPosition = profileInfoZPosition
+        userNameLabel.layer.zPosition = profileInfoZPosition
+        userGivenNameLabel.layer.zPosition = profileInfoZPosition
+        profileStatFollowNumber.view.layer.zPosition = profileInfoZPosition
+        expandableTextViewController.view.layer.zPosition = profileInfoZPosition
+        titleView.layer.zPosition = profileInfoZPosition
+        profileBackground.layer.zPosition = profileInfoZPosition-5
+        
+        view.bringSubviewToFront(expandableTextViewController.view)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
     private func setupUI() {
@@ -182,9 +193,8 @@ class HeaderViewController: UIViewController {
         ])
         
         // Instantiate ProfileToolButtonViewController
-        profileToolButtonVC = ProfileToolButtonViewController(frame: .zero, profile: profile, addShadow: false)
+        profileToolButtonVC = ProfileToolButtonViewController(frame: .zero, profile: profile, addShadow: false, color: .primary)
         profileToolButtonVC.delegate = backButtonDelegate
-        profileToolButtonVC.colorScheme = .light
         
         titleView.addSubview(profileToolButtonVC)
         profileToolButtonVC.translatesAutoresizingMaskIntoConstraints = false
@@ -309,7 +319,7 @@ class HeaderViewController: UIViewController {
     }
     
     private func addBottomViewController() {
-        bottomViewController = BottomViewController(profile: profile)
+        bottomViewController = BottomViewController(profile: profile, headerSpace: true)
         addChild(bottomViewController)
         view.addSubview(bottomViewController.view)
         bottomViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -324,9 +334,8 @@ class HeaderViewController: UIViewController {
     
     
     private func addToolBar() {
-        toolBar = ProfileToolButtonViewController(frame: .zero, profile: profile)
+        toolBar = ProfileToolButtonViewController(frame: .zero, profile: profile, color: .background)
         toolBar.delegate = backButtonDelegate
-        toolBar.colorScheme = .dark
         view.addSubview(toolBar)
         view.bringSubviewToFront(toolBar)
         toolBar.translatesAutoresizingMaskIntoConstraints = false
@@ -339,7 +348,9 @@ class HeaderViewController: UIViewController {
             toolBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
     }
+}
 
+extension HeaderViewController {
     
     func update(with progress: CGFloat, minHeaderHeight: CGFloat) {
         lastProgress = progress
@@ -379,7 +390,12 @@ class HeaderViewController: UIViewController {
         
         titleView.alpha = progress
         
-        let titleOffset = max(min(0, (profileStatFollowNumber.view.convert(profileStatFollowNumber.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+        let titleOffset: CGFloat
+        if expandableTextViewController.text == "" {
+            titleOffset = max(min(0, (profileStatFollowNumber.view.convert(profileStatFollowNumber.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+        } else {
+            titleOffset = max(min(0, (expandableTextViewController.view.convert(expandableTextViewController.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+        }
         titleView.contentOffset.y = -titleOffset - titleView.frame.height
         
         if progress < 0 {
@@ -419,9 +435,7 @@ class HeaderViewController: UIViewController {
         visualEffectView.center.y = coverImageView.center.y
         titleView.center.y = coverImageView.frame.maxY - titleView.frame.height / 2
         
-        // 40 -> 57
         profileBackground.layer.cornerRadius = (progress*17)+40 // Set the corner radius
-        
         
         if toolBar != nil {
             if y < 0 {
@@ -429,16 +443,33 @@ class HeaderViewController: UIViewController {
                 toolBar.layer.zPosition = 0
             } else if progress <= 0.75 {
                 toolBarTopAnchor.constant = 4 + y
-                toolBar.layer.zPosition = profileInfoZPosition-10
+                toolBar.layer.zPosition = -10
             } else if progress <= 0.9{
                 toolBarTopAnchor.constant = 4 + y
-                toolBar.layer.zPosition = 0
+                toolBar.layer.zPosition = -10
             } else {
                 toolBar.alpha = 0
             }
         }
     }
-
+    
+    func updateProfile(profile: ProfileSettings) {
+        DispatchQueue.main.async { [self] in
+            self.profile = profile
+            userImageView.image = profile.profileImage?.image
+            
+            userGivenNameLabel.text = profile.givenName
+            userNameLabel.text = "@\(profile.preferredUsername)"
+            expandableTextViewController.text = profile.bio
+            profileStatFollowNumber.updateProfile(profile: profile)
+            bottomViewController.updateProfile(profile: profile)
+            toolBar.updateProfile(profile: profile)
+            profileToolButtonVC.updateProfile(profile: profile)
+            
+            expandableTextViewController.view.layoutIfNeeded()
+            view.layoutIfNeeded()
+        }
+    }
     
     @objc private func appWillEnterForeground() {
         addBlurAnimation()

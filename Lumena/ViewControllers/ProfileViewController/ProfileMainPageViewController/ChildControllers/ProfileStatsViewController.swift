@@ -114,4 +114,9 @@ class ProfileStatsViewController: UIViewController {
         formatter.numberStyle = .decimal
         return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
     }
+    
+    func updateProfile(profile: ProfileSettings) {
+        self.profile = profile
+        updateStats()
+    }
 }

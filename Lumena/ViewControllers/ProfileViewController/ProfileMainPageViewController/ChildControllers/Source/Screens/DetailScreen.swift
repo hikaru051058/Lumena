@@ -22,14 +22,16 @@ class DetailScreen: UIViewController {
     
     var thumbnailURL: URL?
     var fitOrFill: UIView.ContentMode
+    var heightScale: CGFloat
 
     // MARK: Init
 
-    init(lumes: [Lume], currentLumePostID: String, thumbnailURL: URL, fitOrFill: UIView.ContentMode) { // Updated
+    init(lumes: [Lume], currentLumePostID: String, thumbnailURL: URL, fitOrFill: UIView.ContentMode, heightScale: CGFloat) { // Updated
         self.lumes = lumes
         self.currentLumePostID = currentLumePostID
         self.thumbnailURL = thumbnailURL // Updated
         self.fitOrFill = fitOrFill // Updated
+        self.heightScale = heightScale
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -72,7 +74,7 @@ extension DetailScreen {
         print("DetailScreen - setupUI")
         setupView()
         setupImageView()
-//        setupLumeVerticalSrollViewController()
+        setupLumeVerticalSrollViewController()
     }
 
     private func setupView() {
@@ -83,6 +85,7 @@ extension DetailScreen {
     }
     
     private func setupLumeVerticalSrollViewController() {
+        
         lumeVerticalScroll = LumeVerticalInfiniteScrollViewController(lumes: lumes, loadAutomatically: false, currentLumePostID: currentLumePostID)
         lumeVerticalScroll.view.then {
             view.addSubview($0)
@@ -92,6 +95,8 @@ extension DetailScreen {
             $0.leading == view.leadingAnchor
             $0.trailing == view.trailingAnchor
         }
+        
+        print("DetailScreen - setupLumeVerticalSrollViewController")
     }
     
     private func setupImageView() {
@@ -117,11 +122,20 @@ extension DetailScreen {
                 multiplier: 1.25
             ).isActive = true
             
+            if heightScale > 1 {
+                imageView.widthAnchor.constraint(
+                    equalTo: imageView.heightAnchor,
+                    multiplier: max(1.3, (heightScale+0.25))
+                ).isActive = true
+            }
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 UIView.animate(withDuration: 0.5) {
                     self.imageView.alpha = 0.0
                 }
             }
+            
+            print("DetailScreen - setupImageView")
         }
     }
 }

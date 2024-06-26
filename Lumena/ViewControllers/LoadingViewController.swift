@@ -41,7 +41,7 @@ class LoadingViewController: UIViewController {
     }
     
     func navigateToLogin() {
-        let profileVC = LoginViewController()
-        navigationController?.pushViewController(profileVC, animated: true)
+        let loginVC = LoginViewController()
+        navigationController?.pushViewController(loginVC, animated: true)
     }
 }

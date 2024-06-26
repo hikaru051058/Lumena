@@ -15,7 +15,6 @@ import AWSDataStorePlugin
 import AWSPinpointPushNotificationsPlugin
 import AVFAudio
 
-
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     

@@ -1,5 +1,6 @@
 {
   "AppSyncApiName": "lumena",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthModeLastUpdated": "2024-06-12T09:16:31.547Z"
 }

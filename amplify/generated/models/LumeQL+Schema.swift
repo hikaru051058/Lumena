@@ -11,11 +11,13 @@ extension LumeQL {
     case tagProducts
     case tagMusic
     case description
-    case userprofile
+    case userprofileqlID
     case likeCount
     case commentCount
     case hashTags
     case zipURL
+    case lumeState
+    case lumeAuth
     case createdAt
     case updatedAt
   }
@@ -45,11 +47,13 @@ extension LumeQL {
       .field(lumeQL.tagProducts, is: .optional, ofType: .embeddedCollection(of: TagCosmeticQL.self)),
       .field(lumeQL.tagMusic, is: .optional, ofType: .embedded(type: TagTrackQL.self)),
       .field(lumeQL.description, is: .optional, ofType: .string),
-      .belongsTo(lumeQL.userprofile, is: .optional, ofType: UserProfileQL.self, targetNames: ["userprofileqlID"]),
+      .field(lumeQL.userprofileqlID, is: .required, ofType: .string),
       .field(lumeQL.likeCount, is: .optional, ofType: .int),
       .field(lumeQL.commentCount, is: .optional, ofType: .int),
       .field(lumeQL.hashTags, is: .optional, ofType: .embeddedCollection(of: String.self)),
       .field(lumeQL.zipURL, is: .optional, ofType: .string),
+      .hasMany(lumeQL.lumeState, is: .optional, ofType: LumeStateQL.self, associatedWith: LumeStateQL.keys.lumeqlID),
+      .field(lumeQL.lumeAuth, is: .optional, ofType: .bool),
       .field(lumeQL.createdAt, is: .optional, isReadOnly: true, ofType: .dateTime),
       .field(lumeQL.updatedAt, is: .optional, isReadOnly: true, ofType: .dateTime)
     )

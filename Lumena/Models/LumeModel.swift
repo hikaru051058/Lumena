@@ -18,9 +18,14 @@ class LumeVideo: Identifiable {
     
     let id = UUID()
     var player: AVPlayer?
+    var url: URL?
     
-    init(player: AVPlayer? = nil) {
+    init(player: AVPlayer? = nil, url: URL? = nil) {
         self.player = player
+        self.url = url
+        if let url = url {
+            self.player = AVPlayer(url: url)
+        }
     }
     
     func mute(muteBool: Bool = true) {
@@ -28,19 +33,12 @@ class LumeVideo: Identifiable {
     }
     
     func generateThumbnail() async -> UIImage? {
-        guard let asset = player?.currentItem?.asset as? AVURLAsset else { return nil }
-        
-        let assetImgGenerate = AVAssetImageGenerator(asset: asset)
-        assetImgGenerate.appliesPreferredTrackTransform = true
-        let time = CMTimeMakeWithSeconds(1.0, preferredTimescale: 600)
-        
-        do {
-            let img = try assetImgGenerate.copyCGImage(at: time, actualTime: nil)
-            return UIImage(cgImage: img)
-        } catch {
-            print(error.localizedDescription)
+        guard let player = player else {
+            print("Player is not set")
             return nil
         }
+        let thumbnail = player.generateThumbnail(time: CMTime(seconds: 1, preferredTimescale: 1))
+        return thumbnail
     }
     
     func seekVideo(to progress: CGFloat) {
@@ -66,7 +64,33 @@ class LumeVideo: Identifiable {
             return nil
         }
     }
+    
+    // New method to get the URL of the video
+    func getVideoURL() -> URL? {
+        return url
+    }
 }
+
+extension AVPlayer {
+    func generateThumbnail(time: CMTime) -> UIImage? {
+        guard let asset = currentItem?.asset else {
+            print("Current item asset is not set")
+            return nil
+        }
+        
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true // Apply track transform to get the correct orientation
+
+        do {
+            let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+            return UIImage(cgImage: cgImage)
+        } catch {
+            print("Failed to generate thumbnail: \(error.localizedDescription)")
+            return nil
+        }
+    }
+}
+
 
 class LumeImage: Identifiable, ObservableObject {
     let id = UUID()
@@ -174,7 +198,7 @@ class LumeImage: Identifiable, ObservableObject {
         cancellable?.cancel()
     }
         
-    static func fetchThumbnail(from url: URL) async -> UIImage? {
+    func fetchThumbnail(from url: URL) async -> UIImage? {
         let normalizedUrl = normalizeUrl(url: url)
         
         // Check cache first for thumbnail
@@ -182,23 +206,20 @@ class LumeImage: Identifiable, ObservableObject {
             return cachedImage
         }
         
-        do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                print("HTTP Error: Status code is not 200 for URL: \(url)")
-                return nil
-            }
-            
-            let image = UIImage(data: data)
-            
-            if let image = image {
+        var retryCount = 0
+        let maxRetries = 3
+        
+        while retryCount < maxRetries {
+            if let image = await loadAgain() {
                 ImageCache.shared.store(image: image, forId: normalizedUrl)
+                return image
+            } else {
+                retryCount += 1
+                print("Failed to fetch thumbnail after \(maxRetries) attempts for URL: \(url)")
             }
-            return image
-        } catch {
-            print("Network Error: \(error.localizedDescription)")
-            return nil
         }
+        
+        return nil
     }
 
     // Helper method used in static context to normalize URL
@@ -206,6 +227,11 @@ class LumeImage: Identifiable, ObservableObject {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         components?.query = nil  // Remove query to normalize
         return components?.url?.absoluteString ?? url.absoluteString
+    }
+    
+    // New method to get the URL of the thumbnail
+    func getThumbnailURL() -> URL? {
+        return url
     }
 }
 
@@ -265,18 +291,34 @@ class LumeManager: ObservableObject {
         return ids.compactMap { getLume(withID: $0) }
     }
     
-    func getUserLumes(withID identityID: String) -> [Lume] {
+    func getUserPostLumes(withID identityID: String) -> [Lume] {
+        Task {
+            do {
+                let lumeIDs = try await GraphQL.shared.fetchUserLumas(userProfileID: identityID)
+                let _ = try await LumeManager.shared.getLumes(withID: lumeIDs)
+            } catch {
+                print(error)
+            }
+        }
         return lumes.values.filter { $0.postUserIID == identityID}
     }
     
-    func getLumeQueue(withID id: String) {
+    func getUserLikedLumes(withID identityID: String) -> [Lume] {
         Task {
-            let lume = Lume(id: id)
-            LumeManager.shared.updateLume(lume)
-            DispatchQueue.main.async {
-                self.lumes[id] = lume
+            do {
+                let userLikedPostsResponse = try await GraphQL.shared.fetchUserLikedPosts(userID: identityID)
+                let lumeIDs = userLikedPostsResponse.likes.map { $0.lumeQLID }
+                _ = try await LumeManager.shared.getLumes(withID: lumeIDs)
+            } catch {
+                print(error)
             }
         }
+        return []
+    }
+    
+    func getLumeQueue(withID id: String) {
+        let lume = Lume(id: id)
+        LumeManager.shared.updateLume(lume)
     }
     
     func updateLume(_ lume: Lume) {
@@ -285,6 +327,16 @@ class LumeManager: ObservableObject {
             objectWillChange.send()
         }
     }
+    
+    func setNewLume(_ lume: Lume) {
+        if lumes.first(where: { $0.value.postID == lume.postID }) == nil {
+            DispatchQueue.main.async { [self] in
+                lumes[lume.postID] = lume
+                objectWillChange.send()
+            }
+        }
+    }
+
 }
 
 extension Lume {
@@ -311,7 +363,7 @@ extension Lume {
     }
 }
 
-class Lume: Identifiable, ObservableObject, Hashable {
+class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     
     var id: UUID = UUID()
     
@@ -369,12 +421,23 @@ class Lume: Identifiable, ObservableObject, Hashable {
         }
     }
     
-    
     var contents: [Content] = []
     var currentContent: UUID = UUID()
     var previousContent: UUID = UUID()
     
-    var thumbnail: UIImage?
+    @Published var thumbnail: UIImage? {
+        didSet {
+            LumeManager.shared.updateLume(self)
+        }
+    }
+    
+    @Published var thumbnailURL: URL? {
+        didSet {
+            LumeManager.shared.updateLume(self)
+        }
+    }
+    
+    var lumeAuth: Bool = false
     
     var userAlgoStruct: userAlgorithm = userAlgorithm()
     
@@ -382,7 +445,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
     
     init() {}
     
-    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [Content] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "") {
+    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [Content] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
         
         if let postUUID = UUID(uuidString: postID) {
             self.id = postUUID
@@ -412,6 +475,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
         self.userAlgoStruct = userAlgoStruct
         self.timestamp = timestamp
         self.zipURL = zipURL
+        self.lumeAuth = lumeAuth
         
         LumeManager.shared.updateLume(self)
     }
@@ -436,6 +500,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
             self.thumbnail = lume.thumbnail
             self.userAlgoStruct = lume.userAlgoStruct
             self.zipURL = lume.zipURL
+            self.lumeAuth = lume.lumeAuth
         }
     }
     
@@ -456,7 +521,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
         if postUserIDParts.count >= 2 {
             postUserID = "\(postUserIDParts[0]):\(postUserIDParts[1])"
         } else {
-            postUserID = ql.userprofile?.id ?? ""
+            postUserID = ql.userprofileqlID
         }
         
         let userLiked = false
@@ -478,7 +543,8 @@ class Lume: Identifiable, ObservableObject, Hashable {
             currentContent: UUID(),
             userAlgoStruct: userAlgorithm(),
             timestamp: timestamp,
-            zipURL: ql.zipURL ?? ""
+            zipURL: ql.zipURL ?? "",
+            lumeAuth: ql.lumeAuth ?? false
         )
         
         self.fetchAndProcessReel { result in
@@ -492,9 +558,11 @@ class Lume: Identifiable, ObservableObject, Hashable {
         
         userLikedPost()
         
-        Task {
-            let _ = await self.generateThumbnail()
-            LumeManager.shared.updateLume(self)
+        DispatchQueue.main.async {
+            Task {
+                self.thumbnail = await self.getThumbnailImage()
+                LumeManager.shared.updateLume(self)
+            }
         }
     }
     
@@ -527,7 +595,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
                 }
             }
             
-            let _ = await self.generateThumbnail()
+            self.thumbnail = await self.getThumbnailImage()
             
             userLikedPost()
             
@@ -538,9 +606,6 @@ class Lume: Identifiable, ObservableObject, Hashable {
     }
     
     func toLumeQL() -> LumeQL {
-        
-        let postUser = ProfileManager.shared.profiles[self.postUserIID]!.toUserProfileQL()
-        
         return LumeQL(
             id: self.postID,
             postURL: self.postURL,
@@ -550,7 +615,8 @@ class Lume: Identifiable, ObservableObject, Hashable {
             },
             tagMusic: TagTrackQL(trackID: self.tagMusic.uri, tagMusicRange: [Double(self.tagMusic.tagMusicRange.lowerBound), Double(self.tagMusic.tagMusicRange.upperBound)]),
             description: self.postDescription,
-            userprofile: postUser
+            userprofileqlID: self.postUserIID,
+            lumeAuth: self.lumeAuth
         )
     }
     
@@ -573,7 +639,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
                     } else if url.path.hasSuffix(".mp4") || url.path.hasSuffix(".mov") || url.path.hasSuffix(".MOV") || url.path.hasSuffix(".m3u8") {
                         // Handle video content
                         let player = AVPlayer(url: url)
-                        self.contents.append(.video(LumeVideo(player: player)))
+                        self.contents.append(.video(LumeVideo(player: player, url: url)))
                     } else {
                         print("Unsupported media format in URL: \(url)")
                         continue
@@ -751,7 +817,7 @@ class Lume: Identifiable, ObservableObject, Hashable {
         }
         
         let videoName = "\(ReelLocationS3)/video\(index + 1).mp4"
-        _ = try await S3.shared.storeDataAsync(name: videoName, data: videoData!, accessLevel: .guest, progressHandler: progressUpdate)
+        _ = try await S3.shared.storeDataAsync(name: videoName, data: videoData!, accessLevel: "public", progressHandler: progressUpdate)
         return videoName
     }
     
@@ -776,39 +842,8 @@ class Lume: Identifiable, ObservableObject, Hashable {
         }
 
         let imageName = "\(ReelLocationS3)/image\(index + 1).jpg"
-        _ = try await S3.shared.storeDataAsync(name: imageName, data: imageData, accessLevel: .guest, progressHandler: progressUpdate)
+        _ = try await S3.shared.storeDataAsync(name: imageName, data: imageData, accessLevel: "public", progressHandler: progressUpdate)
         return imageName
-    }
-
-    
-    //thumbnails
-    func generateThumbnail() async -> UIImage? {
-        guard let firstContent = contents.first else { return nil }
-        
-        switch firstContent {
-        case .video(let reelVideo):
-            // Use the method from LumeVideo class
-            if let videoThumbnail = await reelVideo.generateThumbnail() {
-                self.thumbnail = videoThumbnail
-                return videoThumbnail
-            } else {
-                return nil
-            }
-            
-        case .image(let reelImage):
-            // Directly return the image if available, otherwise fetch from URL
-            if let image = reelImage.image {
-                self.thumbnail = image
-                return image
-            } else if let url = reelImage.url {
-                // Use a static method or initializer from LumeImage class that fetches the image
-                let fetchedThumbnail = await LumeImage.fetchThumbnail(from: url)
-                self.thumbnail = fetchedThumbnail
-                return fetchedThumbnail
-            } else {
-                return nil
-            }
-        }
     }
     
     //video actions
@@ -1003,6 +1038,77 @@ class Lume: Identifiable, ObservableObject, Hashable {
         return Date(timeIntervalSince1970: TimeInterval(timestamp))
     }
 }
+
+
+// MARK: thumbnails
+extension Lume {
+    
+    func getThumbnailImage() async -> UIImage? {
+        guard let firstContent = contents.first else { return nil }
+        
+        switch firstContent {
+        case .video(let reelVideo):
+            // Use the method from LumeVideo class
+            if let videoThumbnail = await reelVideo.generateThumbnail() {
+                self.thumbnail = videoThumbnail
+                return videoThumbnail
+            } else {
+                return nil
+            }
+            
+        case .image(let reelImage):
+            // Directly return the image if available, otherwise fetch from URL
+            if let image = reelImage.image {
+                self.thumbnail = image
+                return image
+            } else if let url = reelImage.url {
+                // Use a static method or initializer from LumeImage class that fetches the image
+                let fetchedThumbnail = await reelImage.fetchThumbnail(from: url)
+                self.thumbnail = fetchedThumbnail
+                return fetchedThumbnail
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    func getThumbnailURL() -> URL? {
+        guard let firstContent = contents.first else { return nil }
+        
+        switch firstContent {
+        case .video(let reelVideo):
+            // Use the method from LumeVideo class
+            return reelVideo.getVideoURL()
+            
+        case .image(let reelImage):
+            // Directly return the image if available, otherwise fetch from URL
+            return reelImage.getThumbnailURL()
+        }
+    }
+    
+    func loadThumbnailAsync() {
+        // Asynchronous thumbnail loading logic
+        Task {
+            if let url = self.thumbnailURL {
+                let image = await loadImage(from: url) // An async method to fetch the image
+                DispatchQueue.main.async {
+                    self.thumbnail = image
+                }
+            }
+        }
+    }
+    
+    private func loadImage(from url: URL) async -> UIImage? {
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            return UIImage(data: data)
+        } catch {
+            print("Failed to load image: \(error)")
+            return nil
+        }
+    }
+}
+
 
 
 enum LumeUploadError: Error {

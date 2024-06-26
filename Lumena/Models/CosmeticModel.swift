@@ -351,7 +351,7 @@ extension Cosmetic {
         let zipFileLocation = "cosmetics/\(zipFileName)"
         
         // Store data asynchronously and await the result
-        _ = try await S3.shared.storeDataAsync(name: zipFileLocation, data: zipData, accessLevel: .guest, progressHandler: { progress in
+        _ = try await S3.shared.storeDataAsync(name: zipFileLocation, data: zipData, accessLevel: "public", progressHandler: { progress in
             progressHandler(progress)  // Call the closure passed by the caller
             print("Upload Progress: \(progress * 100)%")
         })

@@ -22,7 +22,7 @@ extension SharedTransitionConfig {
             duration: 0.2,
             curve: CAMediaTimingFunction(controlPoints: 0.5, 0, 0.6, 1),
             maskCornerRadius: 39,
-            overlayOpacity: 0.5,
+            overlayOpacity: 1,
             placeholderColor: .background
         )
     }
@@ -32,7 +32,7 @@ extension SharedTransitionConfig {
             duration: 0.2,
             curve: CAMediaTimingFunction(controlPoints: 0.57, 0.27, 0.21, 0.97),
             maskCornerRadius: 39,
-            overlayOpacity: 0.5,
+            overlayOpacity: 1,
             interactionScaleFactor: 0.6,
             placeholderColor: .background
         )

@@ -29,6 +29,18 @@ class LoginViewController: UIViewController {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.pinToEdges(of: view)
         hostingController.didMove(toParent: self)
+        
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     func navigateToMain() {

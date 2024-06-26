@@ -73,11 +73,18 @@ extension SharedTransitionAnimator {
             $0.layer.cornerCurve = .continuous
             $0.backgroundColor = .black
         }
-        let overlay = UIView().then {
-            $0.backgroundColor = .black
+//        let overlay = UIView().then {
+//            $0.backgroundColor = .black
+//            $0.layer.opacity = 0
+//            $0.frame = fromView.frame
+//        }
+        
+        let blurEffect = UIBlurEffect(style: .regular)
+        let overlay = UIVisualEffectView(effect: blurEffect).then {
+            $0.frame = toView.frame
             $0.layer.opacity = 0
-            $0.frame = fromView.frame
         }
+        
         let placeholder = UIView().then {
             $0.backgroundColor = config.placeholderColor
             $0.frame = fromFrame
@@ -118,10 +125,15 @@ extension SharedTransitionAnimator {
             $0.backgroundColor = .black
             $0.layer.cornerRadius = config.maskCornerRadius
         }
-        let overlay = UIView().then {
-            $0.backgroundColor = .black
-            $0.layer.opacity = config.overlayOpacity
+//        let overlay = UIView().then {
+//            $0.backgroundColor = .black
+//            $0.layer.opacity = config.overlayOpacity
+//            $0.frame = toView.frame
+//        }
+        let blurEffect = UIBlurEffect(style: .regular)
+        let overlay = UIVisualEffectView(effect: blurEffect).then {
             $0.frame = toView.frame
+            $0.layer.opacity = config.overlayOpacity
         }
         let placeholder = UIView().then {
             $0.backgroundColor = config.placeholderColor
@@ -162,6 +174,7 @@ extension SharedTransitionAnimator {
         toVC?.prepare(for: transition)
     }
     
+    // push
     private func setup(with context: UIViewControllerContextTransitioning) -> (UIView, CGRect, UIView, CGRect)? {
         guard let toView = context.view(forKey: .to),
               let fromView = context.view(forKey: .from) else {

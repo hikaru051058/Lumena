@@ -13,11 +13,15 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
     // MARK: Constants
 
     private enum Constants {
-        static let numberOfRows = 3
+        static let numberOfRows = 2
         static let sectionInset: UIEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
         static let interItemSpacing: CGFloat = 2
         static let lineSpacing: CGFloat = 2
     }
+    
+    private var headerSpace: Bool = false // for header to identify the space
+    
+    let refresh = UIRefreshControl()
 
     // MARK: Typealiases
 
@@ -34,12 +38,35 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
         $0.minimumLineSpacing = Constants.lineSpacing
         $0.minimumInteritemSpacing = Constants.interItemSpacing
     }
+    
+    private let noContentTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No Content"
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let noContentSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Please check back later."
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .lightGray
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     // MARK: Private properties
 
     var selectedIndexPath: IndexPath? = nil
     private var lumes = [Lume]() {
-        didSet { updateCollectionView() }
+        didSet {
+            updateCollectionView()
+            updateNoContentLabelsVisibility()
+        }
     }
 
     var pageIndex: Int = 0
@@ -47,9 +74,9 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
     var currentTabIndex: Int = 0
     var profile: ProfileSettings!
     
-    
-    init(profile: ProfileSettings?) {
+    init(profile: ProfileSettings?, lumes: [Lume] = [], headerSpace: Bool = false) {
         self.profile = profile
+        self.headerSpace = headerSpace
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -64,16 +91,23 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .background
         setupUI()
-        fetchData()
+        self.fetchData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.delegate = self
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        fetchData()
     }
-
+    
+    func updateProfile(profile: ProfileSettings) {
+        DispatchQueue.main.async { [self] in
+            self.profile = profile
+            view.layoutIfNeeded()
+            collectionView.layoutIfNeeded()
+            self.fetchData()
+        }
+    }
 }
 
 // MARK: - Helpers
@@ -82,10 +116,11 @@ extension BottomViewController {
     private func setupUI() {
         setupView()
         setupCollectionView()
+        setupNoContentLabels()
     }
 
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .background
     }
 
     private func setupCollectionView() {
@@ -101,6 +136,8 @@ extension BottomViewController {
             $0.top == view.topAnchor
             $0.bottom == view.bottomAnchor
         }
+        
+        collectionView.layoutIfNeeded()
     }
     
     private func fetchData() {
@@ -113,6 +150,22 @@ extension BottomViewController {
             break
         }
         updateCollectionView()
+    }
+}
+
+
+// MARK: - RefreshDelegate
+
+extension BottomViewController: RefreshDelegate {
+    func didStartRefreshing() {
+        print("Started refreshing in BottomViewController")
+        DispatchQueue.main.async {
+            self.fetchData()
+        }
+    }
+    
+    func didEndRefreshing() {
+        print("Ended refreshing in BottomViewController")
     }
 }
 
@@ -144,7 +197,7 @@ extension BottomViewController: UICollectionViewDelegate {
         let lume = lumes[indexPath.item]
         if let cell = collectionView.cellForItem(at: indexPath) as? ProfileCell,
            let thumbnailURL = cell.thumbnailURL {
-            let viewController = DetailScreen(lumes: lumes, currentLumePostID: lume.postID, thumbnailURL: thumbnailURL, fitOrFill: cell.fitOrFill)
+            let viewController = DetailScreen(lumes: lumes, currentLumePostID: lume.postID, thumbnailURL: thumbnailURL, fitOrFill: cell.fitOrFill, heightScale: cell.heightScale)
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
@@ -209,6 +262,33 @@ extension BottomViewController: SharedTransitioning {
         guard transition == .pop, let selectedIndexPath else { return }
         collectionView.scrollToItem(at: selectedIndexPath, at: .centeredVertically, animated: false)
         collectionView.layoutIfNeeded()
+    }
+}
+
+extension BottomViewController {
+    
+    private func setupNoContentLabels() {
+        guard !headerSpace else { return }
+        view.addSubview(noContentTitleLabel)
+        view.addSubview(noContentSubtitleLabel)
+        NSLayoutConstraint.activate([
+            noContentTitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noContentTitleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -80),
+            noContentSubtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noContentSubtitleLabel.topAnchor.constraint(equalTo: noContentTitleLabel.bottomAnchor, constant: 8)
+        ])
+        noContentTitleLabel.isHidden = true
+        noContentSubtitleLabel.isHidden = true
+        
+        updateNoContentLabelsVisibility()
+    }
+
+    private func updateNoContentLabelsVisibility() {
+        guard !headerSpace else { return }
+        
+        let isEmpty = lumes.isEmpty
+        noContentTitleLabel.isHidden = !isEmpty
+        noContentSubtitleLabel.isHidden = !isEmpty
     }
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03A47627954A36C164845027 /* UserStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C755A7F1FDB35AB324DA4F0E /* UserStateQL.swift */; };
 		0983FCC09C5D3B2F0B2B8B51 /* FollowQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1CA30015C2F5509B072489 /* FollowQL+Schema.swift */; };
 		170264702BEACED5004C9444 /* SkinSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */; };
 		170264722BEB0C30004C9444 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170264712BEB0C30004C9444 /* Notifications.swift */; };
@@ -60,6 +61,8 @@
 		17C0ABB62BFEA90100FA027A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAB2BFEA90000FA027A /* Extensions.swift */; };
 		17C0ABB72BFEA90100FA027A /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAC2BFEA90000FA027A /* GradientView.swift */; };
 		17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */; };
+		17C412312C2C04010083C8A5 /* LumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C4122F2C2C04010083C8A5 /* LumeQL.swift */; };
+		17C412322C2C04010083C8A5 /* LumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412302C2C04010083C8A5 /* LumeQL+Schema.swift */; };
 		17FA9F452BEE44B000CC28AC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FA9F442BEE44B000CC28AC /* NotificationService.swift */; };
 		17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA42BD616D900682EE2 /* AppDelegate.swift */; };
 		17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */; };
@@ -110,25 +113,36 @@
 		17FFC09B2BD61E7E00682EE2 /* CoreMLPredictionsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC09A2BD61E7E00682EE2 /* CoreMLPredictionsPlugin */; };
 		20DFC5EB606A735ED7E72356 /* FollowStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A2310EEC3BE35FC305BB9 /* FollowStatus.swift */; };
 		289A3AD1AD4D2FC8D2B18CCC /* TagTrackQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49685701C790F10CF9F6AD62 /* TagTrackQL.swift */; };
+		327E1C6869D9F303B17E8931 /* UserStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA750ABD2C7A14A6C561556A /* UserStateQL+Schema.swift */; };
 		3437565D3E4B5B2FE0EB6BE8 /* LikedLumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD15051602AC0562FF54E42F /* LikedLumeQL.swift */; };
 		3B940D44345CB860D8AC6DDC /* CosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A649F905F407D7B0E3721F /* CosmeticQL.swift */; };
+		3E2E3D6DA2E1E08237F32819 /* UserStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C755A7F1FDB35AB324DA4F0E /* UserStateQL.swift */; };
 		3F895ABB9903C95C21ECADA9 /* UserProfileQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */; };
+		46766C07B2059F5F53A16CC2 /* UserProfileQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */; };
 		51A87C82B8F1E677A7956BD1 /* TagTrackQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB253D209DCB12BFF2B5AD5B /* TagTrackQL+Schema.swift */; };
-		596FCA3363C220C8113CC5F6 /* LumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6CCB9A0CB9D57FB6AF3F13 /* LumeQL.swift */; };
-		59B4FEEEC141999F712ADB50 /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DA0EB67E91E15EC2A7D2B45 /* Pods_LumenaNotificationAPNAWS.framework */; };
+		68070E20A9E41D20ADA75F61 /* Pods_Lumena.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECA78801A05ABBE08BB264E /* Pods_Lumena.framework */; };
+		899F4EED2A018C598AB895A7 /* AccountState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F6B0FCBF8C39AA7FD031EC /* AccountState.swift */; };
+		9374293E3D51022C1575CA0A /* LumeStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B0EBD03DB7FF36AC6D3A09 /* LumeStateQL.swift */; };
+		97528BF85CB070A7CC73BACA /* UserStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA750ABD2C7A14A6C561556A /* UserStateQL+Schema.swift */; };
 		9E9F5DB0CDDF92416F95B1F4 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 43857A6C65D43346ED17699C /* awsconfiguration.json */; };
+		A8FEDEC983DB4FD117DA647E /* LumeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2AB67588A284CEF9287B09 /* LumeState.swift */; };
 		B21F4CB3AE6752F2B70D53BD /* CommentQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC05480F882D8F9451AAA573 /* CommentQL.swift */; };
 		B9B42B22EAF04524FC174A62 /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B8B41178BF26D66A9A30BE6 /* AmplifyModels.swift */; };
+		B9FC60EDB57612A51D275E9B /* UserProfileQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75EFE485ACECD46B932519C4 /* UserProfileQL.swift */; };
 		BBF0E7299FCA3112E33DC9A9 /* UserProfileQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75EFE485ACECD46B932519C4 /* UserProfileQL.swift */; };
+		C234D224CE198C04977FF59B /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 577BA46D725C5E928A5B89C0 /* Pods_LumenaNotificationAPNAWS.framework */; };
 		C6984BC31533AE700B0261DC /* TagCosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C522896EC3B87500CB7D58 /* TagCosmeticQL+Schema.swift */; };
 		C717920F97CE0A122BC32F1E /* TagCosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A68E589B4590DEABB92ED2 /* TagCosmeticQL.swift */; };
-		C9D8475A5F4AD51606ACDDD5 /* LumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39F4DF369703EE83D9E53B6 /* LumeQL+Schema.swift */; };
+		C92B0B009BC7BF6A111D955D /* TagCosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A68E589B4590DEABB92ED2 /* TagCosmeticQL.swift */; };
+		CEFAA2F3828CCD8993F488FE /* TagTrackQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49685701C790F10CF9F6AD62 /* TagTrackQL.swift */; };
+		D11F4137B6798DF23955419B /* TagTrackQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB253D209DCB12BFF2B5AD5B /* TagTrackQL+Schema.swift */; };
 		D46841A48683F900074A3D33 /* FollowQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF182FFC9382C4012ED042A /* FollowQL.swift */; };
 		D8B06BB103C63793778B1F10 /* CommentQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9967140AFDAABE970E812F /* CommentQL+Schema.swift */; };
+		E188466D937084ED35174F16 /* TagCosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C522896EC3B87500CB7D58 /* TagCosmeticQL+Schema.swift */; };
 		E2E15858C2B4FB6A94BCAC0D /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */; };
 		E942C3C6E9EBF5EBA646AC43 /* CosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436748F3D789D98FA0B5F77B /* CosmeticQL+Schema.swift */; };
+		EA2EE1B9030D84D2A3B40939 /* LumeStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D50EDD392CDC6266F7F34D1 /* LumeStateQL+Schema.swift */; };
 		F2D70857164F3DD8A7E044DC /* LikedLumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F16349EDD7BC0C8F11DC42 /* LikedLumeQL+Schema.swift */; };
-		F5718CE2F356BC8FF81783C1 /* Pods_Lumena.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92F94159632E505339D3AB23 /* Pods_Lumena.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -164,6 +178,25 @@
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
+		1761DB1C2C1BF02900DFA5D2 /* UserStateQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStateQL.swift; sourceTree = "<group>"; };
+		1761DB1D2C1BF02900DFA5D2 /* LikedLumeQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LikedLumeQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB1E2C1BF02900DFA5D2 /* UserStateQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserStateQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB1F2C1BF02900DFA5D2 /* LikedLumeQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikedLumeQL.swift; sourceTree = "<group>"; };
+		1761DB202C1BF02900DFA5D2 /* TagTrackQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TagTrackQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB212C1BF02900DFA5D2 /* FollowStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FollowStatus.swift; sourceTree = "<group>"; };
+		1761DB222C1BF02900DFA5D2 /* FollowQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FollowQL.swift; sourceTree = "<group>"; };
+		1761DB232C1BF02900DFA5D2 /* AmplifyModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AmplifyModels.swift; sourceTree = "<group>"; };
+		1761DB242C1BF02900DFA5D2 /* AccountState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountState.swift; sourceTree = "<group>"; };
+		1761DB252C1BF02900DFA5D2 /* CommentQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB262C1BF02900DFA5D2 /* CosmeticQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CosmeticQL.swift; sourceTree = "<group>"; };
+		1761DB272C1BF02900DFA5D2 /* UserProfileQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileQL.swift; sourceTree = "<group>"; };
+		1761DB282C1BF02900DFA5D2 /* TagCosmeticQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagCosmeticQL.swift; sourceTree = "<group>"; };
+		1761DB292C1BF02900DFA5D2 /* TagCosmeticQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TagCosmeticQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB2A2C1BF02900DFA5D2 /* TagTrackQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagTrackQL.swift; sourceTree = "<group>"; };
+		1761DB2B2C1BF02900DFA5D2 /* CosmeticQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CosmeticQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB2D2C1BF02900DFA5D2 /* CommentQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentQL.swift; sourceTree = "<group>"; };
+		1761DB2E2C1BF02900DFA5D2 /* UserProfileQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserProfileQL+Schema.swift"; sourceTree = "<group>"; };
+		1761DB302C1BF02900DFA5D2 /* FollowQL+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FollowQL+Schema.swift"; sourceTree = "<group>"; };
 		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
 		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -210,6 +243,8 @@
 		17C0ABAB2BFEA90000FA027A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		17C0ABAC2BFEA90000FA027A /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterParallaxViewController.swift; sourceTree = "<group>"; };
+		17C4122F2C2C04010083C8A5 /* LumeQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeQL.swift; path = ../amplify/generated/models/LumeQL.swift; sourceTree = "<group>"; };
+		17C412302C2C04010083C8A5 /* LumeQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LumeQL+Schema.swift"; path = "../amplify/generated/models/LumeQL+Schema.swift"; sourceTree = "<group>"; };
 		17FA9F442BEE44B000CC28AC /* NotificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17FFBFA12BD616D900682EE2 /* Lumena.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumena.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17FFBFA42BD616D900682EE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -248,32 +283,38 @@
 		17FFC07E2BD61D8500682EE2 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		17FFC07F2BD61DB100682EE2 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		2771A96D839CC094DCDB39B5 /* Pods-LumenaNotificationAPNAWS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.release.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.release.xcconfig"; sourceTree = "<group>"; };
 		32A649F905F407D7B0E3721F /* CosmeticQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = CosmeticQL.swift; path = amplify/generated/models/CosmeticQL.swift; sourceTree = "<group>"; };
-		3DA0EB67E91E15EC2A7D2B45 /* Pods_LumenaNotificationAPNAWS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LumenaNotificationAPNAWS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		347B01243838519F935B254C /* Pods-Lumena.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.debug.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.debug.xcconfig"; sourceTree = "<group>"; };
 		436748F3D789D98FA0B5F77B /* CosmeticQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "CosmeticQL+Schema.swift"; path = "amplify/generated/models/CosmeticQL+Schema.swift"; sourceTree = "<group>"; };
 		43857A6C65D43346ED17699C /* awsconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
 		49685701C790F10CF9F6AD62 /* TagTrackQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = TagTrackQL.swift; path = amplify/generated/models/TagTrackQL.swift; sourceTree = "<group>"; };
+		577BA46D725C5E928A5B89C0 /* Pods_LumenaNotificationAPNAWS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LumenaNotificationAPNAWS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
 		5D1CA30015C2F5509B072489 /* FollowQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "FollowQL+Schema.swift"; path = "amplify/generated/models/FollowQL+Schema.swift"; sourceTree = "<group>"; };
+		6F2AB67588A284CEF9287B09 /* LumeState.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = LumeState.swift; path = amplify/generated/models/LumeState.swift; sourceTree = "<group>"; };
 		75EFE485ACECD46B932519C4 /* UserProfileQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = UserProfileQL.swift; path = amplify/generated/models/UserProfileQL.swift; sourceTree = "<group>"; };
+		84D02CF8016463475C0C172E /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.debug.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.debug.xcconfig"; sourceTree = "<group>"; };
 		87A68E589B4590DEABB92ED2 /* TagCosmeticQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = TagCosmeticQL.swift; path = amplify/generated/models/TagCosmeticQL.swift; sourceTree = "<group>"; };
+		89F6B0FCBF8C39AA7FD031EC /* AccountState.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = AccountState.swift; path = amplify/generated/models/AccountState.swift; sourceTree = "<group>"; };
 		8B8B41178BF26D66A9A30BE6 /* AmplifyModels.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = AmplifyModels.swift; path = amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
 		8B9967140AFDAABE970E812F /* CommentQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "CommentQL+Schema.swift"; path = "amplify/generated/models/CommentQL+Schema.swift"; sourceTree = "<group>"; };
 		8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "UserProfileQL+Schema.swift"; path = "amplify/generated/models/UserProfileQL+Schema.swift"; sourceTree = "<group>"; };
-		92F94159632E505339D3AB23 /* Pods_Lumena.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lumena.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D50EDD392CDC6266F7F34D1 /* LumeStateQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "LumeStateQL+Schema.swift"; path = "amplify/generated/models/LumeStateQL+Schema.swift"; sourceTree = "<group>"; };
+		9D9AE686476247DC7E95EFDD /* Pods-LumenaNotificationAPNAWS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.release.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.release.xcconfig"; sourceTree = "<group>"; };
 		AB253D209DCB12BFF2B5AD5B /* TagTrackQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "TagTrackQL+Schema.swift"; path = "amplify/generated/models/TagTrackQL+Schema.swift"; sourceTree = "<group>"; };
 		B15A2310EEC3BE35FC305BB9 /* FollowStatus.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = FollowStatus.swift; path = amplify/generated/models/FollowStatus.swift; sourceTree = "<group>"; };
-		B1F23C36796BB2D6B83E048E /* Pods-Lumena.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.release.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.release.xcconfig"; sourceTree = "<group>"; };
 		BD15051602AC0562FF54E42F /* LikedLumeQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = LikedLumeQL.swift; path = amplify/generated/models/LikedLumeQL.swift; sourceTree = "<group>"; };
-		C24FE48FCE939D0AA358D7AA /* Pods-Lumena.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.debug.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.debug.xcconfig"; sourceTree = "<group>"; };
+		C2B0EBD03DB7FF36AC6D3A09 /* LumeStateQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = LumeStateQL.swift; path = amplify/generated/models/LumeStateQL.swift; sourceTree = "<group>"; };
 		C39F4DF369703EE83D9E53B6 /* LumeQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "LumeQL+Schema.swift"; path = "amplify/generated/models/LumeQL+Schema.swift"; sourceTree = "<group>"; };
 		C4F16349EDD7BC0C8F11DC42 /* LikedLumeQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "LikedLumeQL+Schema.swift"; path = "amplify/generated/models/LikedLumeQL+Schema.swift"; sourceTree = "<group>"; };
-		C6FE2FC96BD59F32293721DD /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.debug.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.debug.xcconfig"; sourceTree = "<group>"; };
+		C755A7F1FDB35AB324DA4F0E /* UserStateQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = UserStateQL.swift; path = amplify/generated/models/UserStateQL.swift; sourceTree = "<group>"; };
+		CA750ABD2C7A14A6C561556A /* UserStateQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "UserStateQL+Schema.swift"; path = "amplify/generated/models/UserStateQL+Schema.swift"; sourceTree = "<group>"; };
 		DBF182FFC9382C4012ED042A /* FollowQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = FollowQL.swift; path = amplify/generated/models/FollowQL.swift; sourceTree = "<group>"; };
 		DE6CCB9A0CB9D57FB6AF3F13 /* LumeQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = LumeQL.swift; path = amplify/generated/models/LumeQL.swift; sourceTree = "<group>"; };
+		E6FC6C84CD2E103E1816C301 /* Pods-Lumena.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.release.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.release.xcconfig"; sourceTree = "<group>"; };
 		E8C522896EC3B87500CB7D58 /* TagCosmeticQL+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "TagCosmeticQL+Schema.swift"; path = "amplify/generated/models/TagCosmeticQL+Schema.swift"; sourceTree = "<group>"; };
 		FC05480F882D8F9451AAA573 /* CommentQL.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = CommentQL.swift; path = amplify/generated/models/CommentQL.swift; sourceTree = "<group>"; };
+		FECA78801A05ABBE08BB264E /* Pods_Lumena.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lumena.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,7 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17A7C2252BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin in Frameworks */,
-				59B4FEEEC141999F712ADB50 /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */,
+				C234D224CE198C04977FF59B /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,13 +345,22 @@
 				17FFC0952BD61E7E00682EE2 /* AWSPredictionsPlugin in Frameworks */,
 				17FFC07D2BD61C8400682EE2 /* ColorKit in Frameworks */,
 				17FFC0972BD61E7E00682EE2 /* AWSS3StoragePlugin in Frameworks */,
-				F5718CE2F356BC8FF81783C1 /* Pods_Lumena.framework in Frameworks */,
+				68070E20A9E41D20ADA75F61 /* Pods_Lumena.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		04DB6ED8BDE61D2D9C7E38DB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FECA78801A05ABBE08BB264E /* Pods_Lumena.framework */,
+				577BA46D725C5E928A5B89C0 /* Pods_LumenaNotificationAPNAWS.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		171761CE2C096323000268A6 /* ProfileMainPageViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -361,6 +411,34 @@
 				17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */,
 			);
 			path = DescriptionBox;
+			sourceTree = "<group>";
+		};
+		1761DB462C1BF03200DFA5D2 /* AmplifyModels */ = {
+			isa = PBXGroup;
+			children = (
+				1761DB242C1BF02900DFA5D2 /* AccountState.swift */,
+				1761DB232C1BF02900DFA5D2 /* AmplifyModels.swift */,
+				1761DB2D2C1BF02900DFA5D2 /* CommentQL.swift */,
+				1761DB252C1BF02900DFA5D2 /* CommentQL+Schema.swift */,
+				1761DB262C1BF02900DFA5D2 /* CosmeticQL.swift */,
+				1761DB2B2C1BF02900DFA5D2 /* CosmeticQL+Schema.swift */,
+				1761DB222C1BF02900DFA5D2 /* FollowQL.swift */,
+				1761DB302C1BF02900DFA5D2 /* FollowQL+Schema.swift */,
+				1761DB212C1BF02900DFA5D2 /* FollowStatus.swift */,
+				1761DB1F2C1BF02900DFA5D2 /* LikedLumeQL.swift */,
+				1761DB1D2C1BF02900DFA5D2 /* LikedLumeQL+Schema.swift */,
+				17C4122F2C2C04010083C8A5 /* LumeQL.swift */,
+				17C412302C2C04010083C8A5 /* LumeQL+Schema.swift */,
+				1761DB282C1BF02900DFA5D2 /* TagCosmeticQL.swift */,
+				1761DB292C1BF02900DFA5D2 /* TagCosmeticQL+Schema.swift */,
+				1761DB2A2C1BF02900DFA5D2 /* TagTrackQL.swift */,
+				1761DB202C1BF02900DFA5D2 /* TagTrackQL+Schema.swift */,
+				1761DB272C1BF02900DFA5D2 /* UserProfileQL.swift */,
+				1761DB2E2C1BF02900DFA5D2 /* UserProfileQL+Schema.swift */,
+				1761DB1C2C1BF02900DFA5D2 /* UserStateQL.swift */,
+				1761DB1E2C1BF02900DFA5D2 /* UserStateQL+Schema.swift */,
+			);
+			path = AmplifyModels;
 			sourceTree = "<group>";
 		};
 		17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */ = {
@@ -488,9 +566,10 @@
 				17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */,
 				17FFBFA22BD616D900682EE2 /* Products */,
 				2B5361B86E21440D64F99BF8 /* AmplifyConfig */,
-				9BC7B5AD92F0831954F4A389 /* AmplifyModels */,
 				2E4DDAA05F2EFD1480943A17 /* Pods */,
-				546C65EFB46A840A3DFBB318 /* Frameworks */,
+				1761DB462C1BF03200DFA5D2 /* AmplifyModels */,
+				9BC7B5AD92F0831954F4A389 /* AmplifyModels */,
+				04DB6ED8BDE61D2D9C7E38DB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -591,26 +670,18 @@
 		2E4DDAA05F2EFD1480943A17 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C24FE48FCE939D0AA358D7AA /* Pods-Lumena.debug.xcconfig */,
-				B1F23C36796BB2D6B83E048E /* Pods-Lumena.release.xcconfig */,
-				C6FE2FC96BD59F32293721DD /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */,
-				2771A96D839CC094DCDB39B5 /* Pods-LumenaNotificationAPNAWS.release.xcconfig */,
+				347B01243838519F935B254C /* Pods-Lumena.debug.xcconfig */,
+				E6FC6C84CD2E103E1816C301 /* Pods-Lumena.release.xcconfig */,
+				84D02CF8016463475C0C172E /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */,
+				9D9AE686476247DC7E95EFDD /* Pods-LumenaNotificationAPNAWS.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		546C65EFB46A840A3DFBB318 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				92F94159632E505339D3AB23 /* Pods_Lumena.framework */,
-				3DA0EB67E91E15EC2A7D2B45 /* Pods_LumenaNotificationAPNAWS.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		9BC7B5AD92F0831954F4A389 /* AmplifyModels */ = {
 			isa = PBXGroup;
 			children = (
+				89F6B0FCBF8C39AA7FD031EC /* AccountState.swift */,
 				8B8B41178BF26D66A9A30BE6 /* AmplifyModels.swift */,
 				8B9967140AFDAABE970E812F /* CommentQL+Schema.swift */,
 				FC05480F882D8F9451AAA573 /* CommentQL.swift */,
@@ -629,6 +700,11 @@
 				49685701C790F10CF9F6AD62 /* TagTrackQL.swift */,
 				8BA6AB88B47916A47C99DF14 /* UserProfileQL+Schema.swift */,
 				75EFE485ACECD46B932519C4 /* UserProfileQL.swift */,
+				CA750ABD2C7A14A6C561556A /* UserStateQL+Schema.swift */,
+				C755A7F1FDB35AB324DA4F0E /* UserStateQL.swift */,
+				6F2AB67588A284CEF9287B09 /* LumeState.swift */,
+				9D50EDD392CDC6266F7F34D1 /* LumeStateQL+Schema.swift */,
+				C2B0EBD03DB7FF36AC6D3A09 /* LumeStateQL.swift */,
 			);
 			name = AmplifyModels;
 			sourceTree = "<group>";
@@ -640,7 +716,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17A7C2232BD66B57008FED83 /* Build configuration list for PBXNativeTarget "LumenaNotificationAPNAWS" */;
 			buildPhases = (
-				D542509028ED04EDEE8B66FD /* [CP] Check Pods Manifest.lock */,
+				7A8E190008103FC3097AADCA /* [CP] Check Pods Manifest.lock */,
 				17A7C2142BD66B57008FED83 /* Sources */,
 				17A7C2152BD66B57008FED83 /* Frameworks */,
 				17A7C2162BD66B57008FED83 /* Resources */,
@@ -661,12 +737,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17FFBFB52BD616DC00682EE2 /* Build configuration list for PBXNativeTarget "Lumena" */;
 			buildPhases = (
-				E881F8259BCAD504005E787D /* [CP] Check Pods Manifest.lock */,
+				3565613D5E3F097B54C1A4FC /* [CP] Check Pods Manifest.lock */,
 				17FFBF9D2BD616D900682EE2 /* Sources */,
 				17FFBF9E2BD616D900682EE2 /* Frameworks */,
 				17FFBF9F2BD616D900682EE2 /* Resources */,
 				17A7C2202BD66B57008FED83 /* Embed Foundation Extensions */,
-				CFF9706377C642AE8EE9F55C /* [CP] Embed Pods Frameworks */,
+				5192D9436F45D2648BAF0BCE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -761,7 +837,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CFF9706377C642AE8EE9F55C /* [CP] Embed Pods Frameworks */ = {
+		3565613D5E3F097B54C1A4FC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Lumena-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5192D9436F45D2648BAF0BCE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -782,7 +880,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Lumena/Pods-Lumena-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D542509028ED04EDEE8B66FD /* [CP] Check Pods Manifest.lock */ = {
+		7A8E190008103FC3097AADCA /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -798,28 +896,6 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-LumenaNotificationAPNAWS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E881F8259BCAD504005E787D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Lumena-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -901,9 +977,7 @@
 				17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */,
 				1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */,
 				173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */,
-				B9B42B22EAF04524FC174A62 /* AmplifyModels.swift in Sources */,
 				17C0ABB32BFEA90100FA027A /* LabelCell.swift in Sources */,
-				D8B06BB103C63793778B1F10 /* CommentQL+Schema.swift in Sources */,
 				17B7A3CA2C04104E00777CC1 /* LayoutSizeDimension.swift in Sources */,
 				17B7A3C32C04104E00777CC1 /* SharedTransitionInteractionController.swift in Sources */,
 				17B7A3D32C04104E00777CC1 /* UIView+Extensions.swift in Sources */,
@@ -911,6 +985,20 @@
 				17B7A3C42C04104E00777CC1 /* LayoutAnchor.swift in Sources */,
 				17C0ABB72BFEA90100FA027A /* GradientView.swift in Sources */,
 				17B7A3C92C04104E00777CC1 /* LayoutProxy.swift in Sources */,
+				17B7A3CE2C04104E00777CC1 /* CGRect+Extensions.swift in Sources */,
+				17B7A3D02C04104E00777CC1 /* UIApplication+KeyWindow.swift in Sources */,
+				17B7A3D12C04104E00777CC1 /* UICollectionView+Extensions.swift in Sources */,
+				17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */,
+				17B7A3CF2C04104E00777CC1 /* Then.swift in Sources */,
+				17C0ABB42BFEA90100FA027A /* XLPagerTabStripExampleViewController.swift in Sources */,
+				179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */,
+				17B7A3B32C04104E00777CC1 /* ImageCacheSharedTransition.swift in Sources */,
+				173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */,
+				17C0ABB22BFEA90100FA027A /* HeaderViewController.swift in Sources */,
+				17B7A3C12C04104E00777CC1 /* SharedTransitionConfig.swift in Sources */,
+				899F4EED2A018C598AB895A7 /* AccountState.swift in Sources */,
+				B9B42B22EAF04524FC174A62 /* AmplifyModels.swift in Sources */,
+				D8B06BB103C63793778B1F10 /* CommentQL+Schema.swift in Sources */,
 				B21F4CB3AE6752F2B70D53BD /* CommentQL.swift in Sources */,
 				E942C3C6E9EBF5EBA646AC43 /* CosmeticQL+Schema.swift in Sources */,
 				3B940D44345CB860D8AC6DDC /* CosmeticQL.swift in Sources */,
@@ -919,25 +1007,27 @@
 				20DFC5EB606A735ED7E72356 /* FollowStatus.swift in Sources */,
 				F2D70857164F3DD8A7E044DC /* LikedLumeQL+Schema.swift in Sources */,
 				3437565D3E4B5B2FE0EB6BE8 /* LikedLumeQL.swift in Sources */,
-				17B7A3CE2C04104E00777CC1 /* CGRect+Extensions.swift in Sources */,
-				17B7A3D02C04104E00777CC1 /* UIApplication+KeyWindow.swift in Sources */,
-				C9D8475A5F4AD51606ACDDD5 /* LumeQL+Schema.swift in Sources */,
-				17B7A3D12C04104E00777CC1 /* UICollectionView+Extensions.swift in Sources */,
-				596FCA3363C220C8113CC5F6 /* LumeQL.swift in Sources */,
-				17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */,
 				C6984BC31533AE700B0261DC /* TagCosmeticQL+Schema.swift in Sources */,
-				17B7A3CF2C04104E00777CC1 /* Then.swift in Sources */,
-				17C0ABB42BFEA90100FA027A /* XLPagerTabStripExampleViewController.swift in Sources */,
 				C717920F97CE0A122BC32F1E /* TagCosmeticQL.swift in Sources */,
 				51A87C82B8F1E677A7956BD1 /* TagTrackQL+Schema.swift in Sources */,
-				179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */,
-				17B7A3B32C04104E00777CC1 /* ImageCacheSharedTransition.swift in Sources */,
 				289A3AD1AD4D2FC8D2B18CCC /* TagTrackQL.swift in Sources */,
-				173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */,
-				17C0ABB22BFEA90100FA027A /* HeaderViewController.swift in Sources */,
-				17B7A3C12C04104E00777CC1 /* SharedTransitionConfig.swift in Sources */,
-				3F895ABB9903C95C21ECADA9 /* UserProfileQL+Schema.swift in Sources */,
 				BBF0E7299FCA3112E33DC9A9 /* UserProfileQL.swift in Sources */,
+				3E2E3D6DA2E1E08237F32819 /* UserStateQL.swift in Sources */,
+				327E1C6869D9F303B17E8931 /* UserStateQL+Schema.swift in Sources */,
+				3F895ABB9903C95C21ECADA9 /* UserProfileQL+Schema.swift in Sources */,
+				A8FEDEC983DB4FD117DA647E /* LumeState.swift in Sources */,
+				EA2EE1B9030D84D2A3B40939 /* LumeStateQL+Schema.swift in Sources */,
+				9374293E3D51022C1575CA0A /* LumeStateQL.swift in Sources */,
+				17C412312C2C04010083C8A5 /* LumeQL.swift in Sources */,
+				17C412322C2C04010083C8A5 /* LumeQL+Schema.swift in Sources */,
+				E188466D937084ED35174F16 /* TagCosmeticQL+Schema.swift in Sources */,
+				C92B0B009BC7BF6A111D955D /* TagCosmeticQL.swift in Sources */,
+				D11F4137B6798DF23955419B /* TagTrackQL+Schema.swift in Sources */,
+				CEFAA2F3828CCD8993F488FE /* TagTrackQL.swift in Sources */,
+				46766C07B2059F5F53A16CC2 /* UserProfileQL+Schema.swift in Sources */,
+				B9FC60EDB57612A51D275E9B /* UserProfileQL.swift in Sources */,
+				97528BF85CB070A7CC73BACA /* UserStateQL+Schema.swift in Sources */,
+				03A47627954A36C164845027 /* UserStateQL.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -975,7 +1065,7 @@
 /* Begin XCBuildConfiguration section */
 		17A7C2212BD66B57008FED83 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C6FE2FC96BD59F32293721DD /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */;
+			baseConfigurationReference = 84D02CF8016463475C0C172E /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1001,7 +1091,7 @@
 		};
 		17A7C2222BD66B57008FED83 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2771A96D839CC094DCDB39B5 /* Pods-LumenaNotificationAPNAWS.release.xcconfig */;
+			baseConfigurationReference = 9D9AE686476247DC7E95EFDD /* Pods-LumenaNotificationAPNAWS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1148,7 +1238,7 @@
 		};
 		17FFBFB62BD616DC00682EE2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C24FE48FCE939D0AA358D7AA /* Pods-Lumena.debug.xcconfig */;
+			baseConfigurationReference = 347B01243838519F935B254C /* Pods-Lumena.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1189,7 +1279,7 @@
 		};
 		17FFBFB72BD616DC00682EE2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B1F23C36796BB2D6B83E048E /* Pods-Lumena.release.xcconfig */;
+			baseConfigurationReference = E6FC6C84CD2E103E1816C301 /* Pods-Lumena.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

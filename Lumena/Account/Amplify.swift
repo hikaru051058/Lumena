@@ -281,8 +281,17 @@ class AuthenticationManager: ObservableObject {
                 let newProfileSettings = ProfileSettings(from: amplifyAttributes)
                 newProfileSettings.identityID = identityId
                 
+                let newUserStateQL = UserStateQL(UserState: .active, timestamp: Int(Date.timeIntervalSinceReferenceDate), reason: "fetchAuth acc", userprofileqlID: identityId)
+                do {
+                    let message = try await GraphQL.shared.createModel(newUserStateQL)
+                    print(message as Any)
+                } catch {
+                    print("Error in creating UserStateQL: \(error)")
+                }
+                
                 // Save the newly created profile to the database
                 let _ = try await GraphQL.shared.createModel(newProfileSettings.toUserProfileQL())
+                
             }
             
             UserDefaults.standard.set(true, forKey: "isAuthenticated")
@@ -318,8 +327,6 @@ class AuthenticationManager: ObservableObject {
     }
 }
 
-import AWSS3
-
 class S3 {
     
     static let shared = S3()
@@ -330,10 +337,11 @@ class S3 {
     ///   - completion: A callback with the resulting URL or an error.
     
     //MARK: - private
-    func storeData(name: String, data: Data, accessLevel: StorageAccessLevel = .private, progressHandler: @escaping (Double) -> Void, completionHandler: @escaping (Result<String, StorageError>) -> Void) {
-        let options = StorageUploadDataRequest.Options(accessLevel: accessLevel)
+    func storeData(name: String, data: Data, accessLevel: String = "private", progressHandler: @escaping (Double) -> Void, completionHandler: @escaping (Result<String, StorageError>) -> Void) {
+        let path = name
+        let options = StorageUploadDataRequest.Options()
         let uploadTask = Amplify.Storage.uploadData(
-            key: name,
+            key: path,
             data: data,
             options: options
         )
@@ -364,7 +372,7 @@ class S3 {
         }
     }
     
-    func storeDataAsync(name: String, data: Data, accessLevel: StorageAccessLevel = .private, progressHandler: @escaping (Double) -> Void) async throws -> String {
+    func storeDataAsync(name: String, data: Data, accessLevel: String = "private", progressHandler: @escaping (Double) -> Void) async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             // Call the original storeData function inside the continuation.
             self.storeData(name: name, data: data, accessLevel: accessLevel, progressHandler: progressHandler) { result in
@@ -378,11 +386,11 @@ class S3 {
         }
     }
     
-    
-    func retrieveData<T: Decodable>(name: String, access: StorageAccessLevel = .private, dataType: T.Type) async throws -> T? {
-        let options = StorageDownloadDataRequest.Options(accessLevel: access)
+    func retrieveData<T: Decodable>(name: String, accessLevel: String = "private", dataType: T.Type) async throws -> T? {
+        let path = name
+        let options = StorageDownloadDataRequest.Options()
         do {
-            let data = try await Amplify.Storage.downloadData(key: name, options: options).value
+            let data = try await Amplify.Storage.downloadData(key: path, options: options).value
             print("\(String(describing: dataType)) \(name) loaded")
             if dataType == UIImage.self, let image = UIImage(data: data) {
                 return image as? T
@@ -427,13 +435,28 @@ struct APIResponse<T: Decodable>: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         statusCode = try container.decode(Int.self, forKey: .statusCode)
-        let bodyString = try container.decode(String.self, forKey: .body)
-        guard let bodyData = bodyString.data(using: .utf8) else {
-            throw DecodingError.dataCorruptedError(forKey: .body, in: container, debugDescription: "Cannot decode body string to data")
+        
+        // If T is a type that can decode directly from a String, handle it accordingly
+        if T.self == String.self {
+            body = try container.decode(T.self, forKey: .body)
+        } else {
+            let bodyString = try container.decode(String.self, forKey: .body)
+            guard let bodyData = bodyString.data(using: .utf8) else {
+                throw DecodingError.dataCorruptedError(forKey: .body, in: container, debugDescription: "Cannot decode body string to data")
+            }
+            body = try JSONDecoder().decode(T.self, from: bodyData)
         }
-        body = try JSONDecoder().decode(T.self, from: bodyData)
     }
 }
+
+struct APImessageStruct: Decodable {
+    let message: String
+
+    enum CodingKeys: String, CodingKey {
+        case message
+    }
+}
+
 
 
 enum APIError: Error {
@@ -442,7 +465,7 @@ enum APIError: Error {
     case noData
     case badResponse(Int)
     case custom(Error)
-    case decodingError(Error)
+    case decodingError(Error?)
 }
 
 
@@ -624,45 +647,36 @@ class GraphQL {
     }
     
     func fetchSingleReelQL(reelQLId: String) async throws -> Lume {
-        let urlString = "https://sznkw0r5a2.execute-api.ap-northeast-1.amazonaws.com/reel/\(reelQLId)"
-        
-        let apiResponse: APIResponse<String> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
-        
-        guard let body = apiResponse.body else {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No body got returned"])
+        do {
+            guard let lumeQL = try await GraphQL.shared.queryAmplify(for: LumeQL.self, modelID: reelQLId) else {
+                throw NSError(domain: "fetchSingleReelQL", code: 404, userInfo: [NSLocalizedDescriptionKey: "LumeQL not found for ID: \(reelQLId)"])
+            }
+            let lume = Lume(ql: lumeQL)
+            LumeManager.shared.setNewLume(lume)
+            
+            return lume
+            
+        } catch {
+            print("Error in fetchSingleReelQL: [\(reelQLId)] -> \(error)")
+            throw error
         }
-        
-        let decoder = JSONDecoder()
-        guard let reelData = body.data(using: .utf8),
-              let reelQLs = try? decoder.decode([LumeQL].self, from: reelData),
-              let firstReelQL = reelQLs.first else {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid data in response body"])
-        }
-        let lume = Lume(ql: firstReelQL)
-        return lume
     }
     
     func fetchMultipleReelQL(reelQLIds: [String]) async throws -> [Lume] {
-        
-        let idsString = reelQLIds.joined(separator: ",")
-        guard let encodedIdsString = idsString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)else {
-            throw APIError.encodingError
+        var lumes: [Lume] = []
+        for reelQLID in reelQLIds {
+            do {
+                guard let lumeQL = try await GraphQL.shared.queryAmplify(for: LumeQL.self, modelID: reelQLID) else {
+                    print("Error in fetchMultipleReelQL: At Guard")
+                    continue
+                }
+                let lume = Lume(ql: lumeQL)
+                lumes.append(lume)
+                LumeManager.shared.setNewLume(lume)
+            } catch {
+                print("Error in fetchMultipleReelQL: [\(reelQLID)] -> \(error)")
+            }
         }
-        
-        let urlString = "https://sznkw0r5a2.execute-api.ap-northeast-1.amazonaws.com/reel?ids=\(encodedIdsString)"
-        
-        let apiResponse: APIResponse<String> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
-        
-        guard let body = apiResponse.body else {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No body got returned"])
-        }
-        
-        let decoder = JSONDecoder()
-        guard let reelData = body.data(using: .utf8),
-              let reelQLs = try? decoder.decode([LumeQL].self, from: reelData) else {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid data in response body"])
-        }
-        let lumes = reelQLs.map {Lume(ql: $0)}
         return lumes
     }
     
@@ -678,7 +692,6 @@ class GraphQL {
         guard let body = apiResponse.body else {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No body got returned"])
         }
-        
         return body
     }
     

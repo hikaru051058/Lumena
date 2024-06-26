@@ -113,7 +113,7 @@ struct SkinSetting: View {
                                     Divider()
                                         .frame(width: selectedOption == "感度" ? 0.0 :
                                                 selectedOption == "日光" ? geometry.size.width/2 :
-                                                selectedOption == "種類" ? geometry.size.width-10 : 0.0
+                                                selectedOption == "肌種類" ? geometry.size.width-10 : 0.0
                                                , height: 3)
                                         .overlay(Color(red: 0.486, green: 0.629, blue: 0.53))
                                     
@@ -137,7 +137,7 @@ struct SkinSetting: View {
                         Text(
                             selectedOption == "感度" ? "肌の感度" :
                             selectedOption == "日光" ? "一日に日光を浴びる時間" :
-                            selectedOption == "種類" ? "肌質" : "肌の敏感度"
+                            selectedOption == "肌種類" ? "肌質" : "肌の敏感度"
                             )
                         .font(.title3)
                         .fontWeight(.bold)

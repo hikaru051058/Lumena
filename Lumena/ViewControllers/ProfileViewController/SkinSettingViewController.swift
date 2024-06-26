@@ -14,6 +14,7 @@ class SkinSettingViewController: UIViewController {
     
     private var skinSettingVariables: [Int] = [0, 0, 0]
     
+    // false = jump to main view , true = setting
     private var mainOrSetting: Bool
     
     // Initializer to receive user data

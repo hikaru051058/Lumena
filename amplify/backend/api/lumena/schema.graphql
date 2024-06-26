@@ -1,3 +1,36 @@
+enum LumeState {
+  VISIBLE
+  HIDDEN
+  DELETED
+  REPORTED
+}
+
+type LumeStateQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  state: LumeState
+  timestamp: AWSTimestamp
+  reason: String
+  changedBy: String
+  lumeqlID: ID! @index(name: "byLumeQL")
+}
+
+type UserStateQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  UserState: AccountState
+  timestamp: AWSTimestamp
+  reason: String
+  changedBy: String
+  userprofileqlID: String
+}
+
+enum AccountState {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DELETED
+  BANNED
+}
+
 enum FollowStatus {
   PENDING
   APPROVED
@@ -67,11 +100,12 @@ type LumeQL @model @auth(rules: [{allow: public}]) {
   tagMusic: TagTrackQL
   description: String
   userprofileqlID: ID! @index(name: "byUserProfileQL")
-  userprofile: UserProfileQL @belongsTo(fields: ["userprofileqlID"])
   likeCount: Int
   commentCount: Int
   hashTags: [String]
   zipURL: String
+  lumeState: [LumeStateQL] @hasMany(indexName: "byLumeQL", fields: ["id"])
+  lumeAuth: Boolean
 }
 
 type UserProfileQL @model @auth(rules: [{allow: public}]) {
@@ -93,8 +127,9 @@ type UserProfileQL @model @auth(rules: [{allow: public}]) {
   followerCount: Int
   followingCount: Int
   bio: String
-  zipURL: String
   following: [FollowQL] @hasMany(indexName: "byUserProfileQL", fields: ["id"])
   postCount: Int
+  profileImageLastModified: Int
+  backgroundImageLastModified: Int
 }
-  
+ 

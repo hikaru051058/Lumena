@@ -5,555 +5,45 @@
 //  Created by 島田晃 on 2023/07/18.
 //
 
+
+private func setupDefaultImageAppearance(imageView: UIImageView, text: String, icon: String) {
+        imageView.subviews.forEach { $0.removeFromSuperview() } // Always clear previous subviews first
+
+        if imageView.image == nil {
+            imageView.backgroundColor = .lightGray
+            let iconImage = UIImage(systemName: icon)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+            let iconImageView = UIImageView(image: iconImage)
+            iconImageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let label = UILabel()
+            label.text = text
+            label.textColor = .white
+            label.font = UIFont.systemFont(ofSize: 16)
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
+            let stackView = UIStackView(arrangedSubviews: [iconImageView, label])
+            stackView.axis = .vertical
+            stackView.alignment = .center
+            stackView.spacing = 8
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            
+            imageView.addSubview(stackView)
+            NSLayoutConstraint.activate([
+                stackView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+                stackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
+            ])
+        } else {
+            imageView.backgroundColor = .clear // Optionally clear the background color if not needed
+        }
+    }
+
+
 import SwiftUI
 import _PhotosUI_SwiftUI
 import Amplify
 import AWSS3
 import CoreImage
 import ColorKit
-
-struct Profile: View {
-    
-    @State private var headerHeight: CGFloat = 60
-    @State private var tabBarHeight: CGFloat = 60
-    let toolBarButtonsHeight: CGFloat = 50
-    
-    @State var tabIndex = 0
-    
-    let tabs: [Tab] = [
-        .init(title: "投稿"),
-        //.init(title: "保存"),
-        .init(title: "ライク"),
-    ]
-    
-    @State private var tabBarY: CGFloat = 62
-    @State private var tabButtonOpacity: Float = 1.0
-
-    @State var profile: ProfileSettings = ProfileSettings()
-    
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
-    
-    var onNavigate: () -> Void = {}
-    var onNavigateSkinSetting: ([Int], Bool) -> Void = { _, _ in}
-    
-    var body: some View {
-        
-        ZStack {
-            
-            Color.clear
-                .onAppear{
-                    Task {
-                        do {
-                            if let userIdentityID = GI.shared.identityID {
-                                profile = try await ProfileManager.shared.getProfile(withID: userIdentityID)
-                            }
-                        } catch {
-                            print(error)
-                        }
-                    }
-                }
-            
-            backgroundView()
-                .opacity((tabBarY-headerHeight) <= 1 ? 0 : 1)
-            
-            
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    header
-                    bottom
-                }
-            }
-            .animation(.easeOut(duration: 1), value: tabIndex)
-            .onPreferenceChange(TabBarPreferenceKey.self) { y in
-                guard let y = y, y > 0 else { return }
-                
-                self.tabBarY = y
-                
-                if (tabBarY-headerHeight) < ((UIScreen.main.bounds.height/2)-headerHeight) {
-                    
-                    let scrollFraction = CGFloat((tabBarY-headerHeight)/((UIScreen.main.bounds.height/2)-headerHeight))
-                    
-                    tabButtonOpacity = Float(scrollFraction)
-                    
-                    //tabBarHeight = 50 + ((1-scrollFraction) * 10)
-                    
-                } else {
-                    tabButtonOpacity = 1.0
-                    
-                    tabBarHeight = 60
-                }
-            }
-            .ignoresSafeArea()
-            
-            
-            VStack{
-                toolBarButtons
-                Spacer()
-            }
-        }
-        .navigationBarHidden(true)
-    }
-    
-    private var header: some View {
-    
-        VStack {
-            
-            Spacer()
-            
-            userStats
-        }
-        .frame(height: UIScreen.main.bounds.height)
-    }
-    
-    private var bottom: some View {
-        LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
-            Section {
-                pager
-            } header: {
-                tabBar
-            }
-        }
-    }
-    
-    private var tabBar: some View {
-        GeometryReader { geometry in
-            ZStack {
-                
-                HStack(alignment: .bottom, spacing: 0) {
-                 
-                    VStack{
-                        
-                        Spacer()
-                        
-                        Tabs(tabs: tabs, geoWidth: UIScreen.main.bounds.width, selectedTab: $tabIndex)
-                            .padding(.horizontal, 50)
-                    }
-                 
-                }
-                .frame(maxWidth: .infinity)
-                //.frame(height: tabBarHeight+CGFloat(1-tabButtonOpacity)*10)
-                .background(colorScheme == .dark ? Color.black : Color.white)
-                .onAppear {
-                    self.tabBarY = geometry.frame(in: .global).minY
-                }
-                .preference(key: TabBarPreferenceKey.self,value: geometry.frame(in: .global).minY)
-                
-            }
-//            .padding(.top, tabBarHeight)
-        }
-        .frame(height: tabBarHeight)
-    }
-
-    private func tab(title: String, at index: Int) -> some View {
-        Button {
-            withAnimation {
-                tabIndex = index
-            }
-        } label: {
-            
-            VStack{
-                
-                Spacer()
-                
-                Text(title)
-                    .foregroundColor(Color.primary)
-                    .frame(width: UIScreen.main.bounds.width / 2)
-            }
-            .padding(.bottom)
-        }
-    }
-
-    private var toolBarButtons: some View {
-        
-        HStack{
-            
-            Button(action: {
-                
-                presentationMode.wrappedValue.dismiss()
-            }, label: {
-                
-                Image(systemName: "chevron.backward")
-                    .font(Font.system(size: 25).weight(.bold))
-                    .foregroundColor(interpolatedColor(opacity: colorScheme == .dark ? 1 : tabButtonOpacity))
-                    .padding(.leading)
-                
-            })
-            
-            Spacer(minLength: 0)
-            
-            
-            if profile.lockState {
-                NavigationLink(destination:
-                                FollowRequest()
-                ) {
-                    Image(systemName: "person.fill.checkmark")
-                        .font(Font.system(size: 25).weight(.bold))
-                        .foregroundColor(interpolatedColor(opacity: colorScheme == .dark ? 1 : tabButtonOpacity).opacity(Double(tabButtonOpacity)))
-                        .padding(.leading)
-                }
-                .buttonStyle(PlainButtonStyle())
-                //.background(colorScheme == .dark ? Color.black.opacity(Double(1 - tabButtonOpacity)) : Color.white.opacity(Double(1 - tabButtonOpacity)))
-            }
-            
-//            NavigationLink(destination:
-//                            UserSetting(profile: $profile, onNavigate: onNavigate, onNavigateSkinSetting: onNavigateSkinSetting)
-//            ) {
-//                Image(systemName: "gear")
-//                    .font(Font.system(size: 25).weight(.bold))
-//                    .foregroundColor(interpolatedColor(opacity: colorScheme == .dark ? 1 : tabButtonOpacity))
-//                
-//            }
-//            .buttonStyle(PlainButtonStyle())
-        }
-        .padding(.top)
-        .padding(.horizontal)
-        .frame(height: toolBarButtonsHeight)
-        //.background(colorScheme == .dark ? Color.black.opacity(Double(1 - tabButtonOpacity)) : Color.white.opacity(Double(1 - tabButtonOpacity)))
-
-    }
-    
-    func interpolatedColor(opacity: Float) -> Color {
-        // Interpolating between white and black based on opacity
-        //let whiteIntensity = 1 - opacity
-        let blackIntensity = opacity
-        return Color(red: Double(blackIntensity), green: Double(blackIntensity), blue: Double(blackIntensity))
-    }
-    
-    
-    @State private var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 3)
-    
-    @State var userLume: [Lume] = []
-    @State var likeLume: [Lume] = []
-    
-    private var userGrid: some View {
-        ScrollView {
-            if userLume.isEmpty {
-                Text("No Luma Available")
-                    .padding(.vertical, 150)
-            } else {
-                LazyVGrid(columns: columns, spacing: 2) {
-                    ForEach(userLume, id: \.id) { reel in
-                        NavigationLink(destination: profilereelpage(reels: $userLume, reelLocation: reel.id)) {
-                            if let thumbnail = reel.thumbnail {
-                                Image(uiImage: thumbnail)
-                                    .centerCropped()
-                                    .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 5)
-                            } else {
-                                ShimmerEffectBox()
-                                    .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 5)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .onAppear {
-            userLume = profile.returnUserLumes()
-        }
-    }
-
-    
-    private var likeGrid: some View {
-        
-        ScrollView {
-            if likeLume.isEmpty {
-                
-                Text("No Luma Available")
-                    .padding(.vertical, 150)
-                
-            } else {
-                LazyVGrid(columns: columns, spacing: 2) {
-                    ForEach(likeLume, id: \.id) { reel in
-                        NavigationLink(destination: profilereelpage(reels: $likeLume, reelLocation: reel.id)) {
-                            if let thumbnail = reel.thumbnail {
-                                Image(uiImage: thumbnail)
-                                    .centerCropped()
-                                    .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 5)
-                            } else {
-                                ShimmerEffectBox()
-                                    .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 5)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .onAppear {
-            likeLume = profile.returnUserLikedLumes()
-        }
-    }
-
-    private var pager: some View {
-        
-        TabView(selection: $tabIndex) {
-            
-            userGrid
-            .tag(0)
-            
-            likeGrid
-            .tag(1)
-        }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        .frame(minHeight: UIScreen.main.bounds.height - (tabBarHeight + headerHeight), alignment: .top)
-        .background(colorScheme == .dark ? Color.black : Color.white)
-    }
-    
-    @State private var descriptionHeight: Double = 0.65
-    
-    @State private var userProfileIDS: [String] = []
-    
-    private var userStats: some View {
-        
-        ZStack{
-            VStack{
-                
-                TopRoundedRectangle(radius: 40)
-                    .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
-                    .ignoresSafeArea()
-            }
-            .padding(.top, 60)
-            
-            
-            VStack{
-                
-                profileImageView()
-                
-                Group {
-                    Text((profile.preferredUsername.isEmpty ) ? " " : "@\(profile.preferredUsername )")
-                        .font(.title2)
-                    
-                    Text((profile.givenName.isEmpty ) ?  " " : "\(profile.givenName)")
-                        .font(.footnote)
-                }
-                .fontWeight(.bold)
-                .background(colorScheme == .dark ? Color.black : Color.white)
-                
-                
-                Spacer()
-                
-                VStack{
-                    
-                    ZStack{
-                        
-                        HStack{
-                            //NavigationLink(destination: userFollowList(selectedTab: 0, $profile)){
-                                VStack{
-                                    Text("\(formatNumber(profile.followerCount))")
-                                        .foregroundColor(Color(red: 0.723, green: 0.88, blue: 0.825))
-                                        .font(.title2)
-                                    
-                                    
-                                    Text("フォロワー")
-                                        .font(.footnote)
-                                        .foregroundColor(Color.primary)
-                                }
-                                .frame(width: UIScreen.main.bounds.width/4)
-                            //}
-                            
-                            Spacer()
-                            
-                            
-                            //NavigationLink(destination: userFollowList(selectedTab: 1, $profile)){
-                                VStack{
-                                    Text("\(formatNumber(profile.followingCount))")
-                                        .foregroundColor(Color(red: 0.552, green: 0.724, blue: 0.831))
-                                        .font(.title2)
-                                    
-                                    Text("フォロー中")
-                                        .font(.footnote)
-                                        .foregroundColor(Color.primary)
-                                }
-                                .frame(width: UIScreen.main.bounds.width/4)
-                            //}
-                            
-                            Spacer()
-                            
-                            VStack{
-                                Text("\(profile.postContents.count)")
-                                    .foregroundColor(Color(red: 0.946, green: 0.76, blue: 0.839))
-                                    .font(.title2)
-                                
-                                Text("投稿数")
-                                    .font(.footnote)
-                            }
-                            .frame(width: UIScreen.main.bounds.width/4)
-                        }
-                        .fontWeight(.bold)
-                        .padding(.horizontal, 30)
-                        .padding(.bottom)
-                        
-                    }
-                    
-                    
-                    
-                    if !profile.bio.isEmpty {
-                        HStack{
-                            Spacer()
-                            
-                            Text(profile.bio)
-                                .frame(maxHeight: 200)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.all, 15)
-                                .background(Color.primary.opacity(0.1))
-                                .foregroundColor(Color.primary)
-                                .cornerRadius(15)
-                                .multilineTextAlignment(.leading)
-                            
-                            Spacer()
-                        }
-                        .onAppear{
-                            
-                            descriptionHeight = 0.6
-                        }
-                        .opacity(Double(tabButtonOpacity))
-                    } else {
-                        
-                        Color.clear
-                            .onAppear{
-                                descriptionHeight = 0.65
-                            }
-                    }
-                    
-                }
-                .background(colorScheme == .dark ? Color.black : Color.white)
-                
-                if !profile.bio.isEmpty {
-                    Spacer()
-                }
-            }
-            
-        }
-        .ignoresSafeArea()
-        .padding(.top, UIScreen.main.bounds.height*descriptionHeight)
-    }
-    
-    
-    func profileImageView() -> some View {
-        
-        ZStack{
-            
-            if let profileImage = profile.profileImage?.image {
-                Image(uiImage: profileImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100) // Adjust the size as needed
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(colorScheme == .dark ? Color.black : Color.white, lineWidth: 4) // Adjust the border width as needed
-                    )
-                    .onAppear{
-                        BackgroundBlurImages.append(profileImage)
-                        BackgroundBlurPage = BackgroundBlurImages.count
-                    }
-                    .onDisappear{
-                        if !BackgroundBlurImages.isEmpty {
-                            BackgroundBlurImages.removeAll()
-                            BackgroundBlurPage = BackgroundBlurImages.count
-                        }
-                    }
-                
-            } else {
-                Image(systemName: "person.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .padding()
-                    .frame(width: 100, height: 100) // Adjust the size as needed
-                    .clipShape(Circle())
-                    .foregroundColor(Color.secondary)
-                    .background(
-                        Circle()
-                            .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
-                    )
-                    .onAppear{
-                        profile.profileImage?.loadAgain()
-                    }
-            }
-        }
-    }
-    
-    @State var BackgroundBlurImages: [UIImage] = []
-    @State var BackgroundBlurPage: Int = 0
-    
-    @State var colors: [(id: Int, color: UIColor, frequency: CGFloat)] = []
-    @State var gradientModel = AnimatedGradient.Model(colors: [])
-    
-    func backgroundView() -> some View {
-        
-        ZStack{
-            if let backgroundImage = profile.backgroundImage?.image {
-                Image(uiImage: backgroundImage)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                
-            }
-        }
-        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
-        .background(GradientEffectView($gradientModel).frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-        .onAppear{
-            updateColors()
-            profile.backgroundImage?.loadAgain()
-        }
-        .ignoresSafeArea()
-        .onChange(of: BackgroundBlurPage) { _ in
-            updateColors()
-        }
-    }
-    
-    func formatNumber(_ num: Int) -> String {
-        let thousand = 1_000
-        let million = 1_000_000
-        
-        if num < thousand {
-            return "\(num)"
-        } else if num < million {
-            return String(format: "%.1fk", Double(num) / Double(thousand))
-        } else {
-            return String(format: "%.1fm", Double(num) / Double(million))
-        }
-    }
-}
-
-private extension Profile {
-    
-    var image: UIImage? {
-        if !BackgroundBlurImages.isEmpty {
-            return BackgroundBlurImages[BackgroundBlurPage % BackgroundBlurImages.count].convertToRGBColorspace()
-        } else {
-            return nil
-        }
-    }
-    
-    func updateColors() {
-        if let validImage = image {
-            guard let dominantColors = try? validImage.dominantColorFrequencies(with: .high) else { return }
-            
-            colors = dominantColors.prefix(3).enumerated().map { ($0.offset, $0.element.color, $0.element.frequency) }
-            
-            let schemeColor = UIColor(colorScheme == .light ? .white : .black)
-            colors.append((id: 3, color: schemeColor, frequency: 1.0))
-            
-        } else {
-            // Default colors when there are no valid images
-            let defaultColors = [
-                UIColor(red: 0.723, green: 0.88, blue: 0.825, alpha: 1.0),
-                UIColor(red: 0.552, green: 0.724, blue: 0.831, alpha: 1.0),
-                UIColor(red: 0.946, green: 0.76, blue: 0.839, alpha: 1.0),
-                UIColor(colorScheme == .dark ? .black : .white)
-            ]
-            
-            colors = defaultColors.enumerated().map { (id: $0.offset, color: $0.element, frequency: 1.0) }
-        }
-        
-        DispatchQueue.main.async {
-            withAnimation(.linear.speed(0.7)) {
-                gradientModel.colors = colors.map { Color(uiColor: $0.color) }
-            }
-        }
-    }
-}
 
 extension UIImage {
     func convertToRGBColorspace() -> UIImage? {
@@ -573,8 +63,6 @@ extension UIImage {
         return UIImage(cgImage: convertedImage)
     }
 }
-
-
 
 struct profilereelpage: View {
     
@@ -1624,7 +1112,9 @@ struct OtherUserProfile: View {
             }
         }
         .onAppear{
-            userLuma = profile.returnUserLumes()
+            Task {
+                userLuma = await profile.returnUserLumes()
+            }
         }
         .animation(.easeOut, value: tabIndex)
         .frame(width: UIScreen.main.bounds.width)

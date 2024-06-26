@@ -71,6 +71,13 @@ extension SideButtonsViewController {
         guard let profileView = sideButtonProfileHost?.view else { return }
         profileView.translatesAutoresizingMaskIntoConstraints = false
         profileView.backgroundColor = UIColor(Color.clear)
+        
+        profileView.layer.shadowColor = UIColor.black.cgColor
+        profileView.layer.shadowOpacity = 0.25
+        profileView.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        profileView.layer.shadowRadius = 0.25
+        profileView.layer.masksToBounds = false
+        
         self.addChild(sideButtonProfileHost!)
         view.addSubview(profileView)
         
@@ -90,6 +97,13 @@ extension SideButtonsViewController {
         likeButton = HeartButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         likeButton.translatesAutoresizingMaskIntoConstraints = false
         likeButton.symbolSize = 36
+        
+        likeButton.layer.shadowColor = UIColor.black.cgColor
+        likeButton.layer.shadowOpacity = 0.25
+        likeButton.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        likeButton.layer.shadowRadius = 0.25
+        likeButton.layer.masksToBounds = false
+        
         view.addSubview(likeButton)
         
         NSLayoutConstraint.activate([
@@ -117,9 +131,9 @@ extension SideButtonsViewController {
         
         // Setting shadow properties
         likeCountLabel.layer.shadowColor = UIColor.black.cgColor  // Shadow color
-        likeCountLabel.layer.shadowOffset = CGSize(width: 0, height: 1)  // Shadow offset
-        likeCountLabel.layer.shadowOpacity = 0.5  // Shadow opacity
-        likeCountLabel.layer.shadowRadius = 1  // Shadow blur radius
+        likeCountLabel.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        likeCountLabel.layer.shadowOpacity = 0.25  // Shadow opacity
+        likeCountLabel.layer.shadowRadius = 0.25
         
         likeCountLabel.text = formatNumber(lume.likeCnt)
         
@@ -158,6 +172,13 @@ extension SideButtonsViewController {
         commentButton.translatesAutoresizingMaskIntoConstraints = false
         commentButton.setImage(UIImage(systemName: "bubble.right.fill"), for: .normal)
         commentButton.tintColor = .white
+        
+        commentButton.layer.shadowColor = UIColor.black.cgColor
+        commentButton.layer.shadowOpacity = 0.25
+        commentButton.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        commentButton.layer.shadowRadius = 0.25
+        commentButton.layer.masksToBounds = false
+        
         view.addSubview(commentButton)
         
         commentButton.translatesAutoresizingMaskIntoConstraints = false
@@ -188,6 +209,13 @@ extension SideButtonsViewController {
         // Cosmetics Button
         cosmeticsButton.setImage(UIImage(systemName: "cross.vial", withConfiguration: buttonConfig), for: .normal)
         cosmeticsButton.tintColor = .white
+        
+        cosmeticsButton.layer.shadowColor = UIColor.black.cgColor
+        cosmeticsButton.layer.shadowOpacity = 0.25
+        cosmeticsButton.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        cosmeticsButton.layer.shadowRadius = 0.25
+        cosmeticsButton.layer.masksToBounds = false
+        
         view.addSubview(cosmeticsButton)
         
         cosmeticsButton.translatesAutoresizingMaskIntoConstraints = false
@@ -232,6 +260,13 @@ extension SideButtonsViewController {
     private func setupFurtherActionButton() {
         furtherActionButton.setImage(UIImage(systemName: "ellipsis", withConfiguration: buttonConfig), for: .normal)
         furtherActionButton.tintColor = .white
+        
+        furtherActionButton.layer.shadowColor = UIColor.black.cgColor
+        furtherActionButton.layer.shadowOpacity = 0.25
+        furtherActionButton.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        furtherActionButton.layer.shadowRadius = 0.25
+        furtherActionButton.layer.masksToBounds = false
+        
         view.addSubview(furtherActionButton)
 
         furtherActionButton.translatesAutoresizingMaskIntoConstraints = false
@@ -1100,8 +1135,8 @@ class BottomIslandViewController: UIViewController {
     }
     
     func navigateToProfile() {
-        //let profileVC = ProfileViewController()
-        let profileVC = TwitterParallaxViewController(userIdentityID: GI.shared.identityID!)
+        let userProfile = ProfileManager.shared.getProfile(withID: GI.shared.identityID!)
+        let profileVC = TwitterParallaxViewController(userIdentityID: GI.shared.identityID!, profile: userProfile)
         navigationController?.pushViewController(profileVC, animated: true)
     }
 }

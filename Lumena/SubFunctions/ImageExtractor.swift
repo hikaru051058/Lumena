@@ -314,7 +314,7 @@ extension ImageExtractorViewModel {
                 }
             } else if asset.mediaType == .video {
                 extractVideoData(asset: asset) { player in
-                    var reelVideo = LumeVideo(player: player)
+                    let reelVideo = LumeVideo(player: player)
                     reelVideo.mute() // Mute by default, change as needed
                     contents.append(.video(reelVideo))
                     dispatchGroup.leave()

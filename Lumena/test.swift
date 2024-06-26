@@ -4340,6 +4340,8 @@ import SwiftUI
 
 import UIKit
 
+/*
+
 class HorizontalTabViewController: UIViewController, UIPageViewControllerDataSource {
     
     var pageViewController: UIPageViewController!
@@ -4397,9 +4399,6 @@ class HorizontalTabViewController: UIViewController, UIPageViewControllerDataSou
         return viewControllers[nextIndex]
     }
 }
-
-
-
 
 class VerticalTabViewController: UIViewController, UIScrollViewDelegate {
     
@@ -4462,7 +4461,7 @@ class VerticalTabViewController: UIViewController, UIScrollViewDelegate {
     
     private func addTabs() {
         let titles = ["Tab 1", "Tab 2", "Tab 3"] // Example tabs
-        for title in titles {
+        for _ in titles {
             let contentView = UIView()
             contentView.backgroundColor = UIColor.random() // Just for distinct visual difference
             contentStackView.addArrangedSubview(contentView)
@@ -4512,7 +4511,7 @@ class VerticalTabViewController: UIViewController, UIScrollViewDelegate {
     }
 }
  
-
+*/
 extension UIColor {
     static func random() -> UIColor {
         return UIColor(

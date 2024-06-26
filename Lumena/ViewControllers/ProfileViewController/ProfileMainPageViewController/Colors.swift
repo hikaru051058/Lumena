@@ -29,20 +29,41 @@ extension UIColor {
         return UIColor(red: 0.452, green: 0.634, blue: 0.521, alpha: 1)
     }
     
+    static var arinLightGreen: UIColor   {
+        return UIColor(red: 0.863, green: 0.948, blue: 0.92, alpha: 1)
+    }
+    
+    static var aginGreenColorScheme: UIColor {
+        return UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ? .arinDarkGreen : .arinLightGreen
+        }
+    }
+    
     static var twitterGray: UIColor {
         return UIColor.gray
     }
-    
-    // Dynamic colors for light and dark mode
+}
+
+extension UIColor {
     static var primary: UIColor {
         return UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? .white : .black
+            traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
         }
     }
-    
+
     static var secondary: UIColor {
         return UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? .lightGray : .darkGray
+            traitCollection.userInterfaceStyle == .dark ? UIColor.lightGray : UIColor.darkGray
         }
     }
+}
+
+extension UIColor{
+    static let background: UIColor  = {
+        if #available(iOS 13.0, *) {
+            return UIColor.systemBackground
+        } else {
+            return UIColor.white
+        }
+    }()
 }

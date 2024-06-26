@@ -14,22 +14,22 @@ import AVKit
 import AVFoundation
 
 
+
+enum LumeMainPageTabRep: String {
+    case recommended = "おすすめ"
+    case following = "フォロー"
+}
+
 // MARK: - Horizontal Pagging of Vertical Lumes viewcontroller
 class LumeHorizontalTabViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, TabBarDelegate {
     
     var pageViewController: UIPageViewController!
     var viewControllers: [UIViewController] = []
-    
-    
     private var bottomIslandViewController: BottomIslandViewController!
-    
     var tabBarViewController: TabBarViewController!
-    private var tabBarNames: [String] = ["おすすめ", "フォロー"]
-    
-    
+    private var tabBarNames: [String] = [LumeMainPageTabRep.following.rawValue, LumeMainPageTabRep.recommended.rawValue]
     private var uploadProgressBarViewController: UploadProgressBarViewController!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupHorizontalTab()
@@ -38,6 +38,10 @@ class LumeHorizontalTabViewController: UIViewController, UIPageViewControllerDat
         setupUploadProgressBar()
         
         pageViewController.delegate = self
+        
+//        if let scrollView = pageViewController.view.subviews.compactMap({ $0 as? UIScrollView }).first {
+//            scrollView.delegate = self
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,6 +51,7 @@ class LumeHorizontalTabViewController: UIViewController, UIPageViewControllerDat
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        navigationItem.hidesBackButton = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -136,6 +141,28 @@ class LumeHorizontalTabViewController: UIViewController, UIPageViewControllerDat
         }
         return viewControllers[nextIndex]
     }
+    
+    // MARK: - UIScrollViewDelegate
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        // Check if the scroll is horizontal
+//        if scrollView.contentOffset.x != 0 {
+//            // Shrink view while scrolling
+//            UIView.animate(withDuration: 0.001) {
+//                for viewController in self.viewControllers {
+//                    viewController.view.transform = CGAffineTransform(scaleX: 0.99, y: 0.99)
+//                }
+//            }
+//        }
+//    }
+//
+//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+//        // Restore original size after scrolling ends
+//        UIView.animate(withDuration: 0.05) {
+//            for viewController in self.viewControllers {
+//                viewController.view.transform = CGAffineTransform.identity
+//            }
+//        }
+//    }
 }
 
 extension LumeHorizontalTabViewController {
@@ -199,9 +226,7 @@ extension LumeHorizontalTabViewController {
 // MARK: ^-
 
 
-
 // MARK: - Vertical Lumes viewcontroller
-
 class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     
     var scrollView: UIScrollView!
@@ -283,10 +308,12 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
             contentStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
         
-        refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(refreshAction), for: .valueChanged)
-        scrollView.addSubview(refreshControl)
-        scrollView.refreshControl = refreshControl
+        if loadAutomatically {
+            refreshControl = UIRefreshControl()
+            refreshControl.addTarget(self, action: #selector(refreshAction), for: .valueChanged)
+            scrollView.addSubview(refreshControl)
+            scrollView.refreshControl = refreshControl
+        }
         
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.delegate = self
@@ -481,7 +508,6 @@ extension LumeVerticalInfiniteScrollViewController {
 }
 
 
-
 // MARK: ^-
 
 
@@ -522,6 +548,16 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     private var doubleTapGestureRecognizer: UITapGestureRecognizer!
     
     
+    private var lumeAuthenticityView: UIView!
+    
+    private var lumeAuthenticityTitleStack: UIStackView!
+    private var lumeAuthenticityTitleIcon: UIImageView!
+    private var lumeAuthenticityTitleText: UILabel!
+    
+    private var lumeAuthenticityMessage: UILabel!
+    
+    private var lumeAuthenticityViewButton: UIButton!
+    
     init(lume: Lume, currentLume: UUID, mute: Bool) {
         self.lume = lume
         self.currentLume = currentLume
@@ -544,6 +580,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
         setupFetchUsername()
         setupSideButtonsViewController()
         setupPageIndicator()
+        setupLumeAuthenticity()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -552,6 +589,11 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        toggleLumeAuthView(shouldAppear: false)
     }
     
     
@@ -619,8 +661,137 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
             invisibleRectangleRight.widthAnchor.constraint(equalToConstant: 60)
         ])
     }
+    
+    private func setupLumeAuthenticity() {
+        // Main container view
+        let cornerRadius: CGFloat = 30
+        lumeAuthenticityView = UIView()
+        lumeAuthenticityView.backgroundColor = .clear
+        lumeAuthenticityView.layer.cornerRadius = cornerRadius
+        lumeAuthenticityView.layer.masksToBounds = true
+        lumeAuthenticityView.alpha = 0
+        lumeAuthenticityView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8) // Initially scaled down
+        
+        // Visual effect view for systemThinMaterial background
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.layer.cornerRadius = cornerRadius
+        blurEffectView.layer.masksToBounds = true
+        lumeAuthenticityView.addSubview(blurEffectView)
+        
+        view.addSubview(lumeAuthenticityView)
+        
+        lumeAuthenticityView.translatesAutoresizingMaskIntoConstraints = false
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            lumeAuthenticityView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            lumeAuthenticityView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            lumeAuthenticityView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            
+            blurEffectView.topAnchor.constraint(equalTo: lumeAuthenticityView.topAnchor),
+            blurEffectView.leadingAnchor.constraint(equalTo: lumeAuthenticityView.leadingAnchor),
+            blurEffectView.trailingAnchor.constraint(equalTo: lumeAuthenticityView.trailingAnchor),
+            blurEffectView.bottomAnchor.constraint(equalTo: lumeAuthenticityView.bottomAnchor),
+        ])
+        
+        // Title Stack
+        lumeAuthenticityTitleStack = UIStackView()
+        lumeAuthenticityTitleStack.axis = .horizontal
+        lumeAuthenticityTitleStack.alignment = .center
+        lumeAuthenticityTitleStack.distribution = .equalSpacing
+        lumeAuthenticityTitleStack.spacing = 0
+        lumeAuthenticityTitleStack.translatesAutoresizingMaskIntoConstraints = false
+        lumeAuthenticityView.addSubview(lumeAuthenticityTitleStack)
+        
+        lumeAuthenticityTitleIcon = UIImageView()
+        if let image = UIImage(systemName: "video.fill.badge.checkmark") {
+            //checkmark.seal.fill
+            lumeAuthenticityTitleIcon.image = image
+            lumeAuthenticityTitleIcon.tintColor = .white
+            lumeAuthenticityTitleIcon.contentMode = .scaleAspectFit
+        }
+        lumeAuthenticityTitleStack.addArrangedSubview(lumeAuthenticityTitleIcon)
 
+        // Set the size of the icon to match the font size of the text
+        let fontSize: CGFloat = 22.0
+        lumeAuthenticityTitleIcon.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            lumeAuthenticityTitleIcon.widthAnchor.constraint(equalToConstant: fontSize + 5),
+            lumeAuthenticityTitleIcon.heightAnchor.constraint(equalToConstant: fontSize + 5)
+        ])
 
+        lumeAuthenticityTitleText = UILabel()
+        lumeAuthenticityTitleText.text = "Video Verification"
+        lumeAuthenticityTitleText.textColor = .white
+        lumeAuthenticityTitleText.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
+        lumeAuthenticityTitleText.textAlignment = .center
+        lumeAuthenticityTitleText.translatesAutoresizingMaskIntoConstraints = false
+        lumeAuthenticityTitleStack.addArrangedSubview(lumeAuthenticityTitleText)
+
+        // Message Label
+        lumeAuthenticityMessage = UILabel()
+        lumeAuthenticityMessage.text = "This icon confirms that the content was filmed or recorded on Lumena without using any editing software, filters, or modifications"
+        lumeAuthenticityMessage.textColor = .white
+        lumeAuthenticityMessage.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        lumeAuthenticityMessage.numberOfLines = 0
+        lumeAuthenticityMessage.textAlignment = .center
+        lumeAuthenticityMessage.translatesAutoresizingMaskIntoConstraints = false
+        lumeAuthenticityView.addSubview(lumeAuthenticityMessage)
+        
+        // Constraints for title stack and message label
+        NSLayoutConstraint.activate([
+            lumeAuthenticityTitleStack.topAnchor.constraint(equalTo: lumeAuthenticityView.topAnchor, constant: 16),
+            lumeAuthenticityTitleStack.leadingAnchor.constraint(equalTo: lumeAuthenticityView.leadingAnchor, constant: 48),
+            lumeAuthenticityTitleStack.trailingAnchor.constraint(equalTo: lumeAuthenticityView.trailingAnchor, constant: -48),
+            
+            lumeAuthenticityMessage.topAnchor.constraint(equalTo: lumeAuthenticityTitleStack.bottomAnchor, constant: 16),
+            lumeAuthenticityMessage.leadingAnchor.constraint(equalTo: lumeAuthenticityView.leadingAnchor, constant: 16),
+            lumeAuthenticityMessage.trailingAnchor.constraint(equalTo: lumeAuthenticityView.trailingAnchor, constant: -16),
+            lumeAuthenticityMessage.bottomAnchor.constraint(equalTo: lumeAuthenticityView.bottomAnchor, constant: -16),
+        ])
+        
+        let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
+        
+        lumeAuthenticityViewButton = createButton(action: #selector(lumeAuthButtonTapped), imageName: "checkmark.seal.fill", tintColor: .white, buttonImageConfig: buttonImageConfig)
+        
+        view.addSubview(lumeAuthenticityViewButton)
+        
+        lumeAuthenticityViewButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            lumeAuthenticityViewButton.centerXAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            lumeAuthenticityViewButton.centerYAnchor.constraint(equalTo: pageControl.centerYAnchor),
+        ])
+        
+        
+        // Add tap gesture recognizer to lumeAuthenticityView
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(lumeAuthButtonTapped))
+        lumeAuthenticityView.addGestureRecognizer(tapGesture)
+        lumeAuthenticityView.isUserInteractionEnabled = true
+    }
+
+    @objc private func lumeAuthButtonTapped() {
+        if lumeAuthenticityView.alpha == 0 {
+            toggleLumeAuthView(shouldAppear: true)
+        } else {
+            toggleLumeAuthView(shouldAppear: false)
+        }
+    }
+    
+    private func toggleLumeAuthView(shouldAppear: Bool, animation: Bool = true) {
+        if shouldAppear {
+            UIView.animate(withDuration: animation ? 0.15 : 0, animations: {
+                self.lumeAuthenticityView.alpha = 1
+                self.lumeAuthenticityView.transform = CGAffineTransform.identity
+            })
+        } else {
+            UIView.animate(withDuration: animation ? 0.15 : 0, animations: {
+                self.lumeAuthenticityView.alpha = 0
+                self.lumeAuthenticityView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+            })
+        }
+    }
+    
     private func updateCurrentPage() {
         if let firstContent = lume.contents.first {
             currentContentID = firstContent.id
@@ -637,13 +808,33 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
             scrollView.isPagingEnabled = true
         }
     }
+    
+    
+    private func createButton(action: Selector, imageName: String, tintColor: UIColor, buttonImageConfig: UIImage.SymbolConfiguration) -> UIButton {
+        let button = UIButton()
+        if let image = UIImage(systemName: imageName, withConfiguration: buttonImageConfig) {
+            button.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+        }
+        button.contentMode = .scaleAspectFit
+        button.tintColor = tintColor
+        button.addTarget(self, action: action, for: .touchUpInside)
+        
+        // Add shadow properties
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.25
+        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+        button.layer.shadowRadius = 1
+        button.layer.masksToBounds = false
+        
+        return button
+    }
 }
 
 extension LumeIndividualViewController {
     
     private func setupSideButtonsViewController() {
         // Initialize the side buttons view controller with the necessary data
-        sideButtonsViewController = SideButtonsViewController(lume: lume, userLiked: false)  // Adjust parameters as necessary
+        sideButtonsViewController = SideButtonsViewController(lume: lume, userLiked: lume.userLiked)  // Adjust parameters as necessary
         addChild(sideButtonsViewController)
         view.addSubview(sideButtonsViewController.view)
         sideButtonsViewController.didMove(toParent: self)
@@ -732,6 +923,7 @@ extension LumeIndividualViewController {
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pageControl.widthAnchor.constraint(equalToConstant: 130),
             pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: (-view.bounds.height * 0.035) - 50),
         ])
         
@@ -781,7 +973,6 @@ extension LumeIndividualViewController {
         let nextIndex = currentIndex + 1
         return self.contentViewController(for: lume.contents[nextIndex].id)
     }
-    
 }
 
 extension LumeIndividualViewController {
@@ -833,7 +1024,7 @@ extension LumeIndividualViewController {
     
     private func resumeVideoIfNeeded() {
         if let videoVC = currentVisibleViewController() as? VideoContentViewController {
-            videoVC.resumeVideo()
+            videoVC.resumeVideoIfNeeded()
         }
     }
     
@@ -853,11 +1044,9 @@ extension LumeIndividualViewController {
     
     func currentLumeChanged(to newCurrentLume: UUID?) {
         if let newCurrentLume = newCurrentLume, lume.id == newCurrentLume {
-            
             VideoDataStore.shared.currentContentID = currentContentID
             resumeVideoIfNeeded()
             sideButtonsViewController.updateCurrentLume(with: newCurrentLume)
-            
         } else {
             pauseVideoIfNeeded()
         }
@@ -903,6 +1092,8 @@ extension LumeIndividualViewController {
             pageControl.currentPage = currentIndex
             currentContentID = currentVC.contentID
             lume.currentContent = currentVC.contentID
+            
+            print(currentVC.contentID)
             
             withAnimation {
                 VideoDataStore.shared.videoPlaybackProgress = 0
@@ -961,7 +1152,7 @@ class VideoContentViewController: LumeContentViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        resumeVideo()
+        resumeVideoIfNeeded()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -997,7 +1188,7 @@ class VideoContentViewController: LumeContentViewController {
         playerViewController.videoGravity = .resizeAspectFill
         
         registerEndOfVideoNotification()
-        resumeVideo()
+        resumeVideoIfNeeded()
     }
 
     private func registerEndOfVideoNotification() {
@@ -1041,7 +1232,7 @@ class VideoContentViewController: LumeContentViewController {
         }
     }
     
-    func resumeVideo() {
+    func resumeVideoIfNeeded() {
         
         guard VideoDataStore.shared.currentContentID == contentID else {
             return
@@ -1095,6 +1286,7 @@ class VideoContentViewController: LumeContentViewController {
         }
     }
 }
+
 
 // ImageContentViewController is responsible for displaying image content
 class ImageContentViewController: LumeContentViewController {

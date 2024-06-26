@@ -14,6 +14,7 @@ class ProfileCell: UICollectionViewCell {
     
     var thumbnailURL: URL? // Add this property
     var fitOrFill: UIView.ContentMode = .scaleAspectFill
+    var heightScale: CGFloat = 0.0
 
     // MARK: Init
 
@@ -29,14 +30,17 @@ class ProfileCell: UICollectionViewCell {
     // MARK: Data
 
     func setup(with lume: Lume) {
+        
+//        imageView.setImage(from: lume.getThumbnailURL()!)  <- use this function which will return either image url or video url
+        
         Task {
-            if let thumbnail = await lume.generateThumbnail() {
+            if let thumbnail = await lume.getThumbnailImage() {
                 
                 var thumbnailAspectRatio: CGSize
                 if thumbnail.size.width > thumbnail.size.height {
                     thumbnailAspectRatio = thumbnail.size
-                    thumbnailAspectRatio.width = thumbnailAspectRatio.width * 0.5
-                    thumbnailAspectRatio.height = thumbnailAspectRatio.height * 0.5
+                    thumbnailAspectRatio.width = thumbnailAspectRatio.width
+                    thumbnailAspectRatio.height = thumbnailAspectRatio.height
                 } else {
                     thumbnailAspectRatio = UIScreen.main.bounds.size
                 }
@@ -67,6 +71,7 @@ class ProfileCell: UICollectionViewCell {
             scale = size.height / image.size.height
         } else {
             scale = size.width / image.size.width
+            heightScale = UIScreen.main.bounds.size.height / size.height
         }
         
         let width = image.size.width * scale

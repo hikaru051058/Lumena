@@ -39,9 +39,6 @@
     "%lld / 23" : {
 
     },
-    "%lld / 200" : {
-
-    },
     "%lld / 300" : {
 
     },
@@ -208,6 +205,7 @@
       }
     },
     "アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？なお、アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -218,6 +216,7 @@
       }
     },
     "アカウントを削除" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -272,6 +271,7 @@
       }
     },
     "キャンセル" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -629,7 +629,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Extremely Senstivite"
+            "value" : "Extremely Sensitive"
           }
         }
       }
@@ -655,6 +655,7 @@
       }
     },
     "ユーザーネームはアカウントを検索する際に使用されます。そのため、検索しやすいユーザーネームにすると、友人達から見つかりやすくなるかもしれません。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -708,6 +709,7 @@
       }
     },
     "ログアウト" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -783,6 +785,7 @@
       }
     },
     "削除" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -827,6 +830,7 @@
       }
     },
     "友人などから親しみのある名前を使用すると、友人達から見つかりやすくなるかもしれません。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -847,6 +851,7 @@
       }
     },
     "名前" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1099,6 +1104,7 @@
       }
     },
     "概要欄" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1109,6 +1115,7 @@
       }
     },
     "概要欄は他のユーザーに自分のことを文面で紹介できる機能です。概要欄を使って自己紹介や気分、何でも思うがままに自分を表現しましょう！概要欄の文字数は200文字制限があります。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1215,6 +1222,7 @@
       }
     },
     "肌設定を編集" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1235,6 +1243,7 @@
       }
     },
     "背景を変更" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

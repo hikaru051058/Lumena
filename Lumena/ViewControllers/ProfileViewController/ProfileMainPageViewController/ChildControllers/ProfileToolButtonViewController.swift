@@ -15,23 +15,22 @@ protocol ProfileToolButtonDelegate: AnyObject {
     func didTapSettingsButton()
 }
 
-
 class ProfileToolButtonViewController: UIView {
     
     var profile: ProfileSettings!
-    var colorScheme: UIUserInterfaceStyle = .dark {
+    var color: UIColor = .primary {
         didSet {
             updateButtonColors()
         }
     }
     var tabButtonOpacity: CGFloat = 1.0
     
-    private let buttonConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .bold, scale: .default)
-    
     private var backButton: UIButton!
     private var followRequestButton: UIButton!
     private var settingsButton: UIButton!
     
+    private let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .bold, scale: .default)
+    private let buttonTextConfig = UIFont.systemFont(ofSize: 18, weight: .bold)
     var addShadow: Bool = true
     
     weak var delegate: ProfileToolButtonDelegate?
@@ -41,9 +40,10 @@ class ProfileToolButtonViewController: UIView {
         commonInit()
     }
     
-    init(frame: CGRect, profile: ProfileSettings, addShadow: Bool = true) {
+    init(frame: CGRect, profile: ProfileSettings, addShadow: Bool = true, color: UIColor) {
         self.profile = profile
         self.addShadow = addShadow
+        self.color = color
         super.init(frame: frame)
         commonInit()
     }
@@ -79,25 +79,34 @@ class ProfileToolButtonViewController: UIView {
             stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
         
-        updateButtonColors()
+//        updateButtonColors()
     }
     
     private func setupBackButton() {
-        backButton = createButton(action: #selector(backButtonTapped), imageName: "chevron.backward", tintColor: buttonTintColor(), shadow: addShadow)
+        backButton = createButton(action: #selector(backButtonTapped), imageName: "chevron.backward", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
     }
     
     private func setupRequestButton() {
-        followRequestButton = createButton(action: #selector(followRequestButtonTapped), imageName: "person.fill.checkmark", tintColor: buttonTintColor(), shadow: addShadow)
+        followRequestButton = createButton(action: #selector(followRequestButtonTapped), imageName: "person.fill.checkmark", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
         followRequestButton.isHidden = !profile.lockState
     }
     
     private func setupSettingButton() {
-        settingsButton = createButton(action: #selector(settingsButtonTapped), imageName: "gear", tintColor: buttonTintColor(), shadow: addShadow)
+        settingsButton = createButton(action: #selector(settingsButtonTapped), imageName: "gear", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
     }
     
-    private func createButton(action: Selector, imageName: String, tintColor: UIColor, shadow: Bool) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: imageName, withConfiguration: buttonConfig)?.withTintColor(tintColor), for: .normal)
+    private func createButton(action: Selector, imageName: String, buttonLabel: String, tintColor: UIColor, shadow: Bool, buttonTextConfig: UIFont, buttonImageConfig: UIImage.SymbolConfiguration) -> UIButton {
+        let button = UIButton()
+        if imageName == "" {
+            button.setTitle(buttonLabel, for: .normal)
+            button.setTitleColor(tintColor, for: .normal)
+            button.titleLabel?.font = buttonTextConfig
+        } else {
+            if let image = UIImage(systemName: imageName, withConfiguration: buttonImageConfig) {
+                button.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+            }
+        }
+        
         button.contentMode = .scaleAspectFit
         button.tintColor = tintColor
         button.addTarget(self, action: action, for: .touchUpInside)
@@ -111,18 +120,19 @@ class ProfileToolButtonViewController: UIView {
     
     private func updateButtonColors() {
         if backButton != nil {
-            backButton.tintColor = buttonTintColor()
+            backButton.tintColor = color
         }
         if followRequestButton != nil {
-            followRequestButton?.tintColor = buttonTintColor()
+            followRequestButton?.tintColor = color
         }
         if settingsButton != nil {
-            settingsButton.tintColor = buttonTintColor()
+            settingsButton.tintColor = color
         }
     }
     
-    private func buttonTintColor() -> UIColor {
-        return colorScheme == .dark ? .white : .black
+    func updateProfile(profile: ProfileSettings) {
+        self.profile = profile
+        commonInit()
     }
     
     @objc private func backButtonTapped() {

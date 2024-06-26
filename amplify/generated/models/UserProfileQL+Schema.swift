@@ -23,9 +23,10 @@ extension UserProfileQL {
     case followerCount
     case followingCount
     case bio
-    case zipURL
     case following
     case postCount
+    case profileImageLastModified
+    case backgroundImageLastModified
     case createdAt
     case updatedAt
   }
@@ -57,7 +58,7 @@ extension UserProfileQL {
       .field(userProfileQL.Sensitivity, is: .optional, ofType: .double),
       .field(userProfileQL.SunBathing, is: .optional, ofType: .double),
       .field(userProfileQL.SkinType, is: .optional, ofType: .double),
-      .hasMany(userProfileQL.postContents, is: .optional, ofType: LumeQL.self, associatedWith: LumeQL.keys.userprofile),
+      .hasMany(userProfileQL.postContents, is: .optional, ofType: LumeQL.self, associatedWith: LumeQL.keys.userprofileqlID),
       .hasMany(userProfileQL.likedContents, is: .optional, ofType: LikedLumeQL.self, associatedWith: LikedLumeQL.keys.userprofileqlID),
       .hasMany(userProfileQL.comments, is: .optional, ofType: CommentQL.self, associatedWith: CommentQL.keys.userprofileqlID),
       .field(userProfileQL.lockState, is: .optional, ofType: .bool),
@@ -66,9 +67,10 @@ extension UserProfileQL {
       .field(userProfileQL.followerCount, is: .optional, ofType: .int),
       .field(userProfileQL.followingCount, is: .optional, ofType: .int),
       .field(userProfileQL.bio, is: .optional, ofType: .string),
-      .field(userProfileQL.zipURL, is: .optional, ofType: .string),
       .hasMany(userProfileQL.following, is: .optional, ofType: FollowQL.self, associatedWith: FollowQL.keys.following),
       .field(userProfileQL.postCount, is: .optional, ofType: .int),
+      .field(userProfileQL.profileImageLastModified, is: .optional, ofType: .int),
+      .field(userProfileQL.backgroundImageLastModified, is: .optional, ofType: .int),
       .field(userProfileQL.createdAt, is: .optional, isReadOnly: true, ofType: .dateTime),
       .field(userProfileQL.updatedAt, is: .optional, isReadOnly: true, ofType: .dateTime)
     )

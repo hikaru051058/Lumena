@@ -290,7 +290,7 @@ class ProfileManager: ObservableObject {
     }
 }
 
-class ProfileSettings: Identifiable, ObservableObject {
+class ProfileSettings: Identifiable, ObservableObject, Reflectable {
     
     var id: UUID = UUID()
     
@@ -566,7 +566,6 @@ class ProfileSettings: Identifiable, ObservableObject {
         let birthDate = Date(timeIntervalSince1970: Double(ql.DOB ?? 0))
         let profileImage = ql.profileImage != nil ? Lumena.profileImage(url: ql.profileImage!) : nil
         let backgroundImage = ql.backgroundImage != nil ? Lumena.profileImage(url: ql.backgroundImage!) : nil
-        
         let skinSetting = [Int(ql.Sensitivity ?? 0), Int(ql.SunBathing ?? 0), Int(ql.SkinType ?? 0)]
         
         self.init(
@@ -709,9 +708,9 @@ extension ProfileSettings {
         self.updatedProfile()
     }
     
-    func updateProfile(with userID: String) async throws {
+    func updateProfile() async throws {
         do {
-            let arrUserProf = try await GraphQL.shared.fetchUserProfileQL(userIDs: [userID])
+            let arrUserProf = try await GraphQL.shared.fetchUserProfileQL(userIDs: [self.userprofileqlID])
             
             guard let userProfile = arrUserProf.first else {
                 try await self.updateUserProfileQL()
@@ -735,12 +734,14 @@ extension ProfileSettings {
     func fetchUserRelatedLumes() async throws {
         do {
             try await fetchUserLikedPosts()
+            print("fetched user liked posts for \(self.identityID)")
         } catch {
             print(error)
         }
         
         do {
             try await fetchUserLumes()
+            print("fetched user posts for \(self.identityID)")
         } catch {
             print(error)
         }
@@ -751,6 +752,8 @@ extension ProfileSettings {
             if self.likeContents.isEmpty {
                 let lumes = try await GraphQL.shared.fetchUserLikedPosts(userID: self.identityID)
                 self.likeContents = lumes.likes.map { $0.lumeQLID }
+                
+                _ = try await GraphQL.shared.fetchMultipleReelQL(reelQLIds: lumes.likes.map({ $0.lumeQLID }))
             }
         } catch {
             print(error)
@@ -772,6 +775,9 @@ extension ProfileSettings {
                 if self.identityID == GI.shared.identityID {
                     GI.shared.userPosts = lumes
                 }
+                for PostLume in lumes {
+                    LumeManager.shared.getLumeQueue(withID: PostLume)
+                }
             }
         } catch {
             print(error)
@@ -781,7 +787,7 @@ extension ProfileSettings {
     }
     
     func returnUserLumes() -> [Lume] {
-        return LumeManager.shared.getUserLumes(withID: self.identityID)
+        return LumeManager.shared.getUserPostLumes(withID: self.identityID)
     }
     
     func fetchUserImages() async throws {
@@ -790,7 +796,7 @@ extension ProfileSettings {
         self.backgroundImage = Lumena.profileImage(url: "\(dirstributionURL)/background_image.jpg")
         self.updatedProfile()
     }
-
+    
     func toUserProfileQL() -> UserProfileQL {
         return UserProfileQL(
             id: self.identityID,
@@ -803,6 +809,59 @@ extension ProfileSettings {
             lockState: self.lockState,
             bio: bio
         )
+    }
+    
+}
+
+extension ProfileSettings {
+    
+    func uploadProfileImage(image: UIImage) async {
+        
+        self.profileImage?.image = image
+        do {
+            if let imageData = image.jpegData(compressionQuality: 1.0) {
+                let _ = try await S3.shared.storeDataAsync(name: "\(self.identityID)/userSetting/profile_image.jpg", data: imageData, progressHandler: { progress in
+                    print("Upload Progress for Profile Image: \(progress * 100)%")
+                })
+                await refreshProfileImage()
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func uploadBackgroundImage(image: UIImage) async {
+        
+        self.backgroundImage?.image = image
+        do {
+            if let imageData = image.jpegData(compressionQuality: 1.0) {
+                let _ = try await S3.shared.storeDataAsync(name: "\(self.identityID)/userSetting/background_image.jpg", data: imageData, progressHandler: { progress in
+                    print("Upload Progress for Background Image: \(progress * 100)%")
+                })
+                await refreshProfileImage()
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func refreshProfileImage() async {
+        do {
+            let arrProfile = try await GraphQL.shared.fetchUserProfileQL(userIDs: [self.userprofileqlID])
+            
+            if let newProfile = arrProfile.first {
+                
+                self.profileImage?.url = ""
+                self.backgroundImage?.url = ""
+                
+                self.profileImage?.loadAgain(newUrl: newProfile.profileImage)
+                self.backgroundImage?.loadAgain(newUrl: newProfile.backgroundImage)
+                
+                try await updateProfile()
+            }
+        } catch {
+            print(error)
+        }
     }
 }
 
@@ -878,6 +937,7 @@ class profileImage: ObservableObject {
         if let newUrl = newUrl {
             self.url = newUrl
         }
+        guard !self.url.isEmpty else { return }
         loadImageFromURL()
     }
 }

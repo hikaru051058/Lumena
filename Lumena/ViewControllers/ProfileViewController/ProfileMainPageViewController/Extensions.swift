@@ -29,12 +29,32 @@ extension UIView{
     }
 }
 
-extension UIColor{
-    static let background: UIColor  = {
-        if #available(iOS 13.0, *) {
-            return UIColor.systemBackground
-        } else {
-            return UIColor.white
+protocol Reflectable {
+    func printClassStructure()
+}
+
+extension Reflectable {
+    func printClassStructure() {
+        let mirror = Mirror(reflecting: self)
+        printClassStructure(mirror)
+    }
+    
+    private func printClassStructure(_ mirror: Mirror, indent: Int = 0) {
+        let indentation = String(repeating: " ", count: indent)
+        print("\(indentation)\(mirror.subjectType):")
+        
+        for (label, value) in mirror.children {
+            if let label = label {
+                let valueMirror = Mirror(reflecting: value)
+                if valueMirror.children.isEmpty {
+                    print("\(indentation)  \(label): \(type(of: value)) = \(value)")
+                } else {
+                    print("\(indentation)  \(label): \(type(of: value))")
+                    printClassStructure(valueMirror, indent: indent + 4)
+                }
+            } else {
+                print("\(indentation)  \(type(of: value)) = \(value)")
+            }
         }
-    }()
+    }
 }

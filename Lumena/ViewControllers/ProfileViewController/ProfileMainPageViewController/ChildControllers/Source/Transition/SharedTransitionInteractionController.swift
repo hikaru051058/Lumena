@@ -55,11 +55,18 @@ extension SharedTransitionInteractionController: UIViewControllerInteractiveTran
             $0.backgroundColor = .black
             $0.layer.cornerRadius = config.maskCornerRadius
         }
-        let overlay = UIView().then {
-            $0.backgroundColor = .black
-            $0.layer.opacity = config.overlayOpacity
+//        let overlay = UIView().then {
+//            $0.backgroundColor = .white
+//            $0.layer.opacity = config.overlayOpacity
+//            $0.frame = toView.frame
+//        }
+        
+        let blurEffect = UIBlurEffect(style: .regular)
+        let overlay = UIVisualEffectView(effect: blurEffect).then {
             $0.frame = toView.frame
+            $0.layer.opacity = config.overlayOpacity
         }
+
         let placeholder = UIView().then {
             $0.frame = toFrame
             $0.backgroundColor = config.placeholderColor
@@ -155,23 +162,7 @@ extension SharedTransitionInteractionController {
         toVC?.prepare(for: .pop)
     }
     
-    /*
-    private func setup(with context: UIViewControllerContextTransitioning) -> (UIView, CGRect, UIView, CGRect)? {
-        guard let toView = context.view(forKey: .to),
-              let fromView = context.view(forKey: .from) else {
-            return nil
-        }
-        context.containerView.insertSubview(toView, belowSubview: fromView)
-        guard let toFrame = context.sharedFrame(forKey: .to),
-              let fromFrame = context.sharedFrame(forKey: .from) else {
-            return nil
-        }
-        
-        print("Transition setup transition from frame: \(fromFrame) to frame: \(toFrame)")
-        return (fromView, fromFrame, toView, toFrame)
-    }
-    */
-     
+    // pop
     private func setup(with context: UIViewControllerContextTransitioning) -> (UIView, CGRect, UIView, CGRect)? {
         guard let toView = context.view(forKey: .to),
               let fromView = context.view(forKey: .from) else {
