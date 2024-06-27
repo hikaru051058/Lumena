@@ -591,17 +591,9 @@ struct UserConfirmationCodeView: View {
             VStack{
                 
                 Image(systemName: "envelope.badge.fill")
-                    .font(Font.system(size: 60))
+                    .font(Font.system(size: 50))
                     .foregroundColor(Color(red: 0.49, green: 0.629, blue: 0.53))
                 
-                
-                Text("メールの確認のため、\n６桁の番号を送信させていただきました。\n\n見つからない場合は、再送信のボタンを押してください。\n\nワンタイム確認コードを以下の\n記入欄に入力してください。")
-                    .font(.callout)
-                    .font(.callout)
-                    .fontWeight(.heavy)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .padding(.bottom, 20)
                 
                 VStack{
                     HStack {
@@ -630,7 +622,15 @@ struct UserConfirmationCodeView: View {
                 .frame(minHeight: 15)
                 .padding(.bottom, 200)
                 
+                Text("メールの確認のため、\n６桁の番号を送信させていただきました。\n\n見つからない場合は、再送信のボタンを押してください。\n\nワンタイム確認コードを以下の\n記入欄に入力してください。")
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .padding(.bottom, 20)
+                
             }
+            .padding(.top)
             
             VStack {
                 

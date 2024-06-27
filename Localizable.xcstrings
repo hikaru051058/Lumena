@@ -147,7 +147,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create Lumena Account"
+            "value" : "Create an account on Lumena"
           }
         }
       }
@@ -187,7 +187,15 @@
       }
     },
     "Tagged Cosmetics" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagged Products"
+          }
+        }
+      }
     },
     "URL" : {
 
@@ -204,6 +212,16 @@
         }
       }
     },
+    "アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？ アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete all data associated with the account? Once your account is deleted, it cannot be recovered. By pressing the 'Delete' button below, you agree to delete the data and acknowledge that it cannot be recovered."
+          }
+        }
+      }
+    },
     "アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？なお、アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -216,7 +234,6 @@
       }
     },
     "アカウントを削除" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -271,7 +288,6 @@
       }
     },
     "キャンセル" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -399,6 +415,17 @@
         }
       }
     },
+    "タグされたコスメ" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagged Products"
+          }
+        }
+      }
+    },
     "チーク" : {
       "comment" : "DropDown list option for product submission",
       "extractionState" : "manual",
@@ -484,6 +511,16 @@
         }
       }
     },
+    "バックグラウンド写真の変更" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Background Image"
+          }
+        }
+      }
+    },
     "ファンデーション" : {
       "comment" : "DropDown list option for product submission",
       "extractionState" : "manual",
@@ -542,6 +579,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Block"
+          }
+        }
+      }
+    },
+    "プロファイル写真の変更" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Profile Image"
           }
         }
       }
@@ -639,7 +686,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Content suitable for the user is displayed based on settings."
+            "value" : "Content is recommended based on the user’s skin settings"
           }
         }
       }
@@ -660,7 +707,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usernames are used when searching for accounts. Therefore, choosing an easy-to-search username might make it easier for your friends to find you."
+            "value" : "Your username is used when searching for your account. Therefore, choosing a username that is easy to search for might make it easier for your friends to find you."
           }
         }
       }
@@ -696,6 +743,37 @@
         }
       }
     },
+    "ライク数" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Likes"
+          }
+        }
+      }
+    },
+    "ライブラリから選択" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select from Library"
+          }
+        }
+      }
+    },
+    "リセット" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
+    },
     "リップ" : {
       "comment" : "DropDown list option for product submission",
       "extractionState" : "manual",
@@ -709,7 +787,6 @@
       }
     },
     "ログアウト" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -734,7 +811,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Time spent in the sun during the day."
+            "value" : "Time spent under the sun"
           }
         }
       }
@@ -763,6 +840,17 @@
         }
       }
     },
+    "保存" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
     "円" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -785,7 +873,6 @@
       }
     },
     "削除" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -835,7 +922,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Using a familiar name that your friends know may make it easier for them to find you."
+            "value" : "Using a familiar name from friends might make it easier for them to find you."
           }
         }
       }
@@ -969,6 +1056,28 @@
         }
       }
     },
+    "投稿を削除" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Lume"
+          }
+        }
+      }
+    },
+    "投稿を報告" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report post"
+          }
+        }
+      }
+    },
     "投稿数" : {
       "localizations" : {
         "en" : {
@@ -1071,6 +1180,16 @@
         }
       }
     },
+    "本当にログアウトしますか？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Would you like to logout?"
+          }
+        }
+      }
+    },
     "枠内にバーコードを収めてください" : {
       "localizations" : {
         "en" : {
@@ -1114,13 +1233,13 @@
         }
       }
     },
-    "概要欄は他のユーザーに自分のことを文面で紹介できる機能です。概要欄を使って自己紹介や気分、何でも思うがままに自分を表現しましょう！概要欄の文字数は200文字制限があります。" : {
-      "extractionState" : "stale",
+    "概要欄は他のユーザーに自分のことを文面で紹介できる機能です。概要欄を使って自己紹介や気分、何でも思うがままに自分を表現しましょう！概要欄の文字数は150文字制限があります。" : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The profile summary section is a feature that allows you to introduce yourself to other users through text. Use the summary section to introduce yourself, express your mood, or anything else you feel like sharing! 200-character limit"
+            "value" : "The bio section allows you to introduce yourself to other users in writing. Use the bio to express yourself freely, whether it’s an introduction, your mood, or anything else! The bio section has a 150-character limit."
           }
         }
       }
@@ -1222,7 +1341,6 @@
       }
     },
     "肌設定を編集" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1293,7 +1411,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Removability"
+            "value" : "Wear"
           }
         }
       }
@@ -1327,7 +1445,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Authentication"
+            "value" : "Authenticate"
           }
         }
       }

@@ -237,13 +237,13 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
         view.addSubview(buttonBackground)
         
         // Skin Setting Button
-        skinSettingButton = createActionButton(title: "肌設定を編集", color: .aginGreenColorScheme)
+        skinSettingButton = createActionButton(title: NSLocalizedString("肌設定を編集", comment: ""), color: .aginGreenColorScheme)
         skinSettingButton.translatesAutoresizingMaskIntoConstraints = false
         buttonBackground.addSubview(skinSettingButton)
         
         // Logout Button
         logoutButton = UIButton(type: .system)
-        logoutButton.setTitle("ログアウト", for: .normal)
+        logoutButton.setTitle(NSLocalizedString("ログアウト", comment: ""), for: .normal)
         logoutButton.setTitleColor(.gray, for: .normal)
         logoutButton.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
@@ -251,7 +251,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
         
         // Delete Account Button
         deleteAccountButton = UIButton(type: .system)
-        deleteAccountButton.setTitle("アカウントを削除", for: .normal)
+        deleteAccountButton.setTitle(NSLocalizedString("アカウントを削除", comment: ""), for: .normal)
         deleteAccountButton.setTitleColor(.red, for: .normal)
         deleteAccountButton.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         deleteAccountButton.translatesAutoresizingMaskIntoConstraints = false
@@ -301,35 +301,33 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     }
 
     @objc private func handleProfileImageTap() {
-        let alert = UIAlertController(title: "プロファイル写真の変更", message: "", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "リセット", style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: NSLocalizedString("プロファイル写真の変更", comment: ""), message: "", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("リセット", comment: ""), style: .destructive, handler: { _ in
             // make logic in lambda and dynamodb to remove the profile image existance: Maybe bool?
             self.profileImageView.image = nil  // Set profile image view to nil
             self.profileImageView.subviews.forEach { $0.removeFromSuperview() } // Clear any added subviews
             self.setupDefaultImageAppearance(imageView: self.profileImageView, text: "", icon: "person")
             
         }))
-        alert.addAction(UIAlertAction(title: "ライブラリから選択", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ライブラリから選択", comment: ""), style: .default, handler: { _ in
             self.showImagePicker(sourceType: .photoLibrary, forProfile: true)
-            self.setupDefaultImageAppearance(imageView: self.profileImageView, text: "", icon: "person")
         }))
-        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
 
     @objc private func handleBackgroundImageTap() {
-        let alert = UIAlertController(title: "バックグラウンド写真の変更", message: "", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "リセット", style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: NSLocalizedString("バックグラウンド写真の変更", comment: ""), message: "", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("リセット", comment: ""), style: .destructive, handler: { _ in
             // make logic in lambda and dynamodb to remove the background image existance: Maybe bool?
             self.backgroundImageView.image = nil  // Set profile image view to nil
             self.backgroundImageView.subviews.forEach { $0.removeFromSuperview() } // Clear any added subviews
             self.setupDefaultImageAppearance(imageView: self.backgroundImageView, text: "Tap to set background image", icon: "photo.on.rectangle")
         }))
-        alert.addAction(UIAlertAction(title: "ライブラリから選択", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ライブラリから選択", comment: ""), style: .default, handler: { _ in
             self.showImagePicker(sourceType: .photoLibrary, forProfile: false)
-            self.setupDefaultImageAppearance(imageView: self.backgroundImageView, text: "Tap to set background image", icon: "photo.on.rectangle")
         }))
-        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
 
@@ -339,9 +337,9 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     }
 
     @objc private func handleLogout() {
-        let alert = UIAlertController(title: "ログアウト", message: "本当にログアウトしますか？", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "ログアウト", style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: NSLocalizedString("ログアウト", comment: ""), message: NSLocalizedString("本当にログアウトしますか？", comment: ""), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ログアウト", comment: ""), style: .destructive, handler: { _ in
             // Perform logout action
             Task {
                 let result = await AuthenticationManager.shared.signOut()
@@ -354,9 +352,9 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     }
 
     @objc private func handleDeleteAccount() {
-        let alert = UIAlertController(title: "アカウントを削除", message: "アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？ アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "削除", style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: NSLocalizedString("アカウントを削除", comment: ""), message: NSLocalizedString("アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？ アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。", comment: ""), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("削除", comment: ""), style: .destructive, handler: { _ in
             // Perform delete account action
             Task {
                 do {
@@ -405,6 +403,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
             onSave: { [weak self] newName in
                 self?.nameButton.setTitle(newName, for: .normal)
                 self?.profile.givenName = newName
+                self?.nameButton.configuration?.baseForegroundColor = newName.isEmpty ? .secondary : .primary
                 ProfileManager.shared.updateProfile(self!.profile)
                 // Update in Amplify
                 Task {
@@ -431,6 +430,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
             onSave: { [weak self] newUsername in
                 self?.usernameButton.setTitle(newUsername, for: .normal)
                 self?.profile.preferredUsername = newUsername
+                self?.usernameButton.configuration?.baseForegroundColor = newUsername.isEmpty ? .secondary : .primary
                 ProfileManager.shared.updateProfile(self!.profile)
                 // Update in Amplify
                 Task {
@@ -469,7 +469,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
                     }
                 }
             },
-            userInstructionText: "概要欄は他のユーザーに自分のことを文面で紹介できる機能です。概要欄を使って自己紹介や気分、何でも思うがままに自分を表現しましょう！概要欄の文字数は200文字制限があります。",
+            userInstructionText: "概要欄は他のユーザーに自分のことを文面で紹介できる機能です。概要欄を使って自己紹介や気分、何でも思うがままに自分を表現しましょう！概要欄の文字数は150文字制限があります。",
             characterLimit: 150
         )
         let editVC = EditProfileTextInputViewController(config: config)
@@ -721,7 +721,7 @@ extension EditProfileTextInputViewController {
     private func setupTitleLabel() {
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.text = config.title
+        titleLabel.text = NSLocalizedString(config.title, comment: "")
         titleLabel.font = buttonTextConfig
         titleLabel.textColor = .arinDarkGreen
         
@@ -734,7 +734,7 @@ extension EditProfileTextInputViewController {
     }
     
     private func setupDoneButton() {
-        doneButton = createButton(action: #selector(saveButtonTapped), imageName: "", buttonLabel: "Done", tintColor: .arinDarkGreen, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
+        doneButton = createButton(action: #selector(saveButtonTapped), imageName: "", buttonLabel: NSLocalizedString("保存", comment: ""), tintColor: .arinDarkGreen, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
     }
     
     @objc private func backButtonTapped() {
@@ -858,7 +858,7 @@ struct VerticalTextField: View {
         VStack {
             Divider()
             
-            TextField(placeholder, text: $userInput.text, axis: .vertical)
+            TextField(NSLocalizedString(placeholder, comment: ""), text: $userInput.text, axis: .vertical)
                 .autocapitalization(.none)
                 .onReceive(userInput.text.publisher) { newValue in
                     if userInput.text.count > characterLimit {
@@ -878,7 +878,7 @@ struct VerticalTextField: View {
             }
             .padding(.horizontal, 20)
             
-            Text(bottomInfoText)
+            Text(NSLocalizedString(bottomInfoText, comment: ""))
                 .font(.caption)
                 .foregroundColor(Color.secondary)
                 .padding(.top, 5)

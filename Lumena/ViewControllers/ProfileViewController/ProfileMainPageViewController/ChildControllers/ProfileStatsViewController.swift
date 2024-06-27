@@ -21,7 +21,7 @@ class ProfileStatsViewController: UIViewController {
     
     private let followerTextLabel: UILabel = {
         let label = UILabel()
-        label.text = "フォロワー"
+        label.text = NSLocalizedString("フォロワー", comment: "")
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = .label
         return label
@@ -36,7 +36,7 @@ class ProfileStatsViewController: UIViewController {
     
     private let followingTextLabel: UILabel = {
         let label = UILabel()
-        label.text = "フォロー中"
+        label.text = NSLocalizedString("フォロー中", comment: "")
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = .label
         return label
@@ -51,7 +51,7 @@ class ProfileStatsViewController: UIViewController {
     
     private let postsTextLabel: UILabel = {
         let label = UILabel()
-        label.text = "投稿数"
+        label.text = NSLocalizedString("ライク数", comment: "")
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = .label
         return label

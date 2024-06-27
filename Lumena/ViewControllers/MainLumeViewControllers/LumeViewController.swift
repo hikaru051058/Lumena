@@ -17,7 +17,7 @@ import AVFoundation
 
 enum LumeMainPageTabRep: String {
     case recommended = "おすすめ"
-    case following = "フォロー"
+    case following = "フォロー中"
 }
 
 // MARK: - Horizontal Pagging of Vertical Lumes viewcontroller
@@ -264,8 +264,8 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
             loadInitialLumes()
         } else {
             self.addTabs()
+            scrollToCurrentLumeIfNeeded()
         }
-        scrollToCurrentLumeIfNeeded()
         scrollView.layoutIfNeeded()
     }
     
@@ -275,7 +275,9 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        scrollToCurrentLumeIfNeeded()
+        if !loadAutomatically {
+            scrollToCurrentLumeIfNeeded()
+        }
     }
 
     
@@ -395,6 +397,12 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
         UIView.animate(withDuration: 0.05) {
             self.scaleToOriginalSize()
         }
+        // Print the Lume ID of the current visible LumeIndividualViewController
+        if let visibleIndex = getCurrentVisibleLumeIndex() {
+            let currentLumeID = lumes[visibleIndex].id
+            print("Current Lume ID: \(currentLumeID)")
+            updateCurrentLume()
+        }
     }
     
     private func scaleToOriginalSize() {
@@ -414,7 +422,7 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
                 notifyCurrentLumeChange()
                 
                 // Load more contents at the very end
-                if lumes.count - 1 == visibleIndex {
+                if lumes.count - 1 == visibleIndex && loadAutomatically {
                     loadMoreLumes()
                 }
             }
@@ -422,7 +430,6 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     }
     
     private func newLumeAppearSetup() {
-        
         VideoDataStore.shared.videoPlaybackProgress = 0
     }
 
@@ -585,10 +592,19 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        VideoDataStore.shared.videoPlaybackProgress = 0
+        let currentPage = currentViewControllerIndex()
+        let currentContentID = lume.contents[currentPage].id
+        VideoDataStore.shared.currentContentID = currentContentID
+//        resumeVideoIfNeeded()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        pauseVideoIfNeeded()
+        VideoDataStore.shared.videoPlaybackProgress = 0
+        VideoDataStore.shared.currentContentID = nil
+        toggleLumeAuthView(shouldAppear: false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -646,7 +662,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
             invisibleRectangleLeft.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             invisibleRectangleLeft.topAnchor.constraint(equalTo: view.topAnchor),
             invisibleRectangleLeft.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            invisibleRectangleLeft.widthAnchor.constraint(equalToConstant: 60)
+            invisibleRectangleLeft.widthAnchor.constraint(equalToConstant: 62)
         ])
         
         invisibleRectangleRight = UIView()
@@ -658,7 +674,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
             invisibleRectangleRight.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             invisibleRectangleRight.topAnchor.constraint(equalTo: view.topAnchor),
             invisibleRectangleRight.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            invisibleRectangleRight.widthAnchor.constraint(equalToConstant: 60)
+            invisibleRectangleRight.widthAnchor.constraint(equalToConstant: 62)
         ])
     }
     
@@ -804,8 +820,10 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     private func handleSingleContentScenario() {
         if lume.contents.count == 1 {
             scrollView.isPagingEnabled = false
+            pageControl.alpha = 0
         } else {
             scrollView.isPagingEnabled = true
+            pageControl.alpha = 1
         }
     }
     
@@ -1044,11 +1062,10 @@ extension LumeIndividualViewController {
     
     func currentLumeChanged(to newCurrentLume: UUID?) {
         if let newCurrentLume = newCurrentLume, lume.id == newCurrentLume {
-            VideoDataStore.shared.currentContentID = currentContentID
-            resumeVideoIfNeeded()
             sideButtonsViewController.updateCurrentLume(with: newCurrentLume)
         } else {
             pauseVideoIfNeeded()
+            toggleLumeAuthView(shouldAppear: false)
         }
     }
     
@@ -1068,7 +1085,20 @@ extension LumeIndividualViewController {
         let pageIndex = Int((scrollView.contentOffset.x + pageWidth / 2) / pageWidth)
         pageControl.currentPage = pageIndex
     }
-
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        // Update the current page and print the content ID
+        let currentPage = currentViewControllerIndex()
+        let currentContentID = lume.contents[currentPage].id
+        VideoDataStore.shared.currentContentID = currentContentID
+        resumeVideoIfNeeded()
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        pauseVideoIfNeeded()
+        VideoDataStore.shared.videoPlaybackProgress = 0
+        toggleLumeAuthView(shouldAppear: false)
+    }
     
     @objc private func pageControlDidChange(_ sender: UIPageControl) {
         let targetIndex = sender.currentPage
@@ -1076,12 +1106,11 @@ extension LumeIndividualViewController {
         pageControl.currentPage = targetIndex
         scrollView.setContentOffset(CGPoint(x: targetOffsetX, y: 0), animated: true)
     }
-
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         // This method is called before a transition begins.
         if let videoVC = currentVisibleViewController() as? VideoContentViewController {
-            videoVC.pauseVideo() // Pause the current video since a swipe has begun.
+            videoVC.pauseVideo()
         }
     }
     
@@ -1152,7 +1181,7 @@ class VideoContentViewController: LumeContentViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        resumeVideoIfNeeded()
+        pauseVideo()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -1188,7 +1217,6 @@ class VideoContentViewController: LumeContentViewController {
         playerViewController.videoGravity = .resizeAspectFill
         
         registerEndOfVideoNotification()
-        resumeVideoIfNeeded()
     }
 
     private func registerEndOfVideoNotification() {

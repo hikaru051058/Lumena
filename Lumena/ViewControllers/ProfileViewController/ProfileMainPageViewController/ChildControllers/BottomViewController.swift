@@ -13,7 +13,7 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
     // MARK: Constants
 
     private enum Constants {
-        static let numberOfRows = 2
+        static let numberOfRows = 3
         static let sectionInset: UIEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
         static let interItemSpacing: CGFloat = 2
         static let lineSpacing: CGFloat = 2
@@ -41,7 +41,7 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
     
     private let noContentTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "No Content"
+        label.text = "No Lume Yet!"
         label.font = UIFont.boldSystemFont(ofSize: 24)
         label.textColor = .gray
         label.textAlignment = .center
@@ -51,7 +51,7 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
 
     private let noContentSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Please check back later."
+        label.text = "Create a Lume and share it with friends!"
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .lightGray
         label.textAlignment = .center

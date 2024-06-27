@@ -284,20 +284,20 @@ extension SideButtonsViewController {
     @objc private func furtherActionTapped() {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let reportAction = UIAlertAction(title: "報告", style: .destructive) { _ in
+        let reportAction = UIAlertAction(title: NSLocalizedString("投稿を報告", comment: ""), style: .destructive) { _ in
             // Handle the report action
             print("Report action selected")
         }
         
-        let removeAction = UIAlertAction(title: "Remove current lume", style: .destructive) { _ in
-            // Handle removing the current reel
-            print("Remove lume action selected")
-        }
+//        let removeAction = UIAlertAction(title: "Remove current lume", style: .destructive) { _ in
+//            // Handle removing the current reel
+//            print("Remove lume action selected")
+//        }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 
         actionSheet.addAction(reportAction)
-        actionSheet.addAction(removeAction)
+//        actionSheet.addAction(removeAction)
         actionSheet.addAction(cancelAction)
 
         // Present the action sheet
@@ -483,7 +483,7 @@ struct SideButtonCosmeticsTagView: View {
                     .padding(.top, 25)
                 }
             }
-            .navigationBarTitle(Text("Tagged Cosmetics"), displayMode: .inline)
+            .navigationBarTitle(Text("タグされたコスメ"), displayMode: .inline)
         }
     }
 }

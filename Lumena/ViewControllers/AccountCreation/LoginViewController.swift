@@ -44,13 +44,17 @@ class LoginViewController: UIViewController {
     }
     
     func navigateToMain() {
-        let mainVC = LumeHorizontalTabViewController()
-        navigationController?.pushViewController(mainVC, animated: true)
+        DispatchQueue.main.async {
+            let mainVC = LumeHorizontalTabViewController()
+            self.navigationController?.pushViewController(mainVC, animated: true)
+        }
     }
     
     func navigateToCreateAccount() {
-        let createAccountVC = CreateAccountViewController()
-        navigationController?.pushViewController(createAccountVC, animated: true)
+        DispatchQueue.main.async {
+            let createAccountVC = CreateAccountViewController()
+            self.navigationController?.pushViewController(createAccountVC, animated: true)
+        }
     }
     
     private func setupNavigationBar() {
