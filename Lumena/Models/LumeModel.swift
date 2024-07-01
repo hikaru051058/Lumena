@@ -69,6 +69,68 @@ class LumeVideo: Identifiable {
     func getVideoURL() -> URL? {
         return url
     }
+
+    func replaceAudio(with track: Track, completion: @escaping (Bool) -> Void) {
+        guard let currentItem = self.player?.currentItem else {
+            completion(false)
+            return
+        }
+        
+        track.initializeAudioPlayer { success in
+            guard success, let audioURL = track.previewUrl else {
+                completion(false)
+                return
+            }
+
+            let audioAsset = AVAsset(url: audioURL)
+            let composition = AVMutableComposition()
+
+            Task {
+                do {
+                    // Load video tracks asynchronously
+                    let videoTracks = try await currentItem.asset.loadTracks(withMediaType: .video)
+                    if let videoTrack = videoTracks.first {
+                        let videoCompositionTrack = composition.addMutableTrack(
+                            withMediaType: .video,
+                            preferredTrackID: kCMPersistentTrackID_Invalid
+                        )
+                        let videoDuration = try await currentItem.asset.load(.duration)
+                        let preferredTransform = try await videoTrack.load(.preferredTransform)
+                        try videoCompositionTrack?.insertTimeRange(
+                            CMTimeRange(start: .zero, duration: videoDuration),
+                            of: videoTrack,
+                            at: .zero
+                        )
+                        
+                        // Set the preferred transform to maintain orientation
+                        videoCompositionTrack?.preferredTransform = preferredTransform
+                    }
+
+                    // Load audio tracks asynchronously
+                    let audioTracks = try await audioAsset.loadTracks(withMediaType: .audio)
+                    if let audioTrack = audioTracks.first {
+                        let audioCompositionTrack = composition.addMutableTrack(
+                            withMediaType: .audio,
+                            preferredTrackID: kCMPersistentTrackID_Invalid
+                        )
+                        let audioDuration = try await audioAsset.load(.duration)
+                        try audioCompositionTrack?.insertTimeRange(
+                            CMTimeRange(start: .zero, duration: audioDuration),
+                            of: audioTrack,
+                            at: .zero
+                        )
+                    }
+
+                    let playerItem = AVPlayerItem(asset: composition)
+                    self.player?.replaceCurrentItem(with: playerItem)
+                    completion(true)
+                } catch {
+                    print("Error loading tracks or inserting time range: \(error)")
+                    completion(false)
+                }
+            }
+        }
+    }
 }
 
 extension AVPlayer {

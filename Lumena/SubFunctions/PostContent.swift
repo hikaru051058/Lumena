@@ -254,12 +254,29 @@ struct VideoHome: View {
                         
                         Button(action: {
                             
-                            if !(cameraModel.previewURL == nil), let contentsToAppend = cameraModel.getContentFromPreview(){
-                                postLume.contents.append(contentsToAppend)
-                                savedVideo = true
-                                contentsCount+=1
+                            if cameraModel.previewURL != nil, let contentsToAppend = cameraModel.getContentFromPreview() {
+                                if musicTag {
+                                    if case .video(let reelVideo) = contentsToAppend {
+                                        reelVideo.player?.isMuted = true
+
+                                        // Replace the audio with postLume.tagMusic
+                                        reelVideo.replaceAudio(with: postLume.tagMusic) { result in
+                                            if result {
+                                                postLume.contents.append(contentsToAppend)
+                                                savedVideo = true
+                                                contentsCount += 1
+                                            } else {
+                                                // Handle the error if needed
+                                                print("Failed to replace audio")
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    postLume.contents.append(contentsToAppend)
+                                    savedVideo = true
+                                    contentsCount += 1
+                                }
                             }
-                            
                         }) {
                             
                             Image(systemName: "video.fill.badge.checkmark")
@@ -279,12 +296,6 @@ struct VideoHome: View {
             }
             .frame(maxHeight: .infinity,alignment: .bottom)
             .padding(.bottom,50)
-            
-            
-            
-            
-            
-            
             
             HStack{
                 
