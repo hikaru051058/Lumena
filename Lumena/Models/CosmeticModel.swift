@@ -333,6 +333,7 @@ extension Cosmetic {
 extension Cosmetic {
     
     func uploadCosmeticQL(progressHandler: @escaping (Double) -> Void) async throws -> String {
+        
         guard let productImages = self.productImages, !productImages.isEmpty else {
             throw NSError(domain: "com.nucr.gotdns.Lumena.cosmeticUploadError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No product images to upload."])
         }
@@ -362,8 +363,45 @@ extension Cosmetic {
         try? fileManager.removeItem(at: zipFilePath)
         
         return "Upload successful"
+        
     }
-
+    
+//    private func uploadCosmeticQLZip(progressHandler: @escaping (Double) -> Void) async throws -> String {
+//        guard let productImages = self.productImages, !productImages.isEmpty else {
+//            throw NSError(domain: "com.nucr.gotdns.Lumena.cosmeticUploadError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No product images to upload."])
+//        }
+//        
+//        // Try creating a CosmeticQL model asynchronously
+//        _ = try await GraphQL.shared.createModel(self.toCosmeticQL())
+//        print("CosmeticQL model created successfully.")
+//        
+//        let fileManager = FileManager.default
+//        let tempDirectory = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: URL(fileURLWithPath: NSTemporaryDirectory()), create: true)
+//        try saveProductImagesToDirectory(directory: tempDirectory, productImages: productImages)
+//        
+//        let zipFilePath = try zipDirectory(at: tempDirectory, zipFileName: "cosmetics.zip")
+//        let zipData = try Data(contentsOf: zipFilePath)
+//        let zipFileName = "\(self.cosmeticID).zip"
+//        let zipFileLocation = "cosmetics/\(zipFileName)"
+//        
+//        // Store data asynchronously and await the result
+//        _ = try await S3.shared.storeDataAsync(name: zipFileLocation, data: zipData, accessLevel: "public", progressHandler: { progress in
+//            progressHandler(progress)  // Call the closure passed by the caller
+//            print("Upload Progress: \(progress * 100)%")
+//        })
+//        print("Successfully uploaded cosmetic data.")
+//        
+//        // Clean up the temporary directory and zip file
+//        try? fileManager.removeItem(at: tempDirectory)
+//        try? fileManager.removeItem(at: zipFilePath)
+//        
+//        return "Upload successful"
+//    }
+//
+//    private func generateCompressedImage() {
+//        
+//        
+//    }
 
     private func saveProductImagesToDirectory(directory: URL, productImages: [ImageExtractorAsset]) throws {
         for (index, imageAsset) in productImages.enumerated() {
@@ -482,7 +520,6 @@ extension Cosmetic {
         
         return returnAssets.isEmpty ? nil : returnAssets
     }
-    
 }
 
 extension Cosmetic: Equatable {

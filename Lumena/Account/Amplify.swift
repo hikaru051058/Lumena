@@ -921,4 +921,26 @@ class GraphQL {
         
         return body.message
     }
+    
+    func searchCosmeticQL(searchKeyword: String) async throws -> [Cosmetic] {
+        
+        let baseURL = "https://os9xlcvkn2.execute-api.ap-northeast-1.amazonaws.com/prod/search"
+        var components = URLComponents(string: baseURL)!
+        components.queryItems = [
+            URLQueryItem(name: "q", value: searchKeyword),
+        ]
+        
+        guard let urlString = components.string else {
+            throw NSError(domain: "InvalidURL", code: 0, userInfo: nil)
+        }
+        
+        let apiResponse: APIResponse<[CosmeticQL]> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
+        
+        guard let body = apiResponse.body else {
+            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No body got returned"])
+        }
+        
+        let cosmeticArr = body.map{ Cosmetic(ql: $0) }
+        return cosmeticArr
+    }
 }

@@ -1343,21 +1343,45 @@ struct PrepPost: View {
         @State var searchTerm: String = ""
         
         @State var tagAny: Bool = false
-        
         @State var filterTag: Bool = false
+        
+        // Store original products
+        @State private var originalProducts: [Cosmetic] = []
+        
+        // Loading state
+        @State private var isLoading: Bool = false
         
         var body: some View {
                 
             ZStack{
-                
                 VStack{
-                    
                     HStack{
                         ZStack{
                             TextField("", text: $searchTerm, onCommit: {
-                                
-                                withAnimation {
-                                    SearchOutputShow = true
+                                Task {
+                                    isLoading = true
+                                    do {
+                                        // Store original products before searching
+                                        if originalProducts.isEmpty {
+                                            originalProducts = cosmeticsWrapper.cosmetics
+                                        }
+                                        
+                                        let cosmetics = try await GraphQL.shared.searchCosmeticQL(searchKeyword: searchTerm)
+                                        // Append new cosmetics to existing list
+                                        cosmeticsWrapper.cosmetics.append(contentsOf: cosmetics.filter { newCosmetic in
+                                            !cosmeticsWrapper.cosmetics.contains(where: { $0.cosmeticID == newCosmetic.cosmeticID })
+                                        })
+                                        // Filter the list locally
+                                        cosmeticsWrapper.cosmetics = cosmeticsWrapper.cosmetics.filter { cosmetic in
+                                            cosmetic.productName.contains(searchTerm) || cosmetic.companyID.contains(searchTerm)
+                                        }
+                                        withAnimation {
+                                            SearchOutputShow = true
+                                        }
+                                    } catch {
+                                        print(error)
+                                    }
+                                    isLoading = false
                                 }
                             })
                             .placeholder(when: searchTerm.isEmpty) {
@@ -1369,7 +1393,6 @@ struct PrepPost: View {
                             .cornerRadius(10)
                             
                             if(SearchOutputShow) {
-                                
                                 HStack{
                                     
                                     Spacer()
@@ -1377,6 +1400,9 @@ struct PrepPost: View {
                                     Button(action: {
                                         
                                         searchTerm = ""
+                                        // Reset to original products
+                                        cosmeticsWrapper.cosmetics = originalProducts
+                                        originalProducts = []
                                         
                                         withAnimation {
                                             SearchOutputShow = false
@@ -1454,6 +1480,31 @@ struct PrepPost: View {
                             if !change {
                                 if(scannedCode != ""){
                                     searchTerm = scannedCode
+                                    Task {
+                                        isLoading = true
+                                        do {
+                                            // Store original products before searching
+                                            if originalProducts.isEmpty {
+                                                originalProducts = cosmeticsWrapper.cosmetics
+                                            }
+                                            
+                                            let cosmetics = try await GraphQL.shared.searchCosmeticQL(searchKeyword: searchTerm)
+                                            // Append new cosmetics to existing list
+                                            cosmeticsWrapper.cosmetics.append(contentsOf: cosmetics.filter { newCosmetic in
+                                                !cosmeticsWrapper.cosmetics.contains(where: { $0.cosmeticID == newCosmetic.cosmeticID })
+                                            })
+                                            // Filter the list locally
+                                            cosmeticsWrapper.cosmetics = cosmeticsWrapper.cosmetics.filter { cosmetic in
+                                                cosmetic.productName.contains(searchTerm) || cosmetic.companyID.contains(searchTerm) || cosmetic.cosmeticID.contains(searchTerm)
+                                            }
+                                            withAnimation {
+                                                SearchOutputShow = true
+                                            }
+                                        } catch {
+                                            print(error)
+                                        }
+                                        isLoading = false
+                                    }
                                     scannedCode = ""
                                     withAnimation {
                                         SearchOutputShow = true
@@ -1467,9 +1518,26 @@ struct PrepPost: View {
                     .opacity(filterTag ? 0 : 1)
                     
                     
-                    ZStack{
+                    ZStack {
                         
-                        ProductView(postLume: postLume, tagAny: $tagAny, filterTag: $filterTag, cosmeticsWrapper: cosmeticsWrapper)
+                        // Show loading indicator when loading
+                        if isLoading {
+                            VStack {
+                                Spacer()
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .padding()
+                                        .background(Color(UIColor.systemBackground).opacity(0.8))
+                                        .cornerRadius(10)
+                                    Spacer()
+                                }
+                                Spacer()
+                            }
+                        } else {
+                            ProductView(postLume: postLume, tagAny: $tagAny, filterTag: $filterTag, cosmeticsWrapper: cosmeticsWrapper)
+                        }
                         
                         VStack{
                             

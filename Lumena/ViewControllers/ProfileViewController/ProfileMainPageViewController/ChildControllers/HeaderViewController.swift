@@ -79,6 +79,19 @@ class HeaderViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
+        
+        Task {
+            
+            do {
+                let cosmetics = try await GraphQL.shared.searchCosmeticQL(searchKeyword: "dior")
+                
+                for cosmetic in cosmetics {
+                    print(cosmetic)
+                }
+            } catch {
+                print(error)
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
