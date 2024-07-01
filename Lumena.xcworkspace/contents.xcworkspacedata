@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/hikaru/Desktop/FFT/Lumena/Lumena/ViewControllers/ShimmerViewController.swift">
+   </FileRef>
+   <FileRef
       location = "group:Lumena.xcodeproj">
    </FileRef>
    <FileRef

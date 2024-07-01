@@ -1667,7 +1667,7 @@ struct PrepPost: View {
                                                 
                                             case .success:
                                                 
-                                                GI.shared.profileSettings?.postContents.append(postLume.postID)
+                                                GI.shared.profileSettings?.postContentsID.append(postLume.postID)
                                                 
                                             case .failure:
                                                 

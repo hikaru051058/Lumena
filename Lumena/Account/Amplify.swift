@@ -274,24 +274,25 @@ class AuthenticationManager: ObservableObject {
             let identityId = try identityProvider.getIdentityId().get()
             
             // Fetch user profile using identityID and save it in the cache
-            do  {
-                let _ = try await ProfileManager.shared.getProfile(withID: identityId)
-            } catch {
-                let amplifyAttributes = try await Amplify.Auth.fetchUserAttributes()
-                let newProfileSettings = ProfileSettings(from: amplifyAttributes)
-                newProfileSettings.identityID = identityId
-                
-                let newUserStateQL = UserStateQL(UserState: .active, timestamp: Int(Date.timeIntervalSinceReferenceDate), reason: "fetchAuth acc", userprofileqlID: identityId)
-                do {
-                    let message = try await GraphQL.shared.createModel(newUserStateQL)
-                    print(message as Any)
+            Task {
+                do  {
+                    let _ = try await ProfileManager.shared.getProfile(withID: identityId)
                 } catch {
-                    print("Error in creating UserStateQL: \(error)")
+                    let amplifyAttributes = try await Amplify.Auth.fetchUserAttributes()
+                    let newProfileSettings = ProfileSettings(from: amplifyAttributes)
+                    newProfileSettings.identityID = identityId
+                    
+                    let newUserStateQL = UserStateQL(UserState: .active, timestamp: Int(Date.timeIntervalSinceReferenceDate), reason: "fetchAuth acc", userprofileqlID: identityId)
+                    do {
+                        let message = try await GraphQL.shared.createModel(newUserStateQL)
+                        print(message as Any)
+                    } catch {
+                        print("Error in creating UserStateQL: \(error)")
+                    }
+                    
+                    // Save the newly created profile to the database
+                    let _ = try await GraphQL.shared.createModel(newProfileSettings.toUserProfileQL())
                 }
-                
-                // Save the newly created profile to the database
-                let _ = try await GraphQL.shared.createModel(newProfileSettings.toUserProfileQL())
-                
             }
             
             UserDefaults.standard.set(true, forKey: "isAuthenticated")

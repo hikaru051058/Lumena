@@ -333,16 +333,30 @@ class ProfileSettings: Identifiable, ObservableObject, Reflectable {
             ProfileManager.shared.updateProfile(self)
         }
     }
-    @Published var postContents: [String] {
+    
+    
+    @Published var postContentsID: [String] {
         didSet {
             ProfileManager.shared.updateProfile(self)
         }
     }
-    @Published var likeContents: [String] {
+    @Published var likeContentsID: [String] {
         didSet {
             ProfileManager.shared.updateProfile(self)
         }
     }
+    
+    @Published var postContents: [Lume] = [] {
+        didSet {
+            ProfileManager.shared.updateProfile(self)
+        }
+    }
+    @Published var likeContents: [Lume] = [] {
+        didSet {
+            ProfileManager.shared.updateProfile(self)
+        }
+    }
+    
     
     @Published var followManager: ProfileFollowManager? {
         didSet {
@@ -359,7 +373,7 @@ class ProfileSettings: Identifiable, ObservableObject, Reflectable {
         }
     }
     
-    var skinSetting: [Int] {
+    @Published var skinSetting: [Int] {
         didSet {
             ProfileManager.shared.updateProfile(self)
         }
@@ -412,8 +426,8 @@ class ProfileSettings: Identifiable, ObservableObject, Reflectable {
         self.bio = bio
         self.profileImage = profileImage
         self.backgroundImage = backgroundImage
-        self.postContents = postContents
-        self.likeContents = likeContents
+        self.postContentsID = postContents
+        self.likeContentsID = likeContents
         self.followingCount = followingCount
         self.followerCount = followerCount
         self.lastUpdateTimestamp = lastUpdateTimestamp
@@ -437,8 +451,8 @@ class ProfileSettings: Identifiable, ObservableObject, Reflectable {
         self.bio = ""
         self.profileImage = nil
         self.backgroundImage = nil
-        self.postContents = []
-        self.likeContents = []
+        self.postContentsID = []
+        self.likeContentsID = []
         self.followingCount = 0
         self.followerCount = 0
         self.followManager = ProfileFollowManager(userID: self.identityID)
@@ -527,8 +541,8 @@ class ProfileSettings: Identifiable, ObservableObject, Reflectable {
         self.bio = profile.bio
         self.profileImage = profile.profileImage
         self.backgroundImage = profile.backgroundImage
-        self.postContents = profile.postContents
-        self.likeContents = profile.likeContents
+        self.postContentsID = profile.postContentsID
+        self.likeContentsID = profile.likeContentsID
         self.followingCount = profile.followingCount
         self.followerCount = profile.followerCount
         self.followManager = profile.followManager
@@ -622,8 +636,8 @@ class ProfileSettings: Identifiable, ObservableObject, Reflectable {
             self.bio = profile.bio
             self.profileImage = profile.profileImage
             self.backgroundImage = profile.backgroundImage
-            self.postContents = profile.postContents
-            self.likeContents = profile.likeContents
+            self.postContentsID = profile.postContentsID
+            self.likeContentsID = profile.likeContentsID
             self.followManager = profile.followManager
             self.followingCount = profile.followingCount
             self.followerCount = profile.followerCount
@@ -749,11 +763,11 @@ extension ProfileSettings {
     
     func fetchUserLikedPosts() async throws {
         do {
-            if self.likeContents.isEmpty {
+            if self.likeContentsID.isEmpty {
                 let lumes = try await GraphQL.shared.fetchUserLikedPosts(userID: self.identityID)
-                self.likeContents = lumes.likes.map { $0.lumeQLID }
+                self.likeContentsID = lumes.likes.map { $0.lumeQLID }
                 
-                _ = try await GraphQL.shared.fetchMultipleReelQL(reelQLIds: lumes.likes.map({ $0.lumeQLID }))
+                self.likeContents = try await GraphQL.shared.fetchMultipleReelQL(reelQLIds: lumes.likes.map({ $0.lumeQLID }))
             }
         } catch {
             print(error)
@@ -763,14 +777,17 @@ extension ProfileSettings {
     }
     
     func returnUserLikedLumes() -> [Lume] {
-        return LumeManager.shared.getLumes(withID: self.likeContents)
+        if self.likeContents.isEmpty {
+            self.likeContents = LumeManager.shared.getLumes(withID: self.likeContentsID)
+        }
+        return self.likeContents
     }
     
     func fetchUserLumes() async throws {
         do {
-            if self.postContents.isEmpty {
+            if self.postContentsID.isEmpty {
                 let lumes = try await GraphQL.shared.fetchUserLumas(userProfileID: self.identityID)
-                self.postContents = lumes
+                self.postContentsID = lumes
                 
                 if self.identityID == GI.shared.identityID {
                     GI.shared.userPosts = lumes
@@ -787,7 +804,10 @@ extension ProfileSettings {
     }
     
     func returnUserLumes() -> [Lume] {
-        return LumeManager.shared.getUserPostLumes(withID: self.identityID)
+        if self.postContents.isEmpty {
+            self.postContents = LumeManager.shared.getUserPostLumes(withID: self.identityID)
+        }
+        return self.postContents
     }
     
     func fetchUserImages() async throws {
@@ -838,7 +858,7 @@ extension ProfileSettings {
                 let _ = try await S3.shared.storeDataAsync(name: "\(self.identityID)/userSetting/background_image.jpg", data: imageData, progressHandler: { progress in
                     print("Upload Progress for Background Image: \(progress * 100)%")
                 })
-                await refreshProfileImage()
+                await refreshBackgroundImage()
             }
         } catch {
             print(error)
@@ -852,9 +872,24 @@ extension ProfileSettings {
             if let newProfile = arrProfile.first {
                 
                 self.profileImage?.url = ""
-                self.backgroundImage?.url = ""
                 
                 self.profileImage?.loadAgain(newUrl: newProfile.profileImage)
+                
+                try await updateProfile()
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func refreshBackgroundImage() async {
+        do {
+            let arrProfile = try await GraphQL.shared.fetchUserProfileQL(userIDs: [self.userprofileqlID])
+            
+            if let newProfile = arrProfile.first {
+                
+                self.backgroundImage?.url = ""
+                
                 self.backgroundImage?.loadAgain(newUrl: newProfile.backgroundImage)
                 
                 try await updateProfile()
@@ -932,13 +967,46 @@ class profileImage: ObservableObject {
             return nil
         }
     }
-
+    
     func loadAgain(newUrl: String? = nil) {
         if let newUrl = newUrl {
             self.url = newUrl
         }
         guard !self.url.isEmpty else { return }
         loadImageFromURL()
+    }
+    
+    // New async throwing function
+    func loadImageFromNewURL(newUrl: String) async throws -> UIImage? {
+        self.url = newUrl
+        let normalizedUrl = normalizeUrl(urlString: newUrl)
+        
+        // Check cache first
+        if let cachedImage = ImageCache.shared.image(forId: normalizedUrl) {
+            self.image = cachedImage
+            return cachedImage
+        }
+        
+        // Download new image
+        guard let imageURL = URL(string: newUrl) else {
+            throw URLError(.badURL)
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: imageURL)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        guard let downloadedImage = UIImage(data: data) else {
+            throw URLError(.cannotDecodeContentData)
+        }
+        
+        DispatchQueue.main.async {
+            self.image = downloadedImage
+            ImageCache.shared.store(image: downloadedImage, forId: normalizedUrl)
+        }
+        
+        return downloadedImage
     }
 }
 

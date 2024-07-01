@@ -106,6 +106,7 @@
       }
     },
     "８文字以上\n数字を1つ以上含む\n大文字のアルファベットを1つ以上\n小文字のアルファベットを1つ以上含む" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -136,13 +137,16 @@
     "Email" : {
 
     },
+    "Error" : {
+
+    },
     "Error occurred while processing data." : {
       "comment" : "Data Processing Error"
     },
     "Failed to retrieve data." : {
       "comment" : "Unsuccessful Retrieval"
     },
-    "MyPaletteアカウントの作成" : {
+    "Lumenaアカウントの作成" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -159,6 +163,12 @@
 
     },
     "No Luma Available" : {
+
+    },
+    "OK" : {
+
+    },
+    "Password Structure" : {
 
     },
     "Photo Library" : {
@@ -198,6 +208,9 @@
       }
     },
     "URL" : {
+
+    },
+    "You must be at least 13 years old to use this app." : {
 
     },
     "アイライナー" : {
@@ -1136,6 +1149,9 @@
         }
       }
     },
+    "文字以上\n数字を1つ以上含む\n大文字のアルファベットを1つ以上\n小文字のアルファベットを1つ以上含む" : {
+
+    },
     "新しいパスワードを入力" : {
       "localizations" : {
         "en" : {
@@ -1492,6 +1508,7 @@
       }
     },
     "電話番号（ハイフン不要）" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

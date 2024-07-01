@@ -13,6 +13,7 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     // MARK: PagerAwareProtocol
     
     var profile: ProfileSettings!
+    var userIdentityID: String!
     
     weak var pageDelegate: BottomPageDelegate?
     weak var refreshDelegate: RefreshDelegate?
@@ -29,8 +30,9 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     var isReload = false
     var transitionAnimator = SharedTransitionAnimator()
     
-    init(profile: ProfileSettings?) {
+    init(profile: ProfileSettings?, userIdentityID: String) {
         self.profile = profile
+        self.userIdentityID = userIdentityID
         super.init(nibName: nil, bundle: nil)
     }
         
@@ -82,13 +84,10 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     }
     
     func updateProfile(profile: ProfileSettings) {
-        
-        DispatchQueue.main.async { [self] in
-            self.profile = profile
-            for vc in viewControllers {
-                if let bottomVC = vc as? BottomViewController {
-                    bottomVC.updateProfile(profile: profile)
-                }
+        self.profile = profile
+        for vc in viewControllers {
+            if let bottomVC = vc as? BottomViewController {
+                bottomVC.updateProfile(profile: profile)
             }
         }
     }

@@ -101,12 +101,10 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     func updateProfile(profile: ProfileSettings) {
-        DispatchQueue.main.async { [self] in
-            self.profile = profile
-            view.layoutIfNeeded()
-            collectionView.layoutIfNeeded()
-            self.fetchData()
-        }
+        self.profile = profile
+        collectionView.layoutIfNeeded()
+        self.fetchData()
+        view.layoutIfNeeded()
     }
 }
 

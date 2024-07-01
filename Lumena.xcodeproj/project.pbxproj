@@ -63,6 +63,7 @@
 		17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */; };
 		17C412312C2C04010083C8A5 /* LumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C4122F2C2C04010083C8A5 /* LumeQL.swift */; };
 		17C412322C2C04010083C8A5 /* LumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412302C2C04010083C8A5 /* LumeQL+Schema.swift */; };
+		17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412332C32C5460083C8A5 /* ShimmerViewController.swift */; };
 		17FA9F452BEE44B000CC28AC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FA9F442BEE44B000CC28AC /* NotificationService.swift */; };
 		17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA42BD616D900682EE2 /* AppDelegate.swift */; };
 		17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FFBFA62BD616D900682EE2 /* SceneDelegate.swift */; };
@@ -245,6 +246,7 @@
 		17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterParallaxViewController.swift; sourceTree = "<group>"; };
 		17C4122F2C2C04010083C8A5 /* LumeQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeQL.swift; path = ../amplify/generated/models/LumeQL.swift; sourceTree = "<group>"; };
 		17C412302C2C04010083C8A5 /* LumeQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LumeQL+Schema.swift"; path = "../amplify/generated/models/LumeQL+Schema.swift"; sourceTree = "<group>"; };
+		17C412332C32C5460083C8A5 /* ShimmerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShimmerViewController.swift; path = /Users/hikaru/Desktop/FFT/Lumena/Lumena/ViewControllers/ShimmerViewController.swift; sourceTree = "<absolute>"; };
 		17FA9F442BEE44B000CC28AC /* NotificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17FFBFA12BD616D900682EE2 /* Lumena.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumena.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17FFBFA42BD616D900682EE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -553,6 +555,7 @@
 				171761CE2C096323000268A6 /* ProfileMainPageViewController */,
 				171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */,
 				1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */,
+				17C412332C32C5460083C8A5 /* ShimmerViewController.swift */,
 			);
 			path = ProfileViewController;
 			sourceTree = "<group>";
@@ -975,6 +978,7 @@
 				17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */,
 				179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */,
 				17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */,
+				17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */,
 				1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */,
 				173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */,
 				17C0ABB32BFEA90100FA027A /* LabelCell.swift in Sources */,

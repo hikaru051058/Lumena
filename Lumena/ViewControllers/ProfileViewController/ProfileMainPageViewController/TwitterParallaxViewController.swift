@@ -9,6 +9,7 @@ import UIKit
 import TwitterProfile
 import XLPagerTabStrip
 import SwiftUI
+import Combine
 
 
 protocol RefreshDelegate: AnyObject {
@@ -28,7 +29,13 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     var isSettingsButtonTapped = false
     
     var userIdentityID: String!
-    var profile: ProfileSettings = ProfileSettings()
+    
+    @ObservedObject var profile: ProfileSettings = ProfileSettings() {
+        didSet {
+            ProfileManager.shared.updateProfile(profile)
+        }
+    }
+    
     var profileSettings: ProfileSettingsViewController!
     
     private let transitionAnimator = SharedTransitionAnimator()
@@ -37,9 +44,11 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     weak var refreshDelegate: RefreshDelegate?
     let refresh = UIRefreshControl()
     
+    private var cancellables = Set<AnyCancellable>()
+    
     init(userIdentityID: String, profile: ProfileSettings = ProfileSettings()) {
         self.userIdentityID = userIdentityID
-        self.profile = profile
+        self._profile = ObservedObject(wrappedValue: profile)
         super.init(nibName: nil, bundle: nil)
         fetchUserProfile()
     }
@@ -55,14 +64,13 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
         self.navigationController?.interactivePopGestureRecognizer!.delegate = self;
         originalDelegate = self
         setupBackgroundViewController()
-        viewLoading = false
+        fetchUserProfile()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.delegate = self
-        fetchUserProfile()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -73,28 +81,45 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.delegate = nil
+        viewLoading = true
     }
     
     func fetchUserProfile() {
-//        DispatchQueue.main.async { [self] in
-            self.profile = ProfileManager.shared.getProfile(withID: userIdentityID)
-            if viewLoading {
-                self.headerVC?.updateProfile(profile: profile)
-                self.bottomVC?.updateProfile(profile: profile)
-                self.backgroundVC?.updateProfile(profile: profile)
+        Task {
+            do {
+                if ProfileManager.shared.hasProfile(id: userIdentityID) {
+                    let newProfile = try await ProfileManager.shared.getProfile(withID: self.userIdentityID)
+                    self._profile = ObservedObject(wrappedValue: newProfile)
+                }
+                
+                if viewLoading {
+                    let fetchedProfiles = try await GraphQL.shared.fetchUserProfileQL(userIDs: [userIdentityID])
+                    guard let fetchedProfile = fetchedProfiles.first else {
+                        print("Error: No user profile has been returned in Profile page for \(String(describing: userIdentityID))")
+                        return
+                    }
+                    self._profile = ObservedObject(wrappedValue: ProfileSettings(ql: fetchedProfile))
+                    
+                    self.headerVC?.updateProfile(profile: profile)
+                    self.bottomVC?.updateProfile(profile: profile)
+                    self.backgroundVC?.updateProfile()
+                    viewLoading = false
+                    
+                    ProfileManager.shared.updateProfile(profile)
+                }
             }
-//        }
+        }
     }
     
     // MARK: TPDataSource
     func headerViewController() -> UIViewController {
-        headerVC = HeaderViewController(profile: profile)
+        headerVC = HeaderViewController(profile: profile, userIdentityID: userIdentityID)
         headerVC?.backButtonDelegate = self
         return headerVC!
     }
     
     func bottomViewController() -> UIViewController & PagerAwareProtocol {
-        bottomVC = XLPagerTabStripExampleViewController(profile: profile)
+        bottomVC = XLPagerTabStripExampleViewController(profile: profile, userIdentityID: userIdentityID)
         bottomVC.refreshDelegate = self
         return bottomVC
     }
@@ -147,7 +172,7 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     }
     
     private func setupBackgroundViewController() {
-        backgroundVC = ProfileBackgroundViewController(profile: profile)
+        backgroundVC = ProfileBackgroundViewController(profile: profile, userIdentityID: userIdentityID)
         addChild(backgroundVC)
         view.insertSubview(backgroundVC.view, at: 0)
         backgroundVC.didMove(toParent: self)
@@ -260,9 +285,10 @@ extension TwitterParallaxViewController: ProfileToolButtonDelegate {
     func didTapSettingsButton() {
         self.isSettingsButtonTapped = true
         if profileSettings == nil {
-            profileSettings = ProfileSettingsViewController()
+            profileSettings = ProfileSettingsViewController(profile: profile)
+        } else {
+            profileSettings.updateProfile(profile: profile)
         }
-        profileSettings.profile = profile
         self.navigationController?.delegate = originalDelegate
         self.navigationController?.pushViewController(profileSettings, animated: true)
     }

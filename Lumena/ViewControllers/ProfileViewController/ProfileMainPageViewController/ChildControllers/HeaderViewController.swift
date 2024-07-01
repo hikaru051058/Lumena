@@ -8,16 +8,20 @@
 
 import UIKit
 import SwiftUI
+import Combine
 
 class HeaderViewController: UIViewController {
     
     var coverImageHeightConstraint: NSLayoutConstraint!
+    
+    private var userImageViewShimmerView: ShimmerView!
+    
     var userImageView: UIImageView!
     var userGivenNameLabel: UILabel!
     var userNameLabel: UILabel!
-    var verifiedImageView: UIImageView!
     
-    let profileInfoZPosition: CGFloat = 40
+    private let profileInfoZPosition: CGFloat = 50
+    private let backgroundZPosition: CGFloat = 45
     
     var profileBackground: UIView!
     var coverImageView: UIImageView!
@@ -49,12 +53,16 @@ class HeaderViewController: UIViewController {
     
     var initialValuesSet = false
     
-    var profile: ProfileSettings!
+    @ObservedObject var profile: ProfileSettings
+    var userIdentityID: String!
     
     weak var backButtonDelegate: ProfileToolButtonDelegate?
     
-    init(profile: ProfileSettings?) {
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(profile: ProfileSettings, userIdentityID: String) {
         self.profile = profile
+        self.userIdentityID = userIdentityID
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -79,19 +87,6 @@ class HeaderViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
-        
-        Task {
-            
-            do {
-                let cosmetics = try await GraphQL.shared.searchCosmeticQL(searchKeyword: "dior")
-                
-                for cosmetic in cosmetics {
-                    print(cosmetic)
-                }
-            } catch {
-                print(error)
-            }
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -110,7 +105,43 @@ class HeaderViewController: UIViewController {
             update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
         }
     }
+}
+
+extension HeaderViewController {
     
+    private func setupBindings() {
+        profile.$preferredUsername.sink { [weak self] preferredUsername in
+            self?.updateUserNameLabel(with: preferredUsername)
+        }.store(in: &cancellables)
+        
+        profile.$givenName.sink { [weak self] givenName in
+            self?.updateUserGivenNameLabel(with: givenName)
+        }.store(in: &cancellables)
+        
+        profile.$bio.sink { [weak self] bio in
+            self?.updateBioLabel(with: bio)
+        }.store(in: &cancellables)
+        
+        profile.$profileImage.sink { [weak self] profileImage in
+            self?.updateUserProfileImageView(with: profileImage?.image)
+        }.store(in: &cancellables)
+    }
+    
+    private func updateUserNameLabel(with preferredUsername: String) {
+        userNameLabel.text = "@\(preferredUsername)"
+    }
+    
+    private func updateUserGivenNameLabel(with givenName: String) {
+        userGivenNameLabel.text = givenName
+    }
+    
+    private func updateBioLabel(with bio: String) {
+        expandableTextViewController.text = bio
+    }
+    
+    private func updateUserProfileImageView(with profileImage: UIImage?) {
+        userImageView.image = profileImage
+    }
 }
 
 extension HeaderViewController {
@@ -123,13 +154,15 @@ extension HeaderViewController {
         visualEffectView.layer.zPosition = 20
         titleView.layer.zPosition = 30
         
+        profileBackground.layer.zPosition = backgroundZPosition // Profile background
+            
         userImageView.layer.zPosition = profileInfoZPosition
+        userImageViewShimmerView.layer.zPosition = profileInfoZPosition
         userNameLabel.layer.zPosition = profileInfoZPosition
         userGivenNameLabel.layer.zPosition = profileInfoZPosition
         profileStatFollowNumber.view.layer.zPosition = profileInfoZPosition
         expandableTextViewController.view.layer.zPosition = profileInfoZPosition
         titleView.layer.zPosition = profileInfoZPosition
-        profileBackground.layer.zPosition = profileInfoZPosition-5
         
         view.bringSubviewToFront(expandableTextViewController.view)
         
@@ -168,14 +201,13 @@ extension HeaderViewController {
     }
     
     private func addCoverImage() {
-        
         coverImageView = UIImageView()
         coverImageView.backgroundColor = .clear
         coverImageView.translatesAutoresizingMaskIntoConstraints = false
         coverImageView.contentMode = .scaleAspectFill
         view.addSubview(coverImageView)
         
-        coverImageHeightConstraint = coverImageView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height*0.7)
+        coverImageHeightConstraint = coverImageView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.7)
         coverImageHeightConstraint.isActive = true
         NSLayoutConstraint.activate([
             coverImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -239,7 +271,7 @@ extension HeaderViewController {
         profileBackground.translatesAutoresizingMaskIntoConstraints = false
         profileBackground.backgroundColor = .background
         profileBackground.layer.masksToBounds = true
-        profileBackground.layer.zPosition = profileInfoZPosition - 5
+//        profileBackground.layer.zPosition = profileInfoZPosition - 5
         profileBackground.layer.cornerRadius = 40 // Set the corner radius
         if #available(iOS 13.0, *) {
             profileBackground.layer.cornerCurve = .continuous // Use continuous corner curve for a smoother look
@@ -254,20 +286,42 @@ extension HeaderViewController {
     }
     
     private func addProfileInfo() {
+        addUserProfileImageView()
+        addUserGivenNameLabel()
+        addUserPreferredUsernameLabel()
+    }
+    
+    private func addUserProfileImageView() {
+        // Profile circle image placeholder (ShimmerView)
+        userImageViewShimmerView = ShimmerView()
+        userImageViewShimmerView.translatesAutoresizingMaskIntoConstraints = false
+        userImageViewShimmerView.layer.cornerRadius = 50
+        userImageViewShimmerView.backgroundColor = .systemGray5
+        userImageViewShimmerView.layer.masksToBounds = true
+        userImageViewShimmerView.layer.borderColor = UIColor.background.cgColor
+        userImageViewShimmerView.layer.borderWidth = 4
         
-        // profile circle image
+        view.addSubview(userImageViewShimmerView)
+        NSLayoutConstraint.activate([
+            userImageViewShimmerView.widthAnchor.constraint(equalToConstant: 100),
+            userImageViewShimmerView.heightAnchor.constraint(equalToConstant: 100),
+            userImageViewShimmerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            userImageViewShimmerView.centerYAnchor.constraint(equalTo: coverImageView.bottomAnchor)
+        ])
+        
+        // Actual profile image (UIImageView)
         if let profileImage = profile.profileImage?.image {
             userImageView = UIImageView(image: profileImage)
+            userImageViewShimmerView.isHidden = true // Hide the shimmer view
         } else {
             userImageView = UIImageView()
         }
         userImageView.translatesAutoresizingMaskIntoConstraints = false
         userImageView.layer.cornerRadius = 50
-        userImageView.backgroundColor = .gray
+        userImageView.backgroundColor = .systemGray5
         userImageView.layer.masksToBounds = true
-        
         userImageView.layer.borderColor = UIColor.background.cgColor
-        userImageView.layer.borderWidth = 4 // Adjust the width of the border as needed
+        userImageView.layer.borderWidth = 4
         
         view.addSubview(userImageView)
         NSLayoutConstraint.activate([
@@ -276,22 +330,36 @@ extension HeaderViewController {
             userImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             userImageView.centerYAnchor.constraint(equalTo: coverImageView.bottomAnchor)
         ])
-        
+    }
+    
+    private func addUserGivenNameLabel() {
         // user profile name
         userGivenNameLabel = UILabel()
         userGivenNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        userGivenNameLabel.text = profile.givenName
+        if profile.givenName != "" {
+            userGivenNameLabel.text = profile.givenName
+            userGivenNameLabel.isHidden = false
+        } else {
+            userGivenNameLabel.isHidden = true
+        }
         userGivenNameLabel.font = UIFont.boldSystemFont(ofSize: 22)
         view.addSubview(userGivenNameLabel)
         NSLayoutConstraint.activate([
             userGivenNameLabel.centerXAnchor.constraint(equalTo: userImageView.centerXAnchor),
             userGivenNameLabel.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 10)
         ])
-        
+    }
+    
+    private func addUserPreferredUsernameLabel() {
         // username
         userNameLabel = UILabel()
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        userNameLabel.text = "@\(profile.preferredUsername)"
+        if profile.preferredUsername != "" {
+            userNameLabel.text = "@\(profile.preferredUsername)"
+            userNameLabel.isHidden = false
+        } else {
+            userNameLabel.isHidden = true
+        }
         userNameLabel.font = UIFont.boldSystemFont(ofSize: 14)
         userNameLabel.textColor = .systemGray
         view.addSubview(userNameLabel)
@@ -361,6 +429,45 @@ extension HeaderViewController {
             toolBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
     }
+    
+}
+
+extension  HeaderViewController {
+    private func removeShimmerEffect(from view: UIView) {
+        if let sublayers = view.layer.sublayers {
+            for layer in sublayers {
+                if let gradientLayer = layer as? CAGradientLayer {
+                    gradientLayer.removeFromSuperlayer()
+                }
+            }
+        }
+    }
+    
+    private func addShimmerEffect(to view: UIView) {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor(white: 0.85, alpha: 1.0).cgColor,
+            UIColor(white: 0.95, alpha: 1.0).cgColor,
+            UIColor(white: 0.85, alpha: 1.0).cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.5, 1.0]
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        gradientLayer.frame = view.bounds
+        gradientLayer.masksToBounds = true
+        view.layer.addSublayer(gradientLayer)
+        
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = [-1.0, -0.5, 0.0]
+        animation.toValue = [1.0, 1.5, 2.0]
+        animation.duration = 0.9
+        animation.repeatCount = .infinity
+        gradientLayer.add(animation, forKey: "shimmerEffect")
+        
+        // To ensure the gradient layer resizes with the view
+        view.layer.masksToBounds = true
+        view.layoutIfNeeded()
+    }
 }
 
 extension HeaderViewController {
@@ -384,6 +491,8 @@ extension HeaderViewController {
         userGivenNameLabel.alpha = opacity
         profileStatFollowNumber.view.alpha = opacity
         expandableTextViewController.view.alpha = opacity
+        
+        userImageViewShimmerView.layer.zPosition = opacity
         
         if toolBar != nil {
             UIView.animate(withDuration: 0.1) {
@@ -422,6 +531,8 @@ extension HeaderViewController {
             coverImageView.center.y = covernitialCenterY + y - topLimit
             if stickyCover {
                 self.stickyCover = false
+                
+                userImageViewShimmerView.layer.zPosition = 0
                 userImageView.layer.zPosition = 0
                 userNameLabel.layer.zPosition = 0
                 userGivenNameLabel.layer.zPosition = 0
@@ -435,14 +546,19 @@ extension HeaderViewController {
             //let t = CGAffineTransform(scaleX: scale, y: scale)
             //userImageView.transform = t.translatedBy(x: 0, y: userImageView.frame.height * (1 - scale))
             
+            userImageViewShimmerView.layer.zPosition = profileInfoZPosition + 5
+            
             if !stickyCover {
                 self.stickyCover = true
+                
+                // Set zPosition for sticky state
                 userImageView.layer.zPosition = profileInfoZPosition
+                userImageViewShimmerView.layer.zPosition = profileInfoZPosition
                 userNameLabel.layer.zPosition = profileInfoZPosition
                 userGivenNameLabel.layer.zPosition = profileInfoZPosition
                 profileStatFollowNumber.view.layer.zPosition = profileInfoZPosition
                 expandableTextViewController.view.layer.zPosition = profileInfoZPosition
-                profileBackground.layer.zPosition = profileInfoZPosition-5
+                profileBackground.layer.zPosition = backgroundZPosition
             }
         }
         visualEffectView.center.y = coverImageView.center.y
@@ -467,21 +583,44 @@ extension HeaderViewController {
     }
     
     func updateProfile(profile: ProfileSettings) {
-        DispatchQueue.main.async { [self] in
-            self.profile = profile
-            userImageView.image = profile.profileImage?.image
-            
-            userGivenNameLabel.text = profile.givenName
-            userNameLabel.text = "@\(profile.preferredUsername)"
-            expandableTextViewController.text = profile.bio
-            profileStatFollowNumber.updateProfile(profile: profile)
-            bottomViewController.updateProfile(profile: profile)
-            toolBar.updateProfile(profile: profile)
-            profileToolButtonVC.updateProfile(profile: profile)
-            
-            expandableTextViewController.view.layoutIfNeeded()
-            view.layoutIfNeeded()
+        self.profile = profile
+        
+        if let profileImage =  profile.profileImage?.image {
+            userImageView.image = profileImage
+            userImageView.isHidden = false // Show the image view
+            userImageViewShimmerView.isHidden = true // Hide the shimmer view
+            Task {
+                ProfileManager.shared.updateProfile(profile)
+            }
         }
+        
+        // Update given name
+        if profile.givenName != "" {
+            userGivenNameLabel.text = profile.givenName
+            userGivenNameLabel.isHidden = false // Show the label
+        } else {
+            userGivenNameLabel.isHidden = true // Hide the label
+        }
+        
+        // Update username
+        if profile.preferredUsername != "" {
+            userNameLabel.text = "@\(profile.preferredUsername)"
+            userNameLabel.isHidden = false // Show the label
+        } else {
+            userNameLabel.isHidden = true // Hide the label
+        }
+        
+        titleLabel.text = profile.preferredUsername
+        expandableTextViewController.text = profile.bio
+        profileStatFollowNumber.updateProfile(profile: profile)
+        bottomViewController.updateProfile(profile: profile)
+        toolBar.updateProfile(profile: profile)
+        profileToolButtonVC.updateProfile(profile: profile)
+
+        adaptCoverImageHeight()
+        
+        expandableTextViewController.view.layoutIfNeeded()
+        view.layoutIfNeeded()
     }
     
     @objc private func appWillEnterForeground() {

@@ -32,6 +32,8 @@ struct CreateAccount: View {
     @State private var loadingSignUp: Bool = false
     
     @State private var errorMessage: String = ""
+    @State private var showAlert = false
+    @State private var isValidInput = true
     
     enum FocusTextFields {
         case lastName
@@ -42,7 +44,7 @@ struct CreateAccount: View {
         case username
         case password
     }
-     
+    
     @FocusState var focusState: FocusTextFields?
     
     var navigateToUserConfirmationCodeView: (String, String, String) -> Void = { _, _, _ in }
@@ -51,7 +53,7 @@ struct CreateAccount: View {
         ZStack{
             Color(red: 0.86, green: 0.92, blue: 0.87)
                 .ignoresSafeArea()
-
+            
             VStack{
                 
                 HStack{
@@ -79,7 +81,7 @@ struct CreateAccount: View {
                 .padding(.vertical, 5)
                 
                 HStack{
-                    Text ("MyPaletteアカウントの作成")
+                    Text ("Lumenaアカウントの作成")
                         .foregroundColor(Color(red: 0.452, green: 0.634, blue: 0.521))
                         .fontWeight(.bold)
                         .font(.footnote)
@@ -97,19 +99,19 @@ struct CreateAccount: View {
                 Spacer()
                 
                 if(lastName.isEmpty || firstName.isEmpty ||
-                   dob.description.isEmpty || email.isEmpty ||
+                   dob.description.isEmpty || !isValidInput || email.isEmpty ||
                    username.isEmpty || password.isEmpty || !passwordRequirement) {
                     
                     ZStack {
                         Rectangle()
-                        .frame(width: 140, height: 35)
-                        .cornerRadius(50)
-                        .foregroundColor(.white.opacity(0.4))
+                            .frame(width: 140, height: 35)
+                            .cornerRadius(50)
+                            .foregroundColor(.white.opacity(0.4))
                         
                         Text("新規登録")
-                        .fontWeight(.bold)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                            .fontWeight(.bold)
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                     .padding(.bottom)
                     
@@ -128,7 +130,7 @@ struct CreateAccount: View {
                         let formatter = DateFormatter()
                         formatter.locale = Locale(identifier: "en_US_POSIX") // Set the locale to avoid any potential issues
                         formatter.dateFormat = "MM/DD/YYYY"
-
+                        
                         var birthDateString = formatter.string(from: dob)
                         
                         let calendar = Calendar.current
@@ -136,12 +138,11 @@ struct CreateAccount: View {
                         if let day = components.day, let month = components.month, let year = components.year {
                             birthDateString = String(format: "%02d/%02d/%04d", month, day, year)
                         }
-
+                        
                         Task {
                             do {
-                                let message = try await AuthenticationManager.shared.signUp(username: username, password: password, email: email, givenName: firstName, familyName: lastName, preferredUsername: username, birthdate: birthDateString, phoneNumber: tempPhoneNum)
+                                _ = try await AuthenticationManager.shared.signUp(username: username, password: password, email: email, givenName: firstName, familyName: lastName, preferredUsername: username, birthdate: birthDateString)
                                 
-                                print("Success: \(message)")
                                 authPage = true
                                 
                                 navigateToUserConfirmationCodeView(username, password, email)
@@ -152,9 +153,6 @@ struct CreateAccount: View {
                             }
                             loadingSignUp = false
                         }
-                        
-                        
-                        
                     }) {
                         
                         ZStack {
@@ -189,7 +187,7 @@ struct CreateAccount: View {
             .ignoresSafeArea(.keyboard)
             
             VStack{
-                    
+                
                 ScrollView {
                     
                     VStack{
@@ -199,7 +197,7 @@ struct CreateAccount: View {
                                 
                                 TextField("", text: $lastName)
                                     .placeholder(when: lastName.isEmpty) {
-                                            Text("姓").foregroundColor(.gray)
+                                        Text("姓").foregroundColor(.gray)
                                     }
                                     .onReceive(lastName.publisher.collect()) {
                                         lastName = String($0.prefix(23))
@@ -233,7 +231,7 @@ struct CreateAccount: View {
                                 
                                 TextField("", text: $firstName)
                                     .placeholder(when: firstName.isEmpty) {
-                                            Text("名").foregroundColor(.gray)
+                                        Text("名").foregroundColor(.gray)
                                     }
                                     .onReceive(firstName.publisher.collect()) {
                                         firstName = String($0.prefix(23))
@@ -262,48 +260,59 @@ struct CreateAccount: View {
                         .padding(.horizontal, 40)
                         .frame(minHeight: 15)
                         
-                        VStack{
-                            HStack {
-                                TextField("", text: $tempPhoneNum)
-                                    .placeholder(when: tempPhoneNum.isEmpty) {
-                                        Text("電話番号（ハイフン不要）").foregroundColor(.gray)
-                                    }
-                                    .keyboardType(.phonePad)
-                                    .submitLabel(.next)
-                                    .focused($focusState, equals: .tempPhoneNum)
-                                    .onSubmit {
-                                        focusState = .dob
-                                    }
-                                    .padding(.horizontal, 5)
-                                
-                                Spacer()
-                            }
-                            
-                            Divider()
-                                .frame(minHeight: 1)
-                                .overlay(Color.secondary)
-                            
-                            Spacer()
-                                .padding(.bottom, 5)
-                        }
-                        .padding(.horizontal, 40)
-                        .frame(minHeight: 15)
+//                        VStack{
+//                            HStack {
+//                                TextField("", text: $tempPhoneNum)
+//                                    .placeholder(when: tempPhoneNum.isEmpty) {
+//                                        Text("電話番号（ハイフン不要）").foregroundColor(.gray)
+//                                    }
+//                                    .keyboardType(.phonePad)
+//                                    .submitLabel(.next)
+//                                    .focused($focusState, equals: .tempPhoneNum)
+//                                    .onSubmit {
+//                                        focusState = .dob
+//                                    }
+//                                    .padding(.horizontal, 5)
+//                                
+//                                Spacer()
+//                            }
+//                            
+//                            Divider()
+//                                .frame(minHeight: 1)
+//                                .overlay(Color.secondary)
+//                            
+//                            Spacer()
+//                                .padding(.bottom, 5)
+//                        }
+//                        .padding(.horizontal, 40)
+//                        .frame(minHeight: 15)
                         
                         VStack{
                             
                             HStack{
                                 
                                 Text("誕生日: ")
-                                    .foregroundColor(.gray)
                                     .padding(.horizontal, 5)
+                                    .foregroundColor(isValidInput ? .gray : .red)
                                 
                                 DatePicker("誕生日", selection: $dob, displayedComponents: .date)
-                                    .accentColor(Color(red: 0.452, green: 0.634, blue: 0.521))
+                                    .accentColor(isValidInput ? Color(red: 0.452, green: 0.634, blue: 0.521) : .red)
+                                    .foregroundColor(isValidInput ? .black : .red)
                                     .labelsHidden()
                                     .padding(.horizontal, 5)
                                     .datePickerStyle(.compact)
                                     .focused($focusState, equals: .dob)
-                             
+                                    .onChange(of: dob) { newValue in
+                                        isValidInput = isOver13YearsOld(newValue)
+                                        if !isValidInput {
+                                            showAlert = true
+                                        }
+                                    }
+                                    .alert(isPresented: $showAlert) {
+                                        Alert(title: Text("Error"), message: Text("You must be at least 13 years old to use this app."), dismissButton: .default(Text("OK")))
+                                    }
+                                    .foregroundColor(isValidInput ? .black : .red)
+                                
                                 Spacer()
                             }
                             
@@ -311,7 +320,7 @@ struct CreateAccount: View {
                             
                             Divider()
                                 .frame(minHeight: 1)
-                                .overlay(Color.secondary)
+                                .overlay(isValidInput ? Color.secondary : Color.red)
                             
                             Spacer()
                                 .padding(.bottom, 15)
@@ -319,41 +328,13 @@ struct CreateAccount: View {
                         }
                         .padding(.horizontal, 40)
                         .frame(minHeight: 15)
-                        
-                        
-                        /*
-                        VStack{
-                            HStack{
-                                
-                                Menu(sex.isEmpty ? "性別" : sex) {
-                                    Button("女性", action: {sex = "女性"})
-                                    Button("男性", action: {sex = "男性"})
-                                    Button("その他", action: {sex = "その他"})
-                                }
-                                .padding(.horizontal, 5)
-                                .foregroundColor(sex.isEmpty ? .gray : .black)
-                                
-                                Spacer()
-                            }
-                            
-                            Divider()
-                                .frame(minHeight: 1)
-                                .overlay(Color.secondary)
-                            
-                            Spacer()
-                                .padding(.bottom, 15)
-                        }
-                        .padding(.horizontal, 40)
-                        .frame(minHeight: 15)
-                         
-                         */
                         
                         VStack{
                             HStack{
                                 
                                 TextField("", text: $email)
                                     .placeholder(when: email.isEmpty) {
-                                            Text("Email").foregroundColor(.gray)
+                                        Text("Email").foregroundColor(.gray)
                                     }
                                     .keyboardType(.emailAddress)
                                     .autocapitalization(.none)
@@ -363,7 +344,7 @@ struct CreateAccount: View {
                                         focusState = .username
                                     }
                                 
-                                .padding(.horizontal, 5)
+                                    .padding(.horizontal, 5)
                                 
                                 Spacer()
                             }
@@ -383,11 +364,12 @@ struct CreateAccount: View {
                                 
                                 TextField("", text: $username)
                                     .placeholder(when: username.isEmpty) {
-                                            Text("ユーザーネーム").foregroundColor(.gray)
+                                        Text("ユーザーネーム").foregroundColor(.gray)
                                     }
                                     .onReceive(username.publisher.collect()) {
                                         username = String($0.prefix(23))
                                     }
+                                    .autocapitalization(.none)
                                     .submitLabel(.next)
                                     .focused($focusState, equals: .username)
                                     .onSubmit {
@@ -413,22 +395,8 @@ struct CreateAccount: View {
                         }
                         .padding(.horizontal, 40)
                         .frame(minHeight: 15)
-
+                        
                         VStack{
-                            
-                            if showPasswordInfo {
-                                
-                                HStack {
-                                    Spacer()
-                                    Text("８文字以上\n数字を1つ以上含む\n大文字のアルファベットを1つ以上\n小文字のアルファベットを1つ以上含む").padding().background(Color(red: 0.452, green: 0.634, blue: 0.521)).clipShape(BubbleShape(myMessage: true)).foregroundColor(.white)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                    
-                                }
-                                .padding(.leading, 55)
-                                .opacity(showPasswordInfo ? 1 : 0)
-                                
-                            }
                             
                             HStack{
                                 
@@ -486,6 +454,9 @@ struct CreateAccount: View {
                                     Image(systemName: "info.circle")
                                         .foregroundColor(Color.gray)
                                 }
+                                .alert(isPresented: $showPasswordInfo, content: {
+                                    Alert(title: Text("Password Structure"), message: Text("文字以上\n数字を1つ以上含む\n大文字のアルファベットを1つ以上\n小文字のアルファベットを1つ以上含む"), dismissButton: .default(Text("OK")))
+                                })
                             }
                             
                             Divider()
@@ -519,13 +490,21 @@ struct CreateAccount: View {
     }
     
     func passwordIsValid() -> Bool {
-            let hasUppercase = password.range(of: "[A-Z]", options: .regularExpression) != nil
-            let hasLowercase = password.range(of: "[a-z]", options: .regularExpression) != nil
-            let hasNumber = password.range(of: "[0-9]", options: .regularExpression) != nil
-            let hasMinimumLength = password.count >= 8
-            
-            return hasUppercase && hasLowercase && hasNumber && hasMinimumLength
-        }
+        let hasUppercase = password.range(of: "[A-Z]", options: .regularExpression) != nil
+        let hasLowercase = password.range(of: "[a-z]", options: .regularExpression) != nil
+        let hasNumber = password.range(of: "[0-9]", options: .regularExpression) != nil
+        let hasMinimumLength = password.count >= 8
+        
+        return hasUppercase && hasLowercase && hasNumber && hasMinimumLength
+    }
+
+    private func isOver13YearsOld(_ dob: Date) -> Bool {
+        let calendar = Calendar.current
+        let now = Date()
+        let ageComponents = calendar.dateComponents([.year], from: dob, to: now)
+        let age = ageComponents.year ?? 0
+        return age >= 13
+    }
 }
 
 
@@ -582,7 +561,6 @@ struct UserConfirmationCodeView: View {
                     Spacer()
                 }
                 .padding()
-//                .padding(.vertical, 5)
                 
                 
                 Spacer()
@@ -620,7 +598,6 @@ struct UserConfirmationCodeView: View {
                 }
                 .padding(.horizontal, 40)
                 .frame(minHeight: 15)
-                .padding(.bottom, 200)
                 
                 Text("メールの確認のため、\n６桁の番号を送信させていただきました。\n\n見つからない場合は、再送信のボタンを押してください。\n\nワンタイム確認コードを以下の\n記入欄に入力してください。")
                     .font(.footnote)
@@ -630,7 +607,8 @@ struct UserConfirmationCodeView: View {
                     .padding(.bottom, 20)
                 
             }
-            .padding(.top)
+            .padding(.bottom, 200)
+            .padding(.top, 50)
             
             VStack {
                 

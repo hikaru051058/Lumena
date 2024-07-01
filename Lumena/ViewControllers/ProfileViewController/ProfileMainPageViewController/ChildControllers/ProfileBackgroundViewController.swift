@@ -15,9 +15,11 @@ class ProfileBackgroundViewController: UIViewController {
     var imageView: UIImageView!
     var backgroundGradient: GradientEffectViewController?
     var profile: ProfileSettings!
+    var userIdentityID: String!
     
-    init(profile: ProfileSettings?) {
+    init(profile: ProfileSettings?, userIdentityID: String) {
         self.profile = profile
+        self.userIdentityID = userIdentityID
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,12 +33,26 @@ class ProfileBackgroundViewController: UIViewController {
         setupBackgroundGradientOrImage()
     }
     
-    func updateProfile(profile: ProfileSettings) {
-        DispatchQueue.main.async { [self] in
-            self.profile = profile
-            imageView.image = profile.backgroundImage?.image
-            backgroundGradient?.updateColors(from: profile.backgroundImage?.image)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateProfile()
+    }
+    
+    func updateProfile() {
+        self.profile = ProfileManager.shared.getProfile(withID: userIdentityID)
+        if let backgroundImageURLString = self.profile.backgroundImage?.url,
+           let backgroundImageURL = URL(string: backgroundImageURLString) {
+            Task {
+                if let backgroundImage = await downloadImage(from: backgroundImageURL) {
+                    DispatchQueue.main.async {
+                        self.updateBackgroundImage(backgroundImage)
+                    }
+                }
+            }
+        } else {
+            print("Background image URL is nil or invalid.")
         }
+        backgroundGradient?.updateColors(from: profile.profileImage?.image)
     }
 
     private func setupBackgroundGradientOrImage() {
@@ -121,4 +137,37 @@ class ProfileBackgroundViewController: UIViewController {
             UIColor(red: 0.946, green: 0.76, blue: 0.839, alpha: 1.0)
         ]
     }
+    
+    private func downloadImage(from url: URL) async -> UIImage? {
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                print("HTTP Error: Status code is not 200 for URL: \(url)")
+                return nil
+            }
+            return UIImage(data: data)
+        } catch {
+            print("Failed to download image from URL: \(url), Error: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    private func updateBackgroundImage(_ image: UIImage) {
+        // Remove old imageView if exists
+        imageView?.removeFromSuperview()
+        
+        imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFill
+        imageView.frame = view.bounds
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.addSubview(imageView)
+        
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: backgroundView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor),
+            imageView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
+        ])
+    }
 }
+

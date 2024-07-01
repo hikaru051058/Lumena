@@ -42,12 +42,20 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     private let buttonTextConfig = UIFont.systemFont(ofSize: 18, weight: .bold)
     var addShadow: Bool = true
     
-    
     // State variables
-    var profile: ProfileSettings!
+    @ObservedObject var profile: ProfileSettings
     var userPrivate: Bool = false
     var profSelectedImage: UIImage?
     var backSelectedImage: UIImage?
+    
+    init(profile: ProfileSettings) {
+        self.profile = profile
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,10 +127,10 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
 
     private func setupDefaultImageAppearance(imageView: UIImageView, text: String?, icon: String) {
         imageView.subviews.forEach { $0.removeFromSuperview() } // Always clear previous subviews first
-
+        
         if imageView.image == nil {
             imageView.backgroundColor = .systemGray5
-
+            
             // Configure the label if text is provided
             if let text = text, !text.isEmpty {
                 let iconImage = UIImage(systemName: icon)?.withTintColor(.primary, renderingMode: .alwaysOriginal)  // Apply primary color
@@ -152,7 +160,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
                 let iconImageView = UIImageView(image: iconImage)
                 iconImageView.contentMode = .scaleAspectFit
                 iconImageView.translatesAutoresizingMaskIntoConstraints = false
-
+                
                 imageView.addSubview(iconImageView)
                 
                 // Adjust the icon to fill the imageView
@@ -169,8 +177,6 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
         
         imageView.layoutIfNeeded()
     }
-
-
 
     private func setupFieldButtons() {
         
@@ -504,12 +510,14 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
         if forProfile {
             profSelectedImage = image
             profileImageView.image = profSelectedImage
+            profileImageView.subviews.forEach { $0.removeFromSuperview() } // Clear any added subviews
             Task {
                 await profile.uploadProfileImage(image: image)
             }
         } else {
             backSelectedImage = image
             backgroundImageView.image = backSelectedImage
+            backgroundImageView.subviews.forEach { $0.removeFromSuperview() } // Clear any added subviews
             Task {
                 await profile.uploadBackgroundImage(image: image)
             }
@@ -519,6 +527,11 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func updateProfile(profile: ProfileSettings) {
+        self.profile = profile
+        self.loadData()
     }
 }
 

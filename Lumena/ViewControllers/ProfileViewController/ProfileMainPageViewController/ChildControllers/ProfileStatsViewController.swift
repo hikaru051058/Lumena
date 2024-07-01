@@ -106,7 +106,7 @@ class ProfileStatsViewController: UIViewController {
     private func updateStats() {
         followerCountLabel.text = "\(formatNumber(profile.followerCount))"
         followingCountLabel.text = "\(formatNumber(profile.followingCount))"
-        postsCountLabel.text = "\(profile.postContents.count)"
+        postsCountLabel.text = "\(profile.postContentsID.count)"
     }
     
     private func formatNumber(_ number: Int) -> String {
