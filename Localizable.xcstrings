@@ -1,0 +1,2311 @@
+{
+  "sourceLanguage" : "ja",
+  "strings" : {
+    "" : {
+
+    },
+    " " : {
+
+    },
+    " more about beauty" : {
+
+    },
+    " reliable products" : {
+
+    },
+    " your favorite products" : {
+
+    },
+    "、" : {
+      "comment" : "CreateAccountAgreementText",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", "
+          }
+        }
+      }
+    },
+    "@%@" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@円" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "$%@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld / %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "%lld / 23" : {
+
+    },
+    "%lld / 300" : {
+
+    },
+    "%lld/5 selected" : {
+
+    },
+    "$%@" : {
+
+    },
+    "1-2時間" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1-2 Hours"
+          }
+        }
+      }
+    },
+    "１時間以下" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less than 1 Hour"
+          }
+        }
+      }
+    },
+    "2-4時間" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2-4 Hours"
+          }
+        }
+      }
+    },
+    "5-6時間" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5-6 Hours"
+          }
+        }
+      }
+    },
+    "7時間以上" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More than 7 Hours"
+          }
+        }
+      }
+    },
+    "8文字以上\n数字を1つ以上含む\n大文字のアルファベットを1つ以上\n小文字のアルファベットを1つ以上含む" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least 8 characters\nAt least one number\nAt least one uppercase letter\nAt least one lowercase letter"
+          }
+        }
+      }
+    },
+    "８文字以上\n数字を1つ以上含む\n大文字のアルファベットを1つ以上\n小文字のアルファベットを1つ以上含む" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least 8 characters\nAt least one number\nAt least one uppercase letter\nAt least one lowercase letter"
+          }
+        }
+      }
+    },
+    "13歳以上です" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "13 y/o or older"
+          }
+        }
+      }
+    },
+    "Add" : {
+
+    },
+    "Add new reading item" : {
+
+    },
+    "An unknown error occurred." : {
+      "comment" : "Unknown Error"
+    },
+    "Are you sure you want to delete this url?" : {
+
+    },
+    "Back" : {
+
+    },
+    "block_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to block %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんを本当にブロックしますか？"
+          }
+        }
+      }
+    },
+    "Camera" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Close" : {
+
+    },
+    "Create new reading item" : {
+
+    },
+    "Crop View" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Done" : {
+
+    },
+    "Email" : {
+
+    },
+    "Error occurred while processing data." : {
+      "comment" : "Data Processing Error"
+    },
+    "Failed to retrieve data." : {
+      "comment" : "Unsuccessful Retrieval"
+    },
+    "Find" : {
+
+    },
+    "How Lumena Works" : {
+
+    },
+    "Learn" : {
+
+    },
+    "Lumenaアカウントの作成" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an account on Lumena"
+          }
+        }
+      }
+    },
+    "Network error occurred." : {
+      "comment" : "Network Error"
+    },
+    "New URL" : {
+
+    },
+    "No image available" : {
+
+    },
+    "No Luma Available" : {
+
+    },
+    "OK" : {
+
+    },
+    "Our platform was made to help people find reliable products through reliable reviews. We want YOUR own thoughts and feedback and not what other companies want you to say. Posting content sponsored by companies can be against our terms of use and can potentially lead to being banned on our platform." : {
+
+    },
+    "Password Structure" : {
+
+    },
+    "Photo Library" : {
+
+    },
+    "Please Enable cameraModel Access Or Microphone Access" : {
+
+    },
+    "Please, enter a url." : {
+
+    },
+    "Preview %lld" : {
+
+    },
+    "Reading List" : {
+
+    },
+    "remove current reel" : {
+
+    },
+    "Search" : {
+
+    },
+    "Selected: %lld/%lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected: %1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "Share" : {
+
+    },
+    "Sorry, we could not load this url." : {
+
+    },
+    "Tagged Cosmetics" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagged Products"
+          }
+        }
+      }
+    },
+    "title" : {
+
+    },
+    "Title:" : {
+
+    },
+    "URL" : {
+
+    },
+    "URL:" : {
+
+    },
+    "When you create a video on our app, it automatically adds a check mark to indicate the content's authenticity. Additionally, when you post a video featuring a product, you can scan the product to verify its presence. Scanning successfully adds a check mark to the product on the tagged list, reassuring viewers of its authenticity." : {
+
+    },
+    "アイライナー" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eye Liner"
+          }
+        }
+      }
+    },
+    "アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？ アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete all data associated with the account? Once your account is deleted, it cannot be recovered. By pressing the 'Delete' button below, you agree to delete the data and acknowledge that it cannot be recovered."
+          }
+        }
+      }
+    },
+    "アカウントに紐ずくデータは全て削除されますがよろしいでしょうか？なお、アカウントを一度削除されますと、復旧はできません。以下の「削除」ボタンを押すことにより、データが削除されることに同意し、回復できないことに同意したと見做します。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleting your account will remove all associated data. Please note that once the account is deleted, it cannot be recovered. By pressing the 'Delete' button below, you agree to the deletion of the data and acknowledge that it cannot be recovered."
+          }
+        }
+      }
+    },
+    "アカウントを削除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Account"
+          }
+        }
+      }
+    },
+    "アカウント認証" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Validate Account"
+          }
+        }
+      }
+    },
+    "あなたの自然な目の色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The natural color of your eyes"
+          }
+        }
+      }
+    },
+    "あなたの自然な肌の色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The natural color of your skin"
+          }
+        }
+      }
+    },
+    "あなたの自然な色合いに最も合うカラーパレット" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The color palette that best matches your natural coloring"
+          }
+        }
+      }
+    },
+    "アンバー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amber"
+          }
+        }
+      }
+    },
+    "いただいた情報は、Lumenaコミュニティーをより安全かつ、楽しめる場にするために役立たせていただきます" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The information you provided will help us make the Lumena community a safer and more enjoyable place."
+          }
+        }
+      }
+    },
+    "ウォームスプリング" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm Spring"
+          }
+        }
+      }
+    },
+    "エラー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        }
+      }
+    },
+    "おすすめ" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommended"
+          }
+        }
+      }
+    },
+    "おすすめじゃない" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Recommended"
+          }
+        }
+      }
+    },
+    "おすすめ度" : {
+      "comment" : "Tag Rating sheetview",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        }
+      }
+    },
+    "オプションの選択" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an Option"
+          }
+        }
+      }
+    },
+    "キャンセル" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "クールウィンター" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool Winter"
+          }
+        }
+      }
+    },
+    "クールサマー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool Summer"
+          }
+        }
+      }
+    },
+    "グレー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gray"
+          }
+        }
+      }
+    },
+    "ここから始める" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's start from here..."
+          }
+        }
+      }
+    },
+    "コスメを登録する" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submit Cosmetic"
+          }
+        }
+      }
+    },
+    "コスメ登録" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Register Product"
+          }
+        }
+      }
+    },
+    "このアプリを利用するには、13歳以上である必要があります。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To use this app, you must be at least 13 years old."
+          }
+        }
+      }
+    },
+    "コミュニティーガイドライン" : {
+      "comment" : "CreateAccountAgreementText",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Community Guideline"
+          }
+        }
+      }
+    },
+    "コミュニティーガイドライン、" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Community Guideline"
+          }
+        }
+      }
+    },
+    "コメント" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment"
+          }
+        }
+      }
+    },
+    "コメントを書く" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post Comment"
+          }
+        }
+      }
+    },
+    "コメントを追加してみよう！" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's be the first one to submit the comment!"
+          }
+        }
+      }
+    },
+    "コンシーラー" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concealor"
+          }
+        }
+      }
+    },
+    "ご報告ありがとうございます" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you for your report"
+          }
+        }
+      }
+    },
+    "サインアップすることにより、" : {
+      "comment" : "CreateAccountAgreementText",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By signing up, you have agreed to our "
+          }
+        }
+      }
+    },
+    "サインアップすることにより、利用規約、データ・プライバシー ポリシー、Cookie ポリシー、コミュニティーガイドライン、プラットフォームポリシーに同意したことになります。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By signing up, you agree to the Terms of Use, Data Privacy Policy, Cookie Policy, Community Guidelines, and Platform Policy."
+          }
+        }
+      }
+    },
+    "サラサラ" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silky"
+          }
+        }
+      }
+    },
+    "シャドー" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shadow"
+          }
+        }
+      }
+    },
+    "スキップ" : {
+
+    },
+    "すごく敏感" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highly Sensitive"
+          }
+        }
+      }
+    },
+    "ソフトオータム" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soft Autumn"
+          }
+        }
+      }
+    },
+    "ソフトサマー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soft Summer"
+          }
+        }
+      }
+    },
+    "ダークウィンター" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark Winter"
+          }
+        }
+      }
+    },
+    "ダークオータム" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark Autumn"
+          }
+        }
+      }
+    },
+    "タグされたコスメ" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagged Products"
+          }
+        }
+      }
+    },
+    "チーク" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheek"
+          }
+        }
+      }
+    },
+    "にきび" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acne"
+          }
+        }
+      }
+    },
+    "に同意したことになります。" : {
+      "comment" : "CreateAccountAgreementText",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " "
+          }
+        }
+      }
+    },
+    "バーコード" : {
+      "comment" : "Field name for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barcode"
+          }
+        }
+      }
+    },
+    "バーコードをスキャン" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan Barcode"
+          }
+        }
+      }
+    },
+    "バーコードを収めてください" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please Fit the Barcode Within the Frame"
+          }
+        }
+      }
+    },
+    "パーソナルカラー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Color"
+          }
+        }
+      }
+    },
+    "パスワード" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        }
+      }
+    },
+    "パスワードの変更" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change Password"
+          }
+        }
+      }
+    },
+    "パスワードを忘れた場合" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgot Password"
+          }
+        }
+      }
+    },
+    "パスワード変更先が見つかりませんでした。正しい Email またはユーザーネームを上記に入力してください。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We were not able to identify your email. Please enter valid email or username."
+          }
+        }
+      }
+    },
+    "パスワード変更用コードを入力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Code for Password Change"
+          }
+        }
+      }
+    },
+    "パスワード変更用の６桁の数字をご登録されているメールに送信いたしました。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-digit code has been sent to your email for password reset."
+          }
+        }
+      }
+    },
+    "バックグラウンド写真の変更" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Background Image"
+          }
+        }
+      }
+    },
+    "ファンデーション" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foundation"
+          }
+        }
+      }
+    },
+    "フォロー" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow"
+          }
+        }
+      }
+    },
+    "フォローリクエスト" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow Request"
+          }
+        }
+      }
+    },
+    "フォロー中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Following"
+          }
+        }
+      }
+    },
+    "フォロワー" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follower"
+          }
+        }
+      }
+    },
+    "ブライトウィンター" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bright Winter"
+          }
+        }
+      }
+    },
+    "ブライトスプリング" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bright Spring"
+          }
+        }
+      }
+    },
+    "プライバシーポリシー" : {
+      "comment" : "CreateAccountAgreementText",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
+          }
+        }
+      }
+    },
+    "プラットフォームポリシー" : {
+      "comment" : "CreateAccountAgreementText",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "and Platform Policy"
+          }
+        }
+      }
+    },
+    "ブロック" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block"
+          }
+        }
+      }
+    },
+    "ブロックしました" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have blocked this user"
+          }
+        }
+      }
+    },
+    "ブロック解除はプロファイル設定画面から行えます" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This user could be unblocked in profile page"
+          }
+        }
+      }
+    },
+    "プロファイル写真の変更" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Profile Image"
+          }
+        }
+      }
+    },
+    "ヘーゼル" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazel"
+          }
+        }
+      }
+    },
+    "ベトベト" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticky"
+          }
+        }
+      }
+    },
+    "ペルソナ設定" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Persona Settings"
+          }
+        }
+      }
+    },
+    "マスカラ" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mascara"
+          }
+        }
+      }
+    },
+    "まだ誰もコメントしてません" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Be the first one to Comment!"
+          }
+        }
+      }
+    },
+    "まだ誰もライクしてません" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Be the first one to Like it!"
+          }
+        }
+      }
+    },
+    "メールの確認のため、\n６桁の番号を送信させていただきました。\n\n見つからない場合は、再送信のボタンを押してください。\n\nワンタイム確認コードを以下の\n記入欄に入力してください。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For verification of your email, a 6-digit number has been sent to you.\n\nIf you cannot find it, please press the button to resend.\n\nPlease enter the one-time verification code in the field below."
+          }
+        }
+      }
+    },
+    "メールの確認のため、６桁の番号を送信させていただきました。見つからない場合は、再送信のボタンを押してください" : {
+      "comment" : "AccountValidationCode",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For verification of your email, a 6-digit number has been sent to you.\nIf you cannot find it, please press the button to resend."
+          }
+        }
+      }
+    },
+    "めっちゃおすすめ" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highly Recommended"
+          }
+        }
+      }
+    },
+    "めっちゃ効果的" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highly Effective"
+          }
+        }
+      }
+    },
+    "ものすごく敏感" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extremely Sensitive"
+          }
+        }
+      }
+    },
+    "ユーザーIDとパスワードを入力してください" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter valid User Credential and Password"
+          }
+        }
+      }
+    },
+    "ユーザーに適したコンテンツを設定に基づいて表示します" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content is recommended based on the user’s skin settings"
+          }
+        }
+      }
+    },
+    "ユーザーネーム" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Username"
+          }
+        }
+      }
+    },
+    "ユーザーネームはアカウントを検索する際に使用されます。そのため、検索しやすいユーザーネームにすると、友人達から見つかりやすくなるかもしれません。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your username is used when searching for your account. Therefore, choosing a username that is easy to search for might make it easier for your friends to find you."
+          }
+        }
+      }
+    },
+    "ユーザーをブロック" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block User"
+          }
+        }
+      }
+    },
+    "ユーザーをブロックするには、Lumenaアカウントにサインインしてください" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In order to block another user, please sign in to Lumena account"
+          }
+        }
+      }
+    },
+    "ユーザー名・電話番号・Email" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Username, Phone, Email"
+          }
+        }
+      }
+    },
+    "ライク" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liked"
+          }
+        }
+      }
+    },
+    "ライクみよう！" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Be the first one to Like!"
+          }
+        }
+      }
+    },
+    "ライク数" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Likes"
+          }
+        }
+      }
+    },
+    "ライトサマー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Summer"
+          }
+        }
+      }
+    },
+    "ライトスプリング" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Spring"
+          }
+        }
+      }
+    },
+    "ライブラリから選択" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select from Library"
+          }
+        }
+      }
+    },
+    "リセット" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
+    },
+    "リップ" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lip"
+          }
+        }
+      }
+    },
+    "ログアウト" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logout"
+          }
+        }
+      }
+    },
+    "ログイン" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login"
+          }
+        }
+      }
+    },
+    "ログインが必要です" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login Required"
+          }
+        }
+      }
+    },
+    "一日に日光を浴びる時間" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The amount of time you are exposed to sunlight daily"
+          }
+        }
+      }
+    },
+    "乾燥肌" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dry"
+          }
+        }
+      }
+    },
+    "乾癬" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psoriasis"
+          }
+        }
+      }
+    },
+    "会社名" : {
+      "comment" : "Field name for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Company Name"
+          }
+        }
+      }
+    },
+    "保存" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "入力エラー" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input Error"
+          }
+        }
+      }
+    },
+    "円" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yen"
+          }
+        }
+      }
+    },
+    "再送信" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resend"
+          }
+        }
+      }
+    },
+    "利用規約" : {
+      "comment" : "CreateAccountAgreementText",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terms of Use"
+          }
+        }
+      }
+    },
+    "削除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "効果" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effect"
+          }
+        }
+      }
+    },
+    "効果が見られない" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not effective"
+          }
+        }
+      }
+    },
+    "化粧水・乳液" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "toner and emulsion"
+          }
+        }
+      }
+    },
+    "友人などから親しみのある名前を使用すると、友人達から見つかりやすくなるかもしれません。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Using a familiar name from friends might make it easier for them to find you."
+          }
+        }
+      }
+    },
+    "名" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "名前" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Name"
+          }
+        }
+      }
+    },
+    "商品" : {
+      "comment" : "PostContent TabBar Option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Product"
+          }
+        }
+      }
+    },
+    "商品名" : {
+      "comment" : "Field name for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Product Name"
+          }
+        }
+      }
+    },
+    "報告" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report"
+          }
+        }
+      }
+    },
+    "変更" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        }
+      }
+    },
+    "姓" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Name"
+          }
+        }
+      }
+    },
+    "完了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "少々敏感" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mildly Sensitive"
+          }
+        }
+      }
+    },
+    "年齢" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Age"
+          }
+        }
+      }
+    },
+    "感度" : {
+      "comment" : "SkinSetting Page status bar option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensitivity"
+          }
+        }
+      }
+    },
+    "投稿" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post"
+          }
+        }
+      }
+    },
+    "投稿の概要欄" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "投稿を削除" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Lume"
+          }
+        }
+      }
+    },
+    "投稿を報告" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report post"
+          }
+        }
+      }
+    },
+    "投稿数" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posts"
+          }
+        }
+      }
+    },
+    "招待コード" : {
+
+    },
+    "撮影" : {
+      "comment" : "PostContent TabBar Option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post"
+          }
+        }
+      }
+    },
+    "敏感" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensitive"
+          }
+        }
+      }
+    },
+    "敏感ではない" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Sensitive"
+          }
+        }
+      }
+    },
+    "敏感肌" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensitive"
+          }
+        }
+      }
+    },
+    "新しいパスワードを入力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter New Password"
+          }
+        }
+      }
+    },
+    "新規登録" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an Account"
+          }
+        }
+      }
+    },
+    "日光" : {
+      "comment" : "SkinSetting Page status bar option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UV"
+          }
+        }
+      }
+    },
+    "普通" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal"
+          }
+        }
+      }
+    },
+    "本当にログアウトしますか？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Would you like to logout?"
+          }
+        }
+      }
+    },
+    "枠内にバーコードを収めてください" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please Fit the Barcode Within the Frame"
+          }
+        }
+      }
+    },
+    "検索" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    },
+    "概要" : {
+      "comment" : "PostContent TabBar Option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "概要欄" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "概要欄は他のユーザーに自分のことを文面で紹介できる機能です。概要欄を使って自己紹介や気分、何でも思うがままに自分を表現しましょう！概要欄の文字数は150文字制限があります。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The bio section allows you to introduce yourself to other users in writing. Use the bio to express yourself freely, whether it’s an introduction, your mood, or anything else! The bio section has a 150-character limit."
+          }
+        }
+      }
+    },
+    "次へ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "油分や乾燥に基づく肌の種類" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The type of skin based on oiliness and dryness"
+          }
+        }
+      }
+    },
+    "混合肌" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oily and Dry"
+          }
+        }
+      }
+    },
+    "皮膚炎" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dermatitis"
+          }
+        }
+      }
+    },
+    "目の色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eye Color"
+          }
+        }
+      }
+    },
+    "確認用に新しいパスワードを再入力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter the new password again"
+          }
+        }
+      }
+    },
+    "私は13歳以上です" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "13 y/o or older"
+          }
+        }
+      }
+    },
+    "種類" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "緑" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green"
+          }
+        }
+      }
+    },
+    "肌が様々な要因にどれだけ敏感であるか" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How sensitive your skin is to various factors"
+          }
+        }
+      }
+    },
+    "肌に関する悩みや状態" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Issues or conditions affecting your skin"
+          }
+        }
+      }
+    },
+    "肌の悩み" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concerns"
+          }
+        }
+      }
+    },
+    "肌の感度" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Sensitivity"
+          }
+        }
+      }
+    },
+    "肌の敏感度" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Sensitivity"
+          }
+        }
+      }
+    },
+    "肌種類" : {
+      "comment" : "SkinSetting Page status bar option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Type"
+          }
+        }
+      }
+    },
+    "肌色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Color"
+          }
+        }
+      }
+    },
+    "肌触り" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Texture"
+          }
+        }
+      }
+    },
+    "肌設定" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Settings"
+          }
+        }
+      }
+    },
+    "肌設定を編集" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Skin Settings"
+          }
+        }
+      }
+    },
+    "肌質" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin Type"
+          }
+        }
+      }
+    },
+    "背景を変更" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Background"
+          }
+        }
+      }
+    },
+    "脂性肌" : {
+      "comment" : "SkinSetting Page Survey Options",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oily"
+          }
+        }
+      }
+    },
+    "色素沈着" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hyper Pigmentation"
+          }
+        }
+      }
+    },
+    "茶色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brown"
+          }
+        }
+      }
+    },
+    "落ちにくい" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard"
+          }
+        }
+      }
+    },
+    "落ちやすい" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy"
+          }
+        }
+      }
+    },
+    "落ち具合" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wear"
+          }
+        }
+      }
+    },
+    "評価" : {
+      "comment" : "PostContent TabBar Option",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rating"
+          }
+        }
+      }
+    },
+    "詳細" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
+          }
+        }
+      }
+    },
+    "認証" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verification"
+          }
+        }
+      }
+    },
+    "認証コード" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verification Code"
+          }
+        }
+      }
+    },
+    "認証コードを入力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Verification Code"
+          }
+        }
+      }
+    },
+    "認証済み" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verified"
+          }
+        }
+      }
+    },
+    "誕生日" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birthday"
+          }
+        }
+      }
+    },
+    "誕生日: " : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birthday:"
+          }
+        }
+      }
+    },
+    "赤" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        }
+      }
+    },
+    "電話番号（ハイフン不要）" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phone Number"
+          }
+        }
+      }
+    },
+    "青" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue"
+          }
+        }
+      }
+    },
+    "音楽" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music"
+          }
+        }
+      }
+    },
+    "香水" : {
+      "comment" : "DropDown list option for product submission",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfume"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

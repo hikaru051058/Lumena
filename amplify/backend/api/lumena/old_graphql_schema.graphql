@@ -1,0 +1,181 @@
+type CosmeticPrice {
+  price: Float
+  priceSign: String
+  currency: String
+}
+
+type ProductColor {
+  hexValue: String
+  colorName: String
+}
+
+type CosmeticBrandQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  websiteLink: String
+  description: String
+  products: [CosmeticQL] @hasMany(indexName: "byCosmeticBrandQL", fields: ["id"])
+}
+
+enum BlockStatus {
+  BLOCKED
+  BLOCKING
+  MUTUAL
+}
+
+type InvitationQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  invitationCode: String
+  timestamp: AWSTimestamp
+}
+
+type BlockQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userprofileqlID: ID! @index(name: "byUserProfileQL")
+  blockeduserprofileqlID: String
+  status: BlockStatus
+}
+
+enum LumeState {
+  VISIBLE
+  HIDDEN
+  DELETED
+  REPORTED
+}
+
+type LumeStateQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  state: LumeState
+  timestamp: AWSTimestamp
+  reason: String
+  changedBy: String
+  lumeqlID: ID! @index(name: "byLumeQL")
+}
+
+type UserStateQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  UserState: AccountState
+  timestamp: AWSTimestamp
+  reason: String
+  changedBy: String
+  userprofileqlID: String
+}
+
+enum AccountState {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DELETED
+  BANNED
+}
+
+enum FollowStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type FollowQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  timestamp: AWSTimestamp
+  followingID: ID! @index(name: "byUserProfileQL")
+  following: UserProfileQL @belongsTo(fields: ["followingID"])
+  followerID: ID
+  status: FollowStatus
+}
+
+type LikedLumeQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  timestamp: AWSTimestamp
+  lumeQLID: ID!
+  lume: LumeQL @hasOne(fields: ["lumeQLID"])
+  userprofileqlID: ID! @index(name: "byUserProfileQL")
+}
+
+type CommentQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  timestamp: AWSTimestamp!
+  comment: String!
+  lumeQLID: ID!
+  lume: LumeQL @hasOne(fields: ["lumeQLID"])
+  userprofileqlID: ID! @index(name: "byUserProfileQL")
+}
+
+type CosmeticQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  productName: String!
+  price: CosmeticPrice
+  amount: String
+  totPostTagCount: Int
+  authenticated: Boolean!
+  cosmeticbrandqlID: ID! @index(name: "byCosmeticBrandQL")
+  description: String
+  rating: Float
+  category: String
+  productType: String
+  imageLink: [String]
+  productLink: String
+  createdAt: AWSTimestamp
+  updatedAt: AWSTimestamp
+  productColors: [ProductColor]
+  barcode: String
+  criteriaTags: [String]
+}
+
+type TagTrackQL {
+  trackID: String!
+  tagMusicRange: [Float!]
+}
+
+type TagCosmeticQL {
+  cosmeticID: String!
+  authProduct: Boolean!
+  recommend: Float
+  effect: Float
+  fading: Float
+  feeling: Float
+  attachedURL: String
+}
+
+type LumeQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  postURL: [AWSURL]
+  timestamp: AWSTimestamp!
+  tagProducts: [TagCosmeticQL]
+  tagMusic: TagTrackQL
+  description: String
+  userprofileqlID: ID! @index(name: "byUserProfileQL")
+  likeCount: Int
+  commentCount: Int
+  hashTags: [String]
+  zipURL: String
+  lumeState: [LumeStateQL] @hasMany(indexName: "byLumeQL", fields: ["id"])
+  lumeAuth: Boolean
+}
+
+type UserProfileQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  followingUsers: [String]
+  followerUsers: [String]
+  username: String!
+  DOB: AWSTimestamp
+  firstName: String!
+  Sensitivity: Float
+  SunBathing: Float
+  SkinType: Float
+  postContents: [LumeQL] @hasMany(indexName: "byUserProfileQL", fields: ["id"])
+  likedContents: [LikedLumeQL] @hasMany(indexName: "byUserProfileQL", fields: ["id"])
+  comments: [CommentQL] @hasMany(indexName: "byUserProfileQL", fields: ["id"])
+  lockState: Boolean
+  profileImage: String
+  backgroundImage: String
+  followerCount: Int
+  followingCount: Int
+  bio: String
+  following: [FollowQL] @hasMany(indexName: "byUserProfileQL", fields: ["id"])
+  postCount: Int
+  profileImageLastModified: Int
+  backgroundImageLastModified: Int
+  blockedUsers: [BlockQL] @hasMany(indexName: "byUserProfileQL", fields: ["id"])
+  invitationCode: InvitationQL @hasOne
+}

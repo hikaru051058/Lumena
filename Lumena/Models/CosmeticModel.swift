@@ -1,0 +1,467 @@
+//
+//  CosmeticModel.swift
+//  MyPalette
+//
+//  Created by 島田晃 on 2023/09/27.
+//
+
+import Foundation
+import UIKit
+import SwiftUI
+import Zip
+import Photos
+
+struct SliderConfiguration {
+    var title: String
+    var minRating: String
+    var maxRating: String
+}
+
+class TagCosmetic: Identifiable, ObservableObject {
+    
+    let id = UUID()
+    
+    var cosmeticID: String
+    @Published var cosmeticItem: Cosmetic?
+    
+    var recommendRating: Double
+    var effectRating: Double
+    var fadingRating: Double
+    var feelingRating: Double
+    
+    var attachedURL: String?
+    
+    var authProduct: Bool
+    
+    init(cosmeticID: String, cosmeticItem: Cosmetic? = nil,
+         recommendRating: Double = 0.0, effectRating: Double = 0.0, fadingRating: Double = 0.0, feelingRating: Double = 0.0, attachedURL: String = "", authProduct: Bool = false) {
+        
+        self.cosmeticID = cosmeticID
+        self.cosmeticItem = cosmeticItem
+        self.recommendRating = recommendRating
+        self.effectRating = effectRating
+        self.fadingRating = fadingRating
+        self.feelingRating = feelingRating
+        self.attachedURL = attachedURL
+        self.authProduct = authProduct
+        
+        Task {
+            await fetchAndAssignCosmetic()
+        }
+    }
+    
+    init(from tagCosmetic: TagCosmetic) {
+        
+        self.cosmeticID = tagCosmetic.cosmeticID
+        self.cosmeticItem = tagCosmetic.cosmeticItem
+        self.recommendRating = tagCosmetic.recommendRating
+        self.effectRating = tagCosmetic.effectRating
+        self.fadingRating = tagCosmetic.fadingRating
+        self.feelingRating = tagCosmetic.feelingRating
+        self.attachedURL = tagCosmetic.attachedURL
+        self.authProduct = tagCosmetic.authProduct
+    }
+    
+    init(ql: TagCosmeticQL) {
+        
+        self.cosmeticID = ql.cosmeticID
+        self.authProduct = ql.authProduct
+        self.recommendRating = ql.recommend ?? 0.0
+        self.effectRating = ql.effect ?? 0.0
+        self.fadingRating = ql.fading ?? 0.0
+        self.feelingRating = ql.feeling ?? 0.0
+        self.attachedURL = ql.attachedURL
+        self.cosmeticItem = Cosmetic(id: ql.cosmeticID)
+        
+        Task {
+            await fetchAndAssignCosmetic()
+        }
+    }
+    
+    @MainActor
+    private func fetchAndAssignCosmetic() async {
+        do {
+            let fetchedCosmetic = try await CosmeticManager.shared.getCosmetic(withID: cosmeticID)
+            self.cosmeticItem = fetchedCosmetic
+        } catch {
+            print("Failed to fetch cosmetic: \(error)")
+        }
+    }
+    
+    func toTagCosmeticQL() -> TagCosmeticQL {
+        return TagCosmeticQL(
+            cosmeticID: self.cosmeticID,
+            authProduct: self.authProduct,
+            recommend: self.recommendRating,
+            effect: self.effectRating,
+            fading: self.fadingRating,
+            feeling: self.feelingRating,
+            attachedURL: self.attachedURL
+        )
+    }
+}
+
+class CosmeticsWrapper: ObservableObject {
+    
+    @Published var cosmetics: [Cosmetic] = []
+    
+    func fetchRandomCosmetics() async throws {
+        do {
+            let returnedCosmetics = try await GraphQL.shared.fetchRandomCosmetic()
+            DispatchQueue.main.async {
+                self.cosmetics = returnedCosmetics
+            }
+            print("cosmetics created in fetchrandomcosmetics")
+        } catch {
+            
+            print(error)
+        }
+    }
+}
+
+class Cosmetic: Identifiable, ObservableObject {
+    let id: UUID
+    let cosmeticID: String
+    var barcode: String
+    var productName: String
+    var companyID: String
+    var price: String
+    var amount: String
+    @Published var productImages: [ImageExtractorAsset]?
+    
+    var description: String
+    var category: String
+    
+    var totTagCount: Int
+    var authenticated: Bool
+    var productUrl: [String?]
+    var createdAt: Int
+    var updatedAt: Int
+    var productColors: [ProductColor]
+    var productType: String
+    var rating: Double
+    var criteriaTags: [String]
+    var type: String
+    var imageURL: [String]
+    
+    init(id: String = "",
+         cosmeticID: String = "",
+         barcode: String = "",
+         productName: String = "null",
+         companyID: String = "null",
+         price: String = "0",
+         amount: String = "null",
+         productImages: [ImageExtractorAsset] = [],
+         description: String = "null",
+         category: String = "null",
+         totTagCount: Int = 0,
+         authenticated: Bool = false,
+         productUrl: [String?] = [],
+         createdAt: Int = 0,
+         updatedAt: Int = 0,
+         productColors: [ProductColor] = [],
+         productType: String = "",
+         rating: Double = 0.0,
+         criteriaTags: [String] = [],
+         type: String = "",
+         imageURL: [String] = []) {
+        
+        self.id = UUID(uuidString: id) ?? UUID()
+        self.cosmeticID = cosmeticID
+        self.barcode = barcode
+        self.productName = productName
+        self.companyID = companyID
+        self.price = price
+        self.amount = amount
+        self.productImages = productImages
+        self.description = description
+        self.category = category
+        self.totTagCount = totTagCount
+        self.authenticated = authenticated
+        self.productUrl = productUrl
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.productColors = productColors
+        self.productType = productType
+        self.rating = rating
+        self.criteriaTags = criteriaTags
+        self.type = type
+        self.imageURL = imageURL
+    }
+    
+    convenience init(ql: CosmeticQL) {
+        let priceString = "\(ql.price?.priceSign ?? "")\(ql.price?.price ?? 0)"
+        
+        self.init(
+            id: ql.id,
+            cosmeticID: ql.id,
+            barcode: ql.barcode ?? "",
+            productName: ql.productName,
+            companyID: ql.cosmeticbrandqlID,
+            price: priceString,
+            amount: ql.amount ?? "",
+            description: ql.description ?? "",
+            category: ql.category ?? "",
+            totTagCount: ql.totPostTagCount ?? 0,
+            authenticated: ql.authenticated,
+            productUrl: [ql.productLink ?? ""],
+            createdAt: Int(ql.createdAt!),
+            updatedAt: Int(ql.updatedAt!),
+            productColors: ql.productColors ?? [],
+            productType: ql.productType ?? "",
+            rating: ql.rating ?? 0.0,
+            criteriaTags: ql.criteriaTags ?? [],
+            imageURL: ql.imageLink ?? []
+        )
+        
+        Task {
+            await self.downloadProductImages()
+            CosmeticManager.shared.updateCosmetic(self)
+        }
+    }
+    
+    func toCosmeticQL() -> CosmeticQL {
+        let priceSign = self.price.first.map { String($0) } ?? ""
+        let priceValue = Int(self.price.dropFirst()) ?? 0
+        let price = CosmeticPrice(price: Double(priceValue), priceSign: priceSign)
+        
+        return CosmeticQL(
+            id: self.cosmeticID,
+            productName: self.productName,
+            price: price,
+            amount: self.amount,
+            totPostTagCount: self.totTagCount,
+            authenticated: self.authenticated,
+            cosmeticbrandqlID: self.companyID,
+            description: self.description,
+            rating: self.rating,
+            category: self.category,
+            productType: self.productType, 
+            imageLink: self.imageURL,
+            productLink: self.productUrl.first ?? "",
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt,
+            productColors: self.productColors,
+            barcode: self.barcode,
+            criteriaTags: self.criteriaTags
+        )
+    }
+}
+
+class CosmeticManager: ObservableObject {
+    
+    static let shared = CosmeticManager()
+    
+    @Published var cosmetics: [String: Cosmetic] = [:]
+    
+    var downloadedImagesCache: Set<String> = []
+    
+    private var currentlyDownloading = Set<String>()
+    private let downloadQueue = DispatchQueue(label: "com.nucr.gotdns.org.Lumena.cosmeticManager.downloading")
+    
+    private init() {}
+    
+    func getCosmetic(withID id: String) async throws -> Cosmetic {
+        if let existing = cosmetics[id] {
+            return existing
+        } else {
+            // Check if it's currently downloading to avoid simultaneous downloads
+            if !isCurrentlyDownloading(id) {
+                markAsDownloading(id)
+                defer {
+                    markDownloadComplete(id)
+                }
+                do {
+                    let cosmeticFetched = try await getCosmeticAPI(with: id)
+                    if let cosmeticFetched = cosmeticFetched {
+                        DispatchQueue.main.async {
+                            self.cosmetics[id] = cosmeticFetched
+                        }
+                        print("CosmeticManager: has downloaded: \(id)")
+                        return cosmeticFetched
+                    }
+                } catch {
+                    print("Failed to fetch cosmetic with ID \(id): \(error)")
+                }
+            }
+            return Cosmetic(id: id) // Return a placeholder if not found
+        }
+    }
+    
+    func getCosmetic(withID id: String) -> Cosmetic {
+        if let existing = cosmetics[id] {
+            return existing
+        } else {
+            return Cosmetic(id: id)
+        }
+    }
+    
+    func getCosmeticQueue(withID id: String) async throws {
+        let cosmetic = Cosmetic(id: id)
+        CosmeticManager.shared.updateCosmetic(cosmetic)
+        DispatchQueue.main.async {
+            self.cosmetics[id] = cosmetic
+        }
+    }
+    
+    func getCosmeticAPI(with cosmeticID: String) async throws -> Cosmetic? {
+        do {
+            if cosmeticID != "" {
+                let arrCosmetic = try await GraphQL.shared.fetchCosmetic(cosmeticIDs: [cosmeticID])
+                guard let cosmetic = arrCosmetic.first else {
+                    throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: No Cosmetic has been returned when called fetchCosmetic for \(cosmeticID)"])
+                }
+                return cosmetic
+            } else {
+                return nil
+            }
+        } catch {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: Unknown error occured while fetching cosmetic: \(error)"])
+        }
+    }
+    
+    func updateCosmetic(_ cosmetic: Cosmetic) {
+        DispatchQueue.main.async { [self] in
+            cosmetics[cosmetic.cosmeticID] = cosmetic
+            objectWillChange.send()
+        }
+    }
+    
+    private func isCurrentlyDownloading(_ id: String) -> Bool {
+        downloadQueue.sync {
+            return currentlyDownloading.contains(id)
+        }
+    }
+    
+    private func markAsDownloading(_ id: String) {
+        let _ = downloadQueue.sync {
+            currentlyDownloading.insert(id)
+        }
+    }
+    
+    private func markDownloadComplete(_ id: String) {
+        let _ = downloadQueue.sync {
+            currentlyDownloading.remove(id)
+        }
+    }
+}
+
+extension Cosmetic {
+    
+    static func getCachedOrNew(cosmeticID: String) async throws -> Cosmetic? {
+        do {
+            let result = try await CosmeticManager.shared.getCosmetic(withID: cosmeticID)
+            return result
+        } catch {
+            print(error)
+        }
+        return nil
+    }
+    
+    func updateSelf(cosmetic: Cosmetic) {
+        DispatchQueue.main.async {
+            self.barcode = cosmetic.barcode
+            self.productName = cosmetic.productName
+            self.companyID = cosmetic.companyID
+            self.price = cosmetic.price
+            self.amount = cosmetic.amount
+            self.productImages = cosmetic.productImages
+            self.description = cosmetic.description
+            self.category = cosmetic.category
+            self.totTagCount = cosmetic.totTagCount
+            self.authenticated = cosmetic.authenticated
+            self.productUrl = cosmetic.productUrl
+            self.createdAt = cosmetic.createdAt
+            self.updatedAt = cosmetic.updatedAt
+            self.productColors = cosmetic.productColors
+            self.productType = cosmetic.productType
+            self.rating = cosmetic.rating
+            self.criteriaTags = cosmetic.criteriaTags
+            self.type = cosmetic.type
+            self.imageURL = cosmetic.imageURL
+        }
+    }
+}
+
+extension Cosmetic {
+    
+    func uploadCosmeticQL(progressHandler: @escaping (Double) -> Void) async throws -> String {
+        
+        guard let productImages = self.productImages, !productImages.isEmpty else {
+            throw NSError(domain: "com.nucr.gotdns.Lumena.cosmeticUploadError", code: 0, userInfo: [NSLocalizedDescriptionKey: "No product images to upload."])
+        }
+        
+        let fileManager = FileManager.default
+        let tempDirectory = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: URL(fileURLWithPath: NSTemporaryDirectory()), create: true)
+        try saveProductImagesToDirectory(directory: tempDirectory, productImages: productImages)
+        
+        let zipFilePath = try zipDirectory(at: tempDirectory, zipFileName: "cosmetics.zip")
+        let zipData = try Data(contentsOf: zipFilePath)
+        let zipFileName = "\(self.cosmeticID).zip"
+        let zipFileLocation = "cosmetics/\(zipFileName)"
+        
+        // Store data asynchronously and await the result
+        _ = try await S3.shared.storeDataAsync(name: zipFileLocation, data: zipData, accessLevel: "public", progressHandler: { progress in
+            progressHandler(progress)  // Call the closure passed by the caller
+            print("Upload Progress: \(progress * 100)%")
+        })
+        print("Successfully uploaded cosmetic data.")
+        
+        // Clean up the temporary directory and zip file
+        try? fileManager.removeItem(at: tempDirectory)
+        try? fileManager.removeItem(at: zipFilePath)
+        
+        // Try creating a CosmeticQL model asynchronously
+        _ = try await GraphQL.shared.createModel(self.toCosmeticQL())
+        print("CosmeticQL model created successfully.")
+        
+        return "Upload successful"
+    }
+    
+    private func saveProductImagesToDirectory(directory: URL, productImages: [ImageExtractorAsset]) throws {
+        for (index, imageAsset) in productImages.enumerated() {
+            guard let image = imageAsset.image else { continue }
+            let imagePath = directory.appendingPathComponent("image\(index).jpg")
+            guard let imageData = image.jpegData(compressionQuality: 0.8) else { continue }
+            try imageData.write(to: imagePath)
+        }
+    }
+    
+    private func zipDirectory(at directory: URL, zipFileName: String) throws -> URL {
+        let zipFilePath = directory.appendingPathComponent(zipFileName)
+        try Zip.zipFiles(paths: [directory], zipFilePath: zipFilePath, password: nil, progress: nil)
+        return zipFilePath
+    }
+    
+    func downloadProductImages() async {
+        if self.imageURL.isEmpty { return }
+        let downloader = ImageDownloader()
+        
+        await withTaskGroup(of: ImageExtractorAsset?.self) { group in
+            for urlString in imageURL {
+                guard let url = URL(string: urlString) else { continue }
+                group.addTask {
+                    return try? await ImageExtractorAsset.create(from: url)
+                }
+            }
+            
+            for await asset in group {
+                if let asset = asset {
+                    await downloader.addAsset(asset)
+                }
+            }
+        }
+        
+        let assets = await downloader.getAssets()
+        
+        DispatchQueue.main.async {
+            self.productImages = assets
+        }
+    }
+}
+
+extension Cosmetic: Equatable {
+    static func == (lhs: Cosmetic, rhs: Cosmetic) -> Bool {
+        return lhs.id == rhs.id
+    }
+}

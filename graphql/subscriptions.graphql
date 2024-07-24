@@ -1,0 +1,625 @@
+# this is an auto generated file. This will be overwritten
+
+subscription OnCreateFollowQL($filter: ModelSubscriptionFollowQLFilterInput) {
+  onCreateFollowQL(filter: $filter) {
+    id
+    timestamp
+    followingID
+    following {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    followerID
+    status
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateFollowQL($filter: ModelSubscriptionFollowQLFilterInput) {
+  onUpdateFollowQL(filter: $filter) {
+    id
+    timestamp
+    followingID
+    following {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    followerID
+    status
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteFollowQL($filter: ModelSubscriptionFollowQLFilterInput) {
+  onDeleteFollowQL(filter: $filter) {
+    id
+    timestamp
+    followingID
+    following {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    followerID
+    status
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateLikedLumeQL(
+  $filter: ModelSubscriptionLikedLumeQLFilterInput
+) {
+  onCreateLikedLumeQL(filter: $filter) {
+    id
+    timestamp
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateLikedLumeQL(
+  $filter: ModelSubscriptionLikedLumeQLFilterInput
+) {
+  onUpdateLikedLumeQL(filter: $filter) {
+    id
+    timestamp
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteLikedLumeQL(
+  $filter: ModelSubscriptionLikedLumeQLFilterInput
+) {
+  onDeleteLikedLumeQL(filter: $filter) {
+    id
+    timestamp
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateCommentQL($filter: ModelSubscriptionCommentQLFilterInput) {
+  onCreateCommentQL(filter: $filter) {
+    id
+    timestamp
+    comment
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateCommentQL($filter: ModelSubscriptionCommentQLFilterInput) {
+  onUpdateCommentQL(filter: $filter) {
+    id
+    timestamp
+    comment
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteCommentQL($filter: ModelSubscriptionCommentQLFilterInput) {
+  onDeleteCommentQL(filter: $filter) {
+    id
+    timestamp
+    comment
+    lumeQLID
+    lume {
+      id
+      postURL
+      timestamp
+      description
+      userprofileqlID
+      likeCount
+      commentCount
+      hashTags
+      zipURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    userprofileqlID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateCosmeticQL(
+  $filter: ModelSubscriptionCosmeticQLFilterInput
+) {
+  onCreateCosmeticQL(filter: $filter) {
+    id
+    productName
+    companyID
+    price
+    amount
+    totTagCount
+    authenticated
+    link
+    tagCnt
+    type
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateCosmeticQL(
+  $filter: ModelSubscriptionCosmeticQLFilterInput
+) {
+  onUpdateCosmeticQL(filter: $filter) {
+    id
+    productName
+    companyID
+    price
+    amount
+    totTagCount
+    authenticated
+    link
+    tagCnt
+    type
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteCosmeticQL(
+  $filter: ModelSubscriptionCosmeticQLFilterInput
+) {
+  onDeleteCosmeticQL(filter: $filter) {
+    id
+    productName
+    companyID
+    price
+    amount
+    totTagCount
+    authenticated
+    link
+    tagCnt
+    type
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateLumeQL($filter: ModelSubscriptionLumeQLFilterInput) {
+  onCreateLumeQL(filter: $filter) {
+    id
+    postURL
+    timestamp
+    tagProducts {
+      cosmeticID
+      authProduct
+      recommend
+      effect
+      fading
+      feeling
+      attachedURL
+      __typename
+    }
+    tagMusic {
+      trackID
+      tagMusicRange
+      __typename
+    }
+    description
+    userprofileqlID
+    userprofile {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    likeCount
+    commentCount
+    hashTags
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateLumeQL($filter: ModelSubscriptionLumeQLFilterInput) {
+  onUpdateLumeQL(filter: $filter) {
+    id
+    postURL
+    timestamp
+    tagProducts {
+      cosmeticID
+      authProduct
+      recommend
+      effect
+      fading
+      feeling
+      attachedURL
+      __typename
+    }
+    tagMusic {
+      trackID
+      tagMusicRange
+      __typename
+    }
+    description
+    userprofileqlID
+    userprofile {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    likeCount
+    commentCount
+    hashTags
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteLumeQL($filter: ModelSubscriptionLumeQLFilterInput) {
+  onDeleteLumeQL(filter: $filter) {
+    id
+    postURL
+    timestamp
+    tagProducts {
+      cosmeticID
+      authProduct
+      recommend
+      effect
+      fading
+      feeling
+      attachedURL
+      __typename
+    }
+    tagMusic {
+      trackID
+      tagMusicRange
+      __typename
+    }
+    description
+    userprofileqlID
+    userprofile {
+      id
+      followingUsers
+      followerUsers
+      username
+      DOB
+      firstName
+      Sensitivity
+      SunBathing
+      SkinType
+      lockState
+      profileImage
+      backgroundImage
+      followerCount
+      followingCount
+      bio
+      zipURL
+      postCount
+      createdAt
+      updatedAt
+      __typename
+    }
+    likeCount
+    commentCount
+    hashTags
+    zipURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateUserProfileQL(
+  $filter: ModelSubscriptionUserProfileQLFilterInput
+) {
+  onCreateUserProfileQL(filter: $filter) {
+    id
+    followingUsers
+    followerUsers
+    username
+    DOB
+    firstName
+    Sensitivity
+    SunBathing
+    SkinType
+    postContents {
+      nextToken
+      __typename
+    }
+    likedContents {
+      nextToken
+      __typename
+    }
+    comments {
+      nextToken
+      __typename
+    }
+    lockState
+    profileImage
+    backgroundImage
+    followerCount
+    followingCount
+    bio
+    zipURL
+    following {
+      nextToken
+      __typename
+    }
+    postCount
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateUserProfileQL(
+  $filter: ModelSubscriptionUserProfileQLFilterInput
+) {
+  onUpdateUserProfileQL(filter: $filter) {
+    id
+    followingUsers
+    followerUsers
+    username
+    DOB
+    firstName
+    Sensitivity
+    SunBathing
+    SkinType
+    postContents {
+      nextToken
+      __typename
+    }
+    likedContents {
+      nextToken
+      __typename
+    }
+    comments {
+      nextToken
+      __typename
+    }
+    lockState
+    profileImage
+    backgroundImage
+    followerCount
+    followingCount
+    bio
+    zipURL
+    following {
+      nextToken
+      __typename
+    }
+    postCount
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteUserProfileQL(
+  $filter: ModelSubscriptionUserProfileQLFilterInput
+) {
+  onDeleteUserProfileQL(filter: $filter) {
+    id
+    followingUsers
+    followerUsers
+    username
+    DOB
+    firstName
+    Sensitivity
+    SunBathing
+    SkinType
+    postContents {
+      nextToken
+      __typename
+    }
+    likedContents {
+      nextToken
+      __typename
+    }
+    comments {
+      nextToken
+      __typename
+    }
+    lockState
+    profileImage
+    backgroundImage
+    followerCount
+    followingCount
+    bio
+    zipURL
+    following {
+      nextToken
+      __typename
+    }
+    postCount
+    createdAt
+    updatedAt
+    __typename
+  }
+}

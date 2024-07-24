@@ -1,0 +1,6 @@
+framework module Pods_LumenaNotificationAPNAWS {
+  umbrella header "Pods-LumenaNotificationAPNAWS-umbrella.h"
+
+  export *
+  module * { export * }
+}

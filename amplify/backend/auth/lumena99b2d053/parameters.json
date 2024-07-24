@@ -1,0 +1,30 @@
+{
+  "authSelections": "identityPoolAndUserPool",
+  "resourceName": "lumena99b2d053",
+  "serviceType": "imported",
+  "region": "ap-northeast-1",
+  "aliasAttributes": [
+    "email",
+    "phone_number"
+  ],
+  "requiredAttributes": [
+    "given_name",
+    "family_name",
+    "preferred_username",
+    "picture",
+    "email",
+    "birthdate",
+    "phone_number"
+  ],
+  "passwordPolicyMinLength": 8,
+  "passwordPolicyCharacters": [
+    "Requires Lowercase",
+    "Requires Uppercase",
+    "Requires Numbers"
+  ],
+  "mfaConfiguration": "OFF",
+  "autoVerifiedAttributes": [
+    "email"
+  ],
+  "mfaTypes": []
+}

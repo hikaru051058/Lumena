@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-Lumena/Pods-Lumena-frameworks.sh
+${BUILT_PRODUCTS_DIR}/ACThumbnailGenerator-Swift/ACThumbnailGenerator_Swift.framework
+${BUILT_PRODUCTS_DIR}/TwitterProfile/TwitterProfile.framework
+${BUILT_PRODUCTS_DIR}/XLPagerTabStrip/XLPagerTabStrip.framework

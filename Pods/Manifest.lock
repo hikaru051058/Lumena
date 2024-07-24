@@ -1,0 +1,24 @@
+PODS:
+  - ACThumbnailGenerator-Swift (1.0.1)
+  - TwitterProfile (1.0.1)
+  - XLPagerTabStrip (9.1.0)
+
+DEPENDENCIES:
+  - ACThumbnailGenerator-Swift
+  - TwitterProfile
+  - XLPagerTabStrip (~> 9.0)
+
+SPEC REPOS:
+  trunk:
+    - ACThumbnailGenerator-Swift
+    - TwitterProfile
+    - XLPagerTabStrip
+
+SPEC CHECKSUMS:
+  ACThumbnailGenerator-Swift: 4c619a2ab32f005762c79a9a91ac61b092ab5e7e
+  TwitterProfile: 104d0588d1c510a6c7841e3c24a48adda024159d
+  XLPagerTabStrip: 27f3bfe23c53b4251c6481b06b1c289458a3fc1d
+
+PODFILE CHECKSUM: e9a1c018cec2e03df5af91f27ea0570badfb8a2b
+
+COCOAPODS: 1.12.0
