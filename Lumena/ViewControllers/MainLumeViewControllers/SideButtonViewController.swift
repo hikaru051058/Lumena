@@ -13,6 +13,9 @@ import XLPagerTabStrip
 
 
 class LumeSideButtonsViewController: UIViewController, ObservableObject, LumeIndividualDataUpdateDelegate {
+    func didUpdateDescriptionHeight(_ height: CGFloat?) {
+    }
+    
     
     @Published var lume: Lume
     @Published var currentLume: UUID?
@@ -109,7 +112,7 @@ extension LumeSideButtonsViewController {
     
     func navigateToProfile() {
         DispatchQueue.main.async { [self] in
-            let profileVC = TwitterParallaxViewController(userIdentityID: lume.postUserIID, profile: lume.returnPostUser())
+            let profileVC = TwitterParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == GI.shared.identityID)
             self.navigationController?.pushViewController(profileVC, animated: true)
         }
     }
@@ -447,7 +450,7 @@ class HeartButton: UIButton {
     
     private func updateUI() {
         let newImage = isLiked ? likedImage : unlikedImage
-        let newColor = isLiked ? UIColor(red: 0.919, green: 0.767, blue: 0.834, alpha: 1.0) : .white
+        let newColor = isLiked ? UIColor.arinPink.saturated(by: 1.7) : .white
         setImage(newImage?.withTintColor(newColor, renderingMode: .alwaysOriginal), for: .normal)
     }
     
@@ -466,235 +469,6 @@ class HeartButton: UIButton {
         
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
-    }
-}
-
-struct SideButtonCosmeticsTagView: View {
-    
-    @State var TagCosmetics: [TagCosmetic]
-
-    var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                Divider() // Adds a visual line
-                    .background(Color.clear)
-
-                ScrollView {
-                    VStack(spacing: 25) {
-                        ForEach(TagCosmetics.indices, id: \.self) { index in
-                            SideButtonIndividualTagCosmeticsTagView(TagCosmetic: TagCosmetics[index], showDetails: index == 0)
-                        }
-                    }
-                    .padding(.top, 25)
-                }
-            }
-            .navigationBarTitle(Text("タグされたコスメ"), displayMode: .inline)
-        }
-    }
-}
-
-struct SideButtonIndividualTagCosmeticsTagView: View {
-    
-    @ObservedObject var TagCosmetic: TagCosmetic
-    
-    @State var cosmetic: Cosmetic?
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    @State var showDetails: Bool = false
-    @State var showInside: Bool = false
-    
-    @State private var verticalOffset: CGFloat = 0
-    
-    var body: some View {
-        
-        ZStack {
-            
-            Color.clear
-                .onAppear{
-                    let CosmeticID = TagCosmetic.cosmeticID
-                    cosmetic = CosmeticManager.shared.getCosmetic(withID: CosmeticID)
-                }
-            
-            RoundedRectangle(cornerRadius: 20)
-                .shadow(radius: 3)
-                .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-            
-            VStack{
-                
-                HStack {
-                    if let productImages = cosmetic?.productImages {
-                        CardStack(productImages) { item in
-                            
-                            if let uiItemImage = item.image, uiItemImage != UIImage() {
-                                
-                                Image(uiImage: uiItemImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 70, height: 70)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                    .shadow(radius: 5)
-                                
-                            } else {
-                                
-                                Image(systemName: "cross.vial")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 70, height: 70)
-                                    .cornerRadius(10)
-                                    .padding(.trailing)
-                            }
-                        }
-                        .padding(.trailing)
-                        
-                    } else {
-                        
-                        Image(systemName: "cross.vial")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 70, height: 70)
-                            .cornerRadius(10)
-                            .padding(.trailing)
-                    }
-                    
-                    VStack(alignment: .leading) {
-                        
-                        Text(cosmetic?.productName ?? "null")
-                            .font(.title2)
-                        
-                        Text(cosmetic?.companyID ?? "null")
-                            .font(.subheadline)
-                        
-                        HStack {
-                            
-                            if cosmetic?.price != "0" {
-                                Text("\(cosmetic?.price ?? "null")")
-                                    .font(.callout)
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
-                            
-                            if cosmetic?.amount != "" {
-                                
-                                Text(cosmetic?.amount ?? "null")
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
-                            
-                            if let link = TagCosmetic.attachedURL,
-                                let url = URL(string: link)
-                            {
-                                Button(action: {
-                                    NotificationCenter.default.post(name: .showSheetBrowser, object: nil, userInfo: ["url": url])
-                                }) {
-                                    Image(systemName: "link.circle.fill")
-                                        .foregroundColor(Color(uiColor: UIColor.arinBlue))
-                                }
-                                .frame(width: 25, height: 25)
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
-                            
-                            if TagCosmetic.authProduct {
-                                
-                                Image(systemName: "checkmark.seal.fill")
-                                    .foregroundColor(Color(red: 0.552, green: 0.724, blue: 0.831))
-                                    .font(.title2)
-                            }
-                        }
-                    }
-                    .fontWeight(.bold)
-                    .padding(.leading)
-                    
-                }
-                .padding(.vertical)
-                
-                if showDetails {
-                    HStack{
-                        
-                        VStack{
-                            CircularInfoBar(stat: CGFloat(TagCosmetic.effectRating))
-                            Text("効果")
-                        }
-                        .padding()
-                        
-                        VStack{
-                            CircularInfoBar(stat: CGFloat(TagCosmetic.recommendRating))
-                            Text("おすすめ度")
-                        }
-                        .padding()
-                        
-                        VStack{
-                            VStack{
-                                HStack{
-                                    Text("肌触り")
-                                    Spacer()
-                                }
-                                HStack{
-                                    
-                                    Text("ベトベト")
-                                    
-                                    Spacer()
-                                    
-                                    Text("サラサラ")
-                                }
-                                .font(.footnote)
-                                LinearInfoBar(stat: CGFloat(TagCosmetic.feelingRating))
-                            }
-                            
-                            VStack{
-                                HStack{
-                                    Text("落ち具合")
-                                    Spacer()
-                                }
-                                HStack{
-                                    
-                                    Text("落ちやすい")
-                                    
-                                    Spacer()
-                                    
-                                    Text("落ちにくい")
-                                }
-                                .font(.footnote)
-                                LinearInfoBar(stat: CGFloat(TagCosmetic.fadingRating))
-                            }
-                        }
-                        .padding(.bottom)
-                    }
-                    .font(.footnote)
-                    .opacity(showInside ? 1 : 0)
-                    .offset(y: verticalOffset)
-                    .padding(.horizontal)
-                }
-            }
-        }
-        .padding(.horizontal, 20)
-        .onTapGesture {
-            withAnimation(showInside ? .easeOut : .easeIn){
-                showInside.toggle()
-                if showInside {
-                    verticalOffset = 0
-                } else {
-                    verticalOffset = -80
-                }
-            }
-            withAnimation{
-                showDetails.toggle()
-            }
-        }
-        .onAppear{
-            
-            showInside = showDetails
-        }
     }
 }
 
@@ -1064,7 +838,7 @@ extension String {
         let size = self.size(withAttributes: fontAttributes)
         return size.width
     }
-
+    
     func heightOfString(usingFont font: UIFont) -> CGFloat {
         let fontAttributes = [NSAttributedString.Key.font: font]
         let size = self.size(withAttributes: fontAttributes)
@@ -1077,8 +851,10 @@ extension String {
 class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeIndividualDataUpdateDelegate {
     
     private var sideButtonProfileHost: UIHostingController<SideButtonProfileView>?
-    private var sideButtonDescriptionHost: UIHostingController<LumeBottomDescriptionExpandableView>?
-    private let stackView = UIStackView()
+    var sideButtonDescriptionView: DescriptionExpandableViewController!
+    
+    private var profileViewBottomConstraint: NSLayoutConstraint!
+    private var descriptionViewTopConstraint: NSLayoutConstraint!
     
     @Published var lume: Lume
     @Published var currentLume: UUID?
@@ -1097,15 +873,11 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
         }
     }
     
-    private var lumeAuthenticityView: UIView!
-    private var lumeAuthenticityTitleStack: UIStackView!
-    private var lumeAuthenticityTitleIcon: UIImageView!
-    private var lumeAuthenticityTitleText: UILabel!
-    private var lumeAuthenticityMessage: UILabel!
     private var lumeAuthenticityViewButton: UIButton!
+    @State var lumeAuthenticityExpanded: Bool = false
     
     let buttonConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular, scale: .default)
-    let buttonPadding: CGFloat = 25.0
+    let buttonPadding: CGFloat = 5.0
 
     init(lume: Lume, userLiked: Bool, userLoggedIn: Bool) {
         self.lume = lume
@@ -1127,42 +899,23 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
         setupUI()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        toggleLumeAuthView(shouldAppear: false)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        toggleLumeAuthView(shouldAppear: false)
-    }
-    
     private func setupUI() {
         view.backgroundColor = .clear
-        
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.spacing = buttonPadding
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stackView)
-        
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: view.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        
-        setupProfileButton()
-//        setupLumeAuthenticity()
         setupDescriptionButton()
+//        setupLumeAuthenticity()
+        setupProfileButton()
     }
 }
 
+// profile button
 extension LumeBottomButtonsViewController {
     
     private func setupProfileButton() {
-        let sideButtonProfileView = SideButtonProfileView(sideButtonsController: self, postUserID: lume.postUserIID, onNavigateProfile: navigateToProfile)
+        let sideButtonProfileView = SideButtonProfileView(
+            sideButtonsController: self,
+            postUserID: lume.postUserIID,
+            onNavigateProfile: navigateToProfile
+        )
         sideButtonProfileHost = UIHostingController(rootView: sideButtonProfileView)
         
         guard let profileView = sideButtonProfileHost?.view else { return }
@@ -1176,21 +929,20 @@ extension LumeBottomButtonsViewController {
         profileView.layer.masksToBounds = false
         
         self.addChild(sideButtonProfileHost!)
-        stackView.addArrangedSubview(profileView)
+        view.addSubview(profileView)
         sideButtonProfileHost?.didMove(toParent: self)
+        profileViewBottomConstraint = profileView.bottomAnchor.constraint(equalTo: sideButtonDescriptionView.topAnchor)
         
+        // Set up the constraints
         NSLayoutConstraint.activate([
-            profileView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            profileView.heightAnchor.constraint(equalToConstant: 60),
+            profileView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            profileViewBottomConstraint
         ])
     }
-}
-
-extension LumeBottomButtonsViewController {
     
     func navigateToProfile() {
         DispatchQueue.main.async { [self] in
-            let profileVC = TwitterParallaxViewController(userIdentityID: lume.postUserIID, profile: lume.returnPostUser())
+            let profileVC = TwitterParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == GI.shared.identityID)
             self.navigationController?.pushViewController(profileVC, animated: true)
         }
     }
@@ -1207,116 +959,117 @@ extension LumeBottomButtonsViewController {
         navController.modalPresentationStyle = .automatic
         present(navController, animated: true, completion: nil)
     }
-}
+    
+    struct SideButtonProfileView: View {
+        @ObservedObject var sideButtonsController: LumeBottomButtonsViewController
+        @State var postUserID: String
+        @State private var followButton: Bool = false
+        @State private var profileImage: UIImage? = nil
 
-struct SideButtonProfileView: View {
-    @ObservedObject var sideButtonsController: LumeBottomButtonsViewController
-    @State var postUserID: String
-    @State private var followButton: Bool = false
-    @State private var profileImage: UIImage? = nil
+        var onNavigateProfile: (() -> Void)?
 
-    var onNavigateProfile: (() -> Void)?
-
-    var body: some View {
-        HStack {
-            if let userIdentityID = GI.shared.identityID, postUserID != userIdentityID {
-                if AuthenticationManager.shared.authStatus == .authenticated {
-                    Button(action: { onNavigateProfile?() }) {
-                        profileImageView()
+        var body: some View {
+            HStack {
+                if let userIdentityID = GI.shared.identityID, postUserID != userIdentityID {
+                    if AuthenticationManager.shared.authStatus == .authenticated {
+                        Button(action: { onNavigateProfile?() }) {
+                            profileImageView()
+                            
+                            Text(sideButtonsController.profile?.preferredUsername ?? "")
+                                .font(.footnote)
+                                .fontWeight(.bold)
+                                .foregroundStyle(Color.white)
+                        }
                         
-                        Text(sideButtonsController.profile?.preferredUsername ?? "")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color.white)
+                        followButtonView(userIdentityID: userIdentityID)
                     }
-                    
-                    followButtonView(userIdentityID: userIdentityID)
+                }
+                Spacer()
+            }
+            .onAppear {
+                fetchRelationshipStatus()
+                if let userProfile = sideButtonsController.profile {
+                    profileImage = userProfile.profileImage?.image
+                }
+                NotificationCenter.default.addObserver(forName: .didChangeFollowStatus, object: nil, queue: .main) { _ in
+                    self.fetchRelationshipStatus()
                 }
             }
-            Spacer()
-        }
-        .onAppear {
-            fetchRelationshipStatus()
-            if let userProfile = sideButtonsController.profile {
-                profileImage = userProfile.profileImage?.image
+            .onChange(of: sideButtonsController.refreshProfileView) { _ in
+                fetchRelationshipStatus()
             }
-            NotificationCenter.default.addObserver(forName: .didChangeFollowStatus, object: nil, queue: .main) { _ in
-                self.fetchRelationshipStatus()
+            .onChange(of: sideButtonsController.profile) { newProfile in
+                profileImage = newProfile?.profileImage?.image
             }
         }
-        .onChange(of: sideButtonsController.refreshProfileView) { _ in
-            fetchRelationshipStatus()
-        }
-        .onChange(of: sideButtonsController.profile) { newProfile in
-            profileImage = newProfile?.profileImage?.image
-        }
-    }
 
-    func fetchRelationshipStatus() {
-        guard let userIdentityID = GI.shared.identityID else { return }
-        DispatchQueue.main.async {
-            Task {
-                let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: postUserID)
-                followButton = (status == .following) || (status == .mutual)
+        func fetchRelationshipStatus() {
+            guard let userIdentityID = GI.shared.identityID else { return }
+            DispatchQueue.main.async {
+                Task {
+                    let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: postUserID)
+                    followButton = (status == .following) || (status == .mutual)
+                }
             }
         }
-    }
 
-    @ViewBuilder
-    private func profileImageView() -> some View {
-        ZStack {
-            if let profileImage = self.profileImage {
-                Image(uiImage: profileImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
-            } else {
-                
-                Image(systemName: "person.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.white)
-                    .background(Color.gray)
-                    .clipShape(Circle())
+        @ViewBuilder
+        private func profileImageView() -> some View {
+            ZStack {
+                if let profileImage = self.profileImage {
+                    Image(uiImage: profileImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 42, height: 42)
+                        .clipShape(Circle())
+                } else {
+                    
+                    Image(systemName: "person.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 42, height: 42)
+                        .foregroundColor(.white)
+                        .background(Color.gray)
+                        .clipShape(Circle())
+                }
             }
         }
-    }
 
-    @ViewBuilder
-    private func followButtonView(userIdentityID: String) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .frame(width: (followButton ? 20 : 40), height: 20)
-                .foregroundColor(followButton ? Color(red: 0.552, green: 0.724, blue: 0.831) : Color(red: 0.946, green: 0.76, blue: 0.839))
-            Group {
-                Text(followButton ? "" : "フォロー")
-                    .font(.system(size: 9))
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                Image(systemName: followButton ? "checkmark" : "")
-                    .font(.system(size: 9))
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+        @ViewBuilder
+        private func followButtonView(userIdentityID: String) -> some View {
+            ZStack {
+                RoundedRectangle(cornerRadius: 22)
+                    .frame(width: (followButton ? 22 : 50), height: 22)
+                    .foregroundColor(followButton ? Color(red: 0.552, green: 0.724, blue: 0.831) : Color(red: 0.946, green: 0.76, blue: 0.839))
+                Group {
+                    Text(followButton ? "" : "フォロー")
+                        .font(.system(size: 10))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    Image(systemName: followButton ? "checkmark" : "")
+                        .font(.system(size: 10))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
+            }
+            .onTapGesture {
+                toggleFollow(userIdentityID: userIdentityID)
             }
         }
-        .onTapGesture {
-            toggleFollow(userIdentityID: userIdentityID)
-        }
-    }
 
-    private func toggleFollow(userIdentityID: String) {
-        let isCurrentlyFollowing = ProfileManager.shared.isFollowing(userIdentityID, to: postUserID)
-        ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: postUserID, follow: !isCurrentlyFollowing)
-        withAnimation {
-            followButton.toggle()
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
+        private func toggleFollow(userIdentityID: String) {
+            let isCurrentlyFollowing = ProfileManager.shared.isFollowing(userIdentityID, to: postUserID)
+            ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: postUserID, follow: !isCurrentlyFollowing)
+            withAnimation {
+                followButton.toggle()
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
+            }
         }
     }
 }
 
+// lume Authenticity
 extension LumeBottomButtonsViewController {
 
     private func setupLumeAuthenticity() {
@@ -1325,107 +1078,18 @@ extension LumeBottomButtonsViewController {
             return
         }
         
-        // Main container view
-        let cornerRadius: CGFloat = 30
-        lumeAuthenticityView = UIView()
-        lumeAuthenticityView.backgroundColor = .clear
-        lumeAuthenticityView.layer.cornerRadius = cornerRadius
-        lumeAuthenticityView.layer.masksToBounds = true
-        lumeAuthenticityView.alpha = 0
-        lumeAuthenticityView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8) // Initially scaled down
-        
-        // Visual effect view for systemThinMaterial background
-        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.layer.cornerRadius = cornerRadius
-        blurEffectView.layer.masksToBounds = true
-        lumeAuthenticityView.addSubview(blurEffectView)
-        
-        view.addSubview(lumeAuthenticityView)
-        
-        lumeAuthenticityView.translatesAutoresizingMaskIntoConstraints = false
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            lumeAuthenticityView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            lumeAuthenticityView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            lumeAuthenticityView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
-            
-            blurEffectView.topAnchor.constraint(equalTo: lumeAuthenticityView.topAnchor),
-            blurEffectView.leadingAnchor.constraint(equalTo: lumeAuthenticityView.leadingAnchor),
-            blurEffectView.trailingAnchor.constraint(equalTo: lumeAuthenticityView.trailingAnchor),
-            blurEffectView.bottomAnchor.constraint(equalTo: lumeAuthenticityView.bottomAnchor),
-        ])
-        
-        // Title Stack
-        lumeAuthenticityTitleStack = UIStackView()
-        lumeAuthenticityTitleStack.axis = .horizontal
-        lumeAuthenticityTitleStack.alignment = .center
-        lumeAuthenticityTitleStack.distribution = .equalSpacing
-        lumeAuthenticityTitleStack.spacing = 0
-        lumeAuthenticityTitleStack.translatesAutoresizingMaskIntoConstraints = false
-        lumeAuthenticityView.addSubview(lumeAuthenticityTitleStack)
-        
-        lumeAuthenticityTitleIcon = UIImageView()
-        if let image = UIImage(systemName: "video.fill.badge.checkmark") {
-            //checkmark.seal.fill
-            lumeAuthenticityTitleIcon.image = image
-            lumeAuthenticityTitleIcon.tintColor = .white
-            lumeAuthenticityTitleIcon.contentMode = .scaleAspectFit
-        }
-        lumeAuthenticityTitleStack.addArrangedSubview(lumeAuthenticityTitleIcon)
-
-        // Set the size of the icon to match the font size of the text
-        let fontSize: CGFloat = 22.0
-        lumeAuthenticityTitleIcon.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            lumeAuthenticityTitleIcon.widthAnchor.constraint(equalToConstant: fontSize + 5),
-            lumeAuthenticityTitleIcon.heightAnchor.constraint(equalToConstant: fontSize + 5)
-        ])
-
-        lumeAuthenticityTitleText = UILabel()
-        lumeAuthenticityTitleText.text = "Video Verification"
-        lumeAuthenticityTitleText.textColor = .white
-        lumeAuthenticityTitleText.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
-        lumeAuthenticityTitleText.textAlignment = .center
-        lumeAuthenticityTitleText.translatesAutoresizingMaskIntoConstraints = false
-        lumeAuthenticityTitleStack.addArrangedSubview(lumeAuthenticityTitleText)
-
-        // Message Label
-        lumeAuthenticityMessage = UILabel()
-        lumeAuthenticityMessage.text = "This icon confirms that the content was filmed or recorded on Lumena without using any editing software, filters, or modifications"
-        lumeAuthenticityMessage.textColor = .white
-        lumeAuthenticityMessage.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        lumeAuthenticityMessage.numberOfLines = 0
-        lumeAuthenticityMessage.textAlignment = .center
-        lumeAuthenticityMessage.translatesAutoresizingMaskIntoConstraints = false
-        lumeAuthenticityView.addSubview(lumeAuthenticityMessage)
-        
-        // Constraints for title stack and message label
-        NSLayoutConstraint.activate([
-            lumeAuthenticityTitleStack.topAnchor.constraint(equalTo: lumeAuthenticityView.topAnchor, constant: 16),
-            lumeAuthenticityTitleStack.leadingAnchor.constraint(equalTo: lumeAuthenticityView.leadingAnchor, constant: 48),
-            lumeAuthenticityTitleStack.trailingAnchor.constraint(equalTo: lumeAuthenticityView.trailingAnchor, constant: -48),
-            
-            lumeAuthenticityMessage.topAnchor.constraint(equalTo: lumeAuthenticityTitleStack.bottomAnchor, constant: 16),
-            lumeAuthenticityMessage.leadingAnchor.constraint(equalTo: lumeAuthenticityView.leadingAnchor, constant: 16),
-            lumeAuthenticityMessage.trailingAnchor.constraint(equalTo: lumeAuthenticityView.trailingAnchor, constant: -16),
-            lumeAuthenticityMessage.bottomAnchor.constraint(equalTo: lumeAuthenticityView.bottomAnchor, constant: -16),
-        ])
-        
-        let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
+        let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular, scale: .default)
         
         lumeAuthenticityViewButton = createButton(action: #selector(lumeAuthButtonTapped), imageName: "checkmark.seal.fill", tintColor: .white, buttonImageConfig: buttonImageConfig)
         
+        lumeAuthenticityViewButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lumeAuthenticityViewButton)
         
-        lumeAuthenticityViewButton.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addArrangedSubview(lumeAuthenticityViewButton)
-        
-        // Add tap gesture recognizer to lumeAuthenticityView
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(lumeAuthButtonTapped))
-        lumeAuthenticityView.addGestureRecognizer(tapGesture)
-        lumeAuthenticityView.isUserInteractionEnabled = true
+        NSLayoutConstraint.activate([
+            lumeAuthenticityViewButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            lumeAuthenticityViewButton.heightAnchor.constraint(equalToConstant: 21),
+            lumeAuthenticityViewButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+        ])
     }
 
     @objc private func lumeAuthButtonTapped() {
@@ -1434,29 +1098,8 @@ extension LumeBottomButtonsViewController {
             return
         }
         
-        if lumeAuthenticityView.alpha == 0 {
-            toggleLumeAuthView(shouldAppear: true)
-        } else {
-            toggleLumeAuthView(shouldAppear: false)
-        }
-    }
-    
-    private func toggleLumeAuthView(shouldAppear: Bool, animation: Bool = true) {
-        
-        if !lume.lumeAuth {
-            return
-        }
-        if shouldAppear {
-            UIView.animate(withDuration: animation ? 0.15 : 0, animations: {
-                self.lumeAuthenticityView.alpha = 1
-                self.lumeAuthenticityView.transform = CGAffineTransform.identity
-            })
-        } else {
-            UIView.animate(withDuration: animation ? 0.15 : 0, animations: {
-                self.lumeAuthenticityView.alpha = 0
-                self.lumeAuthenticityView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-            })
-        }
+        lumeAuthenticityExpanded.toggle()
+        NotificationCenter.default.post(name: .lumeAuthenticationExpanded, object: nil, userInfo: ["expand": self.lumeAuthenticityExpanded])
     }
     
     private func createButton(action: Selector, imageName: String, tintColor: UIColor, buttonImageConfig: UIImage.SymbolConfiguration) -> UIButton {
@@ -1471,59 +1114,74 @@ extension LumeBottomButtonsViewController {
         // Add shadow properties
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOpacity = 0.25
-        button.layer.shadowOffset = CGSize(width: 0, height: 1)
-        button.layer.shadowRadius = 1
+        button.layer.shadowOffset = CGSize(width: 0.25, height: 0.25)
+        button.layer.shadowRadius = 2
         button.layer.masksToBounds = false
         
         return button
     }
 }
 
-extension LumeBottomButtonsViewController {
+// bottom description
+extension LumeBottomButtonsViewController: DescriptionExpandableViewControllerDelegate {
     
     private func setupDescriptionButton() {
-        let sideButtonDescriptionView = LumeBottomDescriptionExpandableView(text: lume.postDescription ?? "")
         
-        sideButtonDescriptionHost = UIHostingController(rootView: sideButtonDescriptionView)
+        // Create the DescriptionExpandableViewController with the post description
+        sideButtonDescriptionView = DescriptionExpandableViewController(
+//            text: lume.postDescription ?? ""
+        )
         
-        guard let descriptionView = sideButtonDescriptionHost?.view else { return }
-        descriptionView.translatesAutoresizingMaskIntoConstraints = false
-        descriptionView.backgroundColor = UIColor.clear
+        sideButtonDescriptionView.lumeBottomViewControllerdelegate = self
         
-        descriptionView.layer.shadowColor = UIColor.black.cgColor
-        descriptionView.layer.shadowOpacity = 0.25
-        descriptionView.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
-        descriptionView.layer.shadowRadius = 0.25
-        descriptionView.layer.masksToBounds = false
+        // Add the description view to the controller's view
+        sideButtonDescriptionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(sideButtonDescriptionView)
         
-        self.addChild(sideButtonDescriptionHost!)
-        stackView.addArrangedSubview(descriptionView)
-        sideButtonDescriptionHost?.didMove(toParent: self)
+        // Configure the description view's appearance
+        sideButtonDescriptionView.backgroundColor = UIColor.clear
+        sideButtonDescriptionView.layer.shadowColor = UIColor.black.cgColor
+        sideButtonDescriptionView.layer.shadowOpacity = 0.25
+        sideButtonDescriptionView.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        sideButtonDescriptionView.layer.shadowRadius = 0.25
+        sideButtonDescriptionView.layer.masksToBounds = false
         
+        guard let postDescription = lume.postDescription else { return }
+        
+        descriptionViewTopConstraint = sideButtonDescriptionView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: postDescription.isEmpty ? 0 : -sideButtonDescriptionView.getCurrentHeight())
+        
+        // Set the constraints for the description view
         NSLayoutConstraint.activate([
-            descriptionView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            descriptionView.heightAnchor.constraint(equalToConstant: 200),
+            sideButtonDescriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            sideButtonDescriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            sideButtonDescriptionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            descriptionViewTopConstraint
         ])
     }
-}
-
-struct LumeBottomDescriptionExpandableView: View {
-
-    @State var text: String
     
-    var body: some View {
-        ExpandableText(text: text)
-            .font(.caption2)//optional
-            .foregroundColor(.primary)//optional
-//            .lineLimit(3)//optional
-            .expandButton(TextSet(text: "more", font: .body, color: .blue))//optional
-            .collapseButton(TextSet(text: "less", font: .body, color: .blue))//optional
-            .expandAnimation(.easeOut)//optional
-            .padding(.horizontal, 24)//optional
+    func getCurrentHeight() -> CGFloat{
+        return sideButtonDescriptionView.getCurrentHeight()
+    }
+    
+    func didUpdateHeight(_ height: CGFloat) {
+        
+        // Update the height constraint of sideButtonDescriptionView
+        if let heightConstraint = sideButtonDescriptionView.constraints.first(where: { $0.firstAttribute == .height }) {
+            heightConstraint.constant = -height
+        }
+        
+        // Update bottom constraint if needed
+        descriptionViewTopConstraint.constant = -height
+        
+        // Update any related constraints (e.g., profile view)
+        profileViewBottomConstraint = descriptionViewTopConstraint
+        
+        // Animate the layout change
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
-
-
 
 class VideoDataStore: ObservableObject {
     
@@ -1603,8 +1261,8 @@ class BottomIslandViewController: UIViewController {
     }
     
     func navigateToProfile() {
-        let userProfile = ProfileManager.shared.getProfile(withID: GI.shared.identityID!)
-        let profileVC = TwitterParallaxViewController(userIdentityID: GI.shared.identityID!, profile: userProfile)
+        guard let UserProfileIdentity = GI.shared.identityID else { return }
+        let profileVC = TwitterParallaxViewController(userIdentityID: UserProfileIdentity, isAccountUser: true)
         navigationController?.pushViewController(profileVC, animated: true)
     }
     
@@ -1858,4 +1516,169 @@ class UploadProgress: ObservableObject {
     @Published var progress: Double = 0
     @Published var completionState: UploadProgressBarView.CompletionState = .inProgress
     @Published var isVisible: Bool = false
+}
+
+
+
+
+struct DescriptionExpandableViewRepresentable: UIViewRepresentable {
+    
+    func makeUIView(context: Context) -> DescriptionExpandableViewController {
+        return DescriptionExpandableViewController()
+    }
+    
+    func updateUIView(_ uiView: DescriptionExpandableViewController, context: Context) {
+        // Update the view if needed
+    }
+}
+
+protocol DescriptionExpandableViewControllerDelegate: AnyObject {
+    func didUpdateHeight(_ height: CGFloat)
+}
+
+class DescriptionExpandableViewController: UIView {
+    
+    private let scrollView = UIScrollView()
+    private let descriptionLabel = UILabel()
+    private var expanded = false
+    private var maximumExpandedHeight: CGFloat = 300 // Renamed for clarity
+    var text: String = String().loresIpsum
+    
+    private var scrollViewTopConstraint: NSLayoutConstraint!
+    
+    weak var lumeBottomViewControllerdelegate: DescriptionExpandableViewControllerDelegate?
+    weak var lumeIndividualViewControllerdelegate: DescriptionExpandableViewControllerDelegate?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    init(text: String) {
+        super.init(frame: .zero)
+        self.text = text
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+    }
+    
+    private func setupView() {
+        // Configure the scroll view
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.isScrollEnabled = true
+        scrollView.showsVerticalScrollIndicator = false
+//        scrollView.backgroundColor = .gray
+        addSubview(scrollView)
+        
+        // Configure the label
+        descriptionLabel.text = text
+        descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        descriptionLabel.textColor = .white
+        descriptionLabel.numberOfLines = 2
+        descriptionLabel.textAlignment = .left
+        descriptionLabel.lineBreakMode = .byTruncatingTail
+        descriptionLabel.isUserInteractionEnabled = true
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(descriptionLabel)
+        
+        // Set constraints for the label
+        NSLayoutConstraint.activate([
+            descriptionLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            descriptionLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            descriptionLabel.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
+        
+        // Calculate the required height for the label after the layout has been applied
+        DispatchQueue.main.async {
+            let requiredHeight = self.descriptionLabel.requiredHeight(for: self.bounds.width)
+            self.scrollViewTopConstraint = self.scrollView.topAnchor.constraint(equalTo: self.bottomAnchor, constant: -requiredHeight)
+            self.scrollViewTopConstraint.isActive = true
+            self.lumeBottomViewControllerdelegate?.didUpdateHeight(requiredHeight)
+            // Animate the layout change
+            UIView.animate(withDuration: 0.2) {
+                self.layoutIfNeeded()
+            }
+        }
+        
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+        
+        // Add tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDescription))
+        descriptionLabel.addGestureRecognizer(tapGesture)
+        
+    }
+    
+    private func applyVerticalFadeMask() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = self.frame
+        gradientLayer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.white.cgColor,
+            UIColor.white.cgColor,
+            UIColor.clear.cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.05, 0.95, 1.0]
+        
+        self.layer.mask = gradientLayer
+    }
+    
+    private func removeVerticalFadeMask() {
+        self.layer.mask = nil
+    }
+    
+    @objc func toggleDescription() {
+        expanded.toggle()
+        updateDescriptionHeight()
+    }
+    
+    private func updateDescriptionHeight() {
+        self.descriptionLabel.numberOfLines = self.expanded ? 0 : 2
+        
+        // Calculate the required height for the expanded label content
+        var requiredHeight: CGFloat = 0.0
+        if !text.isEmpty {
+            requiredHeight = min(maximumExpandedHeight, descriptionLabel.requiredHeight(for: bounds.width))
+        }
+        scrollView.isScrollEnabled = expanded
+        
+        lumeBottomViewControllerdelegate?.didUpdateHeight(requiredHeight)
+        lumeIndividualViewControllerdelegate?.didUpdateHeight(requiredHeight)
+        
+        // Animate the height change
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            guard let self = self else { return }
+            self.scrollViewTopConstraint?.constant = -requiredHeight
+            self.layoutIfNeeded()
+        }
+    }
+    
+    func getCurrentHeight() -> CGFloat {
+        let heightReturn = min(maximumExpandedHeight, descriptionLabel.requiredHeight(for: bounds.width))
+        print(heightReturn)
+        return heightReturn
+    }
+}
+
+extension UILabel {
+    func requiredHeight(for width: CGFloat) -> CGFloat {
+        let maxSize = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let requiredSize = self.sizeThatFits(maxSize)
+        return requiredSize.height
+    }
+}
+
+#Preview("DescriptionExpandableViewPreview") {
+    
+//    DescriptionExpandableView()
+    DescriptionExpandableViewRepresentable()
+        .padding(.trailing, 50)
 }

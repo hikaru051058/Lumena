@@ -82,9 +82,7 @@ class ProfileBackgroundViewController: UIViewController {
                 imageView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
             ])
         } else if let profileImage = profile.profileImage?.image {
-            updateColors(for: profileImage, colorScheme: traitCollection.userInterfaceStyle) { colors in
-                self.setGradientBackground(colors: colors)
-            }
+            updateColors(for: profileImage, colorScheme: traitCollection.userInterfaceStyle)
         } else {
             setGradientBackground(colors: defaultColors(for: traitCollection.userInterfaceStyle).map { Color(uiColor: $0) })
         }
@@ -106,12 +104,12 @@ class ProfileBackgroundViewController: UIViewController {
         ])
     }
     
-    func updateColors(for image: UIImage?, colorScheme: UIUserInterfaceStyle, completion: @escaping ([Color]) -> Void) {
+    func updateColors(for image: UIImage?, colorScheme: UIUserInterfaceStyle) {
         var colors: [UIColor] = []
 
         if let validImage = image {
             guard let dominantColors = try? validImage.dominantColorFrequencies(with: .high) else {
-                completion(defaultColors(for: colorScheme).map { Color(uiColor: $0) })
+                self.setGradientBackground(colors: defaultColors(for: colorScheme).map { Color(uiColor: $0) })
                 return
             }
 
@@ -126,7 +124,7 @@ class ProfileBackgroundViewController: UIViewController {
         
         let uiColors = colors.map { Color(uiColor: $0) }
         DispatchQueue.main.async {
-            completion(uiColors)
+            self.setGradientBackground(colors: uiColors)
         }
     }
 
@@ -152,22 +150,32 @@ class ProfileBackgroundViewController: UIViewController {
         }
     }
     
-    private func updateBackgroundImage(_ image: UIImage) {
+    func updateBackgroundImage(_ image: UIImage) {
         // Remove old imageView if exists
-        imageView?.removeFromSuperview()
+        profile.backgroundImage?.image = image
         
-        imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.frame = view.bounds
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        backgroundView.addSubview(imageView)
+        if imageView != nil {
+            imageView.image = image
+        } else {
+            imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFill
+            imageView.frame = view.bounds
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            backgroundView.addSubview(imageView)
+            
+            NSLayoutConstraint.activate([
+                imageView.topAnchor.constraint(equalTo: backgroundView.topAnchor),
+                imageView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor),
+                imageView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
+            ])
+        }
         
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: backgroundView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor),
-            imageView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
-        ])
+        DispatchQueue.main.async { [self] in
+            imageView.layoutIfNeeded()
+            backgroundView.layoutIfNeeded()
+            self.view.layoutIfNeeded()
+        }
     }
 }
 

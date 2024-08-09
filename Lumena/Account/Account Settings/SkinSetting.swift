@@ -45,8 +45,8 @@ struct SkinSettingsAttributes {
         self.uv = UVOptions.fromGraphQLINT(Int(skinSettingsAttributesQL.skinUVBathing ?? "1") ?? 1) ?? .lessThan1Hour
         self.skinType =  SkinTypeOptions.fromGraphQL(skinSettingsAttributesQL.skinType ?? .oily)
         self.personalColor = PersonalColorOptions.fromGraphQL(skinSettingsAttributesQL.skinPersonalColor ?? .brightSpring)
-        self.eyeColor = skinSettingsAttributesQL.skinEyeColor ?? "#00000000"
-        self.skinColor = skinSettingsAttributesQL.skinColor ?? "#00000000" // Default to white color if not provided
+        self.eyeColor = skinSettingsAttributesQL.skinEyeColor ?? UIColor.toHexString(UIColor.arinBlue)()
+        self.skinColor = skinSettingsAttributesQL.skinColor ?? UIColor.toHexString(UIColor.arinBlue)()
         self.concerns = ConcernsOptions.fromGraphQL(skinSettingsAttributesQL.skinConcerns ?? .drySkin)
     }
 
@@ -132,8 +132,8 @@ private extension SkinSettingsType {
 
     static var eyeColorSettings: SkinSettingsTextStruct {
         return SkinSettingsTextStruct(
-            title: "目の色",
-            subTitle: "あなたの自然な目の色",
+            title: "虹彩色",
+            subTitle: "あなたの自然な虹彩色",
             options: [],
             selected: ""
         )
@@ -157,6 +157,7 @@ private extension SkinSettingsType {
         )
     }
 }
+
 
 enum SensitivityOptions: String, CaseIterable {
     case extremelySensitive = "ものすごく敏感"
@@ -182,6 +183,16 @@ enum SensitivityOptions: String, CaseIterable {
         case SkinSensitivity.sensitive: return .sensitive
         case SkinSensitivity.slightlySensitive: return .slightlySensitive
         case SkinSensitivity.notSensitive: return .notSensitive
+        }
+    }
+    
+    func toArinColor() -> UIColor {
+        switch self {
+        case .extremelySensitive: return UIColor.arinPink
+        case .verySensitive: return UIColor.arinDarkPink
+        case .sensitive: return UIColor.arinYellow
+        case .slightlySensitive: return UIColor.arinBlue
+        case .notSensitive: return UIColor.arinGreen
         }
     }
 }
@@ -213,6 +224,16 @@ enum UVOptions: String, CaseIterable {
         default: return nil
         }
     }
+    
+    func toArinColor() -> UIColor {
+        switch self {
+        case .moreThan7Hours: return UIColor.arinPink
+        case .fiveTo6Hours: return UIColor.arinPink
+        case .twoTo4Hours: return UIColor.arinPink
+        case .oneTo2Hours: return UIColor.arinPink
+        case .lessThan1Hour: return UIColor.arinPink
+        }
+    }
 }
 
 enum SkinTypeOptions: String, CaseIterable {
@@ -239,6 +260,16 @@ enum SkinTypeOptions: String, CaseIterable {
         case .normal: return .normal
         case .sensitive: return .sensitive
         case .dry: return .dry
+        }
+    }
+    
+    func toArinColor() -> UIColor {
+        switch self {
+        case .oily: return UIColor.arinPink
+        case .combination: return UIColor.arinPink
+        case .normal: return UIColor.arinPink
+        case .sensitive: return UIColor.arinPink
+        case .dry: return UIColor.arinPink
         }
     }
 }
@@ -313,6 +344,22 @@ enum PersonalColorOptions: String, CaseIterable {
         case .lightSpring: return .lightSpring
         }
     }
+    
+    func toArinColor() -> UIColor {
+            switch self {
+            case .lightSummer: return UIColor.arinPink
+            case .coolSummer: return UIColor.arinPink
+            case .softSummer: return UIColor.arinPink
+            case .softAutumn: return UIColor.arinPink
+            case .darkAutumn: return UIColor.arinPink
+            case .darkWinter: return UIColor.arinPink
+            case .coolWinter: return UIColor.arinPink
+            case .brightWinter: return UIColor.arinPink
+            case .brightSpring: return UIColor.arinPink
+            case .warmSpring: return UIColor.arinPink
+            case .lightSpring: return UIColor.arinPink
+            }
+    }
 }
 
 enum ConcernsOptions: String, CaseIterable {
@@ -341,6 +388,16 @@ enum ConcernsOptions: String, CaseIterable {
         case .dermatitis: return .dermatitis
         }
     }
+    
+    func toArinColor() -> UIColor {
+        switch self {
+        case .acne: return UIColor.arinPink
+        case .psoriasis: return UIColor.arinPink
+        case .drySkin: return UIColor.arinPink
+        case .pigmentation: return UIColor.arinPink
+        case .dermatitis: return UIColor.arinPink
+        }
+    }
 }
 
 struct SkinSettingsTextStruct {
@@ -358,8 +415,7 @@ struct SkinSetting: View {
     @State private var selectedOption: SkinSettingsType = .sensitivity
     @State private var barLength: Double = 0.0
     
-    @State var profile: ProfileSettings
-    @State var skinSetting: SkinSettingsAttributes?
+    @ObservedObject var skinSettingsModel: SkinSettingsModel
 
     @State var MainOrSetting: Bool = false // false = jump to main view , true = setting
     @State private var ignoreOnChange: Bool = true
@@ -533,10 +589,10 @@ struct SkinSetting: View {
                             }
                         }
                     }
-                    updateSkinSetting()
+//                    updateSkinSetting()
                 } else {
                     showCheckButton = true
-                    updateSkinSetting()
+//                    updateSkinSetting()
                 }
             }
             
@@ -551,7 +607,7 @@ struct SkinSetting: View {
                             ignoreOnChange = true
                             selectedOption = previousOption(before: selectedOption)
                         }
-                        updateSkinSetting()
+//                        updateSkinSetting()
                     }) {
                         ZStack {
                             Rectangle()
@@ -574,10 +630,11 @@ struct SkinSetting: View {
                             showCheckButton = false
                             
                             if selectedOption == .skinColor {
-                                skinSetting?.skinColor = selectedSkinColor.toHexString()
+                                skinSettingsModel.skinSettings.skinColor = selectedSkinColor.toHexString()
                             } else if selectedOption == .eyeColor {
-                                skinSetting?.eyeColor = selectedEyeColor.toHexString()
+                                skinSettingsModel.skinSettings.eyeColor = selectedEyeColor.toHexString()
                             }
+
 
                             // Move to the next screen
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -585,7 +642,7 @@ struct SkinSetting: View {
                                     selectedOption = nextOption(after: selectedOption)
                                 }
                             }
-                            updateSkinSetting()
+//                            updateSkinSetting()
                         }) {
                             ZStack {
                                 Rectangle()
@@ -603,9 +660,14 @@ struct SkinSetting: View {
                         .opacity(showCheckButton ? 1 : 0)
                         
                     } else {
-                        Button(action: MainOrSetting ? {
-                            dismissSetting()
-                        } : onNavigate) {
+                        Button(action: {
+//                            updateSkinSetting()
+                            if MainOrSetting {
+                                dismissSetting()
+                            } else {
+                                onNavigate()
+                            }
+                        }) {
                             ZStack {
                                 Rectangle()
                                     .frame(width: 100, height: 50)
@@ -631,10 +693,12 @@ struct SkinSetting: View {
                         showCheckButton = false
                         
                         if selectedOption == .skinColor {
-                            skinSetting?.skinColor = selectedSkinColor.toHexString()
+                            skinSettingsModel.skinSettings.skinColor = selectedSkinColor.toHexString()
                         } else if selectedOption == .eyeColor {
-                            skinSetting?.eyeColor = selectedEyeColor.toHexString()
+                            skinSettingsModel.skinSettings.eyeColor = selectedEyeColor.toHexString()
                         }
+                        
+                        
                         
                         if selectedOption != .concerns {
                             // Move to the next screen
@@ -643,10 +707,10 @@ struct SkinSetting: View {
                                     selectedOption = nextOption(after: selectedOption)
                                 }
                             }
-                            updateSkinSetting()
+//                            updateSkinSetting()
                         } else {
-                            doneEditing = skinSetting?.concerns != nil
-                            updateSkinSetting()
+                            doneEditing = skinSettingsModel.skinSettings.concerns.rawValue != ""
+//                            updateSkinSetting()
                         }
                     }) {
                         ZStack {
@@ -668,14 +732,11 @@ struct SkinSetting: View {
             }
         }
         .onAppear {
-            self.profile = ProfileManager.shared.getProfile(withID: self.profile.identityID)
-            guard let skinSetting = profile.skinSetting else { return }
-            self.skinSetting = skinSetting
-            if let color = UIColor(hex: skinSetting.skinColor) {
+            if let color = UIColor(hex: skinSettingsModel.skinSettings.skinColor) {
                 self.selectedSkinColor = color
                 self.initialSelectedSkinColor = color
             }
-            if let color = UIColor(hex: skinSetting.eyeColor) {
+            if let color = UIColor(hex: skinSettingsModel.skinSettings.eyeColor) {
                 self.selectedEyeColor = color
                 self.initialSelectedEyeColor = color
             }
@@ -687,81 +748,81 @@ struct SkinSetting: View {
         switch option {
         case .sensitivity:
             return Binding<String?>(
-                get: { self.skinSetting?.sensitivity.rawValue },
-                set: { self.skinSetting?.sensitivity = SensitivityOptions(rawValue: $0 ?? "") ?? .notSensitive }
+                get: { self.skinSettingsModel.skinSettings.sensitivity.rawValue },
+                set: { self.skinSettingsModel.skinSettings.sensitivity = SensitivityOptions(rawValue: $0 ?? "") ?? .notSensitive }
             )
         case .uv:
             return Binding<String?>(
-                get: { self.skinSetting?.uv.rawValue },
-                set: { self.skinSetting?.uv = UVOptions(rawValue: $0 ?? "") ?? .lessThan1Hour }
+                get: { self.skinSettingsModel.skinSettings.uv.rawValue },
+                set: { self.skinSettingsModel.skinSettings.uv = UVOptions(rawValue: $0 ?? "") ?? .lessThan1Hour }
             )
         case .skinType:
             return Binding<String?>(
-                get: { self.skinSetting?.skinType.rawValue },
-                set: { self.skinSetting?.skinType = SkinTypeOptions(rawValue: $0 ?? "") ?? .normal }
+                get: { self.skinSettingsModel.skinSettings.skinType.rawValue },
+                set: { self.skinSettingsModel.skinSettings.skinType = SkinTypeOptions(rawValue: $0 ?? "") ?? .normal }
             )
         case .personalColor:
             return Binding<String?>(
-                get: { self.skinSetting?.personalColor.rawValue },
-                set: { self.skinSetting?.personalColor = PersonalColorOptions(rawValue: $0 ?? "") ?? .lightSpring }
+                get: { self.skinSettingsModel.skinSettings.personalColor.rawValue },
+                set: { self.skinSettingsModel.skinSettings.personalColor = PersonalColorOptions(rawValue: $0 ?? "") ?? .lightSpring }
             )
         case .eyeColor:
             return Binding<String?>(
-                get: { self.skinSetting?.eyeColor },
-                set: { self.skinSetting?.eyeColor = $0 ?? "#00000000" }
+                get: { self.skinSettingsModel.skinSettings.eyeColor },
+                set: { self.skinSettingsModel.skinSettings.eyeColor = $0 ?? "#00000000" }
             )
         case .skinColor:
             return Binding<String?>(
-                get: { self.skinSetting?.skinColor },
-                set: { self.skinSetting?.skinColor = $0 ?? "#00000000" }
+                get: { self.skinSettingsModel.skinSettings.skinColor },
+                set: { self.skinSettingsModel.skinSettings.skinColor = $0 ?? "#00000000" }
             )
         case .concerns:
             return Binding<String?>(
-                get: { self.skinSetting?.concerns.rawValue },
-                set: { self.skinSetting?.concerns = ConcernsOptions(rawValue: $0 ?? "") ?? .drySkin }
+                get: { self.skinSettingsModel.skinSettings.concerns.rawValue },
+                set: { self.skinSettingsModel.skinSettings.concerns = ConcernsOptions(rawValue: $0 ?? "") ?? .drySkin }
             )
         }
     }
-    
+
     // Helper functions to check if navigation is allowed
     func canNavigateBack() -> Bool {
         switch selectedOption {
         case .sensitivity:
             return false // No previous option for sensitivity
         case .uv:
-            return skinSetting?.sensitivity != nil
+            return skinSettingsModel.skinSettings.sensitivity.rawValue != ""
         case .skinType:
-            return skinSetting?.uv != nil
+            return skinSettingsModel.skinSettings.uv.rawValue != ""
         case .personalColor:
-            return skinSetting?.skinType != nil
+            return skinSettingsModel.skinSettings.skinType.rawValue != ""
         case .eyeColor:
-            return skinSetting?.personalColor != nil
+            return skinSettingsModel.skinSettings.personalColor.rawValue != ""
         case .skinColor:
-            return skinSetting?.eyeColor != nil
+            return skinSettingsModel.skinSettings.eyeColor != ""
         case .concerns:
-            return skinSetting?.skinColor != nil
+            return skinSettingsModel.skinSettings.skinColor != ""
         }
     }
-
+    
     func canNavigateForward() -> Bool {
         switch selectedOption {
         case .sensitivity:
-            return skinSetting?.sensitivity != nil
+            return skinSettingsModel.skinSettings.sensitivity.rawValue != ""
         case .uv:
-            return skinSetting?.uv != nil
+            return skinSettingsModel.skinSettings.uv.rawValue != ""
         case .skinType:
-            return skinSetting?.skinType != nil
+            return skinSettingsModel.skinSettings.skinType.rawValue != ""
         case .personalColor:
-            return skinSetting?.personalColor != nil
+            return skinSettingsModel.skinSettings.personalColor.rawValue != ""
         case .eyeColor:
-            return skinSetting?.eyeColor != nil
+            return skinSettingsModel.skinSettings.eyeColor != ""
         case .skinColor:
-            return skinSetting?.skinColor != nil
+            return skinSettingsModel.skinSettings.skinColor != ""
         case .concerns:
             return false // No next option for concerns
         }
     }
-
+    
     func nextOption(after option: SkinSettingsType) -> SkinSettingsType {
         let allOptions = SkinSettingsType.allCases
         if let currentIndex = allOptions.firstIndex(of: option), currentIndex < allOptions.count - 1 {
@@ -778,24 +839,7 @@ struct SkinSetting: View {
         return allOptions.last!
     }
     
-    func updateSkinSetting() {
-        profile.skinSetting = skinSetting
-        Task {
-            try await GraphQL.shared.updateUserProfile(profile: profile)
-            ProfileManager.shared.updateProfile(profile)
-        }
-    }
-    
-    
     func dismissSetting() {
-        updateSkinSetting()
-//        Task {
-//            do {
-//                try await profile.updateProfile()
-//            } catch {
-//                print(error)
-//            }
-//        }
         presentationMode.wrappedValue.dismiss()
     }
     
@@ -827,17 +871,6 @@ struct SkinSetting: View {
         }
     }
 }
-
-struct SkinSetting_Previews: PreviewProvider {
-    
-    static var Onnavigation : () -> Void = { }
-    
-    static var previews: some View {
-        SkinSetting(profile: ProfileSettings(id: ""), onNavigate: Onnavigation)
-    }
-}
-
-import SwiftUI
 
 struct ColorSelectorContainerViewControllerWrapper: UIViewControllerRepresentable {
     @Binding var position: CGPoint

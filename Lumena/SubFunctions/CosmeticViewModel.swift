@@ -50,29 +50,48 @@ struct IndividualCosmeticsTagView: View {
                     
                     if let productImages = cosmetic.productImages {
                         
-                        CardStack(productImages) { item in
+//                        CardStack(productImages) { item in
+//                            
+//                            // Subsequent items - Show the image
+//                            if let uiItemImage = item.image, uiItemImage != UIImage() {
+//                                
+//                                Image(uiImage: uiItemImage)
+//                                    .resizable()
+//                                    .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+//                                    .frame(width: 70, height: 70)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+//                                    .shadow(radius: 5)
+//                                
+//                            } else {
+//                                
+//                                Image(systemName: "cross.vial")
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .frame(width: 70, height: 70)
+//                                    .cornerRadius(10)
+//                                    .padding(.trailing)
+//                            }
+//                        }
+//                        .padding(.trailing)
+                        
+                        if let uiItemImage = productImages.first?.image, uiItemImage != UIImage() {
                             
-                            // Subsequent items - Show the image
-                            if let uiItemImage = item.image, uiItemImage != UIImage() {
-                                
-                                Image(uiImage: uiItemImage)
-                                    .resizable()
-                                    .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
-                                    .frame(width: 70, height: 70)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
-                                    .shadow(radius: 5)
-                                
-                            } else {
-                                
-                                Image(systemName: "cross.vial")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 70, height: 70)
-                                    .cornerRadius(10)
-                                    .padding(.trailing)
-                            }
+                            Image(uiImage: uiItemImage)
+                                .resizable()
+                                .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+                                .frame(width: 70, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+                                .shadow(radius: 5)
+                            
+                        } else {
+                            
+                            Image(systemName: "cross.vial")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 70, height: 70)
+                                .cornerRadius(10)
+                                .padding(.trailing)
                         }
-                        .padding(.trailing)
                         
                     } else {
                         
@@ -88,10 +107,10 @@ struct IndividualCosmeticsTagView: View {
                     VStack(alignment: .leading) {
                         
                         Text(cosmetic.productName)
-                            .font(.title2)
+                            .font(.headline)
                         
                         Text(cosmetic.companyID)
-                            .font(.subheadline)
+                            .font(.caption)
                     
                         HStack {
                             
@@ -173,28 +192,47 @@ struct IndividualTagCosmeticsTagView: View {
                 
                 HStack {
                     if let productImages = cosmetic?.productImages {
-                        CardStack(productImages) { item in
+//                        CardStack(productImages) { item in
+//                            
+//                            if let uiItemImage = item.image, uiItemImage != UIImage() {
+//                                
+//                                Image(uiImage: uiItemImage)
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: 70, height: 70)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+//                                    .shadow(radius: 5)
+//                                
+//                            } else {
+//                                
+//                                Image(systemName: "cross.vial")
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .frame(width: 70, height: 70)
+//                                    .cornerRadius(10)
+//                                    .padding(.trailing)
+//                            }
+//                        }
+//                        .padding(.trailing)
+                        
+                        if let uiItemImage = productImages.first?.image, uiItemImage != UIImage() {
                             
-                            if let uiItemImage = item.image, uiItemImage != UIImage() {
-                                
-                                Image(uiImage: uiItemImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 70, height: 70)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                    .shadow(radius: 5)
-                                
-                            } else {
-                                
-                                Image(systemName: "cross.vial")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 70, height: 70)
-                                    .cornerRadius(10)
-                                    .padding(.trailing)
-                            }
+                            Image(uiImage: uiItemImage)
+                                .resizable()
+                                .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+                                .frame(width: 70, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+                                .shadow(radius: 5)
+                            
+                        } else {
+                            
+                            Image(systemName: "cross.vial")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 70, height: 70)
+                                .cornerRadius(10)
+                                .padding(.trailing)
                         }
-                        .padding(.trailing)
                         
                     } else {
                         
@@ -209,10 +247,10 @@ struct IndividualTagCosmeticsTagView: View {
                     VStack(alignment: .leading) {
                         
                         Text(cosmetic?.productName ?? "null")
-                            .font(.title2)
+                            .font(.headline)
                         
                         Text(cosmetic?.companyID ?? "null")
-                            .font(.subheadline)
+                            .font(.caption)
                         
                         HStack {
                             
@@ -273,12 +311,15 @@ struct IndividualTagCosmeticsTagView: View {
                         VStack{
                             CircularInfoBar(stat: CGFloat(TagCosmetic.effectRating))
                             Text("効果")
+                                .fontWeight(.bold)
+                            
                         }
                         .padding()
                         
                         VStack{
                             CircularInfoBar(stat: CGFloat(TagCosmetic.recommendRating))
                             Text("おすすめ度")
+                                .fontWeight(.bold)
                         }
                         .padding()
                         
@@ -286,15 +327,18 @@ struct IndividualTagCosmeticsTagView: View {
                             VStack{
                                 HStack{
                                     Text("肌触り")
+                                        .fontWeight(.bold)
                                     Spacer()
                                 }
                                 HStack{
                                     
                                     Text("ベトベト")
+                                        .font(.caption2)
                                     
                                     Spacer()
                                     
                                     Text("サラサラ")
+                                        .font(.caption2)
                                 }
                                 .font(.footnote)
                                 LinearInfoBar(stat: CGFloat(TagCosmetic.feelingRating))
@@ -303,15 +347,18 @@ struct IndividualTagCosmeticsTagView: View {
                             VStack{
                                 HStack{
                                     Text("落ち具合")
+                                        .fontWeight(.bold)
                                     Spacer()
                                 }
                                 HStack{
                                     
                                     Text("落ちやすい")
+                                        .font(.caption2)
                                     
                                     Spacer()
                                     
                                     Text("落ちにくい")
+                                        .font(.caption2)
                                 }
                                 .font(.footnote)
                                 LinearInfoBar(stat: CGFloat(TagCosmetic.fadingRating))
@@ -355,12 +402,12 @@ struct CircularInfoBar: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(lineWidth: 10.0)
+                .stroke(lineWidth: 7.0)
                 .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53).opacity(0.3))
             
             Circle()
                 .trim(from: 0.0, to: CGFloat(min(animationProgress, 1.0)))
-                .stroke(style: StrokeStyle(lineWidth: 10.0, lineCap: .round, lineJoin: .round))
+                .stroke(style: StrokeStyle(lineWidth: 7.0, lineCap: .round, lineJoin: .round))
                 .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53))
                 .rotationEffect(Angle(degrees: 270.0))
             Text(String(format: "%.0f", min(stat, 1.0)*100.0))
@@ -383,10 +430,10 @@ struct LinearInfoBar: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                Rectangle().frame(width: geometry.size.width , height: 10.0)
+                Rectangle().frame(width: geometry.size.width , height: 7.0)
                     .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53).opacity(0.3))
                 
-                Rectangle().frame(width: geometry.size.width * min(max(animationProgress, 0), 1), height: 10.0)
+                Rectangle().frame(width: geometry.size.width * min(max(animationProgress, 0), 1), height: 7.0)
                     .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53))
                 
             }.cornerRadius(5.0)
@@ -468,30 +515,49 @@ struct TagIndividualCosmeticsTagView: View {
                 
                 Group {
                     if let productImages = cosmetic.productImages, !productImages.isEmpty  {
-                        CardStack(productImages) { item in
+//                        CardStack(productImages) { item in
+//                            
+//                            // Subsequent items - Show the image
+//                            if let uiItemImage = item.image {
+//                                
+//                                Image(uiImage: uiItemImage)
+//                                    .resizable()
+//                                    .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+//                                    .frame(width: 70, height: 70)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+//                                    .shadow(radius: 5)
+//                                
+//                            } else {
+//                                
+//                                Image(systemName: "cross.vial")
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .frame(width: 70, height: 70)
+//                                    .cornerRadius(10)
+//                                    .padding(.trailing)
+//                                
+//                            }
+//                        }
+//                        .padding(.trailing)
+                        
+                        if let uiItemImage = productImages.first?.image, uiItemImage != UIImage() {
                             
-                            // Subsequent items - Show the image
-                            if let uiItemImage = item.image {
-                                
-                                Image(uiImage: uiItemImage)
-                                    .resizable()
-                                    .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
-                                    .frame(width: 70, height: 70)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
-                                    .shadow(radius: 5)
-                                
-                            } else {
-                                
-                                Image(systemName: "cross.vial")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 70, height: 70)
-                                    .cornerRadius(10)
-                                    .padding(.trailing)
-                                
-                            }
+                            Image(uiImage: uiItemImage)
+                                .resizable()
+                                .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+                                .frame(width: 70, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+                                .shadow(radius: 5)
+                            
+                        } else {
+                            
+                            Image(systemName: "cross.vial")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 70, height: 70)
+                                .cornerRadius(10)
+                                .padding(.trailing)
                         }
-                        .padding(.trailing)
                         
                     } else {
                         
@@ -510,10 +576,10 @@ struct TagIndividualCosmeticsTagView: View {
                 VStack(alignment: .leading) {
                     
                     Text(cosmetic.productName)
-                        .font(.title2)
+                        .font(.headline)
                     
                     Text(cosmetic.companyID)
-                        .font(.subheadline)
+                        .font(.caption)
                     
                     HStack {
                         
@@ -640,12 +706,34 @@ struct RatingIndividualListView: View {
                 VStack{
                     HStack {
                         
-                        if let productImages = tagCosmetic.cosmeticItem?.productImages {
-                            
-                            CardStack(productImages) { item in
+                        Group {
+                            if let productImages = tagCosmetic.cosmeticItem?.productImages {
                                 
-                                // Subsequent items - Show the image
-                                if let uiItemImage = item.image, uiItemImage != UIImage() {
+                                //                            CardStack(productImages) { item in
+                                //
+                                //                                // Subsequent items - Show the image
+                                //                                if let uiItemImage = item.image, uiItemImage != UIImage() {
+                                //
+                                //                                    Image(uiImage: uiItemImage)
+                                //                                        .resizable()
+                                //                                        .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+                                //                                        .frame(width: 70, height: 70)
+                                //                                        .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+                                //                                        .shadow(radius: 5)
+                                //
+                                //                                } else {
+                                //
+                                //                                    Image(systemName: "cross.vial")
+                                //                                        .resizable()
+                                //                                        .scaledToFit()
+                                //                                        .frame(width: 70, height: 70)
+                                //                                        .cornerRadius(10)
+                                //                                        .padding(.trailing)
+                                //                                }
+                                //                            }
+                                //                            .padding(.trailing)
+                                
+                                if let uiItemImage = productImages.first?.image, uiItemImage != UIImage() {
                                     
                                     Image(uiImage: uiItemImage)
                                         .resizable()
@@ -663,27 +751,27 @@ struct RatingIndividualListView: View {
                                         .cornerRadius(10)
                                         .padding(.trailing)
                                 }
+                                
+                            } else {
+                                
+                                Image(systemName: "cross.vial")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 70, height: 70)
+                                    .cornerRadius(10)
+                                    .padding(.trailing)
                             }
-                            .padding(.trailing)
-                            
-                        } else {
-                            
-                            Image(systemName: "cross.vial")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 70, height: 70)
-                                .cornerRadius(10)
-                                .padding(.trailing)
-                        }
+                        } 
+                        .padding(.leading)
                         
                         VStack(alignment: .leading) {
                             
                             HStack{
                                 Text(tagCosmetic.cosmeticItem!.productName)
-                                    .font(.title2)
+                                    .font(.headline)
                                 
                                 Text(tagCosmetic.cosmeticItem!.companyID)
-                                    .font(.subheadline)
+                                    .font(.caption)
                             }
                             
                             HStack {
@@ -912,6 +1000,289 @@ struct RatingSliderView: View {
                 postLume.tagProducts[index].feelingRating = rating
             default:
                 break
+            }
+        }
+    }
+}
+
+struct SideButtonCosmeticsTagView: View {
+    
+    @State var TagCosmetics: [TagCosmetic]
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                Divider() // Adds a visual line
+                    .background(Color.clear)
+
+                ScrollView {
+                    VStack(spacing: 25) {
+                        ForEach(TagCosmetics.indices, id: \.self) { index in
+                            SideButtonIndividualTagCosmeticsTagView(TagCosmetic: TagCosmetics[index], showDetails: index == 0)
+                        }
+                    }
+                    .padding(.top, 25)
+                }
+            }
+            .navigationBarTitle(Text("タグされたコスメ"), displayMode: .inline)
+        }
+    }
+}
+
+struct SideButtonIndividualTagCosmeticsTagView: View {
+    
+    @ObservedObject var TagCosmetic: TagCosmetic
+    
+    @State var cosmetic: Cosmetic?
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    @State var showDetails: Bool = false
+    @State var showInside: Bool = false
+    
+    @State private var verticalOffset: CGFloat = 0
+    
+    @State private var isSheetPresented: Bool = false
+    @State private var url: URL?
+    
+    var body: some View {
+        
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .shadow(radius: 3)
+                .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+            
+            VStack{
+                
+                HStack {
+                    
+                    Group {
+                        if let productImages = cosmetic?.productImages {
+                            //                        CardStack(productImages) { item in
+                            //
+                            //                            if let uiItemImage = item.image, uiItemImage != UIImage() {
+                            //
+                            //                                Image(uiImage: uiItemImage)
+                            //                                    .resizable()
+                            //                                    .scaledToFill()
+                            //                                    .frame(width: 70, height: 70)
+                            //                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                            //                                    .shadow(radius: 5)
+                            //
+                            //                            } else {
+                            //
+                            //                                Image(systemName: "cross.vial")
+                            //                                    .resizable()
+                            //                                    .scaledToFit()
+                            //                                    .frame(width: 70, height: 70)
+                            //                                    .cornerRadius(10)
+                            //                                    .padding(.trailing)
+                            //                            }
+                            //                        }
+                            //                        .padding(.trailing)
+                            
+                            if let uiItemImage = productImages.first?.image, uiItemImage != UIImage() {
+                                
+                                Image(uiImage: uiItemImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 70, height: 70)
+                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                                    .shadow(radius: 5)
+                                
+                            } else {
+                                
+                                Image(systemName: "cross.vial")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 70, height: 70)
+                                    .cornerRadius(10)
+                                    .padding(.trailing)
+                            }
+                            
+                        } else {
+                            
+                            Image(systemName: "cross.vial")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 70, height: 70)
+                                .cornerRadius(10)
+                                .padding(.trailing)
+                        }
+                    }
+                    .padding(.leading)
+                    
+                    VStack(alignment: .leading) {
+                        
+                        Text(cosmetic?.productName ?? "null")
+                            .font(.headline)
+                        
+                        Text(cosmetic?.companyID ?? "null")
+                            .font(.caption)
+                        
+                        HStack {
+                            
+                            if cosmetic?.price != "0" {
+                                Text("$\(cosmetic?.price ?? "null")")
+                                    .font(.callout)
+                            }
+                            
+                            if cosmetic?.amount != "" {
+                                
+                                Rectangle()
+                                    .frame(width: 1, height: 25)
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 2)
+                                
+                                Text(cosmetic?.amount ?? "null")
+                            }
+                            
+                            if let link = cosmetic?.productUrl.first,
+                               let url = URL(string: link ?? "")
+                            {
+                                
+                                Rectangle()
+                                    .frame(width: 1, height: 25)
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 2)
+                                
+                                Button(action: {
+                                    self.url = url
+                                    isSheetPresented.toggle()
+                                }) {
+                                    Image(systemName: "link.circle.fill")
+                                        .foregroundColor(Color(uiColor: UIColor.arinBlue))
+                                }
+                                .frame(width: 25, height: 25)
+                            }
+                            
+                            if TagCosmetic.authProduct {
+                                
+                                Rectangle()
+                                    .frame(width: 1, height: 25)
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 2)
+                                
+                                Image(systemName: "checkmark.seal.fill")
+                                    .foregroundColor(Color(red: 0.552, green: 0.724, blue: 0.831))
+                                    .font(.title2)
+                            }
+                        }
+                    }
+                    .fontWeight(.bold)
+                    .padding(.leading)
+                    
+                }
+                .padding(.vertical)
+                
+                if showDetails {
+                    HStack{
+                        
+                        VStack{
+                            CircularInfoBar(stat: CGFloat(TagCosmetic.effectRating))
+                            Text("効果")
+                                .fontWeight(.bold)
+                        }
+                        .padding()
+                        
+                        VStack{
+                            CircularInfoBar(stat: CGFloat(TagCosmetic.recommendRating))
+                            Text("おすすめ度")
+                                .fontWeight(.bold)
+                        }
+                        .padding()
+                        
+                        VStack{
+                            VStack{
+                                HStack{
+                                    Text("肌触り")
+                                        .fontWeight(.bold)
+                                    Spacer()
+                                }
+                                HStack{
+                                    
+                                    Text("ベトベト")
+                                        .font(.caption2)
+                                    Spacer()
+                                    
+                                    Text("サラサラ")
+                                        .font(.caption2)
+                                }
+                                .font(.footnote)
+                                LinearInfoBar(stat: CGFloat(TagCosmetic.feelingRating))
+                            }
+                            
+                            VStack{
+                                HStack{
+                                    Text("落ち具合")
+                                        .fontWeight(.bold)
+                                    Spacer()
+                                }
+                                HStack{
+                                    
+                                    Text("落ちやすい")
+                                        .font(.caption2)
+                                    
+                                    Spacer()
+                                    
+                                    Text("落ちにくい")
+                                        .font(.caption2)
+                                }
+                                .font(.footnote)
+                                LinearInfoBar(stat: CGFloat(TagCosmetic.fadingRating))
+                            }
+                        }
+                        .padding(.bottom)
+                    }
+                    .font(.footnote)
+                    .opacity(showInside ? 1 : 0)
+                    .offset(y: verticalOffset)
+                    .padding(.horizontal)
+                }
+            }
+        }
+        .padding(.horizontal, 20)
+        .onTapGesture {
+            withAnimation(showInside ? .easeOut : .easeIn){
+                showInside.toggle()
+                if showInside {
+                    verticalOffset = 0
+                } else {
+                    verticalOffset = -80
+                }
+            }
+            withAnimation{
+                showDetails.toggle()
+            }
+        }
+        .onAppear{
+            let CosmeticID = TagCosmetic.cosmeticID
+            cosmetic = CosmeticManager.shared.getCosmetic(withID: CosmeticID)
+            
+            if let link = cosmetic?.productUrl.first,
+               let url = URL(string: link ?? "")
+            {
+                self.url = url
+            }
+            showInside = showDetails
+        }
+        .sheet(isPresented: $isSheetPresented) {
+            VStack(spacing: 0) {
+                #if os(macOS)
+                HStack {
+                    Text(url?.absoluteString ?? "")
+                    Spacer()
+                    Button {
+                        isSheetPresented.toggle()
+                    } label: {
+                        Label("Close", systemImage: "xmark.circle")
+                            .labelStyle(.iconOnly)
+                    }
+                }
+                .padding(10)
+                #endif
+                LoadingWebView(url: url)
+                    .frame(minWidth: 300, minHeight: 300)
             }
         }
     }

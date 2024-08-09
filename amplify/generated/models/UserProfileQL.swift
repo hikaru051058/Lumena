@@ -19,6 +19,7 @@ public struct UserProfileQL: Model {
   public var profileImageLastModified: Int?
   public var backgroundImageLastModified: Int?
   public var skinSettings: SkinSettingsAttributesQL?
+  public var skinStreaks: Int?
   
   public init(id: String = UUID().uuidString,
       followingUsers: [String]? = [],
@@ -35,7 +36,8 @@ public struct UserProfileQL: Model {
       postCount: Int? = nil,
       profileImageLastModified: Int? = nil,
       backgroundImageLastModified: Int? = nil,
-      skinSettings: SkinSettingsAttributesQL? = nil) {
+      skinSettings: SkinSettingsAttributesQL? = nil,
+      skinStreaks: Int? = nil) {
       self.id = id
       self.followingUsers = followingUsers
       self.followerUsers = followerUsers
@@ -52,5 +54,6 @@ public struct UserProfileQL: Model {
       self.profileImageLastModified = profileImageLastModified
       self.backgroundImageLastModified = backgroundImageLastModified
       self.skinSettings = skinSettings
+      self.skinStreaks = skinStreaks
   }
 }

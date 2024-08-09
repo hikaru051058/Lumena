@@ -52,18 +52,21 @@ public struct ButtonBarPagerTabStripSettings {
         public var selectedBarBackgroundColor = UIColor.black
         public var selectedBarHeight: CGFloat = 5
         public var selectedBarVerticalAlignment: SelectedBarVerticalAlignment = .bottom
+        public var selectedBarWidthPercentage: CGFloat = 1.0
+        public var selectedBarCornerRadius: CGFloat = 0.0  // New property for corner radius
 
         public var buttonBarItemBackgroundColor: UIColor?
         public var buttonBarItemFont = UIFont.systemFont(ofSize: 18)
         public var buttonBarItemLeftRightMargin: CGFloat = 8
         public var buttonBarItemTitleColor: UIColor?
         public var buttonBarItemsShouldFillAvailableWidth = true
-        // only used if button bar is created programaticaly and not using storyboards or nib files
+        // only used if button bar is created programmatically and not using storyboards or nib files
         public var buttonBarHeight: CGFloat?
     }
 
     public var style = Style()
 }
+
 
 open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, PagerTabStripDataSource, PagerTabStripIsProgressiveDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
 
@@ -131,6 +134,8 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
                 return buttonBar
             }()
         buttonBarView = buttonBarViewAux
+        buttonBarView.selectedBarWidthPercentage = settings.style.selectedBarWidthPercentage
+        buttonBarView.selectedBarCornerRadius = settings.style.selectedBarCornerRadius
 
         if buttonBarView.superview == nil {
             view.addSubview(buttonBarView)

@@ -67,6 +67,7 @@ class LumeHorizontalTabViewController: ButtonBarPagerTabStripViewController {
     @objc private func authSuccessHandler(notification: Notification) {
         DispatchQueue.main.async {
             self.userLoggedIn = AuthenticationManager.shared.authStatus == .authenticated
+            self.settings.style.selectedBarWidthPercentage = self.userLoggedIn ? 0.5 : 0.25
             self.reloadData()
         }
     }
@@ -157,6 +158,8 @@ class LumeHorizontalTabViewController: ButtonBarPagerTabStripViewController {
         self.settings.style.selectedBarBackgroundColor = .white
         self.settings.style.buttonBarItemFont = .boldSystemFont(ofSize: 15)
         self.settings.style.selectedBarHeight = 3.0
+        self.settings.style.selectedBarWidthPercentage = self.userLoggedIn ? 0.5 : 0.25
+        self.settings.style.selectedBarCornerRadius = 2.5
         self.settings.style.buttonBarMinimumLineSpacing = 20
         self.settings.style.buttonBarItemTitleColor = .white
         self.settings.style.buttonBarItemsShouldFillAvailableWidth = true
@@ -305,7 +308,23 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     private func fetchLumes(completion: @escaping (_ success: Bool) -> Void) {
         Task {
             do {
-                lumes.append(contentsOf: try await GraphQL.shared.fetchRandomLumes())
+                
+                let returnedLumes = try await GraphQL.shared.fetchRandomLumes()
+                // Use a set to track existing lume IDs for fast lookup
+                var existingIds = Set(lumes.map { $0.postID })
+
+                // Filter out duplicates
+                let uniqueLumes = returnedLumes.filter { lume in
+                    if existingIds.contains(lume.postID) {
+                        return false // This lume is a duplicate
+                    } else {
+                        existingIds.insert(lume.postID)
+                        return true // This lume is unique
+                    }
+                }
+                
+                lumes.append(contentsOf: uniqueLumes)
+                
                 completion(true)
             } catch {
                 print(error)
@@ -527,7 +546,12 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     
     var currentContentID: UUID?
     
-    var mute: Bool
+    var mute: Bool {
+        didSet {
+            self.lume.mute(mute: self.mute)
+            VideoDataStore.shared.mute = self.mute
+        }
+    }
     var userLiked: Bool = false
     var userLoggedIn: Bool = false
     
@@ -537,6 +561,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     
     var sideButtonsViewController: LumeSideButtonsViewController!
     var bottomButtonsViewController: LumeBottomButtonsViewController!
+    var darkView: UIView!
     
     private var musicNameText = MarqueeTextViewController()
     private var invisibleRectangleLeft: UIView!
@@ -554,7 +579,8 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     private var lumeAuthenticityTitleIcon: UIImageView!
     private var lumeAuthenticityTitleText: UILabel!
     private var lumeAuthenticityMessage: UILabel!
-    private var lumeAuthenticityViewButton: UIButton!
+    
+    private var lumeBottomViewHeightConstraint: NSLayoutConstraint!
     
     init(lume: Lume, currentLume: UUID, mute: Bool, userLoggedIn: Bool) {
         self.lume = lume
@@ -581,7 +607,6 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
         setupSideButtonsViewController()
         setupBottomButtonsViewController()
         setupLumeAuthenticity()
-        
         fetchMuteStatus()
     }
     
@@ -593,6 +618,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         pauseVideoIfNeeded()
+        lume.voiceOver.stop()
         VideoDataStore.shared.videoPlaybackProgress = 0
         VideoDataStore.shared.currentContentID = nil
         toggleLumeAuthView(shouldAppear: false)
@@ -602,6 +628,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         toggleLumeAuthView(shouldAppear: false)
+        lume.voiceOver.stop()
     }
     
     func setupScrollView() {
@@ -763,23 +790,12 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
             lumeAuthenticityMessage.bottomAnchor.constraint(equalTo: lumeAuthenticityView.bottomAnchor, constant: -16),
         ])
         
-        let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
-        
-        lumeAuthenticityViewButton = createButton(action: #selector(lumeAuthButtonTapped), imageName: "checkmark.seal.fill", tintColor: .white, buttonImageConfig: buttonImageConfig)
-        
-        view.addSubview(lumeAuthenticityViewButton)
-        
-        lumeAuthenticityViewButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            lumeAuthenticityViewButton.centerXAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            lumeAuthenticityViewButton.centerYAnchor.constraint(equalTo: pageControl.centerYAnchor),
-        ])
-        
-        
         // Add tap gesture recognizer to lumeAuthenticityView
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(lumeAuthButtonTapped))
         lumeAuthenticityView.addGestureRecognizer(tapGesture)
         lumeAuthenticityView.isUserInteractionEnabled = true
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(lumeAuthButtonTapped), name: .lumeAuthenticationExpanded, object: nil)
     }
 
     @objc private func lumeAuthButtonTapped() {
@@ -852,7 +868,7 @@ class LumeIndividualViewController: UIViewController, UIScrollViewDelegate {
     }
 }
 
-extension LumeIndividualViewController {
+extension LumeIndividualViewController: DescriptionExpandableViewControllerDelegate {
     
     private func setupSideButtonsViewController() {
         // Initialize the side buttons view controller with the necessary data
@@ -865,25 +881,72 @@ extension LumeIndividualViewController {
         sideButtonsViewController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             sideButtonsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            sideButtonsViewController.view.bottomAnchor.constraint(equalTo: pageControl.bottomAnchor),
+            sideButtonsViewController.view.widthAnchor.constraint(equalToConstant: 50),
+            sideButtonsViewController.view.bottomAnchor.constraint(equalTo: pageControl.topAnchor, constant: -30),
         ])
     }
     
+    private func setupDarkShadeDescriptionBackground() {
+        darkView = UIView()
+        darkView.backgroundColor = UIColor(Color.black.opacity(0.4))
+        darkView.alpha = 0
+        view.addSubview(darkView)
+        darkView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            darkView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            darkView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            darkView.topAnchor.constraint(equalTo: view.topAnchor),
+            darkView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(darkViewTapped))
+        darkView.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func darkViewTapped() {
+        UIView.animate(withDuration: 0.2) {
+            self.bottomButtonsViewController.sideButtonDescriptionView.toggleDescription()
+            self.darkView.alpha = 0
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     private func setupBottomButtonsViewController() {
-        // Initialize the side buttons view controller with the necessary data
+        setupDarkShadeDescriptionBackground()
+        
+        // Initialize the bottom buttons view controller with necessary data
         self.bottomButtonsViewController = LumeBottomButtonsViewController(lume: lume, userLiked: userLiked, userLoggedIn: userLoggedIn)
+        
+        // Add as a child view controller
         addChild(bottomButtonsViewController)
         view.addSubview(bottomButtonsViewController.view)
         bottomButtonsViewController.didMove(toParent: self)
         
-        // Setup constraints or frame for placing it at the trailing bottom edge
+        bottomButtonsViewController.sideButtonDescriptionView.lumeIndividualViewControllerdelegate = self
+        
         bottomButtonsViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        DispatchQueue.main.async { [self] in
+            lumeBottomViewHeightConstraint = bottomButtonsViewController.view.heightAnchor.constraint(equalToConstant: bottomButtonsViewController.sideButtonDescriptionView.getCurrentHeight() + 45)
+            lumeBottomViewHeightConstraint.isActive = true
+        }
+        
         NSLayoutConstraint.activate([
             bottomButtonsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            bottomButtonsViewController.view.trailingAnchor.constraint(equalTo: sideButtonsViewController.view.leadingAnchor),
-            bottomButtonsViewController.view.topAnchor.constraint(equalTo: sideButtonsViewController.view.centerYAnchor),
+            bottomButtonsViewController.view.trailingAnchor.constraint(equalTo: sideButtonsViewController.view.leadingAnchor, constant: -16),
             bottomButtonsViewController.view.bottomAnchor.constraint(equalTo: sideButtonsViewController.view.bottomAnchor),
         ])
+    }
+
+    func didUpdateHeight(_ height: CGFloat) {
+        lumeBottomViewHeightConstraint.constant = height + 45
+        UIView.animate(withDuration: 0.2) {
+            if self.darkView.alpha == 0 {
+                self.darkView.alpha = 1
+            } else {
+                self.darkView.alpha = 0
+            }
+            self.view.layoutIfNeeded()
+        }
     }
     
     private func setupMarqueeLabel() {
@@ -931,12 +994,19 @@ extension LumeIndividualViewController {
         pageControl.tintColor = UIColor.lightGray
         pageControl.pageIndicatorTintColor = UIColor.gray
         pageControl.currentPageIndicatorTintColor = UIColor.white
+        
+        pageControl.layer.shadowColor = UIColor.black.cgColor
+        pageControl.layer.shadowOpacity = 0.25
+        pageControl.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        pageControl.layer.shadowRadius = 0.25
+        pageControl.layer.masksToBounds = false
+        
         view.addSubview(pageControl)
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.widthAnchor.constraint(equalToConstant: 130),
+            pageControl.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            pageControl.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 65),
             pageControl.centerYAnchor.constraint(equalTo: musicNameText.view.centerYAnchor),
         ])
         
@@ -1011,7 +1081,7 @@ extension LumeIndividualViewController {
     
     @objc private func handleSingleTap() {
         // Toggle mute and update UI accordingly
-        muteAction()
+        mute.toggle()
     }
     
     @objc private func handleDoubleTap() {
@@ -1024,27 +1094,12 @@ extension LumeIndividualViewController {
         }
     }
     
-    private func updateMuteStatusOnUI(_ mute: Bool) {
-        updateMuteStatus(mute)
-    }
-    
     private func updateLikeStatusOnUI(_ liked: Bool) {
         sideButtonsViewController.toggleLike()
-    }
-}
-
-extension LumeIndividualViewController {
-    
-    private func muteAction() {
-        mute.toggle()
-        lume.muteVideos(mute: mute)
-        updateMuteStatusOnUI(mute)
-        VideoDataStore.shared.mute = mute
     }
     
     private func fetchMuteStatus() {
         mute = VideoDataStore.shared.mute
-        updateMuteStatusOnUI(mute)
     }
 }
 
@@ -1099,7 +1154,6 @@ extension LumeIndividualViewController {
     
     func updateMuteStatus(_ mute: Bool) {
         self.mute = mute
-        lume.muteVideos(mute: mute)
         VideoDataStore.shared.mute = mute
     }
 }
@@ -1110,16 +1164,16 @@ extension LumeIndividualViewController {
         if let newCurrentLume = newCurrentLume, lume.id == newCurrentLume {
             sideButtonsViewController.updateCurrentLume(with: newCurrentLume)
             setupAutoScrollTimer()
-            
             let currentPage = currentViewControllerIndex()
             let currentContentID = lume.contents[currentPage].id
             VideoDataStore.shared.currentContentID = currentContentID
             resumeVideoIfNeeded()
+            lume.voiceOver.play(repeatAudio: true)
         } else {
-            pauseVideoIfNeeded()
             toggleLumeAuthView(shouldAppear: false)
             autoScrollTimer?.invalidate()
             pauseAllVideo()
+            lume.voiceOver.stop()
         }
     }
     

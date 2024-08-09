@@ -77,7 +77,7 @@ struct VideoHome: View {
     @State var sliderWidthLastDragValue: CGFloat = 0
     
     
-    @State var audioPlayer = AudioPlayer()
+    @State var audioPlayer = LumeAudioPlayer()
     @State private var showingSheet = false
     @State private var loadingSheet = true
     @State private var searchText = ""
@@ -156,6 +156,11 @@ struct VideoHome: View {
                 )
                 .ignoresSafeArea()
                 .padding(.bottom,50)
+                .onChange(of: postLume.contents.count) { change in
+                    if change == 0 {
+                        postLume.lumeAuth = true
+                    }
+                }
             
             
             // MARK: Controls
@@ -164,7 +169,6 @@ struct VideoHome: View {
                 let audioPlaybackQueue = DispatchQueue(label: "com.nucr.gotdns.org.Lumena", qos: .userInitiated)
                 
                 Button(action: {
-                    
                     
                     if !timerCountingRN {
                         
@@ -223,10 +227,9 @@ struct VideoHome: View {
                                 
                                 if !timerAborted {
                                     
-                                    
                                     // Setup after action of capturedImage saved
                                     cameraModel.onImageCaptured = { capturedImage in
-                                        let imageToAppend = LumeImage(image: capturedImage)
+                                        let imageToAppend = LumeImage(image: capturedImage, lumeAuth: true)
                                         postLume.contents.append(.image(imageToAppend))
                                         contentsCount+=1
                                         cameraModel.resetCameraViewModel()
@@ -290,31 +293,46 @@ struct VideoHome: View {
                     
                     HStack{
                         
-                        
                         Button(action: {
                             
                             if cameraModel.previewURL != nil, let contentsToAppend = cameraModel.getContentFromPreview() {
-                                if musicTag {
-                                    if case .video(let reelVideo) = contentsToAppend {
-                                        reelVideo.player?.isMuted = true
-
-                                        // Replace the audio with postLume.tagMusic
-                                        reelVideo.replaceAudio(with: postLume.tagMusic) { result in
-                                            if result {
-                                                postLume.contents.append(contentsToAppend)
-                                                savedVideo = true
-                                                contentsCount += 1
-                                            } else {
-                                                // Handle the error if needed
-                                                print("Failed to replace audio")
-                                            }
-                                        }
-                                    }
-                                } else {
+//                                if musicTag || postLume.musicTag {
+////                                    if case .video(let reelVideo) = contentsToAppend {
+////                                        reelVideo.player?.isMuted = true
+////
+////                                        // Replace the audio with postLume.tagMusic
+////                                        reelVideo.replaceAudio(with: postLume.tagMusic) { result in
+////                                            if result {
+////                                                postLume.contents.append(contentsToAppend)
+////                                                savedVideo = true
+////                                                contentsCount += 1
+////                                            } else {
+////                                                // Handle the error if needed
+////                                                print("Failed to replace audio")
+////                                            }
+////                                        }
+////                                    }
+//
+//                                    if case .video(let reelVideo) = contentsToAppend {
+//                                        reelVideo.player?.isMuted = true
+//                                        
+//                                        reelVideo.removeAudio { result in
+//                                            if result {
+//                                                postLume.contents.append(contentsToAppend)
+//                                                savedVideo = true
+//                                                contentsCount += 1
+//                                            } else {
+//                                                // Handle the error if needed
+//                                                print("Failed to replace audio")
+//                                            }
+//                                        }
+//                                    }
+//                                    
+//                                } else {
                                     postLume.contents.append(contentsToAppend)
                                     savedVideo = true
                                     contentsCount += 1
-                                }
+//                                }
                             }
                         }) {
                             
@@ -627,7 +645,6 @@ struct VideoHome: View {
             }
             .opacity(recording ? 0 : 1)
             .sheet(isPresented: $showingSheet) {
-                
                 Group {
                     NavigationView {
                         VStack {
@@ -680,7 +697,6 @@ struct VideoHome: View {
                                                     }
                                                 }
                                             }
-                                            
                                         }
                                     }
                                 
@@ -760,8 +776,6 @@ struct VideoHome: View {
                 }
             }
             
-            
-            
             if timerActivated && recording && timerCountDown > 0 && timerCountingRN {
                 ZStack {
                     Text("\(timerCountDown)")
@@ -816,7 +830,7 @@ struct VideoHome: View {
         @Binding var track: Track
         @Binding var curPlayURI: String //UID of the music that is playing currently -> to monitor when to stop
         
-        @Binding var audioPlayer: AudioPlayer  // Use @Binding here
+        @Binding var audioPlayer: LumeAudioPlayer  // Use @Binding here
         @Binding var showingSheet: Bool
         
         @State private var PlayOrPause: Bool = false
@@ -1024,8 +1038,6 @@ extension Color {
     }
 }
 
-
-
 struct PrepPost: View {
     
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
@@ -1057,6 +1069,28 @@ struct PrepPost: View {
                             
                             HStack{
                                 
+                                Button(action: {
+                                    
+                                    if selectedOption == "撮影"{
+                                        presentationMode.wrappedValue.dismiss()
+                                    } else {
+                                        
+                                        withAnimation{
+                                            if selectedOption == "概要" {
+                                                selectedOption = "撮影"
+                                            } else if selectedOption == "商品" {
+                                                selectedOption = "概要"
+                                            } else {
+                                                selectedOption = "商品"
+                                            }
+                                        }
+                                    }
+                                }) {
+                                    Image(systemName: "chevron.backward")
+                                        .font(Font.system(size: 25).weight(.bold))
+                                        .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53))
+                                }
+                                
                                 TextOptionView(text: "撮影", selectedOption: $selectedOption, completePage: $completePage)
                                 
                                 Spacer()
@@ -1070,82 +1104,52 @@ struct PrepPost: View {
                                 Spacer()
                                 
                                 TextOptionView(text: "評価", selectedOption: $selectedOption, completePage: $completePage)
+                                
+                                
                             }
+                            .padding(.horizontal)
                         }
                         
-                        GeometryReader { geometry in
-                            
-                            ZStack {
-                                /*Divider()
-                                 .frame(minHeight: 1)
-                                 .overlay(Color(red: 0.686, green: 0.817, blue: 0.724))
-                                 */
-                                
-                                HStack{
-                                    Divider()
-                                        .frame(width:
-                                                selectedOption == "撮影" ? geometry.size.width/6 : //0.0 :
-                                                selectedOption == "概要" ? geometry.size.width/3 :
-                                                selectedOption == "商品" ? (geometry.size.width*2)/3 :
-                                                selectedOption == "評価" ? geometry.size.width-10 : geometry.size.width/6 // 0.0
-                                               , height: 3)
-                                        .overlay(Color(red: 0.486, green: 0.629, blue: 0.53))
-                                    
-                                    Spacer()
-                                }
-                                
-                                HStack {
-                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "撮影")
-                                    Spacer()
-                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "概要")
-                                    Spacer()
-                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "商品")
-                                    Spacer()
-                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "評価")
-                                }
-                            }
-                        }
-                        .frame(height: 20)
+//                        GeometryReader { geometry in
+//                            
+//                            ZStack {
+//                                /*Divider()
+//                                 .frame(minHeight: 1)
+//                                 .overlay(Color(red: 0.686, green: 0.817, blue: 0.724))
+//                                 */
+//                                
+//                                HStack{
+//                                    Divider()
+//                                        .frame(width:
+//                                                selectedOption == "撮影" ? geometry.size.width/6 : //0.0 :
+//                                                selectedOption == "概要" ? geometry.size.width/3 :
+//                                                selectedOption == "商品" ? (geometry.size.width*2)/3 :
+//                                                selectedOption == "評価" ? geometry.size.width-10 : geometry.size.width/6 // 0.0
+//                                               , height: 3)
+//                                        .overlay(Color(red: 0.486, green: 0.629, blue: 0.53))
+//                                    
+//                                    Spacer()
+//                                }
+//                                
+//                                HStack {
+//                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "撮影")
+//                                    Spacer()
+//                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "概要")
+//                                    Spacer()
+//                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "商品")
+//                                    Spacer()
+//                                    CircleOptionView(selectedOption: $selectedOption, completePage: $completePage, option: "評価")
+//                                }
+//                            }
+//                        }
+//                        .frame(height: 20)
                     }
                     .padding(.horizontal, 15)
-                    .padding(.leading, 30)
                     .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53))
                     
                     Spacer()
                 }
-                
-                
-                VStack{
-                    HStack{
-                        
-                        Button(action: {
-                            
-                            if selectedOption == "撮影"{
-                                presentationMode.wrappedValue.dismiss()
-                            } else {
-                                
-                                withAnimation{
-                                    if selectedOption == "概要" {
-                                        selectedOption = "撮影"
-                                    } else if selectedOption == "商品" {
-                                        selectedOption = "概要"
-                                    } else {
-                                        selectedOption = "商品"
-                                    }
-                                }
-                            }
-                        }) {
-                            Image(systemName: "chevron.backward")
-                                .font(Font.system(size: 25).weight(.bold))
-                                .foregroundColor(Color(red: 0.486, green: 0.629, blue: 0.53))
-                                .padding(.top, 35)
-                                .padding(.leading, 15)
-                        }
-                        
-                        Spacer()
-                    }
-                    Spacer()
-                }
+                .padding(.top)
                 
                 if selectedOption == "撮影" {
                     PostPreview(postLume: postLume, selectedOption: $selectedOption, completePage: $completePage, cosmeticsWrapper: cosmeticsWrapper)
@@ -1173,8 +1177,9 @@ struct PrepPost: View {
 
         var body: some View {
             Text(NSLocalizedString(text, comment: "PostContent TabBar Option"))
-                .font(text == selectedOption ? .title2 : .callout)
+//                .font(text == selectedOption ? .title2 : .callout)
                 .fontWeight(text == selectedOption ? .bold: .regular)
+                .foregroundStyle(text == selectedOption ? Color(UIColor.arinMatGreen) : .secondary)
                 .onTapGesture {
                     withAnimation {
                         // Check if the desired page is within the range of completed pages
@@ -1228,54 +1233,62 @@ struct PrepPost: View {
     }*/
     
     struct PostPreview: View {
-        
         @Environment(\.colorScheme) var colorScheme
-        
         @ObservedObject var postLume: Lume
-        
         @Binding var selectedOption: String
         @Binding var completePage: String
+        
+        @State private var showVoiceOverSheet: Bool = false
         
         @ObservedObject var cosmeticsWrapper: CosmeticsWrapper
         
         var body: some View {
-            
-            ZStack{
-                
-                postLumesPlayer(postLume: postLume)
-                    .frame(width: UIScreen.main.bounds.width * 0.85, height:UIScreen.main.bounds.height * 0.8)
-                    .cornerRadius(34)
-                    .padding(.top, 60)
-                
-                VStack{
+            ZStack {
+                VStack {
+                    postLumesPlayer(postLume: postLume)
+                        .frame(width: UIScreen.main.bounds.width * 0.85, height: UIScreen.main.bounds.height * 0.75)
+                        .cornerRadius(34)
+                        .padding(.top, 40)
+                        .padding(.bottom)
                     
-                    Spacer()
-                    
-                    HStack{
-                        
-                        Spacer()
+                    ZStack {
+                        HStack {
+                            Spacer()
+                            Button {
+                                withAnimation {
+                                    selectedOption = "概要"
+                                    completePage = "概要"
+                                }
+                            } label: {
+                                ZStack {
+                                    Rectangle()
+                                        .frame(width: 100, height: 40)
+                                        .cornerRadius(20)
+                                        .foregroundColor(Color.primary)
+                                    
+                                    Text("次へ")
+                                        .fontWeight(.bold)
+                                        .font(.callout)
+                                        .foregroundColor(colorScheme == .dark ? .black : .white)
+                                }
+                            }
+                        }
                         
                         Button {
-                            withAnimation{
-                                selectedOption = "概要"
-                                completePage = "概要"
-                            }
+                            showVoiceOverSheet.toggle()
                         } label: {
                             ZStack {
                                 Rectangle()
-                                    .frame(width: 100, height: 40)
-                                    .cornerRadius(50)
-                                    .foregroundColor(Color.primary)
+                                    .frame(width: 40, height: 40)
+                                    .cornerRadius(20)
+                                    .foregroundColor(.primary)
                                 
-                                Text("次へ")
-                                    .fontWeight(.bold)
-                                    .font(.callout)
+                                Image(systemName: "mic")
                                     .foregroundColor(colorScheme == .dark ? .black : .white)
                             }
                         }
                     }
                 }
-                .padding()
                 .padding(.horizontal, 25)
             }
             .onAppear {
@@ -1287,7 +1300,20 @@ struct PrepPost: View {
                     }
                 }
             }
-
+            .sheet(isPresented: $showVoiceOverSheet) {
+                ZStack(alignment: .top) {
+                    Capsule()
+                        .fill(Color.secondary)
+                        .frame(width: 35, height: 5)
+                        .padding(.top, 5)
+                }
+                AudioRecordContentView(recordingData: postLume.voiceOver)
+                    .presentationDetents([.height(UIScreen.main.bounds.height * 0.22)])
+                    .onDisappear {
+                        postLume.voiceOver.saveRecording()
+                        postLume.playAudio(repeatAudio: true)
+                    }
+            }
         }
     }
     
@@ -1311,7 +1337,7 @@ struct PrepPost: View {
                         Text("投稿の概要欄")
                             .font(.callout)
                             .fontWeight(.bold)
-                            .padding(.top, 100)
+                            .padding(.top, 60)
                         
                         Rectangle()
                             .foregroundColor(Color.gray)
@@ -1566,7 +1592,7 @@ struct PrepPost: View {
                             }
                         }
                     }
-                    .padding(.top, 80)
+                    .padding(.top, 60)
                     .padding(.horizontal)
                     .opacity(filterTag ? 0 : 1)
                     
@@ -1653,7 +1679,6 @@ struct PrepPost: View {
             }
         }
     }
-    
     
     struct RatingAction: View {
         
@@ -1765,7 +1790,7 @@ struct PrepPost: View {
                     }
                     .ignoresSafeArea()
                 }
-                .padding(.top, 80)
+                .padding(.top, 45)
             }
         }
     }
@@ -1791,7 +1816,6 @@ struct PrepPost: View {
             }
         }
     }
-    
     
     struct postLumesPlayer: View {
         
@@ -1885,10 +1909,6 @@ struct PrepPost: View {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .automatic))
-                    .onDisappear{
-                        postLume.stopVideos()
-                    }
-                    
                     
                     GeometryReader { proxy in
                         Color.clear
@@ -1906,45 +1926,30 @@ struct PrepPost: View {
                         .ignoresSafeArea()
                     
                     LoadingSpinner()
-                    
                 }
             }
             .onAppear{
                 
-                let trackName = postLume.tagMusic.trackName
-                let artistName = postLume.tagMusic.artistName
-
-                if !trackName.isEmpty && !artistName.isEmpty {
-                    musicName = "\(trackName) by \(artistName)"
-                } else if !trackName.isEmpty {
-                    musicName = trackName
-                } else if !artistName.isEmpty {
-                    musicName = artistName
-                }
+                mute = postLume.musicTag
                 
                 if let firstContent = postLume.contents.first {
                     switch firstContent {
                     case .video(let reelVideo):
                         
-                        // only play when the current tab is at the first video
-                        
-                        
-                        if currentContent == UUID(uuidString: "") {
-                            currentContent = reelVideo.id
-                            postLume.currentContent = reelVideo.id
-                        }
-                        
-                        if currentReel == postLume.id {
-                            reelVideo.player?.play()
-                            reelVideo.player?.seek(to: CMTime.zero)
-                        }
+                        currentContent = reelVideo.id
+                        reelVideo.player?.play()
+                        reelVideo.player?.seek(to: CMTime.zero)
                         
                     default:
-                        // Handle other types or do nothing
                         break
                     }
                 }
-
+                
+                postLume.playAudio(repeatAudio: true)
+            }
+            .onDisappear{
+                postLume.stopVideos()
+                postLume.stopAudio()
             }
             .navigationBarHidden(true)
         }

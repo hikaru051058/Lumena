@@ -21,18 +21,20 @@ protocol RefreshDelegate: AnyObject {
 class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressDelegate, UINavigationControllerDelegate {
     
     var headerVC: HeaderViewController?
-    var bottomVC: XLPagerTabStripExampleViewController!
+    var bottomVC: ProfileXLPagerTabStripViewController!
     var backgroundVC: ProfileBackgroundViewController!
     
     private var viewLoading: Bool = true
     var isBackButtonTapped = false
     var isSettingsButtonTapped = false
+    var isAccountUser: Bool = false
     
     var userIdentityID: String!
     
     @ObservedObject var profile: ProfileSettings = ProfileSettings() {
         didSet {
             ProfileManager.shared.updateProfile(profile)
+            print("Updated Profile")
         }
     }
     
@@ -46,9 +48,10 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(userIdentityID: String, profile: ProfileSettings = ProfileSettings()) {
+    init(userIdentityID: String, profile: ProfileSettings = ProfileSettings(), isAccountUser: Bool = false) {
         self.userIdentityID = userIdentityID
         self._profile = ObservedObject(wrappedValue: profile)
+        self.isAccountUser = isAccountUser
         super.init(nibName: nil, bundle: nil)
         fetchUserProfile()
     }
@@ -113,13 +116,13 @@ class TwitterParallaxViewController: UIViewController, TPDataSource, TPProgressD
     
     // MARK: TPDataSource
     func headerViewController() -> UIViewController {
-        headerVC = HeaderViewController(profile: profile, userIdentityID: userIdentityID)
+        headerVC = HeaderViewController(profile: profile, userIdentityID: userIdentityID, isAccountUser: isAccountUser)
         headerVC?.backButtonDelegate = self
         return headerVC!
     }
     
     func bottomViewController() -> UIViewController & PagerAwareProtocol {
-        bottomVC = XLPagerTabStripExampleViewController(profile: profile, userIdentityID: userIdentityID)
+        bottomVC = ProfileXLPagerTabStripViewController(profile: profile, userIdentityID: userIdentityID)
         bottomVC.refreshDelegate = self
         return bottomVC
     }
@@ -240,15 +243,6 @@ extension TwitterParallaxViewController: SharedTransitioning {
               let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath else { return }
         
         (bottomVC.currentViewController as? BottomViewController)?.collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
-        
-//        switch transition {
-//        case .push:
-//            // Entering the detail view
-//            reduceViewSize()
-//        case .pop:
-//            // Exiting the detail view
-//            break
-//        }
     }
     
     func reduceViewSize() {
@@ -286,6 +280,7 @@ extension TwitterParallaxViewController: ProfileToolButtonDelegate {
         self.isSettingsButtonTapped = true
         if profileSettings == nil {
             profileSettings = ProfileSettingsViewController(profile: profile)
+            profileSettings.delegate = self
         } else {
             profileSettings.updateProfile(profile: profile)
         }
@@ -400,5 +395,59 @@ extension TwitterParallaxViewController: ProfileToolButtonDelegate {
                 rootVC.showLoginSheet()
             }
         }
+    }
+}
+
+// MARK: - ProfileSettingsDelegate
+
+extension TwitterParallaxViewController: ProfileSettingsDelegate {
+    func didUpdateUserName(_ newUserName: String) {
+        self.profile.preferredUsername = newUserName
+        self.updateProfile()
+        self.headerVC?.updateUserNameLabel(with: newUserName)
+        print("ProfileSettingsDelegate: \(newUserName): didUpdateUserName @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateFirstName(_ newFirstName: String) {
+        self.profile.givenName = newFirstName
+        self.updateProfile()
+        self.headerVC?.updateUserGivenNameLabel(with: newFirstName)
+        print("ProfileSettingsDelegate: \(newFirstName): didUpdateFirstName @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateDescription(_ newDescription: String) {
+        self.profile.bio = newDescription
+        self.updateProfile()
+        self.headerVC?.updateBioLabel(with: newDescription)
+        print("ProfileSettingsDelegate: \(newDescription): didUpdateDescription @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateProfileImage(_ newProfileImage: UIImage) {
+        self.profile.profileImage?.image = newProfileImage
+        self.updateProfile()
+        self.headerVC?.updateUserProfileImageView(with: newProfileImage)
+//        self.backgroundVC.updateColors(for: newProfileImage, colorScheme: traitCollection.userInterfaceStyle)
+        print("ProfileSettingsDelegate: \(newProfileImage): didUpdateProfileImage @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateBackgroundImage(_ newBackgroundImage: UIImage) {
+        self.profile.backgroundImage?.image = newBackgroundImage
+        self.updateProfile()
+        self.backgroundVC.updateBackgroundImage(newBackgroundImage)
+        self.backgroundVC.view.layoutIfNeeded()
+        self.view.layoutIfNeeded()
+        print("ProfileSettingsDelegate: \(newBackgroundImage): didUpdateBackgroundImage @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateSkinSettings(_ newSkinSettings: SkinSettingsAttributes) {
+        self.profile.skinSetting = newSkinSettings
+        self.updateProfile()
+        self.headerVC?.updateSkinSettings(newSkinSettings: newSkinSettings)
+        print("ProfileSettingsDelegate: \(newSkinSettings): didUpdateSkinSettings @ TwitterParallaxViewController")
+    }
+    
+    private func updateProfile() {
+        ProfileManager.shared.updateProfile(self.profile)
+        print("Updated Profile: \(profile)")
     }
 }

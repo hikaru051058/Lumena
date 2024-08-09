@@ -64,8 +64,15 @@
     "%lld / 300" : {
 
     },
-    "%lld/5 selected" : {
-
+    "%lld/%lld selected" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld selected"
+          }
+        }
+      }
     },
     "$%@" : {
 
@@ -318,6 +325,9 @@
     "Title:" : {
 
     },
+    "Toggle" : {
+
+    },
     "URL" : {
 
     },
@@ -380,17 +390,6 @@
         }
       }
     },
-    "あなたの自然な目の色" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The natural color of your eyes"
-          }
-        }
-      }
-    },
     "あなたの自然な肌の色" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -409,6 +408,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The color palette that best matches your natural coloring"
+          }
+        }
+      }
+    },
+    "あなたの自然な虹彩色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The natural color of your eyes"
           }
         }
       }
@@ -719,6 +729,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Highly Sensitive"
+          }
+        }
+      }
+    },
+    "ストリーク" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Streaks"
           }
         }
       }
@@ -1911,17 +1931,6 @@
         }
       }
     },
-    "目の色" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eye Color"
-          }
-        }
-      }
-    },
     "確認用に新しいパスワードを再入力" : {
       "localizations" : {
         "en" : {
@@ -2164,6 +2173,17 @@
         }
       }
     },
+    "虹彩色" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eye Color"
+          }
+        }
+      }
+    },
     "評価" : {
       "comment" : "PostContent TabBar Option",
       "extractionState" : "manual",
@@ -2193,7 +2213,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verification"
+            "value" : "Verify"
           }
         }
       }

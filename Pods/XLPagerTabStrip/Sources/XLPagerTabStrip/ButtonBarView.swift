@@ -46,18 +46,23 @@ public enum SelectedBarVerticalAlignment {
 open class ButtonBarView: UICollectionView {
 
     open lazy var selectedBar: UIView = { [unowned self] in
-        let bar  = UIView(frame: CGRect(x: 0, y: self.frame.size.height - CGFloat(self.selectedBarHeight), width: 0, height: CGFloat(self.selectedBarHeight)))
+        let bar = UIView(frame: CGRect(x: 0, y: self.frame.size.height - CGFloat(self.selectedBarHeight), width: 0, height: CGFloat(self.selectedBarHeight)))
         bar.layer.zPosition = 9999
+        bar.layer.cornerRadius = self.selectedBarCornerRadius  // Use the new setting for initial corner radius
         return bar
     }()
 
     internal var selectedBarHeight: CGFloat = 4 {
         didSet {
             updateSelectedBarYPosition()
+            updateSelectedBarCornerRadius()  // Update corner radius when height changes
         }
     }
+
+    var selectedBarWidthPercentage: CGFloat = 0.5
     var selectedBarVerticalAlignment: SelectedBarVerticalAlignment = .bottom
     var selectedBarAlignment: SelectedBarAlignment = .center
+    var selectedBarCornerRadius: CGFloat = 0.0  // Property to hold the corner radius value
     var selectedIndex = 0
 
     required public init?(coder aDecoder: NSCoder) {
@@ -77,39 +82,31 @@ open class ButtonBarView: UICollectionView {
 
     open func move(fromIndex: Int, toIndex: Int, progressPercentage: CGFloat, pagerScroll: PagerScroll) {
         selectedIndex = progressPercentage > 0.5 ? toIndex : fromIndex
-
-        let fromFrame = layoutAttributesForItem(at: IndexPath(item: fromIndex, section: 0))!.frame
-        let numberOfItems = dataSource!.collectionView(self, numberOfItemsInSection: 0)
-
-        var toFrame: CGRect
-
-        if toIndex < 0 || toIndex > numberOfItems - 1 {
-            if toIndex < 0 {
-                let cellAtts = layoutAttributesForItem(at: IndexPath(item: 0, section: 0))
-                toFrame = cellAtts!.frame.offsetBy(dx: -cellAtts!.frame.size.width, dy: 0)
-            } else {
-                let cellAtts = layoutAttributesForItem(at: IndexPath(item: (numberOfItems - 1), section: 0))
-                toFrame = cellAtts!.frame.offsetBy(dx: cellAtts!.frame.size.width, dy: 0)
-            }
-        } else {
-            toFrame = layoutAttributesForItem(at: IndexPath(item: toIndex, section: 0))!.frame
-        }
-
+        
+        guard let fromAttributes = layoutAttributesForItem(at: IndexPath(item: fromIndex, section: 0)),
+              let toAttributes = layoutAttributesForItem(at: IndexPath(item: toIndex, section: 0)) else { return }
+        
+        let fromFrame = fromAttributes.frame
+        let toFrame = toAttributes.frame
+        
         var targetFrame = fromFrame
         targetFrame.size.height = selectedBar.frame.size.height
-        targetFrame.size.width += (toFrame.size.width - fromFrame.size.width) * progressPercentage
+        targetFrame.size.width = fromFrame.size.width * selectedBarWidthPercentage + (toFrame.size.width * selectedBarWidthPercentage - fromFrame.size.width * selectedBarWidthPercentage) * progressPercentage
+        
+        // Center the selected bar within the target frame using selectedBarWidthPercentage
         targetFrame.origin.x += (toFrame.origin.x - fromFrame.origin.x) * progressPercentage
-
+        targetFrame.origin.x += (fromFrame.size.width * (1 - selectedBarWidthPercentage) / 2) + ((toFrame.size.width - fromFrame.size.width) * (1 - selectedBarWidthPercentage) / 2) * progressPercentage
+        
         selectedBar.frame = CGRect(x: targetFrame.origin.x, y: selectedBar.frame.origin.y, width: targetFrame.size.width, height: selectedBar.frame.size.height)
-
+        
         var targetContentOffset: CGFloat = 0.0
         if contentSize.width > frame.size.width {
             let toContentOffset = contentOffsetForCell(withFrame: toFrame, andIndex: toIndex)
             let fromContentOffset = contentOffsetForCell(withFrame: fromFrame, andIndex: fromIndex)
-
+            
             targetContentOffset = fromContentOffset + ((toContentOffset - fromContentOffset) * progressPercentage)
         }
-
+        
         setContentOffset(CGPoint(x: targetContentOffset, y: 0), animated: false)
     }
 
@@ -117,13 +114,14 @@ open class ButtonBarView: UICollectionView {
         var selectedBarFrame = selectedBar.frame
 
         let selectedCellIndexPath = IndexPath(item: selectedIndex, section: 0)
-        let attributes = layoutAttributesForItem(at: selectedCellIndexPath)
-        let selectedCellFrame = attributes!.frame
+        guard let attributes = layoutAttributesForItem(at: selectedCellIndexPath) else { return }
+        let selectedCellFrame = attributes.frame
 
-        updateContentOffset(animated: animated, pagerScroll: pagerScroll, toFrame: selectedCellFrame, toIndex: (selectedCellIndexPath as NSIndexPath).row)
+        updateContentOffset(animated: animated, pagerScroll: pagerScroll, toFrame: selectedCellFrame, toIndex: selectedIndex)
 
-        selectedBarFrame.size.width = selectedCellFrame.size.width
-        selectedBarFrame.origin.x = selectedCellFrame.origin.x
+        // Adjust selectedBarFrame width and center it in the cell
+        selectedBarFrame.size.width = selectedCellFrame.size.width * selectedBarWidthPercentage
+        selectedBarFrame.origin.x = selectedCellFrame.origin.x + (selectedCellFrame.size.width - selectedBarFrame.size.width) / 2
 
         if animated {
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
@@ -132,6 +130,11 @@ open class ButtonBarView: UICollectionView {
         } else {
             selectedBar.frame = selectedBarFrame
         }
+    }
+
+    // Helper method to update the corner radius
+    private func updateSelectedBarCornerRadius() {
+        selectedBar.layer.cornerRadius = selectedBarCornerRadius > 0 ? selectedBarCornerRadius : selectedBarHeight / 2
     }
 
     // MARK: - Helpers
@@ -187,5 +190,7 @@ open class ButtonBarView: UICollectionView {
     override open func layoutSubviews() {
         super.layoutSubviews()
         updateSelectedBarYPosition()
+        updateSelectedBarCornerRadius() // Ensure corner radius is updated on layout changes
     }
 }
+

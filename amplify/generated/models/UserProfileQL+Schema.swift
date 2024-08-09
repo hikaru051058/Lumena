@@ -21,6 +21,7 @@ extension UserProfileQL {
     case profileImageLastModified
     case backgroundImageLastModified
     case skinSettings
+    case skinStreaks
   }
   
   public static let keys = CodingKeys.self
@@ -51,7 +52,8 @@ extension UserProfileQL {
       .field(userProfileQL.postCount, is: .optional, ofType: .int),
       .field(userProfileQL.profileImageLastModified, is: .optional, ofType: .int),
       .field(userProfileQL.backgroundImageLastModified, is: .optional, ofType: .int),
-      .field(userProfileQL.skinSettings, is: .optional, ofType: .embedded(type: SkinSettingsAttributesQL.self))
+      .field(userProfileQL.skinSettings, is: .optional, ofType: .embedded(type: SkinSettingsAttributesQL.self)),
+      .field(userProfileQL.skinStreaks, is: .optional, ofType: .int)
     )
     }
 }

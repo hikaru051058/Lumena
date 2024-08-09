@@ -8,7 +8,7 @@ enum profilePage: String {
     case saved = "Saved"
 }
 
-class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController, PagerAwareProtocol, UINavigationControllerDelegate {
+class ProfileXLPagerTabStripViewController: ButtonBarPagerTabStripViewController, PagerAwareProtocol, UINavigationControllerDelegate {
     
     // MARK: PagerAwareProtocol
     
@@ -46,6 +46,7 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
         settings.style.selectedBarBackgroundColor = .arinBlue
         settings.style.buttonBarItemTitleColor = .arinBlue
         settings.style.selectedBarHeight = 2
+        settings.style.selectedBarWidthPercentage = userIdentityID == GI.shared.identityID ? 0.5 : 0.25
 
         super.viewDidLoad()
         
@@ -120,7 +121,7 @@ class XLPagerTabStripExampleViewController: ButtonBarPagerTabStripViewController
     }
 }
 
-extension XLPagerTabStripExampleViewController: RefreshDelegate {
+extension ProfileXLPagerTabStripViewController: RefreshDelegate {
     
     func didStartRefreshing() {
         print("Started refreshing in XLPagerTabStripExampleViewController")

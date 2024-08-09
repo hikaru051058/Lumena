@@ -29,3 +29,18 @@ extension Notification.Name {
 extension Notification.Name {
     static let showSheetBrowser = Notification.Name("showSheetBrowser")
 }
+
+
+
+extension Notification.Name {
+    static let lumeDescriptionExpanded = Notification.Name("lumeDescriptionExpanded")
+    static let lumeAuthenticationExpanded = Notification.Name("lumeAuthenticationExpanded")
+}
+
+extension Notification.Name {
+    static let updateAudioVisualizer = Notification.Name("updateAudioVisualizer")
+    static let updateRecordingDuration = Notification.Name("updateRecordingDuration")
+    static let updateRecordButtonLabel = Notification.Name("updateRecordButtonLabel")
+    static let updatePlayButtonLabel = Notification.Name("updatePlayButtonLabel")
+    static let audioRecordingSaved = Notification.Name("audioRecordingSaved")
+}

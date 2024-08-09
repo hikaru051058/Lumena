@@ -300,20 +300,20 @@ extension ImageExtractorViewModel {
             if asset.mediaType == .image {
                 // Assuming the image already loaded in ImageExtractorAsset
                 if let image = imageExtractorAsset.image {
-                    let reelImage = LumeImage(image: image, url: nil) // Assuming URL would be fetched or set differently
+                    let reelImage = LumeImage(image: image, url: nil, lumeAuth: false) // Assuming URL would be fetched or set differently
                     contents.append(.image(reelImage))
                     dispatchGroup.leave()
                 } else {
                     // If image is not preloaded, load it
                     loadThumbnailForAsset(asset) { image in
-                        let reelImage = LumeImage(image: image)
+                        let reelImage = LumeImage(image: image, lumeAuth: false)
                         contents.append(.image(reelImage))
                         dispatchGroup.leave()
                     }
                 }
             } else if asset.mediaType == .video {
                 extractVideoData(asset: asset) { player in
-                    let reelVideo = LumeVideo(player: player)
+                    let reelVideo = LumeVideo(player: player, lumeAuth: false)
                     reelVideo.mute() // Mute by default, change as needed
                     contents.append(.video(reelVideo))
                     dispatchGroup.leave()
@@ -575,6 +575,10 @@ struct ImageSelectorSheetView: View {
             ToolbarItem {
                 Button(imagePicker.selectedPhotos.isEmpty ? "Close": "Done") {
                     isFocused = false
+                }
+                .background {
+                    Color(UIColor.systemBackground)
+                        .blur(radius: 4, opaque: false)
                 }
             }
         }

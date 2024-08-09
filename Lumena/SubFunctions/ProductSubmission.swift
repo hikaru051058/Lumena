@@ -47,7 +47,7 @@ struct ProductSubmission: View {
     @State var selectedImageItems: [ImageExtractorAsset] = []
     @State var selectedImageItemsForShow: [ImageExtractorAsset] = []
     
-    @State var maxImageCnt: Int = 3
+    @State var maxImageCnt: Int = 1
     
     @State private var errorRetryUpload: Bool = false
     
@@ -120,73 +120,142 @@ struct ProductSubmission: View {
                                 
                             } else {
                                 
-                                CardStack(selectedImageItemsForShow) { item in
+//                                CardStack(selectedImageItemsForShow) { item in
+//                                    
+//                                    // Subsequent items - Show the image
+//                                    if let uiItemImage = item.image, uiItemImage != UIImage() {
+//                                        
+//                                        Image(uiImage: uiItemImage)
+//                                            .resizable()
+//                                            .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
+//                                            .frame(width: 120, height: 120)
+//                                            .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+//                                            .shadow(radius: 5)
+//                                            .overlay(
+//                                                Button(action: {
+//                                                    
+//                                                    if let index = selectedImageItemsForShow.firstIndex(where: {$0.id == item.id}) {
+//                                                        selectedImageItemsForShow.remove(at: index) // Remove the item at the found index
+//                                                    }
+//                                                    
+//                                                    if let index = selectedImageItems.firstIndex(where: {$0.id == item.id}) {
+//                                                        selectedImageItems.remove(at: index) // Remove the item at the found index
+//                                                        imagePicker.selectedPhotos = selectedImageItems
+//                                                    }
+//                                                    
+//                                                    if selectedImageItems.count < 5 {
+//                                                        selectedImageItemsForShow.insert(contentsOf: [ImageExtractorAsset(asset: PHAsset(), image: UIImage())], at: 0)
+//                                                    }
+//                                                
+//                                                }) {
+//                                                    ZStack {
+//                                                        Circle()
+//                                                            .fill(Color.red)
+//                                                            .frame(width: 20, height: 20)
+//                                                        
+//                                                        Image(systemName: "xmark")
+//                                                            .font(.caption)
+//                                                            .foregroundColor(.white)
+//                                                    }
+//                                                    .padding(5)
+//                                                }
+//                                                    .disabled(uploading)
+//                                                ,
+//                                                alignment: .topTrailing
+//                                            )
+//                                        
+//                                    } else {
+//                                        
+//                                        Menu{
+//                                            Button("Camera", action: {showCamera.toggle()})
+//                                            Button("Photo Library", action: {showImagePicker.toggle()})
+//                                        } label: {
+//                                            
+//                                            ZStack {
+//                                                RoundedRectangle(cornerRadius: 16)
+//                                                    .frame(width: 120, height: 120)
+//                                                    .foregroundColor(Color.secondary)
+//                                                
+//                                                Image(systemName: "plus")
+//                                                    .resizable()
+//                                                    .frame(width: 20, height: 20)
+//                                                    .foregroundColor(Color.white)
+//                                            }
+//                                            .shadow(radius: 5)
+//                                        }
+//                                        .frame(width: 120, height: 120)
+//                                        .cornerRadius(16)
+//                                        .disabled(uploading)
+//                                    }
+//                                }
+                                
+                                // Subsequent items - Show the image
+                                if let uiItemImage = selectedImageItemsForShow.first?.image, uiItemImage != UIImage() {
                                     
-                                    // Subsequent items - Show the image
-                                    if let uiItemImage = item.image, uiItemImage != UIImage() {
-                                        
-                                        Image(uiImage: uiItemImage)
-                                            .resizable()
-                                            .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
-                                            .frame(width: 120, height: 120)
-                                            .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
-                                            .shadow(radius: 5)
-                                            .overlay(
-                                                Button(action: {
-                                                    
-                                                    if let index = selectedImageItemsForShow.firstIndex(where: {$0.id == item.id}) {
-                                                        selectedImageItemsForShow.remove(at: index) // Remove the item at the found index
-                                                    }
-                                                    
-                                                    if let index = selectedImageItems.firstIndex(where: {$0.id == item.id}) {
-                                                        selectedImageItems.remove(at: index) // Remove the item at the found index
-                                                        imagePicker.selectedPhotos = selectedImageItems
-                                                    }
-                                                    
-                                                    if selectedImageItems.count < 5 {
-                                                        selectedImageItemsForShow.insert(contentsOf: [ImageExtractorAsset(asset: PHAsset(), image: UIImage())], at: 0)
-                                                    }
-                                                
-                                                }) {
-                                                    ZStack {
-                                                        Circle()
-                                                            .fill(Color.red)
-                                                            .frame(width: 20, height: 20)
-                                                        
-                                                        Image(systemName: "xmark")
-                                                            .font(.caption)
-                                                            .foregroundColor(.white)
-                                                    }
-                                                    .padding(5)
-                                                }
-                                                    .disabled(uploading)
-                                                ,
-                                                alignment: .topTrailing
-                                            )
-                                        
-                                    } else {
-                                        
-                                        Menu{
-                                            Button("Camera", action: {showCamera.toggle()})
-                                            Button("Photo Library", action: {showImagePicker.toggle()})
-                                        } label: {
-                                            
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 16)
-                                                    .frame(width: 120, height: 120)
-                                                    .foregroundColor(Color.secondary)
-                                                
-                                                Image(systemName: "plus")
-                                                    .resizable()
-                                                    .frame(width: 20, height: 20)
-                                                    .foregroundColor(Color.white)
-                                            }
-                                            .shadow(radius: 5)
-                                        }
+                                    Image(uiImage: uiItemImage)
+                                        .resizable()
+                                        .scaledToFill() // ensures the content scales to fill the size of the view and may be clipped
                                         .frame(width: 120, height: 120)
-                                        .cornerRadius(16)
-                                        .disabled(uploading)
+                                        .clipShape(RoundedRectangle(cornerRadius: 16)) // crops the image to the same shape as the RoundedRectangle
+                                        .shadow(radius: 5)
+                                        .overlay(
+                                            Button(action: {
+                                                
+//                                                if let index = selectedImageItemsForShow.firstIndex(where: {$0.id == item.id}) {
+//                                                    selectedImageItemsForShow.remove(at: index) // Remove the item at the found index
+//                                                }
+//                                                
+//                                                if let index = selectedImageItems.firstIndex(where: {$0.id == item.id}) {
+//                                                    selectedImageItems.remove(at: index) // Remove the item at the found index
+//                                                    imagePicker.selectedPhotos = selectedImageItems
+//                                                }
+//                                                
+//                                                if selectedImageItems.count < 5 {
+//                                                    selectedImageItemsForShow.insert(contentsOf: [ImageExtractorAsset(asset: PHAsset(), image: UIImage())], at: 0)
+//                                                }
+                                                
+                                                selectedImageItemsForShow.remove(at: 0)
+                                                selectedImageItems.remove(at: 0)
+                                            
+                                            }) {
+                                                ZStack {
+                                                    Circle()
+                                                        .fill(Color.red)
+                                                        .frame(width: 20, height: 20)
+                                                    
+                                                    Image(systemName: "xmark")
+                                                        .font(.caption)
+                                                        .foregroundColor(.white)
+                                                }
+                                                .padding(5)
+                                            }
+                                                .disabled(uploading)
+                                            ,
+                                            alignment: .topTrailing
+                                        )
+                                    
+                                } else {
+                                    
+                                    Menu{
+                                        Button("Camera", action: {showCamera.toggle()})
+                                        Button("Photo Library", action: {showImagePicker.toggle()})
+                                    } label: {
+                                        
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .frame(width: 120, height: 120)
+                                                .foregroundColor(Color.secondary)
+                                            
+                                            Image(systemName: "plus")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(Color.white)
+                                        }
+                                        .shadow(radius: 5)
                                     }
+                                    .frame(width: 120, height: 120)
+                                    .cornerRadius(16)
+                                    .disabled(uploading)
                                 }
                             }
                             
@@ -196,7 +265,7 @@ struct ProductSubmission: View {
                                 
                                 Spacer()
                                 
-                                Text("\(selectedImageItems.count)/5 selected")
+                                Text("\(selectedImageItems.count)/\(maxImageCnt) selected")
                                     .font(.caption)
                                     .bold()
                                     .foregroundColor(Color.secondary)
@@ -275,7 +344,7 @@ struct ProductSubmission: View {
 
                     imagePicker.selectedPhotos = selectedImageItems
                     
-                    if selectedImageItems.count < 5 {
+                    if selectedImageItems.count < maxImageCnt {
                         selectedImageItemsForShow = [ImageExtractorAsset(asset: PHAsset(), image: UIImage())]
                     } else {
                         selectedImageItemsForShow = []
@@ -293,7 +362,7 @@ struct ProductSubmission: View {
                 
                 selectedImageItems = imagePicker.selectedPhotos
                 
-                if selectedImageItems.count < 5 {
+                if selectedImageItems.count < maxImageCnt {
                     selectedImageItemsForShow = [ImageExtractorAsset(asset: PHAsset(), image: UIImage())]
                 } else {
                     selectedImageItemsForShow = []

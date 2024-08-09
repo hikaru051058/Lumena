@@ -64,8 +64,8 @@ struct LoadingWebView: View {
                                            error: $error)
                 if isLoading {
                     ProgressView()
-                        .scaleEffect(2)
                 }
+                
             } else {
                 Text("Sorry, we could not load this url.")
             }

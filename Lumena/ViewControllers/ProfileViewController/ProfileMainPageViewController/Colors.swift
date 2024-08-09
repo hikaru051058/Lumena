@@ -27,6 +27,18 @@ extension UIColor {
 }
 
 extension UIColor {
+    static var arinDarkPink: UIColor    {
+        return UIColor(red: 0.867, green: 0.773, blue: 0.843, alpha: 1)
+    }
+    
+    static var arinYellow: UIColor {
+        return UIColor(red: 1, green: 0.859, blue: 0.651, alpha: 1)
+    }
+    
+    
+}
+
+extension UIColor {
     static var arinGreen: UIColor   {
         return UIColor(red: 0.723, green: 0.88, blue: 0.825, alpha: 1)
     }
@@ -124,5 +136,21 @@ extension UIColor {
         }
         
         return UIColor(hex: description) ?? .clear
+    }
+}
+
+extension UIColor {
+    func saturated(by factor: CGFloat) -> UIColor {
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        if getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
+            saturation = min(saturation * factor, 1.0)
+            return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: alpha)
+        }
+        
+        return self
     }
 }

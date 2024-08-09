@@ -27,6 +27,11 @@ class Track: ObservableObject, Equatable, Identifiable {
     
     @Published var audioPlayer: AVAudioPlayer?
     @Published var isPlaying: Bool = false
+    @Published var isMuted: Bool = false {
+        didSet {
+            self.mute(mute: self.isMuted)
+        }
+    }
     
     private var playbackTimer: Timer?
     
@@ -108,27 +113,27 @@ class Track: ObservableObject, Equatable, Identifiable {
     
     
     // Play the audio
-    func playAudio() {
+    func playAudio(repeat: Bool = false) {
         audioPlayer?.prepareToPlay()
         audioPlayer?.play()
         isPlaying = true
-        startPlaybackTimer()
+        startPlaybackTimer(repeat: `repeat`)
     }
-    
-    func playAudio(from time: Float) {
+
+    func playAudio(from time: Float, repeat: Bool = false) {
         audioPlayer?.currentTime = TimeInterval(time)
         audioPlayer?.play()
         isPlaying = true
-        startPlaybackTimer()
+        startPlaybackTimer(repeat: `repeat`)
     }
-    
-    func playAudio(from startTime: Float, to endTime: Float) {
+
+    func playAudio(from startTime: Float, to endTime: Float, repeat: Bool = false) {
         audioPlayer?.currentTime = TimeInterval(startTime)
         audioPlayer?.play()
         isPlaying = true
-        startPlaybackTimer(endTime: endTime)
+        startPlaybackTimer(endTime: endTime, repeat: `repeat`, startTime: startTime)
     }
-    
+
     func stopAudio() {
         audioPlayer?.stop()
         isPlaying = false
@@ -143,41 +148,37 @@ class Track: ObservableObject, Equatable, Identifiable {
         playbackTimer?.invalidate() // stop the timer when audio resets
     }
     
-    private func startPlaybackTimer(endTime: Float? = nil) {
+    private func startPlaybackTimer(endTime: Float? = nil, repeat: Bool = false, startTime: Float? = nil) {
         // Invalidate any existing timer
         playbackTimer?.invalidate()
         
-        playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] timer in
+        playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] timer in
+            guard let self = self else { return }
             guard let currentTime = self.audioPlayer?.currentTime,
                   let duration = self.audioPlayer?.duration else {
-                print("Unable to get currentTime or duration")  // Add this line
                 return
             }
-
-            print("currentTime: \(currentTime), duration: \(duration)")  // Add this line
-            
-            // Check if we have reached the end time or the end of the track
             
             if let endTime = endTime {
-                if Float(currentTime) >= (endTime-0.5) {
-                    print("Stopping because currentTime >= endTime")
-                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { [self] in
-                        stopAudio()
-                        playbackTimer?.invalidate()
-                        playbackTimer = nil
+                if Float(currentTime) >= endTime {
+                    DispatchQueue.main.async {
+                        self.stopAudio()
+                        if `repeat` {
+                            self.playAudio(from: startTime ?? 0, to: endTime, repeat: `repeat`)
+                        }
                     }
                 }
-             } else if currentTime >= (duration-0.5) {
-                print("Stopping because currentTime >= duration")
-                 DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { [self] in
-                     stopAudio()
-                     playbackTimer?.invalidate()
-                     playbackTimer = nil
-                 }
+            } else if currentTime >= duration {
+                DispatchQueue.main.async {
+                    self.stopAudio()
+                    if `repeat` {
+                        self.playAudio(repeat: `repeat`)
+                    }
+                }
             }
         }
     }
-
+    
     func getCurrentTrackDuration() -> TimeInterval {
         return audioPlayer?.duration ?? 0
     }
@@ -249,6 +250,10 @@ class Track: ObservableObject, Equatable, Identifiable {
             }
         }
         downloadTask.resume()
+    }
+    
+    private func mute(mute: Bool = false) {
+        self.audioPlayer?.volume = mute ? 0.0 : 1.0
     }
 }
 

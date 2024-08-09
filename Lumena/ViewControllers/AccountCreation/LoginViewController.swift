@@ -10,6 +10,7 @@ import UIKit
 import Amplify
 import AWSCognitoAuthPlugin
 import SwiftUI
+import Combine
 
 class LoginViewController: UIViewController {
     
@@ -17,9 +18,9 @@ class LoginViewController: UIViewController {
     
     private var lumenaLogoImageView: UIImageView!
     private var arinLogoImageView: UIImageView!
-    private var bottomFunctions: LoginViewBottomFunctions!
+    private var bottomFunctions: LoginViewBottomView!
     private var backgroundGradient: GradientEffectViewController!
-    private var bottomFunctionsHostingController: UIHostingController<LoginViewBottomFunctions>!
+    private var bottomFunctionsHostingController: UIHostingController<LoginViewBottomView>!
     
     private var showForgotPassword: Bool = false {
         didSet {
@@ -55,7 +56,7 @@ class LoginViewController: UIViewController {
     }
     
     private func setupBottomFunctions() {
-        bottomFunctions = LoginViewBottomFunctions()
+        bottomFunctions = LoginViewBottomView()
         bottomFunctions.onNavigateMain = navigateToMain
         bottomFunctions.onNavigateCreateAccount = navigateToCreateAccount
         bottomFunctions.onShowConfirmationSheet = showConfirmationSheet
@@ -101,7 +102,7 @@ class LoginViewController: UIViewController {
     
     private func setupBottomFunctionsLayout() {
         NSLayoutConstraint.activate([
-            bottomFunctionsHostingController.view.topAnchor.constraint(equalTo: lumenaLogoImageView.bottomAnchor, constant: 20),
+            bottomFunctionsHostingController.view.topAnchor.constraint(equalTo: lumenaLogoImageView.safeAreaLayoutGuide.bottomAnchor),
             bottomFunctionsHostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomFunctionsHostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomFunctionsHostingController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -183,13 +184,16 @@ class LoginViewController: UIViewController {
 }
 
 
-struct LoginViewBottomFunctions: View {
+struct LoginViewBottomView: View {
     @State  var userInput: String = ""
     @State var password: String = ""
     @State var loginLoading: Bool = false
     @State private var showAlert = false
     @State private var messageLabel = ""
     @FocusState private var focusState: FocusField?
+    
+    @State private var isKeyboardVisible: Bool = false
+    @State private var keyboardCancellable: AnyCancellable?
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -207,6 +211,7 @@ struct LoginViewBottomFunctions: View {
     
     var body: some View {
         VStack {
+            
             ScrollView {
                 Text(messageLabel)
                     .font(.caption2)
@@ -217,8 +222,8 @@ struct LoginViewBottomFunctions: View {
             .background(Color.red.opacity(0.3))
             .cornerRadius(15)
             .padding(.bottom, 15)
-            .frame(height: 90)
-            .opacity(messageLabel.isEmpty ? 0 : 1)
+            .frame(height: (messageLabel.isEmpty || isKeyboardVisible) ? 0 : 90)
+            .opacity((messageLabel.isEmpty || isKeyboardVisible) ? 0 : 1)
             
             TextField("", text: $userInput)
                 .focused($focusState, equals: .userInput)
@@ -295,45 +300,14 @@ struct LoginViewBottomFunctions: View {
             .opacity(loginLoading ? 0 : 1)
             
             if !loginLoading {
-                Button(action: {
-                    if userInput.isEmpty || password.isEmpty {
-                        showAlert = true
+                ZStack {
+                    if isKeyboardVisible {
+                        horizontalLayout
                     } else {
-                        loginProcess()
-                    }
-                }) {
-                    ZStack {
-                        Rectangle()
-                            .frame(width: 140, height: 35)
-                            .cornerRadius(50)
-                            .foregroundColor(Color(uiColor: UIColor.systemBackground))
-                        
-                        Text("ログイン")
-                            .fontWeight(.bold)
-                            .font(.caption)
-                            .foregroundColor(.primary)
+                        verticalLayout
                     }
                 }
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("入力エラー"), message: Text("ユーザーIDとパスワードを入力してください"), dismissButton: .default(Text("OK")))
-                }
-                .padding(.vertical, 15)
-                
-                Button(action: { onNavigateCreateAccount() }) {
-                    ZStack {
-                        Rectangle()
-                            .frame(width: 140, height: 35)
-                            .cornerRadius(50)
-                            .foregroundColor(Color(uiColor: UIColor.systemBackground))
-                        
-                        Text("新規登録")
-                            .fontWeight(.bold)
-                            .font(.caption)
-                            .foregroundColor(.primary)
-                    }
-                }
-                .padding(.bottom)
-                
+                .animation(.easeInOut(duration: 0.2), value: isKeyboardVisible)
             } else {
                 ProgressView()
                     .foregroundColor(Color.gray)
@@ -348,7 +322,82 @@ struct LoginViewBottomFunctions: View {
                 }
             }
         }
+        .onAppear {
+            // Subscribe to keyboard notifications
+            keyboardCancellable = Publishers.Merge(
+                NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+                    .map { _ in true },
+                NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+                    .map { _ in false }
+            )
+            .sink { [self] isVisible in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    self.isKeyboardVisible = isVisible
+                }
+            }
+        }
+       .onDisappear {
+           // Cancel the subscription when view disappears
+           keyboardCancellable?.cancel()
+       }
         .navigationBarHidden(true)
+    }
+    
+    private var verticalLayout: some View {
+        VStack {
+            loginButton
+                .padding(.vertical, 15)
+            createAccountButton
+                .padding(.bottom)
+        }
+    }
+
+    private var horizontalLayout: some View {
+        HStack {
+            loginButton
+            createAccountButton
+        }
+    }
+    
+    private var loginButton: some View {
+        Button(action: {
+            if userInput.isEmpty || password.isEmpty {
+                showAlert = true
+            } else {
+                loginProcess()
+            }
+        }) {
+            ZStack {
+                Rectangle()
+                    .frame(width: 140, height: 35)
+                    .cornerRadius(50)
+                    .foregroundColor(Color(uiColor: UIColor.systemBackground))
+                
+                Text("ログイン")
+                    .fontWeight(.bold)
+                    .font(.caption)
+                    .foregroundColor(.primary)
+            }
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("入力エラー"), message: Text("ユーザーIDとパスワードを入力してください"), dismissButton: .default(Text("OK")))
+        }
+    }
+    
+    private var createAccountButton: some View {
+        Button(action: { onNavigateCreateAccount() }) {
+            ZStack {
+                Rectangle()
+                    .frame(width: 140, height: 35)
+                    .cornerRadius(50)
+                    .foregroundColor(Color(uiColor: UIColor.systemBackground))
+                
+                Text("新規登録")
+                    .fontWeight(.bold)
+                    .font(.caption)
+                    .foregroundColor(.primary)
+            }
+        }
     }
     
     private func loginProcess() {

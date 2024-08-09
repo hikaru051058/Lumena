@@ -396,36 +396,8 @@ struct CreateAccount: View {
                     } else {
                         
                         Button(action: {
+                            createAccountProcess()
                             
-                            loadingSignUp = true
-                            
-                            let formatter = DateFormatter()
-                            formatter.locale = Locale(identifier: "en_US_POSIX")
-                            formatter.dateFormat = "MM/dd/yyyy"
-                            
-                            let birthDateString = convertAgeToTimestamp(selectedAge: 13)//selectedAge)
-                            
-                            Task {
-                                do {
-                                    _ = try await AuthenticationManager.shared.signUp(
-                                        username: username,
-                                        password: password,
-                                        email: email,
-                                        givenName: firstName,
-                                        familyName: lastName,
-                                        preferredUsername: username,
-                                        birthdate: String(birthDateString)
-                                    )
-                                    
-                                    authPage = true
-                                    navigateToUserConfirmationCodeView(username, password, email)
-                                    
-                                } catch {
-                                    print("Failure: \(error)")
-                                    errorMessage = "Error: \(error)"
-                                }
-                                loadingSignUp = false
-                            }
                         }) {
                             
                             ZStack {
@@ -486,6 +458,42 @@ struct CreateAccount: View {
                     value = filtered
                 }
             }
+        }
+    }
+    
+    private func createAccountProcess() {
+        loadingSignUp = true
+        
+        if authPage {
+            navigateToUserConfirmationCodeView(username, password, email)
+        }
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "MM/dd/yyyy"
+        
+        let birthDateString = convertAgeToTimestamp(selectedAge: 13)//selectedAge)
+        
+        Task {
+            do {
+                _ = try await AuthenticationManager.shared.signUp(
+                    username: username,
+                    password: password,
+                    email: email,
+                    givenName: firstName,
+                    familyName: lastName,
+                    preferredUsername: username,
+                    birthdate: String(birthDateString)
+                )
+                
+                authPage = true
+                navigateToUserConfirmationCodeView(username, password, email)
+                
+            } catch {
+                print("Failure: \(error)")
+                errorMessage = "Error: \(error)"
+            }
+            loadingSignUp = false
         }
     }
     
@@ -579,6 +587,16 @@ struct UserConfirmationCodeView: View {
             VStack{
                 
                 HStack{
+                    
+                    Button(action: {
+                        
+                        presentationMode.wrappedValue.dismiss()
+                    }, label: {
+                        
+                        Image(systemName: "chevron.backward")
+                            .font(.title)
+                    })
+                    
                     Text("アカウント認証")
                         .font(.title)
                         .fontWeight(.heavy)

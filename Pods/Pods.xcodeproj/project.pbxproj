@@ -31,7 +31,7 @@
 		60C6B4C97FE0B489D324C2CE5C40EC2A /* ButtonBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3513A0CD4AA9A1870FF2D4E7B12EE6BD /* ButtonBarView.swift */; };
 		628A42A6A816BA3436EA2530B3F5629F /* FXPageControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1550D435739D4A67DDF6AFC8B1E53BC5 /* FXPageControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A31CA4C157601EE076E9A8D44B23992 /* ACThumbnailGenerator-Swift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B302827B4CED9847F241B944C6EA5CAD /* ACThumbnailGenerator-Swift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6C39D6A2F4F119EA5CF18C440AB6648B /* XLPagerTabStrip.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip.bundle */; };
+		6C39D6A2F4F119EA5CF18C440AB6648B /* XLPagerTabStrip-XLPagerTabStrip in Resources */ = {isa = PBXBuildFile; fileRef = 78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip-XLPagerTabStrip */; };
 		72B6A614F5825D53487D1CCD3E93CE8A /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C883BD023E2DF2BBBB195D850786D2 /* ContainerViewController.swift */; };
 		7D761EA00A507CFF273FDA1099A1A6EC /* ButtonBarPagerTabStripViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AD697A004FD05A988A9363B21481F3 /* ButtonBarPagerTabStripViewController.swift */; };
 		80ED94B647A0317E521B983FC213BD6E /* TwitterPagerTabStripViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09C134082612FFF57B1A236FDBD3C2A /* TwitterPagerTabStripViewController.swift */; };
@@ -106,7 +106,7 @@
 		4CA75C117413150C10097A7D217148D2 /* FXPageControl.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FXPageControl.m; path = ObjC/FXPageControl.m; sourceTree = "<group>"; };
 		5061098653AFBE5050C305A446B55207 /* ACThumbnailGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ACThumbnailGenerator.swift; path = "ACThumbnailGenerator-Swift/Classes/ACThumbnailGenerator.swift"; sourceTree = "<group>"; };
 		50A94167F859ED3A0A587E77DDC30C15 /* IndicatorInfo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IndicatorInfo.swift; path = Sources/XLPagerTabStrip/IndicatorInfo.swift; sourceTree = "<group>"; };
-		538E3107C2B6F322DE0B27BC88E16486 /* Pods_Lumena.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lumena.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		538E3107C2B6F322DE0B27BC88E16486 /* Pods-Lumena */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Lumena"; path = Pods_Lumena.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5534A6A8AD3D6C53A6A94098A26D16E6 /* PannableViewsProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PannableViewsProtocol.swift; path = TwitterProfile/Classes/Protocols/PannableViewsProtocol.swift; sourceTree = "<group>"; };
 		56530D0C071C9E054B796560EDA48B0A /* Pods-LumenaNotificationAPNAWS-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-LumenaNotificationAPNAWS-Info.plist"; sourceTree = "<group>"; };
 		6616F2BE653327799D69CAFC44488A5B /* SegmentedPagerTabStripViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SegmentedPagerTabStripViewController.swift; path = Sources/XLPagerTabStrip/SegmentedPagerTabStripViewController.swift; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 		6F1EFA0510FFBAA880CD495933B80729 /* XLPagerTabStrip-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "XLPagerTabStrip-Info.plist"; sourceTree = "<group>"; };
 		74CFD2765ED88F88DED7CEA8E3CBA5D7 /* ACThumbnailGenerator_Swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ACThumbnailGenerator_Swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		784843B52CAEF17F6DBC0BA9CE20FDDC /* PagerTabStripBehaviour.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PagerTabStripBehaviour.swift; path = Sources/XLPagerTabStrip/PagerTabStripBehaviour.swift; sourceTree = "<group>"; };
-		78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XLPagerTabStrip.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip-XLPagerTabStrip */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "XLPagerTabStrip-XLPagerTabStrip"; path = XLPagerTabStrip.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BD0C8399CF6C6B0A4876CA206785557 /* XLPagerTabStrip.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = XLPagerTabStrip.debug.xcconfig; sourceTree = "<group>"; };
 		800153858A4C0E8F8DFA246C3FDD245F /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-LumenaNotificationAPNAWS.debug.xcconfig"; sourceTree = "<group>"; };
 		80FE29ED0A8A592CEE107EA074F22159 /* XLPagerTabStrip.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = XLPagerTabStrip.release.xcconfig; sourceTree = "<group>"; };
@@ -147,15 +147,15 @@
 		DBDB918237046EE4CC8F0ECFDB169B0B /* Pods-LumenaNotificationAPNAWS-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-LumenaNotificationAPNAWS-acknowledgements.markdown"; sourceTree = "<group>"; };
 		DC6F409B2498CA7E006D67EDB117F394 /* Pods-Lumena-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Lumena-frameworks.sh"; sourceTree = "<group>"; };
 		E09C134082612FFF57B1A236FDBD3C2A /* TwitterPagerTabStripViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TwitterPagerTabStripViewController.swift; path = Sources/XLPagerTabStrip/TwitterPagerTabStripViewController.swift; sourceTree = "<group>"; };
-		E45DB6EFEE0EFD435389CF18B13A0DF0 /* TwitterProfile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TwitterProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E45DB6EFEE0EFD435389CF18B13A0DF0 /* TwitterProfile */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = TwitterProfile; path = TwitterProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56AC60979FFCE8F3631A2D223D4FEB0 /* BarPagerTabStripViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BarPagerTabStripViewController.swift; path = Sources/XLPagerTabStrip/BarPagerTabStripViewController.swift; sourceTree = "<group>"; };
 		EAB6F611E86A4758835A715E4B4184F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		F1DDEA945255A18F0B9913AB1C2AB718 /* XLPagerTabStrip.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XLPagerTabStrip.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1DDEA945255A18F0B9913AB1C2AB718 /* XLPagerTabStrip */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = XLPagerTabStrip; path = XLPagerTabStrip.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2CD15A84F1AE6D65AD89327A1D8EE2B /* BarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BarView.swift; path = Sources/XLPagerTabStrip/BarView.swift; sourceTree = "<group>"; };
 		F382DD7B1D7C87BEA1EC121383D58777 /* ACThumbnailGenerator-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "ACThumbnailGenerator-Swift.release.xcconfig"; sourceTree = "<group>"; };
 		F59676AE02C81FA305D3FA66971CACCC /* Pods-Lumena-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Lumena-dummy.m"; sourceTree = "<group>"; };
 		F921B6D3AF2ACEC18A5766D413E44095 /* Pods-LumenaNotificationAPNAWS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-LumenaNotificationAPNAWS-dummy.m"; sourceTree = "<group>"; };
-		FBF566649F2B0F35EB592380F9ED3AE4 /* Pods_LumenaNotificationAPNAWS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LumenaNotificationAPNAWS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBF566649F2B0F35EB592380F9ED3AE4 /* Pods-LumenaNotificationAPNAWS */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-LumenaNotificationAPNAWS"; path = Pods_LumenaNotificationAPNAWS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC50B679B4379C6EB255246C5C061453 /* Pods-Lumena-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Lumena-umbrella.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -359,11 +359,11 @@
 			isa = PBXGroup;
 			children = (
 				74CFD2765ED88F88DED7CEA8E3CBA5D7 /* ACThumbnailGenerator_Swift.framework */,
-				538E3107C2B6F322DE0B27BC88E16486 /* Pods_Lumena.framework */,
-				FBF566649F2B0F35EB592380F9ED3AE4 /* Pods_LumenaNotificationAPNAWS.framework */,
-				E45DB6EFEE0EFD435389CF18B13A0DF0 /* TwitterProfile.framework */,
-				F1DDEA945255A18F0B9913AB1C2AB718 /* XLPagerTabStrip.framework */,
-				78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip.bundle */,
+				538E3107C2B6F322DE0B27BC88E16486 /* Pods-Lumena */,
+				FBF566649F2B0F35EB592380F9ED3AE4 /* Pods-LumenaNotificationAPNAWS */,
+				E45DB6EFEE0EFD435389CF18B13A0DF0 /* TwitterProfile */,
+				F1DDEA945255A18F0B9913AB1C2AB718 /* XLPagerTabStrip */,
+				78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip-XLPagerTabStrip */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -470,7 +470,7 @@
 			);
 			name = TwitterProfile;
 			productName = TwitterProfile;
-			productReference = E45DB6EFEE0EFD435389CF18B13A0DF0 /* TwitterProfile.framework */;
+			productReference = E45DB6EFEE0EFD435389CF18B13A0DF0 /* TwitterProfile */;
 			productType = "com.apple.product-type.framework";
 		};
 		3CE4AB0252C92FCF632E428ABBF0B91E /* ACThumbnailGenerator-Swift */ = {
@@ -506,7 +506,7 @@
 			);
 			name = "Pods-LumenaNotificationAPNAWS";
 			productName = Pods_LumenaNotificationAPNAWS;
-			productReference = FBF566649F2B0F35EB592380F9ED3AE4 /* Pods_LumenaNotificationAPNAWS.framework */;
+			productReference = FBF566649F2B0F35EB592380F9ED3AE4 /* Pods-LumenaNotificationAPNAWS */;
 			productType = "com.apple.product-type.framework";
 		};
 		B2828968D0A8549E5E6F264545E1B1DA /* Pods-Lumena */ = {
@@ -527,7 +527,7 @@
 			);
 			name = "Pods-Lumena";
 			productName = Pods_Lumena;
-			productReference = 538E3107C2B6F322DE0B27BC88E16486 /* Pods_Lumena.framework */;
+			productReference = 538E3107C2B6F322DE0B27BC88E16486 /* Pods-Lumena */;
 			productType = "com.apple.product-type.framework";
 		};
 		DC5C3A7662FFA04D04D29F4657D032CE /* XLPagerTabStrip */ = {
@@ -546,7 +546,7 @@
 			);
 			name = XLPagerTabStrip;
 			productName = XLPagerTabStrip;
-			productReference = F1DDEA945255A18F0B9913AB1C2AB718 /* XLPagerTabStrip.framework */;
+			productReference = F1DDEA945255A18F0B9913AB1C2AB718 /* XLPagerTabStrip */;
 			productType = "com.apple.product-type.framework";
 		};
 		EBF90A3A56D4C5830C212D000AB67BC1 /* XLPagerTabStrip-XLPagerTabStrip */ = {
@@ -563,7 +563,7 @@
 			);
 			name = "XLPagerTabStrip-XLPagerTabStrip";
 			productName = XLPagerTabStrip;
-			productReference = 78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip.bundle */;
+			productReference = 78BA4BB1A553AB4136F879792D99C87D /* XLPagerTabStrip-XLPagerTabStrip */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -639,7 +639,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C39D6A2F4F119EA5CF18C440AB6648B /* XLPagerTabStrip.bundle in Resources */,
+				6C39D6A2F4F119EA5CF18C440AB6648B /* XLPagerTabStrip-XLPagerTabStrip in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,7 +778,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/TwitterProfile/TwitterProfile-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/TwitterProfile/TwitterProfile-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -850,7 +850,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/ACThumbnailGenerator-Swift/ACThumbnailGenerator-Swift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/ACThumbnailGenerator-Swift/ACThumbnailGenerator-Swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -922,7 +922,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -951,7 +951,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1039,7 +1039,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1067,7 +1067,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1142,7 +1142,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/TwitterProfile/TwitterProfile-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/TwitterProfile/TwitterProfile-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1176,7 +1176,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/ACThumbnailGenerator-Swift/ACThumbnailGenerator-Swift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/ACThumbnailGenerator-Swift/ACThumbnailGenerator-Swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

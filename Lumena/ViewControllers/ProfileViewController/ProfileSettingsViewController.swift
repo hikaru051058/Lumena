@@ -10,7 +10,16 @@ import UIKit
 import SwiftUI
 import Amplify
 
-class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+protocol ProfileSettingsDelegate: AnyObject {
+    func didUpdateUserName(_ newUserName: String)
+    func didUpdateFirstName(_ newFirstName: String)
+    func didUpdateDescription(_ newDescription: String)
+    func didUpdateProfileImage(_ newProfileImage: UIImage)
+    func didUpdateBackgroundImage(_ newBackgroundImage: UIImage)
+    func didUpdateSkinSettings(_ newSkinSettings: SkinSettingsAttributes)
+}
+
+class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, SkinSettingViewControllerDelegate {
     
     // UI Components
     private var backgroundImageView: UIImageView!
@@ -47,6 +56,8 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     var userPrivate: Bool = false
     var profSelectedImage: UIImage?
     var backSelectedImage: UIImage?
+    
+    weak var delegate: ProfileSettingsDelegate?
     
     init(profile: ProfileSettings) {
         self.profile = profile
@@ -340,7 +351,12 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
 
     @objc private func handleSkinSettingTap() {
         let skinSettingVC = SkinSettingViewController(profile: profile, mainOrSetting: true)
+        skinSettingVC.delegate = self
         navigationController?.pushViewController(skinSettingVC, animated: true)
+    }
+    
+    func skinSettingViewControllerDidDismiss(_ skinSettings: SkinSettingsAttributes) {
+        delegate?.didUpdateSkinSettings(skinSettings)
     }
 
     @objc private func handleLogout() {
@@ -436,6 +452,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
                 self?.nameButton.setTitle(newName, for: .normal)
                 self?.profile.givenName = newName
                 self?.nameButton.configuration?.baseForegroundColor = newName.isEmpty ? .secondary : .primary
+                self?.delegate?.didUpdateFirstName(newName)
                 ProfileManager.shared.updateProfile(self!.profile)
                 // Update in Amplify
                 Task {
@@ -462,6 +479,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
             onSave: { [weak self] newUsername in
                 self?.usernameButton.setTitle(newUsername, for: .normal)
                 self?.profile.preferredUsername = newUsername
+                self?.delegate?.didUpdateUserName(newUsername)
                 self?.usernameButton.configuration?.baseForegroundColor = newUsername.isEmpty ? .secondary : .primary
                 ProfileManager.shared.updateProfile(self!.profile)
                 // Update in Amplify
@@ -489,6 +507,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
             onSave: { [weak self] newBio in
                 self?.bioButton.setTitle(newBio, for: .normal)
                 self?.profile.bio = newBio
+                self?.delegate?.didUpdateDescription(newBio)
                 self?.bioButton.configuration?.baseForegroundColor = newBio.isEmpty ? .secondary : .primary
                 ProfileManager.shared.updateProfile(self!.profile)
                 // Update in Amplify
@@ -537,13 +556,17 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
             profSelectedImage = image
             profileImageView.image = profSelectedImage
             profileImageView.subviews.forEach { $0.removeFromSuperview() } // Clear any added subviews
+            profileImageView.layoutIfNeeded()
+            self.delegate?.didUpdateProfileImage(image)
             Task {
                 await profile.uploadProfileImage(image: image)
             }
         } else {
             backSelectedImage = image
-            backgroundImageView.image = backSelectedImage
             backgroundImageView.subviews.forEach { $0.removeFromSuperview() } // Clear any added subviews
+            backgroundImageView.image = backSelectedImage
+            backgroundImageView.layoutIfNeeded()
+            self.delegate?.didUpdateBackgroundImage(image)
             Task {
                 await profile.uploadBackgroundImage(image: image)
             }

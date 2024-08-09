@@ -39,14 +39,17 @@ class HeaderViewController: UIViewController {
     var descriptionContainer: UIView!
     var bottomViewController: BottomViewController!
     var profileStatFollowNumber: ProfileStatsViewController!
+    var profileStatSkinSettings: SkinSettingsProfileBubbleViewController! //UIHostingController<skinSettingsProfileBubbleView>!
     var followButtonVC: UIHostingController<ProfileFollowButtonView>!
     var expandableTextViewController: ExpandableTextViewController!
+    
+    private var expandableTextViewBottomAnchor: NSLayoutConstraint!
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = 6
+        stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -64,6 +67,8 @@ class HeaderViewController: UIViewController {
     
     var initialValuesSet = false
     
+    var isAccountUser: Bool = false
+    
     @ObservedObject var profile: ProfileSettings
     var userIdentityID: String!
     
@@ -71,9 +76,10 @@ class HeaderViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(profile: ProfileSettings, userIdentityID: String) {
+    init(profile: ProfileSettings, userIdentityID: String, isAccountUser: Bool = false) {
         self.profile = profile
         self.userIdentityID = userIdentityID
+        self.isAccountUser = isAccountUser
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -137,20 +143,27 @@ extension HeaderViewController {
         }.store(in: &cancellables)
     }
     
-    private func updateUserNameLabel(with preferredUsername: String) {
+    func updateUserNameLabel(with preferredUsername: String) {
         userNameLabel.text = "@\(preferredUsername)"
     }
     
-    private func updateUserGivenNameLabel(with givenName: String) {
+    func updateUserGivenNameLabel(with givenName: String) {
         userGivenNameLabel.text = givenName
     }
     
-    private func updateBioLabel(with bio: String) {
+    func updateBioLabel(with bio: String) {
         expandableTextViewController.text = bio
+        didUpdateHeight(expandableTextViewController.getCurrentHeight())
+        adaptCoverImageHeight()
+        update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
     }
     
-    private func updateUserProfileImageView(with profileImage: UIImage?) {
+    func updateUserProfileImageView(with profileImage: UIImage?) {
+        profile.profileImage?.image = profileImage
+        userImageView.subviews.forEach { $0.removeFromSuperview() }
         userImageView.image = profileImage
+        userImageView.layoutIfNeeded()
+        self.view.layoutIfNeeded()
     }
 }
 
@@ -195,12 +208,15 @@ extension HeaderViewController {
     }
     
     private func adaptCoverImageHeight() {
-        let profileBackgroundHeight = stackView.frame.height + 50
-        let dynamicHeight = UIScreen.main.bounds.height - profileBackgroundHeight
-        coverImageHeightConstraint.constant = dynamicHeight
-        covernitialHeight = dynamicHeight
-        covernitialCenterY = dynamicHeight/2
-        update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
+        UIView.animate(withDuration: 0.2) { [self] in
+            let profileBackgroundHeight = self.stackView.frame.height + 50
+            let dynamicHeight = UIScreen.main.bounds.height - profileBackgroundHeight
+            self.coverImageHeightConstraint.constant = dynamicHeight
+            self.covernitialHeight = dynamicHeight
+            self.covernitialCenterY = dynamicHeight/2
+            self.update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
+            self.stackView.layoutIfNeeded()
+        }
     }
     
     private func addCoverImage() {
@@ -274,17 +290,32 @@ extension HeaderViewController {
         profileBackground.translatesAutoresizingMaskIntoConstraints = false
         profileBackground.backgroundColor = .background
         profileBackground.layer.masksToBounds = true
-//        profileBackground.layer.zPosition = profileInfoZPosition - 5
+        //        profileBackground.layer.zPosition = profileInfoZPosition - 5
         profileBackground.layer.cornerRadius = 40 // Set the corner radius
         if #available(iOS 13.0, *) {
             profileBackground.layer.cornerCurve = .continuous // Use continuous corner curve for a smoother look
         }
         profileBackground.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] // Round top-left and top-right corners
         view.addSubview(profileBackground)
+        
+        
+        if expandableTextViewController != nil {
+            let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: expandableTextViewController.bottomAnchor, constant: 16)
+            profileBackgroundBottomAnchor.isActive = true
+        } else if followButtonVC != nil {
+            let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: followButtonVC.view.bottomAnchor, constant: 16)
+            profileBackgroundBottomAnchor.isActive = true
+        } else if profileStatSkinSettings != nil {
+            let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: profileStatSkinSettings.view.bottomAnchor, constant: 16)
+            profileBackgroundBottomAnchor.isActive = true
+        } else {
+            let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: profileStatFollowNumber.view.bottomAnchor, constant: 16)
+            profileBackgroundBottomAnchor.isActive = true
+        }
+        
         NSLayoutConstraint.activate([
             profileBackground.widthAnchor.constraint(equalTo: view.widthAnchor),
             profileBackground.topAnchor.constraint(equalTo: userImageView.centerYAnchor),
-            profileBackground.bottomAnchor.constraint(equalTo: expandableTextViewController.view.bottomAnchor, constant: 32)
         ])
     }
     
@@ -302,6 +333,7 @@ extension HeaderViewController {
         addUserGivenNameLabel(to: stackView)
         addUserPreferredUsernameLabel(to: stackView)
         addFollowNumberInfo(to: stackView)
+        addSkinSettingsInfo(to: stackView)
         addFollowButton(to: stackView)
         addExpandableTextViewController(to: stackView)
         
@@ -339,7 +371,8 @@ extension HeaderViewController {
     }
 }
 
-extension HeaderViewController {
+extension HeaderViewController: ExpandableTextViewControllerDelegate {
+    
     private func addUserProfileImageView(to stackView: UIStackView) {
         // Container view to hold both the shimmer view and the actual profile image view
         let containerView = UIView()
@@ -425,7 +458,6 @@ extension HeaderViewController {
         imageView.layoutIfNeeded()
     }
 
-    
     private func addUserGivenNameLabel(to stackView: UIStackView) {
         // user profile name
         userGivenNameLabel = UILabel()
@@ -472,9 +504,27 @@ extension HeaderViewController {
         
         view.bringSubviewToFront(profileStatFollowNumber.view)
     }
+    
+    private func addSkinSettingsInfo(to stackView: UIStackView) {
+        if !isAccountUser {
+            return
+        }
+        
+//        profileStatSkinSettings = UIHostingController(rootView: skinSettingsProfileBubbleView(skinSettings: profile.skinSetting ?? SkinSettingsAttributes()))
+        profileStatSkinSettings = SkinSettingsProfileBubbleViewController(skinSettings: profile.skinSetting ?? SkinSettingsAttributes())
+        addChild(profileStatSkinSettings)
+        stackView.addArrangedSubview(profileStatSkinSettings.view)
+        profileStatSkinSettings.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            profileStatSkinSettings.view.heightAnchor.constraint(equalToConstant: 75)
+        ])
+        profileStatSkinSettings.didMove(toParent: self)
+        
+        view.bringSubviewToFront(profileStatSkinSettings.view)
+    }
 
     private func addFollowButton(to stackView: UIStackView) {
-        if profile.identityID == GI.shared.identityID {
+        if isAccountUser {
             return
         }
         
@@ -494,21 +544,45 @@ extension HeaderViewController {
         view.bringSubviewToFront(followButtonVC.view)
     }
 
-
     private func addExpandableTextViewController(to stackView: UIStackView) {
-        expandableTextViewController = ExpandableTextViewController(text: profile.bio)
-        addChild(expandableTextViewController)
-        expandableTextViewController.view.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-        expandableTextViewController.view.layer.cornerRadius = 15
-        expandableTextViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addArrangedSubview(expandableTextViewController.view)
-        NSLayoutConstraint.activate([
-            expandableTextViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            expandableTextViewController.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-        ])
-        expandableTextViewController.didMove(toParent: self)
         
-        view.bringSubviewToFront(expandableTextViewController.view)
+        let descriptionText = profile.bio
+        expandableTextViewController = ExpandableTextViewController(text: descriptionText)
+        expandableTextViewController.delegate = self
+        view.addSubview(expandableTextViewController)
+        expandableTextViewController.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(expandableTextViewController)
+        
+        let textBoxHeight = profile.bio.isEmpty ? 0 : max(expandableTextViewController.getCurrentHeight(), 32) + 16
+        
+        if followButtonVC != nil {
+            
+            DispatchQueue.main.async { [self] in
+                expandableTextViewBottomAnchor = expandableTextViewController.bottomAnchor.constraint(equalTo: followButtonVC.view.bottomAnchor, constant: textBoxHeight)
+                expandableTextViewBottomAnchor.isActive = true
+                
+                NSLayoutConstraint.activate([
+                    expandableTextViewController.topAnchor.constraint(equalTo: followButtonVC.view.safeAreaLayoutGuide.bottomAnchor),
+                    expandableTextViewController.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+                    expandableTextViewController.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+                ])
+            }
+            
+        } else {
+            
+            DispatchQueue.main.async { [self] in
+                expandableTextViewBottomAnchor = expandableTextViewController.bottomAnchor.constraint(equalTo: profileStatSkinSettings.view.bottomAnchor, constant: textBoxHeight)
+                expandableTextViewBottomAnchor.isActive = true
+                
+                NSLayoutConstraint.activate([
+                    expandableTextViewController.topAnchor.constraint(equalTo: profileStatSkinSettings.view.safeAreaLayoutGuide.bottomAnchor),
+                    expandableTextViewController.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+                    expandableTextViewController.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+                ])
+            }
+        }
+        
+        view.bringSubviewToFront(expandableTextViewController)
     }
     
     private func logoutAndNavigateToLumeHorizontalTabViewController() {
@@ -617,18 +691,22 @@ extension HeaderViewController {
         titleView.alpha = progress
         
         let titleOffset: CGFloat
-        if expandableTextViewController.text == "" {
-            if profile.identityID == GI.shared.identityID {
-                titleOffset = max(min(0, (profileStatFollowNumber.view.convert(profileStatFollowNumber.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+        if profile.bio.isEmpty {
+            if isAccountUser {
+                if profileStatSkinSettings != nil {
+                    titleOffset = max(min(0, (profileStatSkinSettings.view.convert(profileStatSkinSettings.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+                } else {
+                    titleOffset = max(min(0, (profileStatFollowNumber.view.convert(profileStatFollowNumber.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+                }
             } else {
                 if followButtonVC != nil {
                     titleOffset = max(min(0, (followButtonVC.view.convert(followButtonVC.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
                 } else {
-                    titleOffset = max(min(0, (profileStatFollowNumber.view.convert(profileStatFollowNumber.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+                    titleOffset = max(min(0, (profileStatSkinSettings.view.convert(profileStatSkinSettings.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
                 }
             }
         } else {
-            titleOffset = max(min(0, (expandableTextViewController.view.convert(expandableTextViewController.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+            titleOffset = max(min(0, (expandableTextViewController.convert(expandableTextViewController.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
         }
         titleView.contentOffset.y = -titleOffset - titleView.frame.height
         
@@ -688,14 +766,14 @@ extension HeaderViewController {
     func updateProfile(profile: ProfileSettings) {
         self.profile = profile
         
-        if let profileImage =  profile.profileImage?.image {
-            userImageView.image = profileImage
-            userImageView.isHidden = false // Show the image view
-//            userImageViewShimmerView.isHidden = true // Hide the shimmer view
-            Task {
-                ProfileManager.shared.updateProfile(profile)
-            }
-        }
+//        if let profileImage =  profile.profileImage?.image {
+//            userImageView.image = profileImage
+//            userImageView.isHidden = false // Show the image view
+////            userImageViewShimmerView.isHidden = true // Hide the shimmer view
+//            Task {
+//                ProfileManager.shared.updateProfile(profile)
+//            }
+//        }
         
         // Update given name
         if profile.givenName != "" {
@@ -714,16 +792,35 @@ extension HeaderViewController {
         }
         
         titleLabel.text = profile.preferredUsername
-        expandableTextViewController.text = profile.bio
         profileStatFollowNumber.updateProfile(profile: profile)
         bottomViewController.updateProfile(profile: profile)
         toolBar.updateProfile(profile: profile)
         profileToolButtonVC.updateProfile(profile: profile)
-
+        
+        expandableTextViewController.text = profile.bio
+        expandableTextViewController.layoutIfNeeded()
+        
         adaptCoverImageHeight()
         
-        expandableTextViewController.view.layoutIfNeeded()
         view.layoutIfNeeded()
+    }
+    
+    func updateSkinSettings(newSkinSettings: SkinSettingsAttributes) {
+        profileStatSkinSettings.updateSkinSettings(skinSettings: newSkinSettings)
+    }
+    
+    func didUpdateHeight(_ height: CGFloat) {
+        guard expandableTextViewBottomAnchor != nil else {
+            return
+        }
+        
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            guard let self = self else { return }
+            self.expandableTextViewBottomAnchor.constant = self.expandableTextViewController.text.isEmpty ? 0 : max(height, 32) + 16
+            print("height updated: \(self.expandableTextViewBottomAnchor.constant)")
+            self.adaptCoverImageHeight()
+            self.expandableTextViewController.layoutIfNeeded()
+        }
     }
     
     @objc private func appWillEnterForeground() {

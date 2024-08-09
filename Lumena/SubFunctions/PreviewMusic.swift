@@ -14,34 +14,9 @@ import AVKit
 import Combine
 
 
-class AudioPlayer {
+class LumeAudioPlayer {
     
-    /*
-     
-     fetching music ->
-     
-        fetch using spotify api
-     
-        on init, it will receive all the music within the trending music album
-        this will append the musics in the public tracks array
-     
-        then user will be able to tag and the tagMusicIndex will change from -1 to the tagging index muber
-     
-        when user searches using search term, would it erase the tracks array or should I keep the most trending tracks and create another array called searchResult tracks
-     
-     
-        -> Maybe create two tracks, trending and searchResult arrays
-            -> there will be one tagMusicIndex for to maintain consistency
-            
-        But isnt it unprofessional to use index number of the music in the tracks instead of the UUID cuz then, what if the user searches up and selects song A and when they go back to the trend array, it does not show thta the track was not selected? -> this is inconvenient and not logical
-     
-     
-        how can i fetch the UUID of the music from spotify?
-        
-        
-     */
-    
-    static let shared = AudioPlayer()
+    static let shared = LumeAudioPlayer()
     
     var access_token: String = "null"
     public var tracks: [Track] = []

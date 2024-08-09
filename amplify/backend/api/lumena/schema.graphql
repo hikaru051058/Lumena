@@ -1,4 +1,4 @@
-type SkinSettingsAttributes {
+type SkinSettingsAttributesQL {
   skinSensitivity: SkinSensitivity
   skinUVBathing: String
   skinType: SkinType
@@ -231,6 +231,7 @@ type LumeQL @model @auth(rules: [{allow: public}]) {
   hashTags: [String]
   zipURL: String
   lumeAuth: Boolean
+  voiceOverURL: [AWSURL]
 }
 
 type UserProfileQL @model @auth(rules: [{allow: public}]) {
@@ -249,6 +250,7 @@ type UserProfileQL @model @auth(rules: [{allow: public}]) {
   postCount: Int
   profileImageLastModified: Int
   backgroundImageLastModified: Int
-  skinSettings: SkinSettingsAttributes
+  skinSettings: SkinSettingsAttributesQL
+  skinStreaks: Int
 }
  

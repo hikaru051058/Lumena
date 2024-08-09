@@ -12,9 +12,9 @@
 		171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */; };
 		173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */; };
 		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
-		174E89802C50C5CC0079312D /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174E897F2C50C5CC0079312D /* ExpandableText.swift */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
 		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
+		1777D7C82C57E06C00C09067 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1777D7C72C57E06C00C09067 /* AudioRecorder.swift */; };
 		177DDFA92C459E240042802B /* LoadingWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFA52C459E240042802B /* LoadingWebView.swift */; };
 		177DDFCD2C45A0EB0042802B /* ReadingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC02C45A0EB0042802B /* ReadingData.swift */; };
 		177DDFCF2C45A0EB0042802B /* ReadingDataRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC22C45A0EB0042802B /* ReadingDataRow.swift */; };
@@ -59,7 +59,7 @@
 		17C0ABB12BFEA90100FA027A /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */; };
 		17C0ABB22BFEA90100FA027A /* HeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA62BFEA90000FA027A /* HeaderViewController.swift */; };
 		17C0ABB32BFEA90100FA027A /* LabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA72BFEA90000FA027A /* LabelCell.swift */; };
-		17C0ABB42BFEA90100FA027A /* XLPagerTabStripExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA82BFEA90000FA027A /* XLPagerTabStripExampleViewController.swift */; };
+		17C0ABB42BFEA90100FA027A /* ProfileXLPagerTabStripViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABA82BFEA90000FA027A /* ProfileXLPagerTabStripViewController.swift */; };
 		17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAA2BFEA90000FA027A /* Colors.swift */; };
 		17C0ABB62BFEA90100FA027A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAB2BFEA90000FA027A /* Extensions.swift */; };
 		17C0ABB72BFEA90100FA027A /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAC2BFEA90000FA027A /* GradientView.swift */; };
@@ -170,10 +170,10 @@
 		17FFC0972BD61E7E00682EE2 /* AWSS3StoragePlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0962BD61E7E00682EE2 /* AWSS3StoragePlugin */; };
 		17FFC0992BD61E7E00682EE2 /* Amplify in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC0982BD61E7E00682EE2 /* Amplify */; };
 		17FFC09B2BD61E7E00682EE2 /* CoreMLPredictionsPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 17FFC09A2BD61E7E00682EE2 /* CoreMLPredictionsPlugin */; };
+		5E5CAC2E2A1BB9576A05D7A8 /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C33AED7B56847C6F5516052 /* Pods_LumenaNotificationAPNAWS.framework */; };
+		9610303F4A7CCA7F7D812B75 /* Pods_Lumena.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45FBF0484020AD785E4DDDB1 /* Pods_Lumena.framework */; };
 		9E9F5DB0CDDF92416F95B1F4 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 43857A6C65D43346ED17699C /* awsconfiguration.json */; };
-		AAA156DF0ED8D8399B42620E /* Pods_Lumena.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90B9A4CDFA42EE80910BE73 /* Pods_Lumena.framework */; };
 		E2E15858C2B4FB6A94BCAC0D /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */; };
-		FD63B67BA850744AD4C8354A /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A0C1A58D9CF5E7D36E93BD /* Pods_LumenaNotificationAPNAWS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,15 +201,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1660B82200874B52106EE4A2 /* Pods-Lumena.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.debug.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.debug.xcconfig"; sourceTree = "<group>"; };
 		1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingViewController.swift; sourceTree = "<group>"; };
 		170264712BEB0C30004C9444 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
 		173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfirmationCodeViewController.swift; sourceTree = "<group>"; };
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
-		174E897F2C50C5CC0079312D /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
+		1777D7C72C57E06C00C09067 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		177DDF9D2C459DB90042802B /* BrowserViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserViewModel.swift; sourceTree = "<group>"; };
 		177DDF9E2C459DB90042802B /* BrowserWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserWebView.swift; sourceTree = "<group>"; };
 		177DDF9F2C459DBA0042802B /* BrowserView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
@@ -263,7 +264,7 @@
 		17C0ABA52BFEA90000FA027A /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		17C0ABA62BFEA90000FA027A /* HeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderViewController.swift; sourceTree = "<group>"; };
 		17C0ABA72BFEA90000FA027A /* LabelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelCell.swift; sourceTree = "<group>"; };
-		17C0ABA82BFEA90000FA027A /* XLPagerTabStripExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XLPagerTabStripExampleViewController.swift; sourceTree = "<group>"; };
+		17C0ABA82BFEA90000FA027A /* ProfileXLPagerTabStripViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileXLPagerTabStripViewController.swift; sourceTree = "<group>"; };
 		17C0ABAA2BFEA90000FA027A /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		17C0ABAB2BFEA90000FA027A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		17C0ABAC2BFEA90000FA027A /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
@@ -357,13 +358,12 @@
 		17FFC07F2BD61DB100682EE2 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		43857A6C65D43346ED17699C /* awsconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
-		4C3CB42CA34F7D84200321BD /* Pods-LumenaNotificationAPNAWS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.release.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.release.xcconfig"; sourceTree = "<group>"; };
+		45FBF0484020AD785E4DDDB1 /* Pods_Lumena.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lumena.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		497ED3EED90D37D3333975DB /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.debug.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.debug.xcconfig"; sourceTree = "<group>"; };
 		5CEBF2FFFEDA1B9D77B3C7CF /* amplifyconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
-		5F6EA4AF38CB3DE4694F0F47 /* Pods-Lumena.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.release.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.release.xcconfig"; sourceTree = "<group>"; };
-		A2CEC5A24758D4CF2E66B328 /* Pods-Lumena.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.debug.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.debug.xcconfig"; sourceTree = "<group>"; };
-		B3A0C1A58D9CF5E7D36E93BD /* Pods_LumenaNotificationAPNAWS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LumenaNotificationAPNAWS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C90B9A4CDFA42EE80910BE73 /* Pods_Lumena.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lumena.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D834C384C4F9496D5958D00E /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.debug.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.debug.xcconfig"; sourceTree = "<group>"; };
+		7C33AED7B56847C6F5516052 /* Pods_LumenaNotificationAPNAWS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LumenaNotificationAPNAWS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		95A9F073EB5497DB42AFF570 /* Pods-Lumena.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lumena.release.xcconfig"; path = "Target Support Files/Pods-Lumena/Pods-Lumena.release.xcconfig"; sourceTree = "<group>"; };
+		C1A9BBB0F1B0E0509BC0FE63 /* Pods-LumenaNotificationAPNAWS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumenaNotificationAPNAWS.release.xcconfig"; path = "Target Support Files/Pods-LumenaNotificationAPNAWS/Pods-LumenaNotificationAPNAWS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,7 +372,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17A7C2252BD66B92008FED83 /* AWSPinpointPushNotificationsPlugin in Frameworks */,
-				FD63B67BA850744AD4C8354A /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */,
+				5E5CAC2E2A1BB9576A05D7A8 /* Pods_LumenaNotificationAPNAWS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,7 +394,7 @@
 				17FFC0952BD61E7E00682EE2 /* AWSPredictionsPlugin in Frameworks */,
 				17FFC07D2BD61C8400682EE2 /* ColorKit in Frameworks */,
 				17FFC0972BD61E7E00682EE2 /* AWSS3StoragePlugin in Frameworks */,
-				AAA156DF0ED8D8399B42620E /* Pods_Lumena.framework in Frameworks */,
+				9610303F4A7CCA7F7D812B75 /* Pods_Lumena.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +504,14 @@
 				17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */,
 			);
 			path = DescriptionBox;
+			sourceTree = "<group>";
+		};
+		1777D7B72C57CBCE00C09067 /* PostAudioPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				1777D7C72C57E06C00C09067 /* AudioRecorder.swift */,
+			);
+			path = PostAudioPlayer;
 			sourceTree = "<group>";
 		};
 		177DDFA32C459DC40042802B /* Browser */ = {
@@ -643,7 +651,7 @@
 				179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */,
 				17C0ABA62BFEA90000FA027A /* HeaderViewController.swift */,
 				17C0ABA72BFEA90000FA027A /* LabelCell.swift */,
-				17C0ABA82BFEA90000FA027A /* XLPagerTabStripExampleViewController.swift */,
+				17C0ABA82BFEA90000FA027A /* ProfileXLPagerTabStripViewController.swift */,
 			);
 			path = ChildControllers;
 			sourceTree = "<group>";
@@ -680,7 +688,7 @@
 				2B5361B86E21440D64F99BF8 /* AmplifyConfig */,
 				170B06BD2C4902A600F6320D /* AmplifyModels */,
 				2E4DDAA05F2EFD1480943A17 /* Pods */,
-				E39BE088B67061D401921AA6 /* Frameworks */,
+				79A92BB6C922F7B434EDD1A1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -743,8 +751,8 @@
 				17FFC00B2BD618AC00682EE2 /* SubComponents.swift */,
 				170264712BEB0C30004C9444 /* Notifications.swift */,
 				17C412352C33C4420083C8A5 /* KeyboardResponder.swift */,
+				1777D7B72C57CBCE00C09067 /* PostAudioPlayer */,
 				177DDFA32C459DC40042802B /* Browser */,
-				174E897F2C50C5CC0079312D /* ExpandableText.swift */,
 			);
 			path = SubFunctions;
 			sourceTree = "<group>";
@@ -783,19 +791,19 @@
 		2E4DDAA05F2EFD1480943A17 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A2CEC5A24758D4CF2E66B328 /* Pods-Lumena.debug.xcconfig */,
-				5F6EA4AF38CB3DE4694F0F47 /* Pods-Lumena.release.xcconfig */,
-				D834C384C4F9496D5958D00E /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */,
-				4C3CB42CA34F7D84200321BD /* Pods-LumenaNotificationAPNAWS.release.xcconfig */,
+				1660B82200874B52106EE4A2 /* Pods-Lumena.debug.xcconfig */,
+				95A9F073EB5497DB42AFF570 /* Pods-Lumena.release.xcconfig */,
+				497ED3EED90D37D3333975DB /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */,
+				C1A9BBB0F1B0E0509BC0FE63 /* Pods-LumenaNotificationAPNAWS.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		E39BE088B67061D401921AA6 /* Frameworks */ = {
+		79A92BB6C922F7B434EDD1A1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C90B9A4CDFA42EE80910BE73 /* Pods_Lumena.framework */,
-				B3A0C1A58D9CF5E7D36E93BD /* Pods_LumenaNotificationAPNAWS.framework */,
+				45FBF0484020AD785E4DDDB1 /* Pods_Lumena.framework */,
+				7C33AED7B56847C6F5516052 /* Pods_LumenaNotificationAPNAWS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -807,7 +815,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17A7C2232BD66B57008FED83 /* Build configuration list for PBXNativeTarget "LumenaNotificationAPNAWS" */;
 			buildPhases = (
-				A3861CFFEADB880691AE6153 /* [CP] Check Pods Manifest.lock */,
+				464FFA6EBA9F6EDCEDAFAB04 /* [CP] Check Pods Manifest.lock */,
 				17A7C2142BD66B57008FED83 /* Sources */,
 				17A7C2152BD66B57008FED83 /* Frameworks */,
 				17A7C2162BD66B57008FED83 /* Resources */,
@@ -828,12 +836,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17FFBFB52BD616DC00682EE2 /* Build configuration list for PBXNativeTarget "Lumena" */;
 			buildPhases = (
-				0EC93F1D3F41F8DACE2AE26E /* [CP] Check Pods Manifest.lock */,
+				16CCE689C75B79898961274D /* [CP] Check Pods Manifest.lock */,
 				17FFBF9D2BD616D900682EE2 /* Sources */,
 				17FFBF9E2BD616D900682EE2 /* Frameworks */,
 				17FFBF9F2BD616D900682EE2 /* Resources */,
 				17A7C2202BD66B57008FED83 /* Embed Foundation Extensions */,
-				DDEDEF631C07361536CA1583 /* [CP] Embed Pods Frameworks */,
+				6F24BE7E89C384B4A87CD596 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -928,7 +936,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0EC93F1D3F41F8DACE2AE26E /* [CP] Check Pods Manifest.lock */ = {
+		16CCE689C75B79898961274D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -950,7 +958,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A3861CFFEADB880691AE6153 /* [CP] Check Pods Manifest.lock */ = {
+		464FFA6EBA9F6EDCEDAFAB04 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -972,7 +980,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DDEDEF631C07361536CA1583 /* [CP] Embed Pods Frameworks */ = {
+		6F24BE7E89C384B4A87CD596 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -980,13 +988,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Lumena/Pods-Lumena-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Lumena/Pods-Lumena-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1068,6 +1072,7 @@
 				17FFC0722BD6190900682EE2 /* Profile.swift in Sources */,
 				17FFC06F2BD6190900682EE2 /* Amplify.swift in Sources */,
 				17FFC0472BD6190900682EE2 /* PostContent.swift in Sources */,
+				1777D7C82C57E06C00C09067 /* AudioRecorder.swift in Sources */,
 				1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */,
 				17FFC0442BD6190900682EE2 /* CustomImagePicker.swift in Sources */,
 				17FFC0762BD61A3800682EE2 /* test.swift in Sources */,
@@ -1090,7 +1095,6 @@
 				17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */,
 				17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */,
 				17C0ABB02BFEA90100FA027A /* DescriptionBoxViewController.swift in Sources */,
-				174E89802C50C5CC0079312D /* ExpandableText.swift in Sources */,
 				17FFC03C2BD6190900682EE2 /* ModelCache.swift in Sources */,
 				17FFC0702BD6190900682EE2 /* CreateAccount.swift in Sources */,
 				17B7A3C22C04104E00777CC1 /* SharedTransitioning.swift in Sources */,
@@ -1143,7 +1147,7 @@
 				17B7A3D12C04104E00777CC1 /* UICollectionView+Extensions.swift in Sources */,
 				17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */,
 				17B7A3CF2C04104E00777CC1 /* Then.swift in Sources */,
-				17C0ABB42BFEA90100FA027A /* XLPagerTabStripExampleViewController.swift in Sources */,
+				17C0ABB42BFEA90100FA027A /* ProfileXLPagerTabStripViewController.swift in Sources */,
 				179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */,
 				177DDFD02C45A0EB0042802B /* ReadingDetailView.swift in Sources */,
 				17B7A3B32C04104E00777CC1 /* ImageCacheSharedTransition.swift in Sources */,
@@ -1187,7 +1191,7 @@
 /* Begin XCBuildConfiguration section */
 		17A7C2212BD66B57008FED83 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D834C384C4F9496D5958D00E /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */;
+			baseConfigurationReference = 497ED3EED90D37D3333975DB /* Pods-LumenaNotificationAPNAWS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1213,7 +1217,7 @@
 		};
 		17A7C2222BD66B57008FED83 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C3CB42CA34F7D84200321BD /* Pods-LumenaNotificationAPNAWS.release.xcconfig */;
+			baseConfigurationReference = C1A9BBB0F1B0E0509BC0FE63 /* Pods-LumenaNotificationAPNAWS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1360,7 +1364,7 @@
 		};
 		17FFBFB62BD616DC00682EE2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2CEC5A24758D4CF2E66B328 /* Pods-Lumena.debug.xcconfig */;
+			baseConfigurationReference = 1660B82200874B52106EE4A2 /* Pods-Lumena.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1379,8 +1383,10 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1401,7 +1407,7 @@
 		};
 		17FFBFB72BD616DC00682EE2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5F6EA4AF38CB3DE4694F0F47 /* Pods-Lumena.release.xcconfig */;
+			baseConfigurationReference = 95A9F073EB5497DB42AFF570 /* Pods-Lumena.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1420,8 +1426,10 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

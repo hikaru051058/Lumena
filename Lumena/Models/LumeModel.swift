@@ -67,13 +67,15 @@ class LumeVideo: Identifiable {
     var player: AVPlayer?
     var url: URL?
     var thumbnail: UIImage?
+    var lumeVideoAuth: Bool = false
     
-    init(player: AVPlayer? = nil, url: URL? = nil) {
+    init(player: AVPlayer? = nil, url: URL? = nil, lumeAuth: Bool = false) {
         self.player = player
         self.url = url
         if let url = url {
             self.player = AVPlayer(url: url)
         }
+        self.lumeVideoAuth = lumeAuth
     }
     
     func mute(muteBool: Bool = true) {
@@ -121,6 +123,38 @@ class LumeVideo: Identifiable {
         } else {
             return nil
         }
+    }
+    
+    func getTotalDuration(completion: @escaping (CMTime) -> Void) {
+        guard let player = player, let currentItem = player.currentItem else {
+            completion(CMTime(seconds: 0, preferredTimescale: 1))
+            return
+        }
+
+        let asset = currentItem.asset
+
+        Task {
+            do {
+                let duration = try await asset.load(.duration)
+                DispatchQueue.main.async {
+                    completion(duration)
+                }
+            } catch {
+                print("Failed to load duration: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(CMTime(seconds: 0, preferredTimescale: 1))
+                }
+            }
+        }
+    }
+    
+    func getTotalDuration() async throws -> CMTime {
+        guard let player = player, let currentItem = player.currentItem else {
+            return CMTime(seconds: 0, preferredTimescale: 1)
+        }
+        
+        let asset = currentItem.asset
+        return try await asset.load(.duration)
     }
     
     // New method to get the URL of the video
@@ -189,6 +223,48 @@ class LumeVideo: Identifiable {
             }
         }
     }
+    
+    // Function to remove audio from the video
+    func removeAudio(completion: @escaping (Bool) -> Void) {
+        guard let currentItem = self.player?.currentItem else {
+            completion(false)
+            return
+        }
+        
+        let composition = AVMutableComposition()
+
+        Task {
+            do {
+                // Load video tracks asynchronously
+                let videoTracks = try await currentItem.asset.loadTracks(withMediaType: .video)
+                if let videoTrack = videoTracks.first {
+                    let videoCompositionTrack = composition.addMutableTrack(
+                        withMediaType: .video,
+                        preferredTrackID: kCMPersistentTrackID_Invalid
+                    )
+                    let videoDuration = try await currentItem.asset.load(.duration)
+                    let preferredTransform = try await videoTrack.load(.preferredTransform)
+                    try videoCompositionTrack?.insertTimeRange(
+                        CMTimeRange(start: .zero, duration: videoDuration),
+                        of: videoTrack,
+                        at: .zero
+                    )
+                    
+                    // Set the preferred transform to maintain orientation
+                    videoCompositionTrack?.preferredTransform = preferredTransform
+                }
+
+                // Do not add any audio tracks to the composition
+
+                let playerItem = AVPlayerItem(asset: composition)
+                self.player?.replaceCurrentItem(with: playerItem)
+                completion(true)
+            } catch {
+                print("Error loading tracks or inserting time range: \(error)")
+                completion(false)
+            }
+        }
+    }
 }
 
 class LumeImage: Identifiable, ObservableObject {
@@ -196,15 +272,17 @@ class LumeImage: Identifiable, ObservableObject {
     @Published var image: UIImage?
     private var cancellable: AnyCancellable?
     var url: URL?
+    var lumeImageAuth: Bool = false
     
     init(url: URL?) {
         self.url = url
         loadImage()
     }
     
-    init(image: UIImage, url: URL? = nil) {
+    init(image: UIImage, url: URL? = nil, lumeAuth: Bool = false) {
         self.image = image
         self.url = url
+        self.lumeImageAuth = lumeAuth
     }
 
     private func normalizeUrl(url: URL) -> String {
@@ -334,7 +412,6 @@ class LumeImage: Identifiable, ObservableObject {
     }
 }
 
-
 enum Content: Identifiable {
     case video(LumeVideo)
     case image(LumeImage)
@@ -345,6 +422,15 @@ enum Content: Identifiable {
             return lumeVideo.id
         case .image(let lumeImage):
             return lumeImage.id
+        }
+    }
+    
+    func lumeAuth(auth: Bool) {
+        switch self {
+        case .video(let lumeVideo):
+            lumeVideo.lumeVideoAuth = auth
+        case .image(let lumeImage):
+            lumeImage.lumeImageAuth = auth
         }
     }
 }
@@ -487,6 +573,11 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     var postUserIID: String = ""
     
     var postURL: [String] = []
+    var voiceOverURL: [String] = [] {
+        didSet {
+            self.muteVideos(mute: !voiceOverURL.isEmpty)
+        }
+    }
     
     var timestamp: Date = Date()
     var awsTimestamp: Double {
@@ -529,7 +620,24 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     var userCommentFetchedAll: Bool = false
     
     var tagProducts: [TagCosmetic] = []
-    var tagMusic: Track = Track()
+    var tagMusic: Track = Track() {
+        didSet{
+            if self.tagMusic.trackID != "" {
+                musicTag = true
+            } else {
+                musicTag = false
+            }
+        }
+    }
+    var musicTag: Bool = false
+    var longestDuration: CGFloat = 0.0
+    
+    @Published var voiceOver: AudioRecordingData = AudioRecordingData() {
+        didSet {
+            handleVoiceOverChange()
+            LumeManager.shared.updateLume(self)
+        }
+    }
     
     @Published var userLiked: Bool = false {
         didSet {
@@ -537,7 +645,16 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         }
     }
     
-    var contents: [Content] = []
+    var contents: [Content] = [] {
+        didSet {
+            self.lumeAuth = checkAuth()
+            Task {
+                self.longestDuration = await checkLongestVideoDuration()
+                print(longestDuration)
+            }
+        }
+    }
+    
     var currentContent: UUID = UUID()
     var previousContent: UUID = UUID()
     
@@ -561,7 +678,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     
     init() {}
     
-    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [Content] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
+    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], voiceOverURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [Content] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
         
         if let postUUID = UUID(uuidString: postID) {
             self.id = postUUID
@@ -572,6 +689,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         self.postID = postID
         self.postUserIID = postUserIID
         self.postURL = postURL
+        self.voiceOverURL = voiceOverURL
         self.likedUsers = likedUsers
         self.likeCnt = likeCnt
         self.postDescription = postDescription
@@ -602,6 +720,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             self.postID = lume.postID
             self.postUserIID = lume.postUserIID
             self.postURL = lume.postURL.map { String($0) }  // Deep copy of URLs
+            self.voiceOverURL = lume.voiceOverURL.map { String($0) }  // Deep copy of URLs
             self.timestamp = lume.timestamp
             self.likedUsers = lume.likedUsers  // Assuming deep copy is required
             self.likeCnt = lume.likeCnt
@@ -648,6 +767,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             postID: ql.id,
             postUserIID: postUserID,
             postURL: ql.postURL?.compactMap { $0 } ?? [],
+            voiceOverURL: ql.voiceOverURL?.compactMap { $0 } ?? [],
             likedUsers: likedUsers,
             postDescription: postDescription,
             userComments: [],
@@ -672,6 +792,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             }
         }
         
+        setupVoiceOver()
         userLikedPost()
         
         DispatchQueue.main.async {
@@ -713,6 +834,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             
             self.thumbnail = await self.getThumbnailImage()
             
+            setupVoiceOver()
             userLikedPost()
             
 //            fetchComment(commentLimit: 10)
@@ -732,7 +854,8 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             tagMusic: TagTrackQL(trackID: self.tagMusic.uri, tagMusicRange: [Double(self.tagMusic.tagMusicRange.lowerBound), Double(self.tagMusic.tagMusicRange.upperBound)]),
             description: self.postDescription,
             userprofileqlID: self.postUserIID,
-            lumeAuth: self.lumeAuth
+            lumeAuth: self.lumeAuth,
+            voiceOverURL: self.voiceOverURL
         )
     }
     
@@ -787,7 +910,6 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     //upload process
     func uploadLumeQL(completion: @escaping (Result<Void, LumeUploadError>) -> Void) {
         let s3Prefix = "s3://lumena225d91d9ee5c43d99341141978c6b54c25223-lumenaenv/public/"
-        //let cloudFrontBaseURL = "https://d1s4m1vkr1js6q.cloudfront.net/public/"
         
         let ReelID = "\(GI.shared.identityID ?? "null"):\(Int(Date.now.timeIntervalSince1970))"
         let ReelLocationS3 = "\(GI.shared.identityID ?? "null")/\(ReelID)"
@@ -813,7 +935,6 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                         let contentProgress = partProgress * progress
                         let newOverallProgress = overallProgressReported + contentProgress
                         let overallProgress = min(newOverallProgress * 0.95, 0.95)
-                        print("Overall progress: \(overallProgress * 100)%")
                         
                         if progress >= 1.0 {
                             overallProgressReported += partProgress
@@ -830,7 +951,6 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                     switch content {
                     case .video(let reelVideo):
                         let videoName = try await handleVideoUpload(video: reelVideo, index: index, ReelLocationS3: ReelLocationS3, progressUpdate: updateProgress)
-                        
                         self.postURL.append("\(s3Prefix)\(videoName)")
                         
                     case .image(let reelImage):
@@ -839,21 +959,10 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                     }
                 }
                 
-                if let result = try await GraphQL.shared.createModel(self.toLumeQL()) {
-                    
-                    print(result)
-                    
-                    // process upload
-                    do {
-                        let lumePostProcessResult = try await GraphQL.shared.lumePostProcess(postID: self.postID)
-                        print(lumePostProcessResult)
-                    } catch {
-                        print(error)
-                    }
-                    
-                } else {
-                    print("Error: Could not create ReelQL")
-                }
+                let voiceOverURLPath = await self.voiceOver.uploadFinalAudio(filePath: ReelLocationS3)
+                self.voiceOverURL.append("\(voiceOverURLPath)")
+                
+                let _ = try await GraphQL.shared.createModel(self.toLumeQL())
                 
                 NotificationCenter.default.post(name: .uploadProgressUpdated, object: nil, userInfo: [
                     "postID": self.postID,
@@ -1005,6 +1114,70 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         }
     }
     
+    private func handleVoiceOverChange() {
+        if voiceOver.audioLevels.count != 0 {
+            tagMusic.audioPlayer?.volume = 0.7
+        } else {
+            tagMusic.audioPlayer?.volume = 1.0
+        }
+    }
+    
+    private func checkAuth() -> Bool {
+        for indivContent in self.contents {
+            switch indivContent {
+            case .video(let lumeVideo):
+                if lumeVideo.lumeVideoAuth == false {
+                    return false
+                }
+            case .image(let lumeImage):
+                if lumeImage.lumeImageAuth == false {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    
+    func checkLongestVideoDuration() async -> CGFloat {
+        var longestDuration: CGFloat = 0
+        
+        for indivContent in self.contents {
+            switch indivContent {
+            case .video(let lumeVideo):
+                do {
+                    let duration = try await lumeVideo.getTotalDuration()
+                    let totalSeconds = CMTimeGetSeconds(duration)
+                    if CGFloat(totalSeconds) > longestDuration {
+                        longestDuration = CGFloat(totalSeconds)
+                    }
+                } catch {
+                    print("Failed to get duration: \(error.localizedDescription)")
+                }
+            case .image:
+                continue
+            }
+        }
+        
+        return longestDuration
+    }
+    
+    func playAudio(repeatAudio: Bool = false) {
+        if self.voiceOver.hasRecording {
+            self.muteVideos(mute: true)
+            self.voiceOver.play(repeatAudio: repeatAudio)
+        }
+        self.tagMusic.playAudio(from: 0.0, to: Float(self.voiceOver.recordingDuration), repeat: repeatAudio)
+    }
+    
+    func stopAudio() {
+        self.voiceOver.stop()
+        self.tagMusic.stopAudio()
+    }
+    
+    private func setupVoiceOver() {
+        guard let stringURL = self.voiceOverURL.first, let url = URL(string: stringURL) else { return }
+        self.voiceOver.setAudioPlayerURL(url: url)
+    }
     
     //like
     
@@ -1152,6 +1325,13 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     
     private func dateFromTimestamp(_ timestamp: Int) -> Date {
         return Date(timeIntervalSince1970: TimeInterval(timestamp))
+    }
+    
+    // audio
+    func mute(mute: Bool = false) {
+        self.muteVideos(mute: mute)
+        self.voiceOver.isMuted = mute
+        self.tagMusic.isMuted = mute
     }
 }
 

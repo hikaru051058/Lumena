@@ -13,6 +13,30 @@ import Amplify
 import _AVKit_SwiftUI
 
 
+extension String {
+    /// A property to get a placeholder text, "Lorem Ipsum".
+    var loresIpsum: String {
+        return """
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur, nisl id volutpat sodales, metus eros auctor augue, eget molestie enim arcu vitae odio. Aliquam erat volutpat. Praesent convallis molestie felis, eu dignissim turpis malesuada non. Integer mollis, tellus sit amet egestas scelerisque, velit tellus vulputate erat, consectetur malesuada risus ex at augue. Sed ultricies tortor ut tortor facilisis, quis ornare magna feugiat. Ut ac mi eget risus rutrum placerat nec nec metus. Etiam fringilla a nibh vitae sagittis. Maecenas et diam bibendum, aliquet odio nec, egestas nulla.
+
+        Vivamus tempus tortor sapien, a sodales nunc lobortis nec. Sed feugiat nulla at erat congue vulputate. Etiam eget vulputate ipsum, at hendrerit nibh. Maecenas posuere malesuada urna nec rutrum. Nulla et magna eu dui tincidunt consequat et eget nulla. In nec nibh et lorem vehicula ullamcorper. Sed quis libero pulvinar, cursus mauris sed, efficitur dolor.
+
+        Vestibulum mattis sem metus, nec eleifend ligula placerat vitae. Aliquam posuere quam nec diam tempus, at aliquet metus rhoncus. Integer volutpat lectus nec sagittis molestie. Curabitur iaculis massa eu neque porta dignissim. Fusce dapibus faucibus turpis vel placerat. Cras orci libero, iaculis at rutrum non, vestibulum sit amet dui. Nam ultricies hendrerit augue, in feugiat augue euismod at. Mauris feugiat mi id quam bibendum, ut fermentum eros congue. Suspendisse a eros metus. Morbi ornare nunc neque, et venenatis turpis semper eu. In odio justo, mollis vel neque ac, consectetur dictum sapien. Etiam non sapien sit amet mauris placerat rhoncus.
+
+        Proin ante velit, pretium id velit nec, dictum efficitur arcu. Aliquam mattis, sapien vel iaculis tincidunt, quam urna ullamcorper ex, vehicula mollis felis tortor et nisl. Donec eget eros lacus. Sed eget enim pulvinar nulla auctor condimentum eget sed nisl. Suspendisse accumsan eros eget diam ullamcorper pulvinar. Pellentesque id enim in erat pretium tristique eget et nulla. Integer tempus at magna at rutrum. Sed mollis ligula sit amet sem laoreet, quis bibendum leo aliquam. Nullam iaculis justo dignissim risus faucibus efficitur. Nulla posuere vehicula augue accumsan consectetur. Nam porta id purus non pharetra. Ut at quam a felis consequat tristique sit amet vitae est. Pellentesque ornare nec dolor nec luctus. Duis eu semper lorem, a pretium erat. In hac habitasse platea dictumst. Cras in orci egestas, molestie quam et, consequat felis.
+
+        Aenean volutpat arcu id nisi ullamcorper, sed hendrerit ligula congue. Ut commodo efficitur ultricies. Quisque vulputate velit dolor, eu tincidunt mi consectetur eget. Donec quis imperdiet diam. Nulla congue tempus ligula. Donec nisi massa, tincidunt ut mauris sit amet, congue porttitor neque. Sed tempus leo semper libero pharetra, id sollicitudin nisl consectetur. Fusce id nunc id est bibendum euismod in vehicula urna. Quisque et ultricies orci. Vivamus imperdiet lobortis arcu sed egestas. Nullam in erat vestibulum, maximus urna in, eleifend ligula. Phasellus gravida facilisis eros eu hendrerit. Duis lectus neque, volutpat at tempus eget, fermentum et nibh. Ut porttitor eleifend iaculis. Phasellus vitae lectus feugiat, imperdiet arcu id, tincidunt quam.
+        """
+    }
+    
+    var loresIpsumShort: String {
+        return """
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur, nisl id volutpat sodales, metus eros auctor augue, eget molestie enim arcu vitae odio. Aliquam erat volutpat. Praesent convallis molestie felis, eu dignissim turpis malesuada non. Integer mollis, tellus sit amet egestas scelerisque, velit tellus vulputate erat, consectetur malesuada risus ex at augue. Sed ultricies tortor ut tortor facilisis, quis ornare magna feugiat. Ut ac mi eget risus rutrum placerat nec nec metus. Etiam fringilla a nibh vitae sagittis. Maecenas et diam bibendum, aliquet odio nec, egestas nulla.
+
+        Vivamus tempus tortor sapien, a sodales nunc lobortis nec. Sed feugiat nulla at erat congue vulputate. Etiam eget vulputate ipsum, at hendrerit nibh. Maecenas posuere malesuada urna nec rutrum. Nulla et magna eu dui tincidunt consequat et eget nulla. In nec nibh et lorem vehicula ullamcorper. Sed quis libero pulvinar, cursus mauris sed, efficitur dolor.
+        """
+    }
+}
 
 /*
 struct cont: View {

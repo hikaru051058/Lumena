@@ -531,6 +531,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
     @Published var blockedUsers: [String] = []
     @Published var blockingUsers: [String] = []
     
+    @Published var streaksStartDate: Int?
     @Published var lastUpdateTimestamp: Int?
     
     @Published var skinSetting: SkinSettingsAttributes? {
@@ -565,6 +566,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
          likeContents: [String] = [],
          followingCount: Int = 0,
          followerCount: Int = 0,
+         streaksStartDate: Int = 0,
          lastUpdateTimestamp: Int = Int(NSDate().timeIntervalSince1970),
          skinSetting: SkinSettingsAttributes = SkinSettingsAttributes()
     ) {
@@ -593,6 +595,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
         self.followingCount = followingCount
         self.followerCount = followerCount
         self.lastUpdateTimestamp = lastUpdateTimestamp
+        self.streaksStartDate = streaksStartDate
         self.skinSetting = skinSetting
     }
     
@@ -618,6 +621,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
         self.followingCount = 0
         self.followerCount = 0
         self.followManager = ProfileFollowManager(userID: self.identityID)
+        self.streaksStartDate = 0
         self.lastUpdateTimestamp = Int(NSDate().timeIntervalSince1970)
         self.skinSetting = SkinSettingsAttributes()
         
@@ -715,6 +719,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
         self.followerCount = profile.followerCount
         self.followManager = profile.followManager
         self.lastUpdateTimestamp = profile.lastUpdateTimestamp
+        self.streaksStartDate = profile.streaksStartDate
         self.skinSetting = profile.skinSetting
     }
         
@@ -738,8 +743,6 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
                 ProfileManager.shared.updateProfile(self)
             }
         }
-        
-        print("ProfileSettings init: id@ \(self.identityID)")
     }
     
     convenience init(ql: UserProfileQL) {
@@ -763,13 +766,15 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
             familyName: "",
             email: "",
             pictureURL: nil,
-            lockState: ql.lockState ?? false, bio: "",
+            lockState: ql.lockState ?? false,
+            bio: ql.bio ?? "",
             profileImage: profileImage,
             backgroundImage: backgroundImage,
             postContents: [],
             likeContents: [],
             followingCount: ql.followingCount ?? 0,
             followerCount: ql.followerCount ?? 0,
+            streaksStartDate: 0,
             lastUpdateTimestamp: 0,
             skinSetting: skinSetting
         )
@@ -785,8 +790,6 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
                 print(error)
             }
         }
-        
-        print("ProfileSettings init: UserProfileQL@ \(self.identityID)")
     }
     
     func updateSelf(profile: ProfileSettings) async {
@@ -810,6 +813,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
             self.followingCount = profile.followingCount
             self.followerCount = profile.followerCount
             self.lastUpdateTimestamp = profile.lastUpdateTimestamp
+            self.streaksStartDate = profile.streaksStartDate
             self.skinSetting = profile.skinSetting
         }
     }
@@ -831,11 +835,11 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
             }
             self.lockState = userProfile.lockState ?? false
             self.bio = userProfile.bio ?? ""
-            
             self.followManager = ProfileFollowManager(userID: userProfile.id)
             self.followingCount = userProfile.followingCount ?? 0
             self.followerCount = userProfile.followerCount ?? 0
             self.lastUpdateTimestamp = Int(NSDate().timeIntervalSince1970)
+            self.streaksStartDate = 0
             self.skinSetting = SkinSettingsAttributes(from: userProfile.skinSettings ?? SkinSettingsAttributesQL())
         }
     }
@@ -988,7 +992,7 @@ extension ProfileSettings {
             DOB: Int(self.awsTimestamp),
             firstName: self.givenName,
             lockState: self.lockState,
-            bio: bio,
+            bio: self.bio,
             skinSettings: skinToUserProfileQL
         )
     }

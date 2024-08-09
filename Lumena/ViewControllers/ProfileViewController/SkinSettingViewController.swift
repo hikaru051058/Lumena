@@ -9,16 +9,32 @@ import Foundation
 import UIKit
 import SwiftUI
 
+protocol SkinSettingViewControllerDelegate: AnyObject {
+    func skinSettingViewControllerDidDismiss(_ skinSettings: SkinSettingsAttributes)
+}
+
+// ObservableObject class for skin settings
+class SkinSettingsModel: ObservableObject {
+    @Published var skinSettings: SkinSettingsAttributes
+
+    init(skinSettings: SkinSettingsAttributes) {
+        self.skinSettings = skinSettings
+    }
+}
+
 class SkinSettingViewController: UIViewController {
     private var hostingController: UIHostingController<SkinSetting>?
-    
     // false = jump to main view , true = setting
     var profile: ProfileSettings
+    private var skinSettingsModel: SkinSettingsModel
     var mainOrSetting: Bool
+    
+    weak var delegate: SkinSettingViewControllerDelegate?
 
     init(profile: ProfileSettings, mainOrSetting: Bool = false) {
         self.profile = profile
         self.mainOrSetting = mainOrSetting
+        self.skinSettingsModel = SkinSettingsModel(skinSettings: profile.skinSetting ?? SkinSettingsAttributes())
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,7 +45,7 @@ class SkinSettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Initialize your SwiftUI view
-        let skinSettingView = SkinSetting(profile: profile, MainOrSetting: mainOrSetting, onNavigate: navigateToMain)
+        let skinSettingView = SkinSetting(skinSettingsModel: skinSettingsModel, MainOrSetting: mainOrSetting, onNavigate: navigateToMain)
 
         // Create a hosting controller with SwiftUI view
         hostingController = UIHostingController(rootView: skinSettingView)
@@ -47,6 +63,16 @@ class SkinSettingViewController: UIViewController {
         if !mainOrSetting {
             // Disable the interactive pop gesture to prevent swiping back
             navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Notify delegate when view controller is dismissed
+        if isMovingFromParent || isBeingDismissed {
+            print("ProfileSettingsDelegate: @SkinSettingViewController -> \(self.skinSettingsModel.skinSettings)")
+            delegate?.skinSettingViewControllerDidDismiss(self.skinSettingsModel.skinSettings)
         }
     }
     

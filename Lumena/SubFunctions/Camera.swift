@@ -663,11 +663,11 @@ extension CameraViewModel {
 
         if isVideoFile(url: previewURL) {
             let player = AVPlayer(url: previewURL)
-            let reelVideo = LumeVideo(player: player)
+            let reelVideo = LumeVideo(player: player, lumeAuth: true)
             return .video(reelVideo)
         } else {
             if let image = UIImage(contentsOfFile: previewURL.path) {
-                let reelImage = LumeImage(image: image, url: previewURL)
+                let reelImage = LumeImage(image: image, url: previewURL, lumeAuth: true)
                 return .image(reelImage)
             }
         }
@@ -760,16 +760,14 @@ struct CameraView: View {
     }
 }
 
-
-
 extension AVAssetExportSession {
     func exportAsync() async throws {
-        let _: () = try await withCheckedThrowingContinuation { continuation in
-            self.exportAsynchronously {
+        return try await withCheckedThrowingContinuation { continuation in
+            exportAsynchronously {
                 if let error = self.error {
                     continuation.resume(throwing: error)
                 } else {
-                    continuation.resume()
+                    continuation.resume(returning: ())
                 }
             }
         }
