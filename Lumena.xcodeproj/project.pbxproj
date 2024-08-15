@@ -14,12 +14,18 @@
 		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
 		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
+		175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */; };
+		175AFF762C6B5C35005EA8EC /* ImageSelectorSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF752C6B5C35005EA8EC /* ImageSelectorSheetViewController.swift */; };
+		175AFF782C6B6678005EA8EC /* CameraToggleButtonUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF772C6B6678005EA8EC /* CameraToggleButtonUIView.swift */; };
+		175AFF7A2C6B6694005EA8EC /* CameraRecordButtonUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF792C6B6694005EA8EC /* CameraRecordButtonUIView.swift */; };
 		1777D7C82C57E06C00C09067 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1777D7C72C57E06C00C09067 /* AudioRecorder.swift */; };
 		177DDFA92C459E240042802B /* LoadingWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFA52C459E240042802B /* LoadingWebView.swift */; };
 		177DDFCD2C45A0EB0042802B /* ReadingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC02C45A0EB0042802B /* ReadingData.swift */; };
 		177DDFCF2C45A0EB0042802B /* ReadingDataRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC22C45A0EB0042802B /* ReadingDataRow.swift */; };
 		177DDFD02C45A0EB0042802B /* ReadingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC32C45A0EB0042802B /* ReadingDetailView.swift */; };
 		177DDFD22C45A0EB0042802B /* ReadingListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC52C45A0EB0042802B /* ReadingListViewModel.swift */; };
+		177E44292C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E44282C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift */; };
+		1782B11A2C67530400AC1686 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1782B1192C67530400AC1686 /* CameraViewController.swift */; };
 		179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */; };
 		179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */; };
 		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
@@ -210,6 +216,10 @@
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
+		175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCreationViewController.swift; sourceTree = "<group>"; };
+		175AFF752C6B5C35005EA8EC /* ImageSelectorSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSelectorSheetViewController.swift; sourceTree = "<group>"; };
+		175AFF772C6B6678005EA8EC /* CameraToggleButtonUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraToggleButtonUIView.swift; sourceTree = "<group>"; };
+		175AFF792C6B6694005EA8EC /* CameraRecordButtonUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraRecordButtonUIView.swift; sourceTree = "<group>"; };
 		1777D7C72C57E06C00C09067 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		177DDF9D2C459DB90042802B /* BrowserViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserViewModel.swift; sourceTree = "<group>"; };
 		177DDF9E2C459DB90042802B /* BrowserWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserWebView.swift; sourceTree = "<group>"; };
@@ -224,6 +234,8 @@
 		177DDFC32C45A0EB0042802B /* ReadingDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingDetailView.swift; sourceTree = "<group>"; };
 		177DDFC42C45A0EB0042802B /* ReadingListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingListView.swift; sourceTree = "<group>"; };
 		177DDFC52C45A0EB0042802B /* ReadingListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingListViewModel.swift; sourceTree = "<group>"; };
+		177E44282C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraImagePickerButtonUIView.swift; sourceTree = "<group>"; };
+		1782B1192C67530400AC1686 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
 		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -488,12 +500,11 @@
 		173AB8672BD8EF48008D76BB /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				1782B1172C66A83800AC1686 /* PostContentViewController */,
 				17C0ABAE2BFEA90000FA027A /* ProfileViewController */,
 				171761D02C0963E2000268A6 /* MainLumeViewControllers */,
 				171761CF2C0963B8000268A6 /* AccountCreation */,
-				1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */,
-				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
-				17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */,
+				1782B1182C66A85B00AC1686 /* SubViewControllers */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -548,6 +559,30 @@
 				177DDFC52C45A0EB0042802B /* ReadingListViewModel.swift */,
 			);
 			path = "reading app";
+			sourceTree = "<group>";
+		};
+		1782B1172C66A83800AC1686 /* PostContentViewController */ = {
+			isa = PBXGroup;
+			children = (
+				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
+				1782B1192C67530400AC1686 /* CameraViewController.swift */,
+				175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */,
+				175AFF752C6B5C35005EA8EC /* ImageSelectorSheetViewController.swift */,
+				175AFF772C6B6678005EA8EC /* CameraToggleButtonUIView.swift */,
+				175AFF792C6B6694005EA8EC /* CameraRecordButtonUIView.swift */,
+				177E44282C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift */,
+			);
+			path = PostContentViewController;
+			sourceTree = "<group>";
+		};
+		1782B1182C66A85B00AC1686 /* SubViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */,
+				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
+				17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */,
+			);
+			path = SubViewControllers;
 			sourceTree = "<group>";
 		};
 		17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */ = {
@@ -744,7 +779,6 @@
 				17FFC0032BD618AC00682EE2 /* CosmeticViewModel.swift */,
 				17FFC0042BD618AC00682EE2 /* CustomImagePicker.swift */,
 				17FFC0062BD618AC00682EE2 /* ImageExtractor.swift */,
-				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
 				17FFC0082BD618AC00682EE2 /* PreviewMusic.swift */,
 				17FFC0092BD618AC00682EE2 /* ProductSubmission.swift */,
 				17FFC00A2BD618AC00682EE2 /* Search.swift */,
@@ -1017,6 +1051,7 @@
 				17EDC1C92C4E966500F50B5B /* SkinPersonalColor.swift in Sources */,
 				17EDC1CA2C4E966500F50B5B /* CosmeticPrice.swift in Sources */,
 				17EDC1CB2C4E966500F50B5B /* FollowStatus.swift in Sources */,
+				175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */,
 				17EDC1CC2C4E966500F50B5B /* UserProfileQL+Schema.swift in Sources */,
 				17EDC1CD2C4E966500F50B5B /* FollowQL.swift in Sources */,
 				17EDC1CE2C4E966500F50B5B /* AmplifyModels.swift in Sources */,
@@ -1060,6 +1095,7 @@
 				17EDC1F42C4E966500F50B5B /* LumeQL.swift in Sources */,
 				17FA39532C49064000B739BA /* ReadingDataEditorView.swift in Sources */,
 				17FA39542C49064000B739BA /* ReadingListView.swift in Sources */,
+				175AFF7A2C6B6694005EA8EC /* CameraRecordButtonUIView.swift in Sources */,
 				17FA39552C49064000B739BA /* AdvancedWebView.swift in Sources */,
 				17FA39562C49064000B739BA /* PlatformIndependentWebView.swift in Sources */,
 				17FA39572C49064000B739BA /* SimpleWebView.swift in Sources */,
@@ -1079,7 +1115,9 @@
 				17FFC03F2BD6190900682EE2 /* LumeModel.swift in Sources */,
 				17B7A3C72C04104E00777CC1 /* LayoutOperators.swift in Sources */,
 				17C412362C33C4420083C8A5 /* KeyboardResponder.swift in Sources */,
+				177E44292C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift in Sources */,
 				17FFBFA92BD616D900682EE2 /* ViewController.swift in Sources */,
+				175AFF782C6B6678005EA8EC /* CameraToggleButtonUIView.swift in Sources */,
 				17FFC0732BD6190900682EE2 /* SkinSetting.swift in Sources */,
 				17FFC0602BD6190900682EE2 /* Main.swift in Sources */,
 				17FFC0632BD6190900682EE2 /* ReelsView.swift in Sources */,
@@ -1118,6 +1156,7 @@
 				17B7A3CC2C04104E00777CC1 /* CellReuse.swift in Sources */,
 				17B7A3B92C04104E00777CC1 /* ProfileCell.swift in Sources */,
 				17C0ABB12BFEA90100FA027A /* EmptyViewController.swift in Sources */,
+				175AFF762C6B5C35005EA8EC /* ImageSelectorSheetViewController.swift in Sources */,
 				17BAE1BD2BE6E85600E7C7C9 /* LumeViewController.swift in Sources */,
 				17FFBFA72BD616D900682EE2 /* SceneDelegate.swift in Sources */,
 				177DDFD22C45A0EB0042802B /* ReadingListViewModel.swift in Sources */,
@@ -1133,6 +1172,7 @@
 				17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */,
 				1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */,
 				173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */,
+				1782B11A2C67530400AC1686 /* CameraViewController.swift in Sources */,
 				17C0ABB32BFEA90100FA027A /* LabelCell.swift in Sources */,
 				17B7A3CA2C04104E00777CC1 /* LayoutSizeDimension.swift in Sources */,
 				17B7A3C32C04104E00777CC1 /* SharedTransitionInteractionController.swift in Sources */,
@@ -1371,7 +1411,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Lumena/Lumena.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = 684823BN5K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lumena/Info.plist;
@@ -1392,7 +1432,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1414,7 +1454,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Lumena/Lumena.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = 684823BN5K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lumena/Info.plist;
@@ -1435,7 +1475,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

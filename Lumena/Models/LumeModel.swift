@@ -412,7 +412,7 @@ class LumeImage: Identifiable, ObservableObject {
     }
 }
 
-enum Content: Identifiable {
+enum LumeContent: Identifiable {
     case video(LumeVideo)
     case image(LumeImage)
     
@@ -645,7 +645,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         }
     }
     
-    var contents: [Content] = [] {
+    var contents: [LumeContent] = [] {
         didSet {
             self.lumeAuth = checkAuth()
             Task {
@@ -678,7 +678,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     
     init() {}
     
-    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], voiceOverURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [Content] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
+    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], voiceOverURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [LumeContent] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
         
         if let postUUID = UUID(uuidString: postID) {
             self.id = postUUID

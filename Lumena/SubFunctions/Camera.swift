@@ -11,17 +11,6 @@ import PhotosUI
 import AVFoundation
 import AVKit
 
-enum CameraType {
-    case ultraWide
-    case wide
-    case telephoto
-}
-
-enum CameraPosition {
-    case front
-    case back
-}
-
 class CameraViewModel: NSObject,ObservableObject,AVCaptureFileOutputRecordingDelegate, AVCapturePhotoCaptureDelegate{
     @Published var session: AVCaptureSession
     @Published var alert = false
@@ -323,24 +312,61 @@ class CameraViewModel: NSObject,ObservableObject,AVCaptureFileOutputRecordingDel
     }
     
     func zoom(_ scale: CGFloat) {
-        let dampingFactor: CGFloat = 0.01
-        if let currentCameraInput = session.inputs.compactMap({ $0 as? AVCaptureDeviceInput }).first(where: { $0.device.hasMediaType(.video) }) {
-            let device = currentCameraInput.device
-            do {
-                try device.lockForConfiguration()
-
-                let zoomScale = 1.0 - (1.0 - scale) * dampingFactor
-                let zoomFactor = device.videoZoomFactor * zoomScale
-                
-                device.videoZoomFactor = max(1.0, min(zoomFactor, 10.0)) // set maximum zoom factor to 10
-
-                currentZoomScale = device.videoZoomFactor
-
-                device.unlockForConfiguration()
-            } catch {
-                print(error)
-            }
+        guard let currentCameraInput = session.inputs.compactMap({ $0 as? AVCaptureDeviceInput }).first(where: { $0.device.hasMediaType(.video) }) else {
+            return
         }
+        
+        let device = currentCameraInput.device
+        
+        do {
+            try device.lockForConfiguration()
+            
+            let desiredZoomFactor = currentZoomScale * scale
+            let zoomFactor = min(max(desiredZoomFactor, 1.0), 6.5)
+            
+            // Determine the appropriate camera based on the zoom factor
+            if currentCameraPosition == .front {
+                // Front camera, apply zoom directly
+                device.videoZoomFactor = zoomFactor
+            } else {
+                // Handle rear cameras with different types
+                switch currentCameraType {
+                case .ultraWide:
+                    if zoomFactor >= 1.5 {
+                        switchCameraType(to: .wide)
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 1.5, fromRangeMax: 3.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    } else {
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 1.0, fromRangeMax: 1.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    }
+                case .wide:
+                    if zoomFactor < 1.5 {
+                        switchCameraType(to: .ultraWide)
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 1.0, fromRangeMax: 1.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    } else if zoomFactor > 3.5 {
+                        switchCameraType(to: .telephoto)
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 3.5, fromRangeMax: 6.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    } else {
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 1.5, fromRangeMax: 3.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    }
+                case .telephoto:
+                    if zoomFactor <= 3.5 {
+                        switchCameraType(to: .wide)
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 1.5, fromRangeMax: 3.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    } else {
+                        device.videoZoomFactor = remapZoomFactor(zoomFactor, fromRangeMin: 3.5, fromRangeMax: 6.5, toRangeMin: 1.0, toRangeMax: 3.0)
+                    }
+                }
+            }
+            
+            currentZoomScale = device.videoZoomFactor
+            device.unlockForConfiguration()
+        } catch {
+            print("Failed to set zoom factor: \(error)")
+        }
+    }
+    
+    func remapZoomFactor(_ zoomFactor: CGFloat, fromRangeMin: CGFloat, fromRangeMax: CGFloat, toRangeMin: CGFloat, toRangeMax: CGFloat) -> CGFloat {
+        return toRangeMin + (zoomFactor - fromRangeMin) * (toRangeMax - toRangeMin) / (fromRangeMax - fromRangeMin)
     }
     
     private func toDeviceType(type: CameraType) -> AVCaptureDevice.DeviceType? {
@@ -396,7 +422,6 @@ class CameraViewModel: NSObject,ObservableObject,AVCaptureFileOutputRecordingDel
             self.session.commitConfiguration()
         }
     }
-
     
     func switchCamera() {
         if let currentCameraInput = session.inputs.compactMap({ $0 as? AVCaptureDeviceInput }).first(where: { $0.device.hasMediaType(.video) }) {
@@ -466,7 +491,6 @@ class CameraViewModel: NSObject,ObservableObject,AVCaptureFileOutputRecordingDel
         // Return the first device that matches the desired device type.
         return discoverySession.devices.first(where: { $0.deviceType == type })
     }
-
     
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
@@ -514,7 +538,6 @@ class CameraViewModel: NSObject,ObservableObject,AVCaptureFileOutputRecordingDel
             }
         }
     }
-    
     
     func mergeVideos(assets: [AVURLAsset]) async throws -> AVAssetExportSession {
             
@@ -653,10 +676,9 @@ class CameraViewModel: NSObject,ObservableObject,AVCaptureFileOutputRecordingDel
     }
 }
 
-
 extension CameraViewModel {
     // Function to get content from previewURL
-    func getContentFromPreview() -> Content? {
+    func getContentFromPreview() -> LumeContent? {
         guard let previewURL = previewURL else {
             return nil
         }
@@ -773,8 +795,6 @@ extension AVAssetExportSession {
         }
     }
 }
-
-
 
 struct CameraPreview: UIViewRepresentable {
     

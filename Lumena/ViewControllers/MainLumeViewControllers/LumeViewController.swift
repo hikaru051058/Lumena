@@ -45,6 +45,11 @@ class LumeHorizontalTabViewController: ButtonBarPagerTabStripViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(authSuccessHandler), name: .authStatusChanged, object: nil)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -1000,6 +1005,8 @@ extension LumeIndividualViewController: DescriptionExpandableViewControllerDeleg
         pageControl.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
         pageControl.layer.shadowRadius = 0.25
         pageControl.layer.masksToBounds = false
+        
+        pageControl.isHidden = (lume.contents.count <= 1)
         
         view.addSubview(pageControl)
         

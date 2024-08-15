@@ -1849,7 +1849,7 @@ struct PrepPost: View {
                         ForEach(postLume.contents) { content in
                             
                             switch content {
-                            case Content.video(let reelVideo):
+                            case LumeContent.video(let reelVideo):
                                 // Assuming reelVideo.player is an AVPlayer
                                 
                                 CustomVideoPlayer(player: reelVideo.player!)
@@ -1870,7 +1870,7 @@ struct PrepPost: View {
                                     }
                                 
                                 
-                            case Content.image(let reelImage):
+                            case LumeContent.image(let reelImage):
                                 ZStack {
                                     if let uiImage = reelImage.image {
                                         // If a UIImage is already loaded, display it
@@ -1978,7 +1978,6 @@ struct PrepPost: View {
     }
 }
 
-
 class FakeModalNavigationController: UINavigationController {
 
     fileprivate static let unwindToBubblegumScreenSegueID = "unwindToBubblegumScreenSegueID"
@@ -1999,3 +1998,5 @@ class FakeModalNavigationController: UINavigationController {
         popViewController(animated: false)
     }
 }
+
+

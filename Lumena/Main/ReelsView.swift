@@ -211,7 +211,7 @@ struct ReelsPlayer: View {
                     
                     ForEach(reel.contents) { content in
                         switch content {
-                        case Content.video(let reelVideo):
+                        case LumeContent.video(let reelVideo):
                             CustomVideoPlayer(player: reelVideo.player!)
                                 .tag(reelVideo.id)
                                 .onChange(of: reel.currentContent) { change in
@@ -242,7 +242,7 @@ struct ReelsPlayer: View {
                                 }
                             
                             
-                        case Content.image(let reelImage):
+                        case LumeContent.image(let reelImage):
                             ZStack {
                                 if let uiImage = reelImage.image {
                                     // If a UIImage is already loaded, display it

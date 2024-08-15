@@ -1129,7 +1129,7 @@ extension LumeBottomButtonsViewController: DescriptionExpandableViewControllerDe
         
         // Create the DescriptionExpandableViewController with the post description
         sideButtonDescriptionView = DescriptionExpandableViewController(
-//            text: lume.postDescription ?? ""
+            text: lume.postDescription ?? ""
         )
         
         sideButtonDescriptionView.lumeBottomViewControllerdelegate = self

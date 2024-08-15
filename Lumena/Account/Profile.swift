@@ -265,11 +265,11 @@ struct ProfileReelsPlayer: View {
                 TabView(selection: $reel.currentContent) {
                     ForEach(reel.contents) { content in
                         switch content {
-                        case Content.video(let reelVideo):
+                        case LumeContent.video(let reelVideo):
                             CustomVideoPlayer(player: reelVideo.player!)
                                 .tag(reelVideo.id)
                             
-                        case Content.image(let reelImage):
+                        case LumeContent.image(let reelImage):
                             ZStack {
                                 if let index = reel.contents.firstIndex(where: { $0.id == reelImage.id }),
                                    case .image(let reelImageContent) = reel.contents[index],

@@ -288,8 +288,8 @@ class ImageExtractorViewModel: NSObject, ObservableObject, PHPhotoLibraryChangeO
 extension ImageExtractorViewModel {
     
     // Function to convert selected photos to a Content array
-    func fetchContents(completion: @escaping ([Content]) -> Void) {
-        var contents: [Content] = []
+    func fetchContents(completion: @escaping ([LumeContent]) -> Void) {
+        var contents: [LumeContent] = []
         
         let dispatchGroup = DispatchGroup()
         
