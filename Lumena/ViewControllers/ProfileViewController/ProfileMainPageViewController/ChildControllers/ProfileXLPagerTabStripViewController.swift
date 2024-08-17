@@ -67,7 +67,7 @@ class ProfileXLPagerTabStripViewController: ButtonBarPagerTabStripViewController
         
         var viewControllers: [UIViewController] = [child_1]
         
-        if GI.shared.identityID == profile.identityID {
+        if userIdentityID == GI.shared.identityID {
             let child_2 = createBottomViewController(pageIndex: 1, title: .likes)
             viewControllers.append(child_2)
         }

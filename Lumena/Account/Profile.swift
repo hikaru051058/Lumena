@@ -337,16 +337,16 @@ struct ProfileReelsPlayer: View {
                 }
                 
                 
-                GeometryReader { proxy in
-                    Color.clear
-                        .preference(key: ViewPositionKey.self, value: proxy.frame(in: .global))
-                }
-                .onPreferenceChange(ViewPositionKey.self) { frame in
-                    let minY = frame.minY
-                    let size = frame.size
-                    manageVideoPlayback(minY: minY, size: size, reel: reel)
-                }
-                
+//                GeometryReader { proxy in
+//                    Color.clear
+//                        .preference(key: ViewPositionKey.self, value: proxy.frame(in: .global))
+//                }
+//                .onPreferenceChange(ViewPositionKey.self) { frame in
+//                    let minY = frame.minY
+//                    let size = frame.size
+//                    manageVideoPlayback(minY: minY, size: size, reel: reel)
+//                }
+//                
                 Image(systemName: mute ? "speaker.slash.fill" : "speaker.wave.2.fill")
                     .font(.title)
                     .foregroundColor(.white)
@@ -382,7 +382,7 @@ struct ProfileReelsPlayer: View {
                 }
                 .ignoresSafeArea()
                 
-                sideButtons(reel: $reel, reels: $reels, userLiked: $userLiked)
+//                sideButtons(reel: $reel, reels: $reels, userLiked: $userLiked)
                 
                 VStack{
                     
@@ -1089,7 +1089,7 @@ struct OtherUserProfile: View {
                             NavigationLink(destination: profilereelpage(reels: $userLuma, reelLocation: reel.id)) {
                                 if let thumbnail = reel.thumbnail {
                                     Image(uiImage: thumbnail)
-                                        .centerCropped()
+//                                        .centerCropped()
                                         .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 5)
                                 } else {
                                     ShimmerEffectBox()
@@ -1113,7 +1113,7 @@ struct OtherUserProfile: View {
         }
         .onAppear{
             Task {
-                userLuma = await profile.returnUserLumes()
+//                userLuma = await profile.returnUserLumes()
             }
         }
         .animation(.easeOut, value: tabIndex)

@@ -1579,7 +1579,6 @@ class Comment: Identifiable, ObservableObject {
         return dateFormatter.string(from: timestamp)
     }
     
-    
     init(commentID: String = "",
          userProfile: ProfileSettings = ProfileSettings(),
          timestamp: Date = Date(),

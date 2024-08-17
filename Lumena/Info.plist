@@ -31,11 +31,5 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to take photos and record videos.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to save photos and videos.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to your microphone to record videos.</string>
 </dict>
 </plist>

@@ -37,7 +37,7 @@ class LumeSideButtonsViewController: UIViewController, ObservableObject, LumeInd
     let buttonConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular, scale: .default)
     let buttonPadding: CGFloat = 25.0
     
-    var likeButton = HeartButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+    var likeButton = HeartUIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
     private var likeCountLabel = UILabel()
     private var likeContainerView = UIView()
     private let cosmeticsButton = UIButton()
@@ -82,7 +82,7 @@ class LumeSideButtonsViewController: UIViewController, ObservableObject, LumeInd
         
         setupLikeButton()
         setupCosmeticButton()
-//        setupCommentButton()
+        setupCommentButton()
         setupFurtherActionButton()
     }
     
@@ -140,7 +140,7 @@ extension LumeSideButtonsViewController {
         likeContainerView.translatesAutoresizingMaskIntoConstraints = false
 
         // Setup the like button
-        likeButton = HeartButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        likeButton = HeartUIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         likeButton.translatesAutoresizingMaskIntoConstraints = false
         likeButton.symbolSize = 36
         
@@ -194,7 +194,7 @@ extension LumeSideButtonsViewController {
         containerView.addSubview(likeCountLabel)
         
         NSLayoutConstraint.activate([
-            likeCountLabel.topAnchor.constraint(equalTo: likeButton.bottomAnchor, constant: 3),
+            likeCountLabel.topAnchor.constraint(equalTo: likeButton.bottomAnchor),
             likeCountLabel.centerXAnchor.constraint(equalTo: likeButton.centerXAnchor)
         ])
     }
@@ -220,41 +220,6 @@ extension LumeSideButtonsViewController {
             return String(format: "%.1fk", Double(num) / Double(thousand))
         } else {
             return String(format: "%.1m", Double(num) / Double(million))
-        }
-    }
-}
-
-// Comment Button
-extension LumeSideButtonsViewController {
-    
-    private func setupCommentButton() {
-        commentButton.translatesAutoresizingMaskIntoConstraints = false
-        commentButton.setImage(UIImage(systemName: "bubble.right.fill"), for: .normal)
-        commentButton.tintColor = .white
-        
-        commentButton.layer.shadowColor = UIColor.black.cgColor
-        commentButton.layer.shadowOpacity = 0.25
-        commentButton.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
-        commentButton.layer.shadowRadius = 0.25
-        commentButton.layer.masksToBounds = false
-        
-        stackView.addArrangedSubview(commentButton)
-        
-        NSLayoutConstraint.activate([
-            commentButton.widthAnchor.constraint(equalToConstant: 44),
-            commentButton.heightAnchor.constraint(equalToConstant: 37),
-        ])
-        
-        commentButton.addTarget(self, action: #selector(showComments), for: .touchUpInside)
-    }
-    
-    @objc private func showComments() {
-        if AuthenticationManager.shared.authStatus == .authenticated {
-            let commentsViewController = CommentsViewController(lume: lume)
-            commentsViewController.lume = lume  // assuming CommentsViewController can handle a reel
-            navigationController?.pushViewController(commentsViewController, animated: true)
-        } else {
-            showLoginSheet()
         }
     }
 }
@@ -309,6 +274,46 @@ extension LumeSideButtonsViewController {
         
         // Present the sheet
         self.present(hostingController, animated: true)
+    }
+}
+
+// Comment Button
+extension LumeSideButtonsViewController {
+    
+    private func setupCommentButton() {
+        
+        commentButton.setImage(UIImage(systemName: "text.bubble", withConfiguration: buttonConfig), for: .normal)
+        commentButton.tintColor = .white
+        
+        commentButton.layer.shadowColor = UIColor.black.cgColor
+        commentButton.layer.shadowOpacity = 0.25
+        commentButton.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        commentButton.layer.shadowRadius = 0.25
+        commentButton.layer.masksToBounds = false
+        
+        stackView.addArrangedSubview(commentButton)
+        
+        NSLayoutConstraint.activate([
+            commentButton.widthAnchor.constraint(equalToConstant: 50),
+            commentButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        commentButton.addTarget(self, action: #selector(showComments), for: .touchUpInside)
+    }
+    
+    @objc private func showComments() {
+//        if AuthenticationManager.shared.authStatus == .authenticated {
+//            let commentsViewController = CommentsViewController(lume: lume)
+//            commentsViewController.lume = lume  // assuming CommentsViewController can handle a reel
+//            commentsViewController.modalPresentationStyle = .pageSheet
+//            if let sheet = commentsViewController.sheetPresentationController {
+//                sheet.detents = [.medium(), .large()]
+//                sheet.prefersGrabberVisible = true
+//            }
+//            present(commentsViewController, animated: true, completion: nil)
+//        } else {
+//            showLoginSheet()
+//        }
     }
 }
 
@@ -415,7 +420,7 @@ extension LumeSideButtonsViewController {
     }
 }
 
-class HeartButton: UIButton {
+class HeartUIButton: UIButton {
     var isLiked: Bool = false {
         didSet {
             updateUI()
@@ -469,207 +474,6 @@ class HeartButton: UIButton {
         
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
-    }
-}
-
-class CommentsViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
-    var lume: Lume
-    var userComments: [Comment]
-    var keyboardHeight: CGFloat = 0
-    
-    private let tableView = UITableView()
-    private let commentTextField = UITextField()
-    private let sendButton = UIButton(type: .system)
-    
-    init(lume: Lume) {
-        self.lume = lume
-        self.userComments = lume.userComments
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupViews()
-        setupConstraints()
-        registerForKeyboardNotifications()
-        setupTableView()
-    }
-    
-    private func setupViews() {
-        view.backgroundColor = .white
-        
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
-        view.addSubview(tableView)
-        
-        commentTextField.placeholder = "コメントを書く"
-        commentTextField.borderStyle = .roundedRect
-        commentTextField.delegate = self
-        view.addSubview(commentTextField)
-        
-        sendButton.setTitle("Send", for: .normal)
-        sendButton.addTarget(self, action: #selector(sendComment), for: .touchUpInside)
-        view.addSubview(sendButton)
-    }
-    
-    private func setupConstraints() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        commentTextField.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: commentTextField.topAnchor),
-            
-            commentTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
-            commentTextField.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -8),
-            commentTextField.heightAnchor.constraint(equalToConstant: 50),
-            
-            sendButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            sendButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -8),
-            sendButton.widthAnchor.constraint(equalToConstant: 50)
-        ])
-    }
-    
-    @objc private func sendComment() {
-        guard let text = commentTextField.text, !text.isEmpty else { return }
-        // Logic to send comment
-        if let userProfile = GI.shared.profileSettings {
-            
-            let commentID = lume.postID + ":\(userProfile.identityID):\(Int(Date.now.timeIntervalSince1970))"
-            
-            let newComment = Comment(commentID: commentID, userProfile: userProfile, content: text, lumeQLID: lume.postID)
-            
-            Task {
-                do {
-                    let message = try await newComment.postComment()
-                    DispatchQueue.main.async {
-                        print(message)
-                        self.userComments.append(newComment)
-                        self.tableView.reloadData()
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-        }
-        
-        commentTextField.text = "" // Clear text field
-        dismissKeyboard()
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
-    private func registerForKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(_:)), name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    @objc func keyboardWasShown(_ notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            UIView.animate(withDuration: 0.1) {
-                self.view.frame.origin.y -= keyboardSize.height
-            }
-        }
-    }
-    
-    @objc func keyboardWillBeHidden(_ notification: NSNotification) {
-        UIView.animate(withDuration: 0.1) {
-            self.view.frame.origin.y = 0
-        }
-    }
-    
-    private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    private func setupTableView() {
-        tableView.reloadData()
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userComments.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentCell
-        let comment = userComments[indexPath.row]
-        cell.configure(with: comment)
-        return cell
-    }
-}
-
-class CommentCell: UITableViewCell {
-    private let profileImageView = UIImageView()
-    private let usernameLabel = UILabel()
-    private let commentLabel = UILabel()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupViews()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupViews() {
-        profileImageView.layer.cornerRadius = 35
-        profileImageView.clipsToBounds = true
-        
-        usernameLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        usernameLabel.textColor = .darkGray
-        
-        commentLabel.font = .systemFont(ofSize: 16)
-        commentLabel.textColor = .black
-        commentLabel.numberOfLines = 0
-        
-        contentView.addSubview(profileImageView)
-        contentView.addSubview(usernameLabel)
-        contentView.addSubview(commentLabel)
-    }
-    
-    private func setupConstraints() {
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        commentLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            profileImageView.widthAnchor.constraint(equalToConstant: 70),
-            profileImageView.heightAnchor.constraint(equalToConstant: 70),
-            
-            usernameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
-            usernameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            usernameLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -10),
-            
-            commentLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
-            commentLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
-            commentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            commentLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
-        ])
-    }
-
-    func configure(with comment: Comment) {
-        // Assuming `profileImage` and `username` are properties of `userProfile`
-        if let profileImage = comment.userProfile.profileImage, let image = profileImage.image {
-            profileImageView.image = image
-        }
-        usernameLabel.text = comment.userProfile.preferredUsername
-        commentLabel.text = comment.content
     }
 }
 
@@ -847,7 +651,6 @@ extension String {
 }
 
 
-
 class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeIndividualDataUpdateDelegate {
     
     private var sideButtonProfileHost: UIHostingController<SideButtonProfileView>?
@@ -902,7 +705,7 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
     private func setupUI() {
         view.backgroundColor = .clear
         setupDescriptionButton()
-//        setupLumeAuthenticity()
+        setupLumeAuthenticity()
         setupProfileButton()
     }
 }
@@ -1001,6 +804,7 @@ extension LumeBottomButtonsViewController {
             .onChange(of: sideButtonsController.profile) { newProfile in
                 profileImage = newProfile?.profileImage?.image
             }
+            .padding(.vertical, 8)
         }
 
         func fetchRelationshipStatus() {
@@ -1129,7 +933,7 @@ extension LumeBottomButtonsViewController: DescriptionExpandableViewControllerDe
         
         // Create the DescriptionExpandableViewController with the post description
         sideButtonDescriptionView = DescriptionExpandableViewController(
-            text: lume.postDescription ?? ""
+//            text: lume.postDescription ?? ""
         )
         
         sideButtonDescriptionView.lumeBottomViewControllerdelegate = self
@@ -1177,8 +981,8 @@ extension LumeBottomButtonsViewController: DescriptionExpandableViewControllerDe
         profileViewBottomConstraint = descriptionViewTopConstraint
         
         // Animate the layout change
-        UIView.animate(withDuration: 0.2) {
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.2) { [self] in
+            view.layoutIfNeeded()
         }
     }
 }
@@ -1544,7 +1348,10 @@ class DescriptionExpandableViewController: UIView {
     private var maximumExpandedHeight: CGFloat = 300 // Renamed for clarity
     var text: String = String().loresIpsum
     
-    private var scrollViewTopConstraint: NSLayoutConstraint!
+    var scrollViewTopConstraint: NSLayoutConstraint!
+    
+    private var topFadeLayer: CAGradientLayer?
+    private var bottomFadeLayer: CAGradientLayer?
     
     weak var lumeBottomViewControllerdelegate: DescriptionExpandableViewControllerDelegate?
     weak var lumeIndividualViewControllerdelegate: DescriptionExpandableViewControllerDelegate?
@@ -1614,30 +1421,60 @@ class DescriptionExpandableViewController: UIView {
         // Add tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDescription))
         descriptionLabel.addGestureRecognizer(tapGesture)
-        
-    }
-    
-    private func applyVerticalFadeMask() {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = self.frame
-        gradientLayer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.white.cgColor,
-            UIColor.white.cgColor,
-            UIColor.clear.cgColor
-        ]
-        gradientLayer.locations = [0.0, 0.05, 0.95, 1.0]
-        
-        self.layer.mask = gradientLayer
-    }
-    
-    private func removeVerticalFadeMask() {
-        self.layer.mask = nil
     }
     
     @objc func toggleDescription() {
         expanded.toggle()
         updateDescriptionHeight()
+        
+//        if expanded {
+//            addFadeOutLayer()
+//        } else {
+//            removeFadeOutLayer()
+//        }
+    }
+    
+    private func addFadeOutLayer() {
+        topFadeLayer = CAGradientLayer()
+        topFadeLayer?.colors = [
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.4).cgColor,
+        ]
+        topFadeLayer?.locations = [0.0, 1.0]
+        topFadeLayer?.startPoint = CGPoint(x: 0.5, y: 0.0)
+        topFadeLayer?.endPoint = CGPoint(x: 0.5, y: 1.0)
+        topFadeLayer?.frame = CGRect(
+            x: 0,
+            y: maximumExpandedHeight * 0.9,
+            width: scrollView.frame.width,
+            height: maximumExpandedHeight * 0.1
+        )
+        if let topFadeLayer = topFadeLayer {
+            self.layer.addSublayer(topFadeLayer)
+        }
+        
+        bottomFadeLayer = CAGradientLayer()
+        bottomFadeLayer?.colors = [
+            UIColor.black.withAlphaComponent(0.4).cgColor,
+            UIColor.clear.cgColor,
+        ]
+        bottomFadeLayer?.locations = [0.0, 1.0]
+        bottomFadeLayer?.startPoint = CGPoint(x: 0.5, y: 0.0)
+        bottomFadeLayer?.endPoint = CGPoint(x: 0.5, y: 1.0)
+        bottomFadeLayer?.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: scrollView.frame.width,
+            height: maximumExpandedHeight * 0.1
+        )
+        if let bottomFadeLayer = bottomFadeLayer {
+            self.layer.addSublayer(bottomFadeLayer)
+        }
+    }
+    
+    private func removeFadeOutLayer() {
+        topFadeLayer?.removeFromSuperlayer()
+        bottomFadeLayer?.removeFromSuperlayer()
     }
     
     private func updateDescriptionHeight() {
@@ -1655,7 +1492,7 @@ class DescriptionExpandableViewController: UIView {
         
         // Animate the height change
         UIView.animate(withDuration: 0.2) { [weak self] in
-            guard let self = self else { return }
+             guard let self = self else { return }
             self.scrollViewTopConstraint?.constant = -requiredHeight
             self.layoutIfNeeded()
         }
@@ -1665,6 +1502,38 @@ class DescriptionExpandableViewController: UIView {
         let heightReturn = min(maximumExpandedHeight, descriptionLabel.requiredHeight(for: bounds.width))
         print(heightReturn)
         return heightReturn
+    }
+    
+    func getFullHeight() -> CGFloat {
+        let heightReturn = descriptionLabel.requiredHeight(for: bounds.width)
+        return heightReturn
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateFadeLayersVisibility()
+    }
+    
+    private func updateFadeLayersVisibility() {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.height
+        
+        UIView.animate(withDuration: 0.2) {
+            // Handle top fade layer visibility
+            if offsetY <= 0 {
+                // At the very top, hide the top fade
+                self.topFadeLayer?.opacity = 1.0
+                self.bottomFadeLayer?.opacity = 0.0
+            } else if offsetY + frameHeight >= contentHeight {
+                // At the very bottom, hide the bottom fade
+                self.topFadeLayer?.opacity = 0.0
+                self.bottomFadeLayer?.opacity = 1.0
+            } else {
+                // In between, show both fades
+                self.topFadeLayer?.opacity = 1.0
+                self.bottomFadeLayer?.opacity = 1.0
+            }
+        }
     }
 }
 

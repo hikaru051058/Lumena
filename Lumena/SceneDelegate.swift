@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         //_ = AuthenticationManager.shared
-        window.rootViewController = UINavigationController(rootViewController: ImageSelectorSheetViewController())
+        window.rootViewController = UINavigationController(rootViewController: CommentsSheetViewController(comments: []))
         self.window = window
         window.makeKeyAndVisible()
     }

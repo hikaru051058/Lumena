@@ -461,9 +461,11 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
     }
     
     func updateWithSelectedImages(_ assets: [PHAsset]) {
-        // Update the assets array with the selected images and reload the collection view
-        self.assets = assets
-        collectionView.reloadData()
+        DispatchQueue.main.async {
+            self.assets = assets
+            self.collectionView.reloadData()
+            self.collectionView.layoutIfNeeded()
+        }
     }
 
     // MARK: - UICollectionViewDataSource
@@ -497,71 +499,95 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
 
         let threshold = contentWidth - visibleWidth - visibleWidth / 3
 
-        if xOffset > threshold && !isLoading {
-            fetchMoreAssets()
-        }
+//        if xOffset > threshold && !isLoading {
+//            fetchMoreAssets()
+//        }
     }
 }
 
 class HorizontalPhotoLibraryCell: UICollectionViewCell {
-    
+
     private var imageView: UIImageView!
-    private var isImageLoaded: Bool = false // Track if image was successfully loaded
-    
+    private var asset: PHAsset?
+    private var cornerRadius: CGFloat = 24.0
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupImageView()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupImageView() {
         imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit // Scale to fit within the bounds, keeping the aspect ratio
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         contentView.addSubview(imageView)
-        
-        // Enable Auto Layout for the imageView
+
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Center the imageView within the contentView
         NSLayoutConstraint.activate([
-            self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-            self.imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
-            self.imageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-    
+
     func configure(with asset: PHAsset, cornerRadius: CGFloat) {
+        self.asset = asset
+        self.cornerRadius = cornerRadius
         imageView.layer.cornerRadius = cornerRadius
-        loadImage(asset: asset)
+        imageView.clipsToBounds = true
+        setNeedsLayout()  // Trigger layout update to load the image
     }
-    
-    private func loadImage(asset: PHAsset) {
-        let imageManager = PHImageManager.default()
-        let options = PHImageRequestOptions()
-        options.isSynchronous = true
-        options.deliveryMode = .highQualityFormat
-        options.resizeMode = .exact
-        
-        let targetSize = CGSize(width: contentView.frame.width * 3, height: contentView.frame.height * 3)
-        
-        imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: options) { (image, _) in
-            DispatchQueue.main.async {
-                if let loadedImage = image {
-                    self.imageView.image = loadedImage
-                    self.isImageLoaded = true
-                } else {
-                    self.isImageLoaded = false
-                }
-            }
+//
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//        imageView.image = nil
+//        imageView.isHidden = true
+//    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if let asset = asset {
+            loadImage(asset: asset)
         }
     }
     
-    func hasImageLoaded() -> Bool {
-        return isImageLoaded
+    private func loadImage(asset: PHAsset, targetSize: CGSize? = nil) {
+        let imageManager = PHImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+        options.deliveryMode = .opportunistic // Allows the system to provide the image in stages, if necessary
+
+        // Set the initial target size if not provided
+        let initialTargetSize = CGSize(width: self.contentView.frame.width * 2, height: self.contentView.frame.height * 2)
+        let currentTargetSize = targetSize ?? initialTargetSize
+
+        imageManager.requestImage(for: asset, targetSize: currentTargetSize, contentMode: .aspectFill, options: options) { [weak self] (image, _) in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                if let loadedImage = image {
+                    self.imageView.image = loadedImage
+                    self.imageView.layer.cornerRadius = self.cornerRadius
+                    self.imageView.clipsToBounds = true
+                    self.imageView.isHidden = false
+                } else {
+                    if currentTargetSize.width > 100 && currentTargetSize.height > 100 {
+                        // Retry with a smaller target size
+                        let smallerTargetSize = CGSize(width: currentTargetSize.width / 2, height: currentTargetSize.height / 2)
+                        print("Retrying with smaller target size: \(smallerTargetSize)")
+                        self.loadImage(asset: asset, targetSize: smallerTargetSize)
+                    } else {
+                        // Final fallback if the image still fails to load
+                        self.imageView.isHidden = true
+                        print("Could not show image for asset \(asset.localIdentifier) even after resizing.")
+                    }
+                }
+            }
+        }
     }
 }
