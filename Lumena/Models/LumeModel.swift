@@ -1621,10 +1621,14 @@ class Comment: Identifiable, ObservableObject {
     
     func postComment() async throws -> String {
         do {
-            let result = try await GraphQL.shared.createModel(self.toCommentQL())
-            return (result ?? "Successfully created comment for \(lumeQLID) with \(commentID)")
+            let newCommentQL = self.toCommentQL()
+            let result = try await GraphQL.shared.createModel(newCommentQL)
+            return result ?? "Successfully created comment for \(lumeQLID) with \(commentID)"
         } catch {
-            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: Unable to upload comment for \(lumeQLID) with \(commentID)"])
+            throw NSError(domain: "", code: -1, userInfo: [
+                NSLocalizedDescriptionKey: "Error: Unable to upload comment for \(lumeQLID) with \(commentID)",
+                NSLocalizedFailureReasonErrorKey: error.localizedDescription
+            ])
         }
     }
 }

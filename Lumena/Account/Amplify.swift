@@ -516,7 +516,7 @@ class GraphQL {
             let result = try await Amplify.API.mutate(request: .create(model))
             switch result {
             case .success(let createdModel):
-                return "Successfully created \(ModelType.self): \(createdModel)"
+                return "Successfully created \(ModelType.self): \(createdModel.identifier)"
             case .failure(let graphQLError):
                 throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: Failed to create graphql \(graphQLError)"])
             }

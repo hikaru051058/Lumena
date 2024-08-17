@@ -534,11 +534,12 @@ class CommentsSheetViewController: UIViewController {
     private var keyboardIsVisible: Bool = false
     private var keyboardHeight: CGFloat = 0.0
     private var lastHeight: CGFloat = 40.0
-    private var lastMinTextFieldHeight: CGFloat = 0.0
     
     private var comments: [Comment] = []
+    private var lumeqlID: String = ""
     
-    init(comments: [Comment] = []) {
+    init(lumeqlID: String = "", comments: [Comment] = []) {
+        self.lumeqlID = lumeqlID
         self.comments = comments
         super.init(nibName: nil, bundle: nil)
     }
@@ -630,8 +631,10 @@ extension CommentsSheetViewController: CommentTextFieldDelegate {
         
         commentTextInput.view.translatesAutoresizingMaskIntoConstraints = false
         
-        commentTextInputHeightConstraint = commentTextInput.view.safeAreaLayoutGuide.heightAnchor.constraint(equalToConstant: 53)
-        commentTextInputBottomConstraint = commentTextInput.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        let commentTextInputHeight = commentTextInput.getCurrentHeight() + view.safeAreaInsets.bottom // -> 34 + 40 = 74
+        
+        commentTextInputHeightConstraint = commentTextInput.view.safeAreaLayoutGuide.heightAnchor.constraint(equalToConstant: commentTextInputHeight)
+        commentTextInputBottomConstraint = commentTextInput.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         
         NSLayoutConstraint.activate([
             commentTextInputHeightConstraint,
@@ -644,11 +647,7 @@ extension CommentsSheetViewController: CommentTextFieldDelegate {
     func didUpdatedHeight(_ height: CGFloat) {
         lastHeight = height
         
-        if commentTextInput.textIsEmpty() {
-            lastMinTextFieldHeight = 53 - height
-        }
-        
-        let commentTextFieldHeight = lastMinTextFieldHeight + height + (keyboardIsVisible ? 0 : view.safeAreaInsets.bottom)
+        let commentTextFieldHeight = height + (keyboardIsVisible ? 0 : view.safeAreaInsets.bottom)
         
         // Deactivate the old constraint
         commentTextInputHeightConstraint.isActive = false
@@ -671,10 +670,51 @@ extension CommentsSheetViewController: CommentTextFieldDelegate {
         commentsListBottomConstraint.isActive = true
         view.layoutIfNeeded()
     }
+    
+    func didPostComment(_ comment: Comment) {
+        Task {
+            await self.sendComment(comment: comment)
+        }
+    }
+}
+
+extension CommentsSheetViewController {
+    
+    private func sendComment(comment: Comment) async {
+        
+        if let userIdentityID = AuthenticationManager.shared.identityID {
+            let commentID = lumeqlID + ":\(userIdentityID):\(Int(Date.now.timeIntervalSince1970))"
+            
+            comment.commentID = commentID
+            comment.lumeQLID = lumeqlID
+            
+            do {
+                comment.userProfile = try await ProfileManager.shared.getProfile(withID: userIdentityID)
+            } catch {
+                print(error)
+            }
+            
+            do {
+                let message = try await comment.postComment()
+                DispatchQueue.main.async {
+                    print(message)
+                    //add comment back to lume's comment
+//                    self.userComments.append(comment)
+                    self.comments.append(comment)
+                    self.commentsList.addSingleCommentToStackView(comment: comment)
+                }
+            } catch {
+                print(error)
+            }
+        } else {
+            print("no identity ID found")
+        }
+    }
 }
 
 protocol CommentTextFieldDelegate: AnyObject {
     func didUpdatedHeight(_ height: CGFloat)
+    func didPostComment(_ comment: Comment)
 }
 
 class CommentTextInputViewController: UIViewController {
@@ -689,7 +729,7 @@ class CommentTextInputViewController: UIViewController {
         return imageView
     }()
     
-    private let actionButton: UIButton = {
+    private let postButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
         let image = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: config)?.withTintColor(.arinBlue, renderingMode: .alwaysOriginal)
@@ -703,11 +743,14 @@ class CommentTextInputViewController: UIViewController {
     private var textFieldHeightAnchor: NSLayoutConstraint!
     private var textFieldBottomAnchor: NSLayoutConstraint!
     
+    private var defaultHeight: CGFloat = 40
+    
     // Label for calculating height
     private let sizingLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         label.font = UIFont.systemFont(ofSize: 17) // Match the font used in the text field
+        label.text = ""
         return label
     }()
     
@@ -726,9 +769,9 @@ class CommentTextInputViewController: UIViewController {
         // Set constraints for the profile image view
         NSLayoutConstraint.activate([
             profileImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            profileImageView.widthAnchor.constraint(equalToConstant: 40),
-            profileImageView.heightAnchor.constraint(equalToConstant: 40),
-            profileImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+            profileImageView.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56),
+            profileImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40)
         ])
     }
     
@@ -754,7 +797,7 @@ class CommentTextInputViewController: UIViewController {
         // Set constraints for the hosting controller's view
         textfieldHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         
-        textFieldBottomAnchor = textfieldHostingController.view.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor)
+        textFieldBottomAnchor = textfieldHostingController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         textFieldHeightAnchor = textfieldHostingController.view.heightAnchor.constraint(equalToConstant: 40)
         
         NSLayoutConstraint.activate([
@@ -763,26 +806,44 @@ class CommentTextInputViewController: UIViewController {
             textFieldBottomAnchor,
             textFieldHeightAnchor,
         ])
+        
+        DispatchQueue.main.async { [self] in
+            defaultHeight = getMinHeight()
+        }
     }
     
     private func addActionButton() {
         // Add the action button to the main view
-        view.addSubview(actionButton)
+        view.addSubview(postButton)
         
         // Set constraints for the action button
         NSLayoutConstraint.activate([
-            actionButton.trailingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -4),
-            actionButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-            actionButton.widthAnchor.constraint(equalToConstant: 30),
-            actionButton.heightAnchor.constraint(equalToConstant: 30)
+            postButton.trailingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -2),
+            postButton.leadingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -32),
+            postButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            postButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
         ])
+        
+        postButton.addTarget(self, action: #selector(postActionTapped), for: .touchUpInside)
+    }
+    
+    @objc private func postActionTapped() {
+        delegate?.didPostComment(exportAsComment())
+        DispatchQueue.main.async {
+            self.userInput.text = ""
+        }
     }
     
     private func adjustTextFieldHeight(for text: String) {
         // Use the sizingLabel to calculate the required height
+//        if textIsEmpty() && defaultHeight < 0.0 {
+//            calculateDefaultHeight()
+//        }
+        
         sizingLabel.text = text
-        let requiredHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 16) // Adjust for padding and spacing
-        let adjustedHeight = min(120, max(40,  requiredHeight + 24))
+        let requiredHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 24) + defaultHeight
+        let adjustedHeight = min(120, max(requiredHeight, 40))
+        print("adjustedHeight: \(adjustedHeight)")
         // Adjust the top anchor while keeping the bottom anchor fixed
 //        textFieldTopAnchor.constant = max(20, requiredHeight) - textfieldHostingController.view.frame.height
         textFieldBottomAnchor = textfieldHostingController.view.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor)
@@ -791,8 +852,31 @@ class CommentTextInputViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
+    func getCurrentHeight() -> CGFloat {
+//        if textIsEmpty() && defaultHeight < 0.0 {
+//            calculateDefaultHeight()
+//        }
+        let requiredHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 24) + defaultHeight
+        let adjustedHeight = min(120, max(requiredHeight, 40))
+        print("adjustedHeight: \(adjustedHeight)")
+        return adjustedHeight
+    }
+    
+    func getMinHeight() -> CGFloat {
+        sizingLabel.text = "aaaaa"
+        let minHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 24)
+        sizingLabel.text = ""
+        print("adjustedHeight: min: \(minHeight)")
+        return minHeight
+    }
+    
     func textIsEmpty() -> Bool {
         return userInput.text.isEmpty
+    }
+    
+    func exportAsComment() -> Comment {
+        let returnComment = Comment(content: userInput.text)
+        return returnComment
     }
 }
 
@@ -916,20 +1000,39 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
     
     private func updateViewForComments() {
         if comments.isEmpty {
+            
+            let topSpacerView = UIView()
+            topSpacerView.backgroundColor = .clear
+            topSpacerView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.addArrangedSubview(topSpacerView)
+            
             // Display the "No Comments Yet!" message
-            view.addSubview(noCommentsLabel)
-            view.addSubview(noCommentsSubtitleLabel)
+            stackView.addArrangedSubview(noCommentsLabel)
+            stackView.addArrangedSubview(noCommentsSubtitleLabel)
+            
+            let bottomSpacerView = UIView()
+            bottomSpacerView.backgroundColor = .clear
+            bottomSpacerView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.addArrangedSubview(bottomSpacerView)
             
             NSLayoutConstraint.activate([
+                
+                topSpacerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                topSpacerView.bottomAnchor.constraint(equalTo: scrollView.centerYAnchor, constant: -50),
+                
                 noCommentsLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                 noCommentsLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
                 noCommentsLabel.heightAnchor.constraint(equalToConstant: 50),
-                noCommentsLabel.bottomAnchor.constraint(equalTo: scrollView.centerYAnchor),
+                noCommentsLabel.topAnchor.constraint(equalTo: topSpacerView.bottomAnchor),
                 noCommentsSubtitleLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                 noCommentsSubtitleLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
                 noCommentsSubtitleLabel.heightAnchor.constraint(equalToConstant: 50),
-                noCommentsSubtitleLabel.topAnchor.constraint(equalTo: scrollView.centerYAnchor),
+                noCommentsSubtitleLabel.topAnchor.constraint(equalTo: noCommentsLabel.bottomAnchor),
+                
+                bottomSpacerView.topAnchor.constraint(equalTo: noCommentsSubtitleLabel.bottomAnchor),
+                bottomSpacerView.heightAnchor.constraint(equalTo: topSpacerView.heightAnchor, constant: 1),
             ])
+            
         } else {
             // Display the comments
             addCommentsToStackView()
@@ -950,6 +1053,11 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
             heightConstraint.isActive = true
             cellHeightConstraints[commentCell] = heightConstraint
         }
+    }
+    
+    func addSingleCommentToStackView(comment: Comment) {
+        comments.append(comment)
+        addCommentsToStackView()
     }
     
     func didUpdateHeight(for cell: CommentCell, height: CGFloat) {
@@ -988,7 +1096,7 @@ class CommentCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle.fill")
         imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 25
         return imageView
@@ -998,21 +1106,13 @@ class CommentCell: UITableViewCell {
         let label = UILabel()
         label.text = "username"
         label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.text = String().loresIpsum
-        label.numberOfLines = 2
-        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let expandableView: CommentCellExpandableViewController = {
         let expandableView = CommentCellExpandableViewController()
-        expandableView.translatesAutoresizingMaskIntoConstraints = false
+//        expandableView.translatesAutoresizingMaskIntoConstraints = false
         return expandableView
     }()
     
@@ -1024,7 +1124,7 @@ class CommentCell: UITableViewCell {
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.spacing = 4
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -1033,7 +1133,7 @@ class CommentCell: UITableViewCell {
         stackView.axis = .horizontal
         stackView.alignment = .top
         stackView.spacing = 12
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -1079,23 +1179,41 @@ class CommentCell: UITableViewCell {
         ])
         
         NSLayoutConstraint.activate([
-            userImageView.widthAnchor.constraint(equalToConstant: 50),
-            userImageView.heightAnchor.constraint(equalToConstant: 50),
+//            userImageView.widthAnchor.constraint(equalToConstant: 50),
+//            userImageView.heightAnchor.constraint(equalToConstant: 50),
+//            
+//            usernameLabel.heightAnchor.constraint(equalToConstant: 18),
+//            replyButton.heightAnchor.constraint(equalToConstant: 18),
             
-            usernameLabel.heightAnchor.constraint(equalToConstant: 18),
-            replyButton.heightAnchor.constraint(equalToConstant: 18),
+            userImageView.topAnchor.constraint(equalTo: containerStackView.topAnchor),
+            userImageView.bottomAnchor.constraint(equalTo: containerStackView.topAnchor, constant: 50),
+            userImageView.leadingAnchor.constraint(equalTo: containerStackView.leadingAnchor),
+            userImageView.trailingAnchor.constraint(equalTo: containerStackView.leadingAnchor, constant: 50),
+            
+            usernameLabel.topAnchor.constraint(equalTo: containerStackView.topAnchor),
+            usernameLabel.bottomAnchor.constraint(equalTo: containerStackView.topAnchor, constant: 18),
+            
+            replyButton.topAnchor.constraint(equalTo: expandableView.bottomAnchor),
+            replyButton.bottomAnchor.constraint(equalTo: containerStackView.bottomAnchor),
             
             containerStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             containerStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
+        
+        backgroundRectView.translatesAutoresizingMaskIntoConstraints = false
+        userImageView.translatesAutoresizingMaskIntoConstraints = false
+        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
+        expandableView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func configure(with comment: Comment) {
         // Populate the cell's UI elements with data from the Comment object
-        usernameLabel.text = comment.userProfile.preferredUsername
-        descriptionLabel.text = comment.content
+//        usernameLabel.text = comment.userProfile.preferredUsername
+//        expandableView.text = comment.content
     }
     
     private func setupLikeButton() {
@@ -1115,8 +1233,9 @@ class CommentCell: UITableViewCell {
 extension CommentCell: CommentCellExpandableViewControllerDelegate {
     func didUpdateHeight(_ height: CGFloat) {
         let newHeight = height
-        delegate?.didUpdateHeight(for: self, height: newHeight + 36)
+        delegate?.didUpdateHeight(for: self, height: newHeight + 44) // 4 + 4 (4 spacing) + 18 + 18 = 44
         expandableViewHeightConstraint?.constant = newHeight
+        
         UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded()
         }
@@ -1280,7 +1399,7 @@ class CommentCellExpandableViewController: UIView, UIScrollViewDelegate {
         }
         scrollView.isScrollEnabled = expanded
         
-        delegate?.didUpdateHeight(max(40, requiredHeight))
+        delegate?.didUpdateHeight(requiredHeight)
         
         // Notify the superview (CommentCell) to update its layout
         if let superview = self.superview as? UITableViewCell {

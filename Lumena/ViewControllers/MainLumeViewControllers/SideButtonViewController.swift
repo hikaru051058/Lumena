@@ -302,18 +302,21 @@ extension LumeSideButtonsViewController {
     }
     
     @objc private func showComments() {
-//        if AuthenticationManager.shared.authStatus == .authenticated {
-//            let commentsViewController = CommentsViewController(lume: lume)
-//            commentsViewController.lume = lume  // assuming CommentsViewController can handle a reel
-//            commentsViewController.modalPresentationStyle = .pageSheet
-//            if let sheet = commentsViewController.sheetPresentationController {
-//                sheet.detents = [.medium(), .large()]
-//                sheet.prefersGrabberVisible = true
-//            }
-//            present(commentsViewController, animated: true, completion: nil)
-//        } else {
-//            showLoginSheet()
-//        }
+        if AuthenticationManager.shared.authStatus == .authenticated {
+            
+            print(lume.userComments)
+            lume.fetchComment()
+            let commentsSheetViewController = CommentsSheetViewController(lumeqlID: lume.postID, comments: lume.userComments)
+            
+            commentsSheetViewController.modalPresentationStyle = .pageSheet
+            if let sheet = commentsSheetViewController.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.prefersGrabberVisible = true
+            }
+            present(commentsSheetViewController, animated: true, completion: nil)
+        } else {
+            showLoginSheet()
+        }
     }
 }
 
