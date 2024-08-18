@@ -162,9 +162,21 @@ class ProfileManager: ObservableObject {
         }
     }
     
-    func getArrayProfiles(ids: [String]) -> [ProfileSettings] {
+    func getArrayProfiles(ids: [String]) async throws -> [ProfileSettings] {
         print("Entering getArrayProfiles with IDs: \(ids)")
-        return ids.compactMap { profiles[$0] }
+        
+        var profilesArray: [ProfileSettings] = []
+        
+        for id in ids {
+            do {
+                let profile = try await getProfile(withID: id)
+                profilesArray.append(profile)
+            } catch {
+                print("Failed to fetch profile for ID: \(id) with error: \(error)")
+            }
+        }
+        
+        return profilesArray
     }
     
     func getProfileAPI(with userID: String) async -> ProfileSettings? {
@@ -247,10 +259,22 @@ class ProfileManager: ObservableObject {
     // Updates the relationships in a centralized manner
     private func updateLocalRelationshipState(fromUserID: String, toUserID: String, relationshipStatus: RelationshipType) {
         var userRelationships = relationships[fromUserID] ?? [:]
+        let previousRelationshipStatus = userRelationships[toUserID] ?? .none
+        
+        print("updateLocalRelationshipState: Updating relationship from \(fromUserID) to \(toUserID):")
+        print("updateLocalRelationshipState: Previous status: \(previousRelationshipStatus.stringValue())")
+        print("updateLocalRelationshipState: New status: \(relationshipStatus.stringValue())")
+        
         userRelationships[toUserID] = relationshipStatus
         relationships[fromUserID] = userRelationships
         
         var reverseRelationships = relationships[toUserID] ?? [:]
+        let previousReverseRelationshipStatus = reverseRelationships[fromUserID] ?? .none
+        
+        print("updateLocalRelationshipState: Updating reverse relationship from \(toUserID) to \(fromUserID):")
+        print("updateLocalRelationshipState: Previous reverse status: \(previousReverseRelationshipStatus.stringValue())")
+        print("updateLocalRelationshipState: New reverse status: \(relationshipStatus.invert().stringValue())")
+        
         reverseRelationships[fromUserID] = relationshipStatus.invert()
         relationships[toUserID] = reverseRelationships
         
@@ -383,16 +407,25 @@ class ProfileManager: ObservableObject {
 }
 
 extension ProfileManager {
-    // Method to block a user
+    
     func blockUser(fromUserID: String, toUserID: String) async throws {
         try await GraphQL.shared.blockUser(blockuserprofileqlID: toUserID, blockAction: .block)
-        updateLocalRelationshipState(fromUserID: fromUserID, toUserID: toUserID, relationshipStatus: .blocked)
+        
+        // Determine if the block is mutual
+        let existingRelationship = relationships[toUserID]?[fromUserID] ?? .none
+        let newRelationship: RelationshipType = (existingRelationship == .blocking) ? .mutuallyBlocked : .blocking
+        
+        updateLocalRelationshipState(fromUserID: fromUserID, toUserID: toUserID, relationshipStatus: newRelationship)
     }
     
-    // Method to unblock a user
     func unblockUser(fromUserID: String, toUserID: String) async throws {
         try await GraphQL.shared.blockUser(blockuserprofileqlID: toUserID, blockAction: .unblock)
-        updateLocalRelationshipState(fromUserID: fromUserID, toUserID: toUserID, relationshipStatus: .none)
+        
+        // Determine if the unblocking leaves a block on the other side
+        let existingRelationship = relationships[toUserID]?[fromUserID] ?? .none
+        let newRelationship: RelationshipType = (existingRelationship == .blocking) ? .blocked : .none
+        
+        updateLocalRelationshipState(fromUserID: fromUserID, toUserID: toUserID, relationshipStatus: newRelationship)
     }
     
     // Method to fetch blocked and blocking users
@@ -402,7 +435,7 @@ extension ProfileManager {
         DispatchQueue.main.async {
             self.blockedUsers = blockResultData
             blockResultData.blocking.forEach { blockedID in
-                self.updateLocalRelationshipState(fromUserID: userID, toUserID: blockedID, relationshipStatus: .blocked)
+                self.updateLocalRelationshipState(fromUserID: userID, toUserID: blockedID, relationshipStatus: .blocking)
             }
             blockResultData.blocked.forEach { blockingID in
                 self.updateLocalRelationshipState(fromUserID: blockingID, toUserID: userID, relationshipStatus: .blocked)
@@ -420,6 +453,41 @@ extension ProfileManager {
         let blocked = blockedUsers?.blocked ?? []
         let blocking = blockedUsers?.blocking ?? []
         return (blocked, blocking)
+    }
+    
+    func returnBlockingUsers() async -> [ProfileSettings] {
+        guard let currentUserID = AuthenticationManager.shared.identityID else {
+            print("No current user ID available")
+            return []
+        }
+        
+        // Find users who are blocking the current user
+        let blockingIDs: [String] = relationships[currentUserID]?.compactMap { (userID, relationship) in
+            return relationship == .blocking ? userID : nil
+        } ?? []
+        
+        // Find users who are mutually blocked
+        let mutualBlockIDs: [String] = relationships[currentUserID]?.compactMap { (userID, relationship) in
+            if relationship == .blocked,
+               let reverseRelationship = relationships[userID]?[currentUserID],
+               reverseRelationship == .blocking {
+                return userID
+            }
+            return nil
+        } ?? []
+        
+        // Combine both lists and remove duplicates
+        let combinedIDs = Array(Set(blockingIDs + mutualBlockIDs))
+        
+        // Convert user IDs to ProfileSettings objects
+        do {
+            let blockingProfiles = try await getArrayProfiles(ids: combinedIDs)
+            return blockingProfiles
+        } catch {
+            print(error)
+        }
+        
+        return []
     }
 }
 
@@ -1185,6 +1253,11 @@ class profileImage: ObservableObject {
         
         return downloadedImage
     }
+    
+    func getImageAsync() async -> UIImage? {
+        guard let imageURL = URL(string: self.url) else { return nil }
+        return await self.downloadImage(from: imageURL)
+    }
 }
 
 
@@ -1269,6 +1342,8 @@ enum RelationshipType: String, Decodable {
     case unknown = "unknown"      // Relationship status has not been fetched
     case disconnected = "disconnected" // Checked but no relationship
     case blocked = "blocked"
+    case blocking = "blocking"
+    case mutuallyBlocked = "mutuallyBlocked" // Both users have blocked each other
 
     // Added lowercase values to match case insensitivity in JSON responses
     func stringValue() -> String {
@@ -1286,12 +1361,17 @@ extension RelationshipType {
         case .mutual:
             return .mutual
         case .blocked:
+            return .blocking
+        case .blocking:
             return .blocked
+        case .mutuallyBlocked:
+            return .mutuallyBlocked
         case .none, .unknown, .disconnected:
             return .none
         }
     }
 }
+
 
 struct UserRelationship {
     let userID: String

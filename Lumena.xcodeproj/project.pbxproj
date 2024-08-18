@@ -26,6 +26,7 @@
 		177DDFD22C45A0EB0042802B /* ReadingListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC52C45A0EB0042802B /* ReadingListViewModel.swift */; };
 		177E44292C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E44282C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift */; };
 		177E442B2C6E88C600EFD2D1 /* CommentsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E442A2C6E88C600EFD2D1 /* CommentsListViewController.swift */; };
+		177E442E2C72244500EFD2D1 /* UnblockingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E442D2C72244500EFD2D1 /* UnblockingViewController.swift */; };
 		1782B11A2C67530400AC1686 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1782B1192C67530400AC1686 /* CameraViewController.swift */; };
 		179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */; };
 		179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */; };
@@ -235,6 +236,7 @@
 		177DDFC52C45A0EB0042802B /* ReadingListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingListViewModel.swift; sourceTree = "<group>"; };
 		177E44282C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraImagePickerButtonUIView.swift; sourceTree = "<group>"; };
 		177E442A2C6E88C600EFD2D1 /* CommentsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsListViewController.swift; sourceTree = "<group>"; };
+		177E442D2C72244500EFD2D1 /* UnblockingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnblockingViewController.swift; sourceTree = "<group>"; };
 		1782B1192C67530400AC1686 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
 		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
@@ -560,6 +562,16 @@
 			path = "reading app";
 			sourceTree = "<group>";
 		};
+		177E442C2C72241300EFD2D1 /* ProfileSettings */ = {
+			isa = PBXGroup;
+			children = (
+				171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */,
+				1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */,
+				177E442D2C72244500EFD2D1 /* UnblockingViewController.swift */,
+			);
+			path = ProfileSettings;
+			sourceTree = "<group>";
+		};
 		1782B1172C66A83800AC1686 /* PostContentViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -694,8 +706,7 @@
 			isa = PBXGroup;
 			children = (
 				171761CE2C096323000268A6 /* ProfileMainPageViewController */,
-				171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */,
-				1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */,
+				177E442C2C72241300EFD2D1 /* ProfileSettings */,
 				17C412332C32C5460083C8A5 /* ShimmerViewController.swift */,
 			);
 			path = ProfileViewController;
@@ -1183,6 +1194,7 @@
 				17B7A3D12C04104E00777CC1 /* UICollectionView+Extensions.swift in Sources */,
 				17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */,
 				17B7A3CF2C04104E00777CC1 /* Then.swift in Sources */,
+				177E442E2C72244500EFD2D1 /* UnblockingViewController.swift in Sources */,
 				17C0ABB42BFEA90100FA027A /* ProfileXLPagerTabStripViewController.swift in Sources */,
 				179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */,
 				177DDFD02C45A0EB0042802B /* ReadingDetailView.swift in Sources */,

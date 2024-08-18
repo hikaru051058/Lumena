@@ -38,10 +38,10 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     private var logoutButton: UIButton!
     private var deleteAccountButton: UIButton!
     
-    
     private var toolBarStackView: UIStackView!
     private var backButton: UIButton!
     private var doneButton: UIButton!
+    private var unblockButton: UIButton!
     var color: UIColor = .background {
         didSet {
             updateButtonColors()
@@ -592,8 +592,9 @@ extension ProfileSettingsViewController {
         
         setupBackButton()
         setupDoneButton()
+        setupUnblockButton()
         
-        toolBarStackView = UIStackView(arrangedSubviews: [backButton, createFlexibleSpace(), doneButton])
+        toolBarStackView = UIStackView(arrangedSubviews: [backButton, createFlexibleSpace(), unblockButton])
         toolBarStackView.axis = .horizontal
         toolBarStackView.distribution = .equalSpacing
         toolBarStackView.alignment = .center
@@ -619,6 +620,10 @@ extension ProfileSettingsViewController {
         doneButton = createButton(action: #selector(saveButtonTapped), imageName: "", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
     }
     
+    private func setupUnblockButton() {
+        unblockButton = createButton(action: #selector(unblockButtonTapped), imageName: "person.crop.circle.fill.badge.xmark", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
+    }
+    
     @objc private func backButtonTapped() {
         Task {
             do {
@@ -630,7 +635,11 @@ extension ProfileSettingsViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    @objc private func saveButtonTapped() {
+    @objc private func saveButtonTapped() {}
+    
+    @objc private func unblockButtonTapped() {
+        let unblockViewController = UnblockViewController(userIdentityID: profile.identityID)
+        self.navigationController?.pushViewController(unblockViewController, animated: true)
     }
     
     private func updateButtonColors() {

@@ -19,6 +19,7 @@ protocol ProfileToolButtonDelegate: AnyObject {
 class ProfileToolButtonViewController: UIView {
     
     var profile: ProfileSettings!
+    var userIdentityID: String!
     var color: UIColor = .primary {
         didSet {
             updateButtonColors()
@@ -41,8 +42,9 @@ class ProfileToolButtonViewController: UIView {
         commonInit()
     }
     
-    init(frame: CGRect, profile: ProfileSettings, addShadow: Bool = true, color: UIColor) {
+    init(frame: CGRect, profile: ProfileSettings, userIdentityID: String, addShadow: Bool = true, color: UIColor) {
         self.profile = profile
+        self.userIdentityID = userIdentityID
         self.addShadow = addShadow
         self.color = color
         super.init(frame: frame)
@@ -94,7 +96,7 @@ class ProfileToolButtonViewController: UIView {
     
     private func setupSettingButton() {
         
-        if profile.identityID != GI.shared.identityID {
+        if userIdentityID != AuthenticationManager.shared.identityID {
             settingsButton = createButton(action: #selector(otherOptionButtonTapped), imageName: "ellipsis", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)
         } else {
             settingsButton = createButton(action: #selector(settingsButtonTapped), imageName: "gear", buttonLabel: "", tintColor: self.color, shadow: addShadow, buttonTextConfig: buttonTextConfig, buttonImageConfig: buttonImageConfig)

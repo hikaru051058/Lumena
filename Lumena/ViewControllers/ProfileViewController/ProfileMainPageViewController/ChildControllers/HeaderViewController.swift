@@ -257,7 +257,7 @@ extension HeaderViewController {
         ])
         
         // Instantiate ProfileToolButtonViewController
-        profileToolButtonVC = ProfileToolButtonViewController(frame: .zero, profile: profile, addShadow: false, color: .primary)
+        profileToolButtonVC = ProfileToolButtonViewController(frame: .zero, profile: profile, userIdentityID: userIdentityID, addShadow: false, color: .primary)
         profileToolButtonVC.delegate = backButtonDelegate
         
         titleView.addSubview(profileToolButtonVC)
@@ -355,7 +355,7 @@ extension HeaderViewController {
     }
     
     private func addToolBar() {
-        toolBar = ProfileToolButtonViewController(frame: .zero, profile: profile, color: .background)
+        toolBar = ProfileToolButtonViewController(frame: .zero, profile: profile, userIdentityID: userIdentityID, color: .background)
         toolBar.delegate = backButtonDelegate
         view.addSubview(toolBar)
         view.bringSubviewToFront(toolBar)

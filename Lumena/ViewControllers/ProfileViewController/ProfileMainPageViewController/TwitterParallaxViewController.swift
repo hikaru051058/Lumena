@@ -315,10 +315,12 @@ extension TwitterParallaxViewController: ProfileToolButtonDelegate {
             let blockAlertController = UIAlertController(title: blockUserNameMessage, message: nil, preferredStyle: .alert)
             
             let blockBlock = UIAlertAction(title: NSLocalizedString("ブロック", comment: ""), style: .destructive) { [self] _ in
-                // Handle cancel action if needed
+                
                 Task {
                     do {
-                        try await GraphQL.shared.blockUser(blockuserprofileqlID: profile.identityID, blockAction: .block)
+                        if let userIdentityID = AuthenticationManager.shared.identityID {
+                            try await ProfileManager.shared.blockUser(fromUserID: userIdentityID, toUserID: profile.identityID)
+                        }
                     } catch {
                         print(error)
                     }

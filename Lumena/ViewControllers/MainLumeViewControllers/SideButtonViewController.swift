@@ -397,7 +397,11 @@ extension LumeSideButtonsViewController {
                 // Handle block action if needed
                 Task {
                     do {
-                        try await GraphQL.shared.blockUser(blockuserprofileqlID: profile!.identityID, blockAction: .block)
+                        if let userIdentityID = AuthenticationManager.shared.identityID,
+                           let toUserIdentityProfile = profile
+                        {
+                            try await ProfileManager.shared.blockUser(fromUserID: userIdentityID, toUserID:  toUserIdentityProfile.identityID)
+                        }
                     } catch {
                         print(error)
                     }
@@ -951,7 +955,7 @@ extension LumeBottomButtonsViewController: DescriptionExpandableViewControllerDe
         
         // Create the DescriptionExpandableViewController with the post description
         sideButtonDescriptionView = DescriptionExpandableViewController(
-//            text: lume.postDescription ?? ""
+            text: lume.postDescription ?? ""
         )
         
         sideButtonDescriptionView.lumeBottomViewControllerdelegate = self
