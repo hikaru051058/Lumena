@@ -1281,32 +1281,31 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         }
     }
     
-    
-    //comment
-    func fetchComment(commentLimit: Int = 20) {
+    // Comment
+    func fetchComment(commentLimit: Int = 20) async {
         if !self.userCommentFetchedAll {
-            Task {
-                do {
-                    let (comments, nextToken) = try await GraphQL.shared.fetchLumeComments(LumeID: self.postID, commentLimit: commentLimit, lastToken: self.commentLastToken ?? "")
+            do {
+                let (comments, nextToken) = try await GraphQL.shared.fetchLumeComments(LumeID: self.postID, commentLimit: commentLimit, lastToken: self.commentLastToken ?? "")
+                
+                // Update the UI and internal state on the main thread
+                DispatchQueue.main.async {
+                    self.userComments = comments
+                    self.commentLastToken = nextToken
                     
-                    DispatchQueue.main.async {
-                        self.userComments = comments
-                        self.commentLastToken = nextToken
-                        
-                        if comments.count < commentLimit {
-                            self.userCommentFetchedAll = true
-                        }
-                        
-                        LumeManager.shared.updateLume(self)
+                    if comments.count < commentLimit {
+                        self.userCommentFetchedAll = true
                     }
-                } catch {
-                    print(error)
+                    
+                    LumeManager.shared.updateLume(self)
                 }
+            } catch {
+                print(error)
             }
         } else {
             print("Fetched all the associated comments for this Lume")
         }
     }
+
     
     func returnPostUser() -> ProfileSettings {
         return ProfileManager.shared.getProfile(withID: self.postUserIID)
@@ -1574,9 +1573,18 @@ class Comment: Identifiable, ObservableObject {
     
     // Computed property to get timestamp as a String
     var timestampString: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter.string(from: timestamp)
+        let timeInterval = Date().timeIntervalSince(timestamp)
+        
+        if timeInterval < 3600 { // Less than 1 hour
+            let minutes = Int(timeInterval / 60)
+            return "\(minutes)m"
+        } else if timeInterval < 86400 { // Less than 24 hours
+            let hours = Int(timeInterval / 3600)
+            return "\(hours)h"
+        } else { // 24 hours or more
+            let days = Int(timeInterval / 86400)
+            return "\(days)d"
+        }
     }
     
     init(commentID: String = "",

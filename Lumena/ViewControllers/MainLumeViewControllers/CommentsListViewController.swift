@@ -9,518 +9,9 @@ import Foundation
 import UIKit
 import SwiftUI
 
-class CommentsViewControllerOLD: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
-    var lume: Lume
-    var userComments: [Comment]
-    var keyboardHeight: CGFloat = 0
-    
-    private let tableView = UITableView()
-    private let commentTextField = UITextField()
-    private let sendButton = UIButton(type: .system)
-    
-    init(lume: Lume) {
-        self.lume = lume
-        self.userComments = lume.userComments
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupViews()
-        setupConstraints()
-        registerForKeyboardNotifications()
-        setupTableView()
-    }
-    
-    private func setupViews() {
-        view.backgroundColor = .white
-        
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
-        view.addSubview(tableView)
-        
-        commentTextField.placeholder = "コメントを書く"
-        commentTextField.borderStyle = .roundedRect
-        commentTextField.delegate = self
-        view.addSubview(commentTextField)
-        
-        sendButton.setTitle("Send", for: .normal)
-        sendButton.addTarget(self, action: #selector(sendComment), for: .touchUpInside)
-        view.addSubview(sendButton)
-    }
-    
-    private func setupConstraints() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        commentTextField.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: commentTextField.topAnchor),
-            
-            commentTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
-            commentTextField.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -8),
-            commentTextField.heightAnchor.constraint(equalToConstant: 50),
-            
-            sendButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            sendButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -8),
-            sendButton.widthAnchor.constraint(equalToConstant: 50)
-        ])
-    }
-    
-    @objc private func sendComment() {
-        guard let text = commentTextField.text, !text.isEmpty else { return }
-        // Logic to send comment
-        if let userProfile = GI.shared.profileSettings {
-            
-            let commentID = lume.postID + ":\(userProfile.identityID):\(Int(Date.now.timeIntervalSince1970))"
-            
-            let newComment = Comment(commentID: commentID, userProfile: userProfile, content: text, lumeQLID: lume.postID)
-            
-            Task {
-                do {
-                    let message = try await newComment.postComment()
-                    DispatchQueue.main.async {
-                        print(message)
-                        self.userComments.append(newComment)
-                        self.tableView.reloadData()
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-        }
-        
-        commentTextField.text = "" // Clear text field
-        dismissKeyboard()
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
-    private func registerForKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(_:)), name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    @objc func keyboardWasShown(_ notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            UIView.animate(withDuration: 0.1) {
-                self.view.frame.origin.y -= keyboardSize.height
-            }
-        }
-    }
-    
-    @objc func keyboardWillBeHidden(_ notification: NSNotification) {
-        UIView.animate(withDuration: 0.1) {
-            self.view.frame.origin.y = 0
-        }
-    }
-    
-    private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    private func setupTableView() {
-        tableView.reloadData()
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userComments.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentCellOLD
-        let comment = userComments[indexPath.row]
-        cell.configure(with: comment)
-        return cell
-    }
+protocol CommentSheetViewDelegate: AnyObject {
+    func didUpdatedLume(_ lume: Lume)
 }
-
-class CommentCellOLD: UITableViewCell {
-    private let profileImageView = UIImageView()
-    private let usernameLabel = UILabel()
-    private let commentLabel = UILabel()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupViews()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupViews() {
-        profileImageView.layer.cornerRadius = 35
-        profileImageView.clipsToBounds = true
-        
-        usernameLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        usernameLabel.textColor = .darkGray
-        
-        commentLabel.font = .systemFont(ofSize: 16)
-        commentLabel.textColor = .black
-        commentLabel.numberOfLines = 0
-        
-        contentView.addSubview(profileImageView)
-        contentView.addSubview(usernameLabel)
-        contentView.addSubview(commentLabel)
-    }
-    
-    private func setupConstraints() {
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        commentLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            profileImageView.widthAnchor.constraint(equalToConstant: 70),
-            profileImageView.heightAnchor.constraint(equalToConstant: 70),
-            
-            usernameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
-            usernameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            usernameLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -10),
-            
-            commentLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
-            commentLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
-            commentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            commentLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
-        ])
-    }
-
-    func configure(with comment: Comment) {
-        // Assuming `profileImage` and `username` are properties of `userProfile`
-        if let profileImage = comment.userProfile.profileImage, let image = profileImage.image {
-            profileImageView.image = image
-        }
-        usernameLabel.text = comment.userProfile.preferredUsername
-        commentLabel.text = comment.content
-    }
-}
-
-
-// MARK: - Previous Comment View
-
-struct CommentSlideView: View {
-    
-    @Binding var reel: Lume
-//    @State private var selectedTab: Int = 0
-    
-    @State private var loading: Bool = false
-    @State private var likers: Bool = false
-
-//    let tabs: [Tab] = [
-//        .init(title: "コメント"),
-//        .init(title: "ライク")
-//    ]
-    
-    var body: some View {
-        
-        ZStack{
-            
-            if loading {
-                
-                ProgressView()
-                    .font(.title)
-                    .foregroundColor(Color.secondary)
-                
-            } else {
-                
-                VStack{
-                    
-                    ZStack{
-                        Text("コメント")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                        
-//                        HStack{
-//
-//                            Spacer()
-//
-//
-//                            Button(action:{
-//                                withAnimation{
-//                                    likers.toggle()
-//                                }
-//                            }){
-//                                Image(systemName: likers ? "heart.fill" : "heart")
-//                                    .font(.title3)
-//                                    .fontWeight(.bold)
-//                            }
-//                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                    .padding(.top, 10)
-                    
-                    ZStack{
-                        
-                        VStack{
-                            Divider()
-                            
-                            Spacer()
-                        }
-                        
-                        ZStack{
-                            
-//                            if likers {
-//                                LikeView(reel: $reel)
-//                            } else {
-//                                CommentView(reel: $reel)
-                                CommentView()
-//                            }
-                        }
-                    }
-                }
-            }
-        }
-        .ignoresSafeArea(.container)
-        .onAppear{
-            
-            loading = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                withAnimation{
-                    loading = false
-                }
-            }
-        }
-    }
-}
-
-struct CommentView: View {
-    
-//    @Binding var reel: Lume
-    @State private var reel: Lume = Lume()
-    @State private var writeComment: String = ""
-    @State private var scrollToCommentId: UUID?
-    
-    @FocusState private var keyboardFocus: Bool
-    @ObservedObject private var keyboardResponder = KeyboardResponder()
-    
-    var body: some View {
-        ZStack {
-            
-            VStack {
-                
-                Group{
-                    ScrollView(showsIndicators: false) {
-                        ScrollViewReader { scrollView in
-                            VStack {
-                                
-                                // Poster's description
-                                if let postDescription = reel.postDescription,
-                                   postDescription != ""
-                                {
-                                    Rectangle()
-                                        .frame(height: 16)
-                                        .foregroundColor(Color.clear)
-                                    
-                                    Text(postDescription)
-                                        .font(.footnote)
-                                        .foregroundColor(.primary)
-                                        .padding(.horizontal)
-                                    
-                                    Divider()
-                                        .padding(.top)
-                                }
-                                
-                                if !reel.userComments.isEmpty {
-                                    ForEach(reel.userComments.indices, id: \.self) { index in
-                                        let comment = reel.userComments[index]
-                                        IndividualCommentView(comment: comment)
-                                            .id(comment.id)
-                                            .onAppear {
-                                                if index == reel.userComments.count - 2 {
-                                                    reel.fetchComment()
-                                                }
-                                            }
-                                    }
-                                    .padding(.vertical, 5)
-                                    .onChange(of: scrollToCommentId) { value in
-                                        if let value = value {
-                                            withAnimation {
-                                                scrollView.scrollTo(value, anchor: .bottom)
-                                            }
-                                        }
-                                    }
-                                    
-                                } else {
-                                    
-                                    Spacer()
-                                    
-                                    Text("まだ誰もコメントしてません")
-                                        .font(.title2)
-                                        .foregroundColor(Color.primary)
-                                        .fontWeight(.heavy)
-                                    Text("コメントを追加してみよう！")
-                                        .font(.callout)
-                                        .foregroundColor(Color.secondary)
-                                        .fontWeight(.medium)
-                                    
-                                    Spacer()
-                                }
-                            }
-                            .onTapGesture {
-                                if(keyboardFocus) {
-                                    
-                                    keyboardFocus = false
-                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal)
-                
-                HStack(alignment: .bottom) {
-                    
-                    TextField("コメントを書く", text: $writeComment, onCommit: {
-                        if !writeComment.isEmpty {
-                            
-                            if let userProfile = GI.shared.profileSettings {
-                                
-                                let commentID = reel.postID + ":\(userProfile.identityID):\(Int(Date.now.timeIntervalSince1970))"
-                                
-                                let newComment = Comment(commentID: commentID, userProfile: userProfile, content: writeComment, lumeQLID: reel.postID)
-                                
-                                Task {
-                                    do {
-                                        let message = try await newComment.postComment()
-                                        print(message)
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                                
-                                reel.userComments.append(newComment)
-                                scrollToCommentId = newComment.id
-                            }
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
-                                writeComment = ""
-                            }
-                        }
-                    })
-                    .focused($keyboardFocus)
-                    .padding(.all, 20)
-                    .frame(height: 40)
-                    .background(
-                        RoundedRectangle(cornerRadius: 40)
-                            .stroke(Color.gray, lineWidth: 0.5)  // This adds a border
-                            .background(Color.clear)  // This makes the fill color clear
-                    )
-                    .foregroundColor(Color.primary)
-                    .keyboardType(.twitter)
-                    
-                    
-                    if writeComment.isEmpty {
-                        Button(action: {
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        }) {
-                            Image(systemName: "square.and.arrow.up.circle.fill")
-                                .font(.title)
-                                .foregroundColor(Color.primary)
-                        }
-                    } else {
-                        Button(action: {
-                            
-                            if let userProfile = GI.shared.profileSettings {
-                                
-                                let commentID = reel.postID + ":\(userProfile.identityID):\(Int(Date.now.timeIntervalSince1970))"
-                                
-                                let newComment = Comment(commentID: commentID, userProfile: userProfile, content: writeComment, lumeQLID: reel.postID)
-                                
-                                Task {
-                                    do {
-                                        let message = try await newComment.postComment()
-                                        print(message)
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                                
-                                reel.userComments.append(newComment)
-                                scrollToCommentId = newComment.id
-                            }
-                            
-                            writeComment = ""
-                            
-                            keyboardFocus = false
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                            
-                        }) {
-                            Image(systemName: "arrow.up.circle.fill")
-                                .font(.title)
-                                .foregroundColor(Color.blue)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.bottom, keyboardFocus ? 0 : 25)
-                .padding(.bottom, keyboardFocus ? keyboardResponder.currentHeight : 0)
-            }
-            .onAppear{
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-            }
-        }
-        .ignoresSafeArea(.container)
-    }
-}
-
-struct IndividualCommentView: View {
-    
-    let comment: Comment
-    
-    var body: some View {
-        
-        HStack(alignment: .top) {
-            
-            
-            if let userProfileImage = comment.userProfile.profileImage?.image {
-                Image(uiImage: userProfileImage)
-                    .resizable()
-                    .scaledToFill()
-                    .foregroundColor(.gray)
-                    .frame(width: 70, height: 70)
-                    .clipShape(Circle())
-            }
-            
-            VStack(alignment: .leading) {
-                
-                HStack {
-                    Text(comment.userProfile.preferredUsername)
-                    Text(comment.timestampString)
-                    Spacer()
-                }
-                .font(.footnote)
-                .foregroundColor(.gray)
-                .padding(.bottom, 3)
-                
-                Text(comment.content)
-                    .font(.footnote)
-                    .foregroundColor(.primary)
-            }
-            .padding(.leading, 6)
-            .multilineTextAlignment(.leading)
-        }
-    }
-}
-
-
-
 
 class CommentsSheetViewController: UIViewController {
     
@@ -535,12 +26,21 @@ class CommentsSheetViewController: UIViewController {
     private var keyboardHeight: CGFloat = 0.0
     private var lastHeight: CGFloat = 40.0
     
-    private var comments: [Comment] = []
-    private var lumeqlID: String = ""
+//    private var comments: [Comment] = []
+//    private var lumeqlID: String = ""
     
-    init(lumeqlID: String = "", comments: [Comment] = []) {
-        self.lumeqlID = lumeqlID
-        self.comments = comments
+    private var lume: Lume = Lume()
+    
+    weak var delegate: CommentSheetViewDelegate?
+    
+//    init(lumeqlID: String = "", comments: [Comment] = []) {
+//        self.lumeqlID = lumeqlID
+//        self.comments = comments
+//        super.init(nibName: nil, bundle: nil)
+//    }
+    
+    init(lume: Lume) {
+        self.lume = lume
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -550,19 +50,38 @@ class CommentsSheetViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .background
         
         navigationItem.title = "Comments"
+//        navigationController?.navigationBar.setValue(true, forKey: "hidesShadow")
+//        navigationController?.navigationBar.shadowImage = UIImage()
         
-        view.backgroundColor = .background
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithDefaultBackground()
+
+        navigationItem.scrollEdgeAppearance = navigationBarAppearance
+        navigationItem.standardAppearance = navigationBarAppearance
+        navigationItem.compactAppearance = navigationBarAppearance
+        
+        navigationController?.setNeedsStatusBarAppearanceUpdate()
+
         
         setupCommentTextField()
         setupCommentsList()
         view.bringSubviewToFront(commentTextInput.view)
+        
         registerForKeyboardNotifications()
+        fetchNewComments()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     private func registerForKeyboardNotifications() {
@@ -593,11 +112,10 @@ class CommentsSheetViewController: UIViewController {
     }
 }
 
-
 extension CommentsSheetViewController: CommentsListDelegate {
     
     private func setupCommentsList() {
-        commentsList = CommentsListViewController(comments: comments)
+        commentsList = CommentsListViewController(comments: lume.userComments, isLoading: !lume.userCommentFetchedAll)
         commentsList.delegate = self
         addChild(commentsList)
         view.addSubview(commentsList.view)
@@ -618,6 +136,15 @@ extension CommentsSheetViewController: CommentsListDelegate {
     func didScrollList(_ lastContentOffset: CGPoint) {
         view.endEditing(true)
     }
+    
+    func fetchNewComments() {
+        DispatchQueue.main.async { [self] in
+            Task {
+                await lume.fetchComment()
+                commentsList.setComments(lume.userComments)
+            }
+        }
+    }
 }
 
 extension CommentsSheetViewController: CommentTextFieldDelegate {
@@ -633,14 +160,27 @@ extension CommentsSheetViewController: CommentTextFieldDelegate {
         
         let commentTextInputHeight = commentTextInput.getCurrentHeight() + view.safeAreaInsets.bottom // -> 34 + 40 = 74
         
-        commentTextInputHeightConstraint = commentTextInput.view.safeAreaLayoutGuide.heightAnchor.constraint(equalToConstant: commentTextInputHeight)
-        commentTextInputBottomConstraint = commentTextInput.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        commentTextInputHeightConstraint = commentTextInput.view.safeAreaLayoutGuide.heightAnchor.constraint(equalToConstant: commentTextInputHeight + 4)
+        commentTextInputBottomConstraint = commentTextInput.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -4)
         
         NSLayoutConstraint.activate([
             commentTextInputHeightConstraint,
             commentTextInputBottomConstraint,
             commentTextInput.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             commentTextInput.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+        
+        // Add a border only on the top
+        let topBorder = UIView()
+        topBorder.backgroundColor = .systemGray6 // Set the border color here
+        topBorder.translatesAutoresizingMaskIntoConstraints = false
+        commentTextInput.view.addSubview(topBorder)
+        
+        NSLayoutConstraint.activate([
+            topBorder.topAnchor.constraint(equalTo: commentTextInput.view.topAnchor),
+            topBorder.leadingAnchor.constraint(equalTo: commentTextInput.view.leadingAnchor),
+            topBorder.trailingAnchor.constraint(equalTo: commentTextInput.view.trailingAnchor),
+            topBorder.heightAnchor.constraint(equalToConstant: 1)
         ])
     }
     
@@ -655,11 +195,11 @@ extension CommentsSheetViewController: CommentTextFieldDelegate {
         commentsListBottomConstraint.isActive = false
         
         if keyboardIsVisible {
-            commentTextInputHeightConstraint = commentTextInput.view.heightAnchor.constraint(equalToConstant: commentTextFieldHeight)
-            commentTextInputBottomConstraint = commentTextInput.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardHeight)
+            commentTextInputHeightConstraint = commentTextInput.view.heightAnchor.constraint(equalToConstant: commentTextFieldHeight + 4)
+            commentTextInputBottomConstraint = commentTextInput.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardHeight-4)
         } else {
-            commentTextInputHeightConstraint = commentTextInput.view.heightAnchor.constraint(equalToConstant: commentTextFieldHeight)
-            commentTextInputBottomConstraint = commentTextInput.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            commentTextInputHeightConstraint = commentTextInput.view.heightAnchor.constraint(equalToConstant: commentTextFieldHeight + 4)
+            commentTextInputBottomConstraint = commentTextInput.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -4)
         }
         
         // Update the comments list constraint
@@ -683,10 +223,10 @@ extension CommentsSheetViewController {
     private func sendComment(comment: Comment) async {
         
         if let userIdentityID = AuthenticationManager.shared.identityID {
-            let commentID = lumeqlID + ":\(userIdentityID):\(Int(Date.now.timeIntervalSince1970))"
+            let commentID = lume.postID + ":\(userIdentityID):\(Int(Date.now.timeIntervalSince1970))"
             
             comment.commentID = commentID
-            comment.lumeQLID = lumeqlID
+            comment.lumeQLID = lume.postID
             
             do {
                 comment.userProfile = try await ProfileManager.shared.getProfile(withID: userIdentityID)
@@ -698,10 +238,9 @@ extension CommentsSheetViewController {
                 let message = try await comment.postComment()
                 DispatchQueue.main.async {
                     print(message)
-                    //add comment back to lume's comment
-//                    self.userComments.append(comment)
-                    self.comments.append(comment)
-                    self.commentsList.addSingleCommentToStackView(comment: comment)
+                    self.lume.userComments.append(comment)
+                    self.delegate?.didUpdatedLume(self.lume)
+                    self.commentsList.setComments(self.lume.userComments)
                 }
             } catch {
                 print(error)
@@ -724,7 +263,9 @@ class CommentTextInputViewController: UIViewController {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle.fill")
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 20
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -764,6 +305,10 @@ class CommentTextInputViewController: UIViewController {
     
     private func setupView() {
         // Add profile image view to the main view
+        if let userIdentityID = AuthenticationManager.shared.identityID {
+            profileImageView.image = ProfileManager.shared.returnProfileImage(userIdentityID: userIdentityID)?.image
+        }
+        
         view.addSubview(profileImageView)
         
         // Set constraints for the profile image view
@@ -814,14 +359,15 @@ class CommentTextInputViewController: UIViewController {
     
     private func addActionButton() {
         // Add the action button to the main view
+        postButton.alpha = 0
         view.addSubview(postButton)
         
         // Set constraints for the action button
         NSLayoutConstraint.activate([
-            postButton.trailingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -2),
-            postButton.leadingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -32),
-            postButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            postButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
+            postButton.trailingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -5),
+            postButton.leadingAnchor.constraint(equalTo: textfieldHostingController.view.trailingAnchor, constant: -35),
+            postButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5),
+            postButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -35)
         ])
         
         postButton.addTarget(self, action: #selector(postActionTapped), for: .touchUpInside)
@@ -835,30 +381,21 @@ class CommentTextInputViewController: UIViewController {
     }
     
     private func adjustTextFieldHeight(for text: String) {
-        // Use the sizingLabel to calculate the required height
-//        if textIsEmpty() && defaultHeight < 0.0 {
-//            calculateDefaultHeight()
-//        }
-        
         sizingLabel.text = text
         let requiredHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 24) + defaultHeight
         let adjustedHeight = min(120, max(requiredHeight, 40))
-        print("adjustedHeight: \(adjustedHeight)")
-        // Adjust the top anchor while keeping the bottom anchor fixed
-//        textFieldTopAnchor.constant = max(20, requiredHeight) - textfieldHostingController.view.frame.height
         textFieldBottomAnchor = textfieldHostingController.view.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor)
         textFieldHeightAnchor.constant = adjustedHeight
         delegate.didUpdatedHeight(adjustedHeight)
+        
+        postButton.alpha = text.isEmpty ? 0 : 1
+        
         view.layoutIfNeeded()
     }
     
     func getCurrentHeight() -> CGFloat {
-//        if textIsEmpty() && defaultHeight < 0.0 {
-//            calculateDefaultHeight()
-//        }
         let requiredHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 24) + defaultHeight
         let adjustedHeight = min(120, max(requiredHeight, 40))
-        print("adjustedHeight: \(adjustedHeight)")
         return adjustedHeight
     }
     
@@ -866,12 +403,7 @@ class CommentTextInputViewController: UIViewController {
         sizingLabel.text = "aaaaa"
         let minHeight = sizingLabel.requiredHeight(for: textfieldHostingController.view.frame.width - 24)
         sizingLabel.text = ""
-        print("adjustedHeight: min: \(minHeight)")
         return minHeight
-    }
-    
-    func textIsEmpty() -> Bool {
-        return userInput.text.isEmpty
     }
     
     func exportAsComment() -> Comment {
@@ -906,6 +438,7 @@ struct CommentTextField: View {
 
 protocol CommentsListDelegate: AnyObject {
     func didScrollList(_ lastContentOffset: CGPoint)
+    func fetchNewComments()
 }
 
 class CommentsListViewController: UIViewController, UIScrollViewDelegate, CommentCellDelegate {
@@ -924,6 +457,8 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+    
+    private var topPaddingView: UIView?
     
     private var noCommentsLabel: UILabel = {
         let label = UILabel()
@@ -945,14 +480,25 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
         return label
     }()
     
+    private let loadingSpinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.hidesWhenStopped = true
+        return spinner
+    }()
+    
     private var cellHeightConstraints: [CommentCell: NSLayoutConstraint] = [:]
     
     private var comments: [Comment]
+    private var addedCommentIDs: Set<String> = []
+    
+    var isLoading: Bool = true
     
     weak var delegate: CommentsListDelegate?
     
-    init(comments: [Comment]) {
+    init(comments: [Comment], isLoading: Bool = true) {
         self.comments = comments
+        self.isLoading = isLoading
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -999,6 +545,7 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
     }
     
     private func updateViewForComments() {
+        
         if comments.isEmpty {
             
             let topSpacerView = UIView()
@@ -1006,9 +553,34 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
             topSpacerView.translatesAutoresizingMaskIntoConstraints = false
             stackView.addArrangedSubview(topSpacerView)
             
-            // Display the "No Comments Yet!" message
-            stackView.addArrangedSubview(noCommentsLabel)
-            stackView.addArrangedSubview(noCommentsSubtitleLabel)
+            if isLoading {
+                // Add the loading spinner
+                stackView.addArrangedSubview(loadingSpinner)
+                loadingSpinner.startAnimating()
+                
+                NSLayoutConstraint.activate([
+                    loadingSpinner.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+                    loadingSpinner.topAnchor.constraint(equalTo: topSpacerView.bottomAnchor),
+                    loadingSpinner.bottomAnchor.constraint(equalTo: topSpacerView.bottomAnchor, constant: 50)
+                ])
+                
+            } else {
+                // Display the "No Comments Yet!" message
+                stackView.addArrangedSubview(noCommentsLabel)
+                stackView.addArrangedSubview(noCommentsSubtitleLabel)
+                
+                NSLayoutConstraint.activate([
+                    noCommentsLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                    noCommentsLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+                    noCommentsLabel.topAnchor.constraint(equalTo: topSpacerView.bottomAnchor),
+                    noCommentsLabel.bottomAnchor.constraint(equalTo: topSpacerView.bottomAnchor, constant: 50),
+                    
+                    noCommentsSubtitleLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                    noCommentsSubtitleLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+                    noCommentsSubtitleLabel.topAnchor.constraint(equalTo: noCommentsLabel.bottomAnchor),
+                    noCommentsSubtitleLabel.bottomAnchor.constraint(equalTo: noCommentsLabel.bottomAnchor, constant: 50),
+                ])
+            }
             
             let bottomSpacerView = UIView()
             bottomSpacerView.backgroundColor = .clear
@@ -1016,31 +588,38 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
             stackView.addArrangedSubview(bottomSpacerView)
             
             NSLayoutConstraint.activate([
-                
                 topSpacerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
                 topSpacerView.bottomAnchor.constraint(equalTo: scrollView.centerYAnchor, constant: -50),
                 
-                noCommentsLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                noCommentsLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-                noCommentsLabel.heightAnchor.constraint(equalToConstant: 50),
-                noCommentsLabel.topAnchor.constraint(equalTo: topSpacerView.bottomAnchor),
-                noCommentsSubtitleLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                noCommentsSubtitleLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-                noCommentsSubtitleLabel.heightAnchor.constraint(equalToConstant: 50),
-                noCommentsSubtitleLabel.topAnchor.constraint(equalTo: noCommentsLabel.bottomAnchor),
-                
-                bottomSpacerView.topAnchor.constraint(equalTo: noCommentsSubtitleLabel.bottomAnchor),
+                bottomSpacerView.topAnchor.constraint(equalTo: isLoading ? loadingSpinner.bottomAnchor : noCommentsSubtitleLabel.bottomAnchor),
                 bottomSpacerView.heightAnchor.constraint(equalTo: topSpacerView.heightAnchor, constant: 1),
             ])
             
         } else {
             // Display the comments
+            if isLoading {
+                stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            }
             addCommentsToStackView()
         }
     }
     
     private func addCommentsToStackView() {
+        // Check if the top padding view has been added
+        if topPaddingView == nil {
+            // Create and add the spacer view at the top for padding
+            topPaddingView = UIView()
+            topPaddingView?.translatesAutoresizingMaskIntoConstraints = false
+            topPaddingView?.heightAnchor.constraint(equalToConstant: 8).isActive = true
+            stackView.insertArrangedSubview(topPaddingView!, at: 0)
+        }
+
         for comment in comments {
+            // Check if the comment has already been added
+            if addedCommentIDs.contains(comment.commentID) {
+                continue // Skip this comment if it's already been added
+            }
+            
             let commentCell = CommentCell(style: .default, reuseIdentifier: "commentCell")
             commentCell.delegate = self
             commentCell.configure(with: comment) // Configure the cell with the comment data
@@ -1052,19 +631,33 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
             let heightConstraint = commentCell.heightAnchor.constraint(equalToConstant: 76)
             heightConstraint.isActive = true
             cellHeightConstraints[commentCell] = heightConstraint
+            
+            // Mark this comment as added
+            addedCommentIDs.insert(comment.commentID)
         }
     }
     
-    func addSingleCommentToStackView(comment: Comment) {
-        comments.append(comment)
-        addCommentsToStackView()
+    func setComments(_ newComments: [Comment]) {
+        DispatchQueue.main.async {
+            // Filter out comments that are already in the list
+            let newUniqueComments = newComments.filter { newComment in
+                !self.comments.contains(where: { $0.commentID == newComment.commentID })
+            }
+            
+            // Append only the new unique comments
+            self.comments.append(contentsOf: newUniqueComments)
+            
+            self.updateViewForComments()
+            
+            self.isLoading = false
+        }
     }
     
     func didUpdateHeight(for cell: CommentCell, height: CGFloat) {
         guard let heightConstraint = cellHeightConstraints[cell] else { return }
         
         // Update the existing height constraint
-        heightConstraint.constant = max(76, height)
+        heightConstraint.constant = max(60, height) //76
         
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
@@ -1073,6 +666,15 @@ class CommentsListViewController: UIViewController, UIScrollViewDelegate, Commen
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.didScrollList(scrollView.contentOffset)
+        
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let scrollViewHeight = scrollView.frame.size.height
+
+        // Check if the user has scrolled near the bottom (e.g., within 100 points of the bottom)
+        if offsetY > contentHeight - scrollViewHeight - 100 {
+            delegate?.fetchNewComments()
+        }
     }
 }
 
@@ -1096,9 +698,8 @@ class CommentCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle.fill")
         imageView.contentMode = .scaleAspectFill
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 25
+        imageView.layer.cornerRadius = 20
         return imageView
     }()
     
@@ -1106,25 +707,39 @@ class CommentCell: UITableViewCell {
         let label = UILabel()
         label.text = "username"
         label.font = UIFont.boldSystemFont(ofSize: 16)
-//        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let expandableView: CommentCellExpandableViewController = {
-        let expandableView = CommentCellExpandableViewController()
-//        expandableView.translatesAutoresizingMaskIntoConstraints = false
+        let expandableView = CommentCellExpandableViewController(text: "")
         return expandableView
     }()
     
-    private var replyButton: UIButton!
-    private var likeButton: CommentLikeUIButton!
+//    private var replyButton: UIButton!
+//    private var likeButton: CommentLikeUIButton!
+    
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = UIColor.secondaryLabel
+        return label
+    }()
+    
+    private let usernameAndTimeStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 8
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.spacing = 4
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -1133,7 +748,6 @@ class CommentCell: UITableViewCell {
         stackView.axis = .horizontal
         stackView.alignment = .top
         stackView.spacing = 12
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -1150,20 +764,24 @@ class CommentCell: UITableViewCell {
     
     private func setupCell() {
         
-        setupLikeButton()
-        setupReplyButton()
-        
+//        setupLikeButton()
+//        setupReplyButton()
+//        
         contentView.addSubview(backgroundRectView)
         
         expandableView.delegate = self
         
-        stackView.addArrangedSubview(usernameLabel)
+        // Add the username and time label to the horizontal stack view
+        usernameAndTimeStackView.addArrangedSubview(usernameLabel)
+        usernameAndTimeStackView.addArrangedSubview(timeLabel)
+        
+        stackView.addArrangedSubview(usernameAndTimeStackView)
         stackView.addArrangedSubview(expandableView)
-        stackView.addArrangedSubview(replyButton)
+//        stackView.addArrangedSubview(replyButton)
         
         containerStackView.addArrangedSubview(userImageView)
         containerStackView.addArrangedSubview(stackView)
-        containerStackView.addArrangedSubview(likeButton)
+//        containerStackView.addArrangedSubview(likeButton)
         
         contentView.addSubview(containerStackView)
         
@@ -1179,22 +797,16 @@ class CommentCell: UITableViewCell {
         ])
         
         NSLayoutConstraint.activate([
-//            userImageView.widthAnchor.constraint(equalToConstant: 50),
-//            userImageView.heightAnchor.constraint(equalToConstant: 50),
-//            
-//            usernameLabel.heightAnchor.constraint(equalToConstant: 18),
-//            replyButton.heightAnchor.constraint(equalToConstant: 18),
-            
             userImageView.topAnchor.constraint(equalTo: containerStackView.topAnchor),
-            userImageView.bottomAnchor.constraint(equalTo: containerStackView.topAnchor, constant: 50),
+            userImageView.bottomAnchor.constraint(equalTo: containerStackView.topAnchor, constant: 40),
             userImageView.leadingAnchor.constraint(equalTo: containerStackView.leadingAnchor),
-            userImageView.trailingAnchor.constraint(equalTo: containerStackView.leadingAnchor, constant: 50),
+            userImageView.trailingAnchor.constraint(equalTo: containerStackView.leadingAnchor, constant: 40),
             
-            usernameLabel.topAnchor.constraint(equalTo: containerStackView.topAnchor),
-            usernameLabel.bottomAnchor.constraint(equalTo: containerStackView.topAnchor, constant: 18),
+            usernameAndTimeStackView.topAnchor.constraint(equalTo: containerStackView.topAnchor),
+            usernameAndTimeStackView.bottomAnchor.constraint(equalTo: containerStackView.topAnchor, constant: 18),
             
-            replyButton.topAnchor.constraint(equalTo: expandableView.bottomAnchor),
-            replyButton.bottomAnchor.constraint(equalTo: containerStackView.bottomAnchor),
+//            replyButton.topAnchor.constraint(equalTo: expandableView.bottomAnchor),
+//            replyButton.bottomAnchor.constraint(equalTo: containerStackView.bottomAnchor),
             
             containerStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
@@ -1205,35 +817,40 @@ class CommentCell: UITableViewCell {
         backgroundRectView.translatesAutoresizingMaskIntoConstraints = false
         userImageView.translatesAutoresizingMaskIntoConstraints = false
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
         expandableView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func configure(with comment: Comment) {
-        // Populate the cell's UI elements with data from the Comment object
-//        usernameLabel.text = comment.userProfile.preferredUsername
-//        expandableView.text = comment.content
+        usernameLabel.text = comment.userProfile.preferredUsername
+        expandableView.text = comment.content
+        userImageView.image = comment.userProfile.profileImage?.image
+        timeLabel.text = "\(comment.timestampString)"
+        
+        self.layoutIfNeeded()
     }
     
-    private func setupLikeButton() {
-        likeButton = CommentLikeUIButton()
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.addTarget(self, action: #selector(toggleLike), for: .touchUpInside)
-    }
-    
-    private func setupReplyButton() {
-        replyButton = UIButton(type: .system)
-        replyButton.setTitle("reply", for: .normal)
-        replyButton.translatesAutoresizingMaskIntoConstraints = false
-        replyButton.addTarget(self, action: #selector(tapReply), for: .touchUpInside)
-    }
+//
+//    private func setupLikeButton() {
+//        likeButton = CommentLikeUIButton()
+//        likeButton.translatesAutoresizingMaskIntoConstraints = false
+//        likeButton.addTarget(self, action: #selector(toggleLike), for: .touchUpInside)
+//    }
+//    
+//    private func setupReplyButton() {
+//        replyButton = UIButton(type: .system)
+//        replyButton.setTitle("reply", for: .normal)
+//        replyButton.translatesAutoresizingMaskIntoConstraints = false
+//        replyButton.addTarget(self, action: #selector(tapReply), for: .touchUpInside)
+//    }
 }
 
 extension CommentCell: CommentCellExpandableViewControllerDelegate {
     func didUpdateHeight(_ height: CGFloat) {
         let newHeight = height
-        delegate?.didUpdateHeight(for: self, height: newHeight + 44) // 4 + 4 (4 spacing) + 18 + 18 = 44
+        delegate?.didUpdateHeight(for: self, height: newHeight + 26)// + 44) // 4 + 4 (4 spacing) + 18 + 18 = 44
         expandableViewHeightConstraint?.constant = newHeight
         
         UIView.animate(withDuration: 0.3) {
@@ -1247,7 +864,7 @@ extension CommentCell: CommentCellExpandableViewControllerDelegate {
 
 extension CommentCell {
     @objc func toggleLike() {
-        likeButton.animateLike()
+//        likeButton.animateLike()
     }
     
     @objc func tapReply() {
@@ -1265,7 +882,13 @@ class CommentCellExpandableViewController: UIView, UIScrollViewDelegate {
     private let scrollView = UIScrollView()
     private let commentLabel = UILabel()
     private var expanded = false
-    var text: String = String().loresIpsumShort
+    var text: String = String().loresIpsumShort {
+        didSet {
+            commentLabel.text = self.text
+            updateDescriptionHeight()
+            self.layoutIfNeeded()
+        }
+    }
     
     var scrollViewBottomConstraint: NSLayoutConstraint!
     
@@ -1479,5 +1102,29 @@ class CommentLikeUIButton: UIButton {
         
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
+    }
+}
+
+
+extension UINavigationItem {
+
+    func setTitleView(withTitle title: String, subTitile: String) {
+
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = .boldSystemFont(ofSize: 17)
+        titleLabel.textColor = .black
+
+        let subTitleLabel = UILabel()
+        subTitleLabel.text = subTitile
+        subTitleLabel.font = .systemFont(ofSize: 14)
+        subTitleLabel.textColor = .gray
+
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel])
+        stackView.distribution = .equalCentering
+        stackView.alignment = .center
+        stackView.axis = .vertical
+
+        self.titleView = stackView
     }
 }

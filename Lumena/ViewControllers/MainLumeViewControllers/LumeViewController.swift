@@ -25,6 +25,11 @@ class LumeHorizontalTabViewController: ButtonBarPagerTabStripViewController {
     var userLoggedIn: Bool
     var pageViewControllers: [UIViewController] = []
     
+    private var defaultIndex: Int {
+        return pageViewControllers.count > 1 ? (userLoggedIn ? 1 : 0) : 0
+    }
+    private var initialized: Bool = false
+    
     init(userLoggedIn: Bool = false) {
         self.userLoggedIn = userLoggedIn
         super.init(nibName: nil, bundle: nil)
@@ -41,13 +46,16 @@ class LumeHorizontalTabViewController: ButtonBarPagerTabStripViewController {
         setupUploadProgressBar()
         setupCustomTabBar()
         setupBottomIsland()
-        
         NotificationCenter.default.addObserver(self, selector: #selector(authSuccessHandler), name: .authStatusChanged, object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        if !initialized {
+            moveToViewController(at: defaultIndex, animated: false)
+            initialized = true
+        }
     }
     
     deinit {
@@ -916,6 +924,14 @@ extension LumeIndividualViewController: DescriptionExpandableViewControllerDeleg
         }
     }
     
+    private func closeDescription() {
+        UIView.animate(withDuration: 0.2) {
+            self.bottomButtonsViewController.sideButtonDescriptionView.setDescriptionExpand(input: false)
+            self.darkView.alpha = 0
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     private func setupBottomButtonsViewController() {
         setupDarkShadeDescriptionBackground()
         
@@ -1181,6 +1197,7 @@ extension LumeIndividualViewController {
             autoScrollTimer?.invalidate()
             pauseAllVideo()
             lume.voiceOver.stop()
+            closeDescription()
         }
     }
     
@@ -1213,7 +1230,6 @@ extension LumeIndividualViewController {
         VideoDataStore.shared.currentContentID = currentContentID
         resumeVideoAtPage(index: index)
     }
-
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageWidth = scrollView.frame.size.width

@@ -278,7 +278,7 @@ extension LumeSideButtonsViewController {
 }
 
 // Comment Button
-extension LumeSideButtonsViewController {
+extension LumeSideButtonsViewController: CommentSheetViewDelegate {
     
     private func setupCommentButton() {
         
@@ -304,18 +304,33 @@ extension LumeSideButtonsViewController {
     @objc private func showComments() {
         if AuthenticationManager.shared.authStatus == .authenticated {
             
-            print(lume.userComments)
-            lume.fetchComment()
-            let commentsSheetViewController = CommentsSheetViewController(lumeqlID: lume.postID, comments: lume.userComments)
+//            let commentsSheetViewController = CommentsSheetViewController(lumeqlID: lume.postID, comments: lume.userComments)
+            let commentsSheetViewController = CommentsSheetViewController(lume: lume)
+            commentsSheetViewController.delegate = self
             
-            commentsSheetViewController.modalPresentationStyle = .pageSheet
-            if let sheet = commentsSheetViewController.sheetPresentationController {
-                sheet.detents = [.medium(), .large()]
+            // Embed the CommentsSheetViewController in a UINavigationController
+            let navController = UINavigationController(rootViewController: commentsSheetViewController)
+            navController.modalPresentationStyle = .pageSheet
+            
+            if let sheet = navController.sheetPresentationController {
+                // Create a custom medium detent with 65% height
+                let customMediumDetent = UISheetPresentationController.Detent.custom() { context in
+                    return context.maximumDetentValue * 0.65
+                }
+                
+                sheet.detents = [customMediumDetent, .large()]
                 sheet.prefersGrabberVisible = true
             }
-            present(commentsSheetViewController, animated: true, completion: nil)
+            
+            present(navController, animated: true, completion: nil)
         } else {
             showLoginSheet()
+        }
+    }
+    
+    func didUpdatedLume(_ lume: Lume) {
+        DispatchQueue.main.async {
+            self.lume = lume
         }
     }
 }
@@ -1429,12 +1444,11 @@ class DescriptionExpandableViewController: UIView {
     @objc func toggleDescription() {
         expanded.toggle()
         updateDescriptionHeight()
-        
-//        if expanded {
-//            addFadeOutLayer()
-//        } else {
-//            removeFadeOutLayer()
-//        }
+    }
+    
+    func setDescriptionExpand(input: Bool) {
+        expanded = input
+        updateDescriptionHeight()
     }
     
     private func addFadeOutLayer() {

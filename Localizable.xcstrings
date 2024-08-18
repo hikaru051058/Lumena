@@ -617,6 +617,7 @@
       }
     },
     "コメント" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -627,6 +628,7 @@
       }
     },
     "コメントを書く" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -637,6 +639,7 @@
       }
     },
     "コメントを追加してみよう！" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1129,6 +1132,7 @@
       }
     },
     "まだ誰もコメントしてません" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

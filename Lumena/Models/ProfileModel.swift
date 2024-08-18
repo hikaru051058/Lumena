@@ -325,7 +325,6 @@ class ProfileManager: ObservableObject {
         await followManager.fetchFollows(relationship: .mutual, limit: 20)
     }
     
-    
     func processFetchedFollowData(userID: String, response: FollowResponse, relationshipType: RelationshipType) {
         DispatchQueue.main.async {
             // Process followers
@@ -421,6 +420,19 @@ extension ProfileManager {
         let blocked = blockedUsers?.blocked ?? []
         let blocking = blockedUsers?.blocking ?? []
         return (blocked, blocking)
+    }
+}
+
+extension ProfileManager {
+    
+    func returnProfileImage(userIdentityID: String) -> profileImage? {
+        let userProfile = getProfile(withID: userIdentityID)
+        return userProfile.profileImage
+    }
+    
+    func returnBackgroundImage(userIdentityID: String) -> profileImage? {
+        let userProfile = getProfile(withID: userIdentityID)
+        return userProfile.backgroundImage
     }
 }
 
