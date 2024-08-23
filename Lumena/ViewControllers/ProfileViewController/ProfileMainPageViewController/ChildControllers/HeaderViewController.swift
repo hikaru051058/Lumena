@@ -103,6 +103,9 @@ class HeaderViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if let profileSkinSetting = profile.skinSetting {
+            profileStatSkinSettings.updateSkinSettings(skinSettings: profileSkinSetting)
+        }
         update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
     }
     
@@ -506,11 +509,9 @@ extension HeaderViewController: ExpandableTextViewControllerDelegate {
     }
     
     private func addSkinSettingsInfo(to stackView: UIStackView) {
-        if !isAccountUser {
-            return
-        }
-        
-//        profileStatSkinSettings = UIHostingController(rootView: skinSettingsProfileBubbleView(skinSettings: profile.skinSetting ?? SkinSettingsAttributes()))
+//        if !isAccountUser {
+//            return
+//        }
         profileStatSkinSettings = SkinSettingsProfileBubbleViewController(skinSettings: profile.skinSetting ?? SkinSettingsAttributes())
         addChild(profileStatSkinSettings)
         stackView.addArrangedSubview(profileStatSkinSettings.view)

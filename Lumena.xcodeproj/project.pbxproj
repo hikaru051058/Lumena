@@ -12,6 +12,63 @@
 		171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */; };
 		173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */; };
 		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
+		1751B8902C76810900E8F20F /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8552C76810500E8F20F /* NotificationType.swift */; };
+		1751B8912C76810900E8F20F /* TagCosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8562C76810600E8F20F /* TagCosmeticQL+Schema.swift */; };
+		1751B8922C76810900E8F20F /* CosmeticPrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8572C76810600E8F20F /* CosmeticPrice.swift */; };
+		1751B8932C76810900E8F20F /* TagTrackQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8582C76810600E8F20F /* TagTrackQL+Schema.swift */; };
+		1751B8942C76810900E8F20F /* FollowStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8592C76810600E8F20F /* FollowStatus.swift */; };
+		1751B8952C76810900E8F20F /* CosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B85A2C76810600E8F20F /* CosmeticQL+Schema.swift */; };
+		1751B8962C76810900E8F20F /* TagCosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B85B2C76810600E8F20F /* TagCosmeticQL.swift */; };
+		1751B8972C76810900E8F20F /* CommentQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B85C2C76810600E8F20F /* CommentQL.swift */; };
+		1751B8982C76810900E8F20F /* CosmeticAmount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B85D2C76810600E8F20F /* CosmeticAmount.swift */; };
+		1751B8992C76810900E8F20F /* CosmeticSearchIndex+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B85E2C76810600E8F20F /* CosmeticSearchIndex+Schema.swift */; };
+		1751B89A2C76810900E8F20F /* InvitationQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B85F2C76810600E8F20F /* InvitationQL+Schema.swift */; };
+		1751B89B2C76810900E8F20F /* BlockQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8602C76810600E8F20F /* BlockQL+Schema.swift */; };
+		1751B89C2C76810900E8F20F /* SkinSettingsAttributesQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8612C76810600E8F20F /* SkinSettingsAttributesQL+Schema.swift */; };
+		1751B89D2C76810900E8F20F /* LumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8622C76810600E8F20F /* LumeQL.swift */; };
+		1751B89E2C76810900E8F20F /* CosmeticVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8632C76810600E8F20F /* CosmeticVariant.swift */; };
+		1751B89F2C76810900E8F20F /* LumeStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8642C76810600E8F20F /* LumeStateQL.swift */; };
+		1751B8A02C76810900E8F20F /* IndividualSearchCosmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8652C76810600E8F20F /* IndividualSearchCosmetic.swift */; };
+		1751B8A12C76810900E8F20F /* BlockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8662C76810600E8F20F /* BlockStatus.swift */; };
+		1751B8A22C76810900E8F20F /* IngredientQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8672C76810600E8F20F /* IngredientQL+Schema.swift */; };
+		1751B8A32C76810900E8F20F /* BlockQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8682C76810600E8F20F /* BlockQL.swift */; };
+		1751B8A42C76810900E8F20F /* FollowQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8692C76810600E8F20F /* FollowQL.swift */; };
+		1751B8A52C76810900E8F20F /* LumeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B86A2C76810700E8F20F /* LumeState.swift */; };
+		1751B8A62C76810900E8F20F /* SkinPersonalColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B86B2C76810700E8F20F /* SkinPersonalColor.swift */; };
+		1751B8A72C76810900E8F20F /* LikedLumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B86C2C76810700E8F20F /* LikedLumeQL.swift */; };
+		1751B8A82C76810900E8F20F /* LikedLumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B86D2C76810700E8F20F /* LikedLumeQL+Schema.swift */; };
+		1751B8A92C76810900E8F20F /* FollowQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B86E2C76810700E8F20F /* FollowQL+Schema.swift */; };
+		1751B8AA2C76810900E8F20F /* TagTrackQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B86F2C76810700E8F20F /* TagTrackQL.swift */; };
+		1751B8AB2C76810900E8F20F /* CosmeticSearchTagFrequency+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8702C76810700E8F20F /* CosmeticSearchTagFrequency+Schema.swift */; };
+		1751B8AC2C76810900E8F20F /* InvitationOrganizationQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8712C76810700E8F20F /* InvitationOrganizationQL+Schema.swift */; };
+		1751B8AD2C76810900E8F20F /* NotificationQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8722C76810700E8F20F /* NotificationQL+Schema.swift */; };
+		1751B8AF2C76810900E8F20F /* SkinSensitivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8742C76810700E8F20F /* SkinSensitivity.swift */; };
+		1751B8B02C76810900E8F20F /* InvitationOrganizationQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8752C76810700E8F20F /* InvitationOrganizationQL.swift */; };
+		1751B8B12C76810900E8F20F /* CosmeticSearchTagFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8762C76810700E8F20F /* CosmeticSearchTagFrequency.swift */; };
+		1751B8B22C76810900E8F20F /* IndividualSearchCosmetic+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8772C76810700E8F20F /* IndividualSearchCosmetic+Schema.swift */; };
+		1751B8B32C76810900E8F20F /* SkinConcerns.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8782C76810700E8F20F /* SkinConcerns.swift */; };
+		1751B8B42C76810900E8F20F /* CosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8792C76810700E8F20F /* CosmeticQL.swift */; };
+		1751B8B52C76810900E8F20F /* CosmeticAmount+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B87A2C76810700E8F20F /* CosmeticAmount+Schema.swift */; };
+		1751B8B62C76810900E8F20F /* UserProfileQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B87B2C76810700E8F20F /* UserProfileQL.swift */; };
+		1751B8B72C76810900E8F20F /* CosmeticBrandQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B87C2C76810800E8F20F /* CosmeticBrandQL+Schema.swift */; };
+		1751B8B82C76810900E8F20F /* LumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B87D2C76810800E8F20F /* LumeQL+Schema.swift */; };
+		1751B8B92C76810900E8F20F /* CosmeticPrice+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B87E2C76810800E8F20F /* CosmeticPrice+Schema.swift */; };
+		1751B8BB2C76810900E8F20F /* NotificationQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8802C76810800E8F20F /* NotificationQL.swift */; };
+		1751B8BC2C76810900E8F20F /* UserStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8812C76810800E8F20F /* UserStateQL+Schema.swift */; };
+		1751B8BD2C76810900E8F20F /* InvitationQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8822C76810800E8F20F /* InvitationQL.swift */; };
+		1751B8BE2C76810900E8F20F /* IngredientQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8832C76810800E8F20F /* IngredientQL.swift */; };
+		1751B8BF2C76810900E8F20F /* UserStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8842C76810800E8F20F /* UserStateQL.swift */; };
+		1751B8C02C76810900E8F20F /* SkinType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8852C76810800E8F20F /* SkinType.swift */; };
+		1751B8C12C76810900E8F20F /* CosmeticSearchIndexStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8862C76810800E8F20F /* CosmeticSearchIndexStatus.swift */; };
+		1751B8C22C76810900E8F20F /* SkinSettingsAttributesQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8872C76810800E8F20F /* SkinSettingsAttributesQL.swift */; };
+		1751B8C32C76810900E8F20F /* CosmeticVariant+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8882C76810800E8F20F /* CosmeticVariant+Schema.swift */; };
+		1751B8C42C76810900E8F20F /* UserProfileQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8892C76810800E8F20F /* UserProfileQL+Schema.swift */; };
+		1751B8C52C76810900E8F20F /* CommentQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88A2C76810800E8F20F /* CommentQL+Schema.swift */; };
+		1751B8C62C76810900E8F20F /* LumeStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88B2C76810900E8F20F /* LumeStateQL+Schema.swift */; };
+		1751B8C72C76810900E8F20F /* CosmeticSearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88C2C76810900E8F20F /* CosmeticSearchIndex.swift */; };
+		1751B8C82C76810900E8F20F /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88D2C76810900E8F20F /* AmplifyModels.swift */; };
+		1751B8C92C76810900E8F20F /* CosmeticBrandQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88E2C76810900E8F20F /* CosmeticBrandQL.swift */; };
+		1751B8CA2C76810900E8F20F /* AccountState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88F2C76810900E8F20F /* AccountState.swift */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
 		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
 		175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */; };
@@ -75,52 +132,6 @@
 		17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412332C32C5460083C8A5 /* ShimmerViewController.swift */; };
 		17C412362C33C4420083C8A5 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412352C33C4420083C8A5 /* KeyboardResponder.swift */; };
 		17CA9F4F2C3A334100FDA4EE /* HyperLinkTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */; };
-		17EDC1C72C4E966500F50B5B /* UserStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1992C4E966300F50B5B /* UserStateQL.swift */; };
-		17EDC1C82C4E966500F50B5B /* InvitationOrganizationQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC19A2C4E966300F50B5B /* InvitationOrganizationQL.swift */; };
-		17EDC1C92C4E966500F50B5B /* SkinPersonalColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC19B2C4E966300F50B5B /* SkinPersonalColor.swift */; };
-		17EDC1CA2C4E966500F50B5B /* CosmeticPrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC19C2C4E966300F50B5B /* CosmeticPrice.swift */; };
-		17EDC1CB2C4E966500F50B5B /* FollowStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC19D2C4E966300F50B5B /* FollowStatus.swift */; };
-		17EDC1CC2C4E966500F50B5B /* UserProfileQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC19E2C4E966300F50B5B /* UserProfileQL+Schema.swift */; };
-		17EDC1CD2C4E966500F50B5B /* FollowQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC19F2C4E966300F50B5B /* FollowQL.swift */; };
-		17EDC1CE2C4E966500F50B5B /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A02C4E966300F50B5B /* AmplifyModels.swift */; };
-		17EDC1CF2C4E966500F50B5B /* BlockQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A12C4E966300F50B5B /* BlockQL.swift */; };
-		17EDC1D02C4E966500F50B5B /* FollowQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A22C4E966300F50B5B /* FollowQL+Schema.swift */; };
-		17EDC1D12C4E966500F50B5B /* LikedLumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A32C4E966300F50B5B /* LikedLumeQL+Schema.swift */; };
-		17EDC1D22C4E966500F50B5B /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A42C4E966300F50B5B /* NotificationType.swift */; };
-		17EDC1D32C4E966500F50B5B /* SkinSettingsAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A52C4E966300F50B5B /* SkinSettingsAttributes.swift */; };
-		17EDC1D42C4E966500F50B5B /* TagTrackQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A62C4E966300F50B5B /* TagTrackQL.swift */; };
-		17EDC1D52C4E966500F50B5B /* AccountState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A72C4E966300F50B5B /* AccountState.swift */; };
-		17EDC1D62C4E966500F50B5B /* BlockQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A82C4E966300F50B5B /* BlockQL+Schema.swift */; };
-		17EDC1D72C4E966500F50B5B /* InvitationQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1A92C4E966400F50B5B /* InvitationQL.swift */; };
-		17EDC1D82C4E966500F50B5B /* CommentQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1AA2C4E966400F50B5B /* CommentQL+Schema.swift */; };
-		17EDC1D92C4E966500F50B5B /* InvitationOrganizationQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1AB2C4E966400F50B5B /* InvitationOrganizationQL+Schema.swift */; };
-		17EDC1DA2C4E966500F50B5B /* BlockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1AC2C4E966400F50B5B /* BlockStatus.swift */; };
-		17EDC1DB2C4E966500F50B5B /* CosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1AD2C4E966400F50B5B /* CosmeticQL.swift */; };
-		17EDC1DC2C4E966500F50B5B /* TagCosmeticQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1AE2C4E966400F50B5B /* TagCosmeticQL.swift */; };
-		17EDC1DD2C4E966500F50B5B /* TagTrackQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1AF2C4E966400F50B5B /* TagTrackQL+Schema.swift */; };
-		17EDC1DE2C4E966500F50B5B /* SkinSettingsAttributes+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B02C4E966400F50B5B /* SkinSettingsAttributes+Schema.swift */; };
-		17EDC1DF2C4E966500F50B5B /* NotificationQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B12C4E966400F50B5B /* NotificationQL.swift */; };
-		17EDC1E02C4E966500F50B5B /* LumeStateQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B22C4E966400F50B5B /* LumeStateQL.swift */; };
-		17EDC1E12C4E966500F50B5B /* ProductColor+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B32C4E966400F50B5B /* ProductColor+Schema.swift */; };
-		17EDC1E22C4E966500F50B5B /* TagCosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B42C4E966400F50B5B /* TagCosmeticQL+Schema.swift */; };
-		17EDC1E32C4E966500F50B5B /* CosmeticPrice+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B52C4E966400F50B5B /* CosmeticPrice+Schema.swift */; };
-		17EDC1E42C4E966500F50B5B /* UserProfileQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B62C4E966400F50B5B /* UserProfileQL.swift */; };
-		17EDC1E52C4E966500F50B5B /* SkinConcerns.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B72C4E966400F50B5B /* SkinConcerns.swift */; };
-		17EDC1E62C4E966500F50B5B /* SkinSensitivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B82C4E966400F50B5B /* SkinSensitivity.swift */; };
-		17EDC1E72C4E966500F50B5B /* UserStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1B92C4E966400F50B5B /* UserStateQL+Schema.swift */; };
-		17EDC1E82C4E966500F50B5B /* CommentQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1BA2C4E966400F50B5B /* CommentQL.swift */; };
-		17EDC1E92C4E966500F50B5B /* CosmeticBrandQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1BB2C4E966400F50B5B /* CosmeticBrandQL+Schema.swift */; };
-		17EDC1EA2C4E966500F50B5B /* SkinType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1BC2C4E966400F50B5B /* SkinType.swift */; };
-		17EDC1EB2C4E966500F50B5B /* LikedLumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1BD2C4E966400F50B5B /* LikedLumeQL.swift */; };
-		17EDC1EC2C4E966500F50B5B /* InvitationQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1BE2C4E966400F50B5B /* InvitationQL+Schema.swift */; };
-		17EDC1ED2C4E966500F50B5B /* LumeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1BF2C4E966400F50B5B /* LumeState.swift */; };
-		17EDC1EE2C4E966500F50B5B /* CosmeticQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C02C4E966400F50B5B /* CosmeticQL+Schema.swift */; };
-		17EDC1EF2C4E966500F50B5B /* NotificationQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C12C4E966400F50B5B /* NotificationQL+Schema.swift */; };
-		17EDC1F02C4E966500F50B5B /* LumeQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C22C4E966500F50B5B /* LumeQL+Schema.swift */; };
-		17EDC1F12C4E966500F50B5B /* CosmeticBrandQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C32C4E966500F50B5B /* CosmeticBrandQL.swift */; };
-		17EDC1F22C4E966500F50B5B /* LumeStateQL+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C42C4E966500F50B5B /* LumeStateQL+Schema.swift */; };
-		17EDC1F32C4E966500F50B5B /* ProductColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C52C4E966500F50B5B /* ProductColor.swift */; };
-		17EDC1F42C4E966500F50B5B /* LumeQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EDC1C62C4E966500F50B5B /* LumeQL.swift */; };
 		17FA39532C49064000B739BA /* ReadingDataEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC12C45A0EB0042802B /* ReadingDataEditorView.swift */; };
 		17FA39542C49064000B739BA /* ReadingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFC42C45A0EB0042802B /* ReadingListView.swift */; };
 		17FA39552C49064000B739BA /* AdvancedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177DDFA42C459E230042802B /* AdvancedWebView.swift */; };
@@ -214,6 +225,63 @@
 		173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfirmationCodeViewController.swift; sourceTree = "<group>"; };
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
+		1751B8552C76810500E8F20F /* NotificationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationType.swift; path = ../amplify/generated/models/NotificationType.swift; sourceTree = "<group>"; };
+		1751B8562C76810600E8F20F /* TagCosmeticQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TagCosmeticQL+Schema.swift"; path = "../amplify/generated/models/TagCosmeticQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8572C76810600E8F20F /* CosmeticPrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticPrice.swift; path = ../amplify/generated/models/CosmeticPrice.swift; sourceTree = "<group>"; };
+		1751B8582C76810600E8F20F /* TagTrackQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TagTrackQL+Schema.swift"; path = "../amplify/generated/models/TagTrackQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8592C76810600E8F20F /* FollowStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowStatus.swift; path = ../amplify/generated/models/FollowStatus.swift; sourceTree = "<group>"; };
+		1751B85A2C76810600E8F20F /* CosmeticQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CosmeticQL+Schema.swift"; path = "../amplify/generated/models/CosmeticQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B85B2C76810600E8F20F /* TagCosmeticQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TagCosmeticQL.swift; path = ../amplify/generated/models/TagCosmeticQL.swift; sourceTree = "<group>"; };
+		1751B85C2C76810600E8F20F /* CommentQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CommentQL.swift; path = ../amplify/generated/models/CommentQL.swift; sourceTree = "<group>"; };
+		1751B85D2C76810600E8F20F /* CosmeticAmount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticAmount.swift; sourceTree = "<group>"; };
+		1751B85E2C76810600E8F20F /* CosmeticSearchIndex+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CosmeticSearchIndex+Schema.swift"; sourceTree = "<group>"; };
+		1751B85F2C76810600E8F20F /* InvitationQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "InvitationQL+Schema.swift"; path = "../amplify/generated/models/InvitationQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8602C76810600E8F20F /* BlockQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "BlockQL+Schema.swift"; path = "../amplify/generated/models/BlockQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8612C76810600E8F20F /* SkinSettingsAttributesQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkinSettingsAttributesQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8622C76810600E8F20F /* LumeQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeQL.swift; path = ../amplify/generated/models/LumeQL.swift; sourceTree = "<group>"; };
+		1751B8632C76810600E8F20F /* CosmeticVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticVariant.swift; sourceTree = "<group>"; };
+		1751B8642C76810600E8F20F /* LumeStateQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeStateQL.swift; path = ../amplify/generated/models/LumeStateQL.swift; sourceTree = "<group>"; };
+		1751B8652C76810600E8F20F /* IndividualSearchCosmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualSearchCosmetic.swift; sourceTree = "<group>"; };
+		1751B8662C76810600E8F20F /* BlockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlockStatus.swift; path = ../amplify/generated/models/BlockStatus.swift; sourceTree = "<group>"; };
+		1751B8672C76810600E8F20F /* IngredientQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IngredientQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8682C76810600E8F20F /* BlockQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlockQL.swift; path = ../amplify/generated/models/BlockQL.swift; sourceTree = "<group>"; };
+		1751B8692C76810600E8F20F /* FollowQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowQL.swift; path = ../amplify/generated/models/FollowQL.swift; sourceTree = "<group>"; };
+		1751B86A2C76810700E8F20F /* LumeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeState.swift; path = ../amplify/generated/models/LumeState.swift; sourceTree = "<group>"; };
+		1751B86B2C76810700E8F20F /* SkinPersonalColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinPersonalColor.swift; path = ../amplify/generated/models/SkinPersonalColor.swift; sourceTree = "<group>"; };
+		1751B86C2C76810700E8F20F /* LikedLumeQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LikedLumeQL.swift; path = ../amplify/generated/models/LikedLumeQL.swift; sourceTree = "<group>"; };
+		1751B86D2C76810700E8F20F /* LikedLumeQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LikedLumeQL+Schema.swift"; path = "../amplify/generated/models/LikedLumeQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B86E2C76810700E8F20F /* FollowQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "FollowQL+Schema.swift"; path = "../amplify/generated/models/FollowQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B86F2C76810700E8F20F /* TagTrackQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TagTrackQL.swift; path = ../amplify/generated/models/TagTrackQL.swift; sourceTree = "<group>"; };
+		1751B8702C76810700E8F20F /* CosmeticSearchTagFrequency+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CosmeticSearchTagFrequency+Schema.swift"; sourceTree = "<group>"; };
+		1751B8712C76810700E8F20F /* InvitationOrganizationQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "InvitationOrganizationQL+Schema.swift"; path = "../amplify/generated/models/InvitationOrganizationQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8722C76810700E8F20F /* NotificationQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NotificationQL+Schema.swift"; path = "../amplify/generated/models/NotificationQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8742C76810700E8F20F /* SkinSensitivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinSensitivity.swift; path = ../amplify/generated/models/SkinSensitivity.swift; sourceTree = "<group>"; };
+		1751B8752C76810700E8F20F /* InvitationOrganizationQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InvitationOrganizationQL.swift; path = ../amplify/generated/models/InvitationOrganizationQL.swift; sourceTree = "<group>"; };
+		1751B8762C76810700E8F20F /* CosmeticSearchTagFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticSearchTagFrequency.swift; sourceTree = "<group>"; };
+		1751B8772C76810700E8F20F /* IndividualSearchCosmetic+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndividualSearchCosmetic+Schema.swift"; sourceTree = "<group>"; };
+		1751B8782C76810700E8F20F /* SkinConcerns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinConcerns.swift; path = ../amplify/generated/models/SkinConcerns.swift; sourceTree = "<group>"; };
+		1751B8792C76810700E8F20F /* CosmeticQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticQL.swift; path = ../amplify/generated/models/CosmeticQL.swift; sourceTree = "<group>"; };
+		1751B87A2C76810700E8F20F /* CosmeticAmount+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CosmeticAmount+Schema.swift"; sourceTree = "<group>"; };
+		1751B87B2C76810700E8F20F /* UserProfileQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserProfileQL.swift; path = ../amplify/generated/models/UserProfileQL.swift; sourceTree = "<group>"; };
+		1751B87C2C76810800E8F20F /* CosmeticBrandQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CosmeticBrandQL+Schema.swift"; path = "../amplify/generated/models/CosmeticBrandQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B87D2C76810800E8F20F /* LumeQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LumeQL+Schema.swift"; path = "../amplify/generated/models/LumeQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B87E2C76810800E8F20F /* CosmeticPrice+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CosmeticPrice+Schema.swift"; path = "../amplify/generated/models/CosmeticPrice+Schema.swift"; sourceTree = "<group>"; };
+		1751B8802C76810800E8F20F /* NotificationQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationQL.swift; path = ../amplify/generated/models/NotificationQL.swift; sourceTree = "<group>"; };
+		1751B8812C76810800E8F20F /* UserStateQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserStateQL+Schema.swift"; path = "../amplify/generated/models/UserStateQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B8822C76810800E8F20F /* InvitationQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InvitationQL.swift; path = ../amplify/generated/models/InvitationQL.swift; sourceTree = "<group>"; };
+		1751B8832C76810800E8F20F /* IngredientQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientQL.swift; sourceTree = "<group>"; };
+		1751B8842C76810800E8F20F /* UserStateQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserStateQL.swift; path = ../amplify/generated/models/UserStateQL.swift; sourceTree = "<group>"; };
+		1751B8852C76810800E8F20F /* SkinType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinType.swift; path = ../amplify/generated/models/SkinType.swift; sourceTree = "<group>"; };
+		1751B8862C76810800E8F20F /* CosmeticSearchIndexStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticSearchIndexStatus.swift; sourceTree = "<group>"; };
+		1751B8872C76810800E8F20F /* SkinSettingsAttributesQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingsAttributesQL.swift; sourceTree = "<group>"; };
+		1751B8882C76810800E8F20F /* CosmeticVariant+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CosmeticVariant+Schema.swift"; sourceTree = "<group>"; };
+		1751B8892C76810800E8F20F /* UserProfileQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserProfileQL+Schema.swift"; path = "../amplify/generated/models/UserProfileQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B88A2C76810800E8F20F /* CommentQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CommentQL+Schema.swift"; path = "../amplify/generated/models/CommentQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B88B2C76810900E8F20F /* LumeStateQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LumeStateQL+Schema.swift"; path = "../amplify/generated/models/LumeStateQL+Schema.swift"; sourceTree = "<group>"; };
+		1751B88C2C76810900E8F20F /* CosmeticSearchIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticSearchIndex.swift; sourceTree = "<group>"; };
+		1751B88D2C76810900E8F20F /* AmplifyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AmplifyModels.swift; path = ../amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
+		1751B88E2C76810900E8F20F /* CosmeticBrandQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticBrandQL.swift; path = ../amplify/generated/models/CosmeticBrandQL.swift; sourceTree = "<group>"; };
+		1751B88F2C76810900E8F20F /* AccountState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountState.swift; path = ../amplify/generated/models/AccountState.swift; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
 		175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCreationViewController.swift; sourceTree = "<group>"; };
@@ -286,52 +354,6 @@
 		17C412332C32C5460083C8A5 /* ShimmerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShimmerViewController.swift; path = /Users/hikaru/Desktop/FFT/Lumena/Lumena/ViewControllers/ShimmerViewController.swift; sourceTree = "<absolute>"; };
 		17C412352C33C4420083C8A5 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperLinkTextViewController.swift; sourceTree = "<group>"; };
-		17EDC1992C4E966300F50B5B /* UserStateQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserStateQL.swift; path = ../amplify/generated/models/UserStateQL.swift; sourceTree = "<group>"; };
-		17EDC19A2C4E966300F50B5B /* InvitationOrganizationQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InvitationOrganizationQL.swift; path = ../amplify/generated/models/InvitationOrganizationQL.swift; sourceTree = "<group>"; };
-		17EDC19B2C4E966300F50B5B /* SkinPersonalColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinPersonalColor.swift; path = ../amplify/generated/models/SkinPersonalColor.swift; sourceTree = "<group>"; };
-		17EDC19C2C4E966300F50B5B /* CosmeticPrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticPrice.swift; path = ../amplify/generated/models/CosmeticPrice.swift; sourceTree = "<group>"; };
-		17EDC19D2C4E966300F50B5B /* FollowStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowStatus.swift; path = ../amplify/generated/models/FollowStatus.swift; sourceTree = "<group>"; };
-		17EDC19E2C4E966300F50B5B /* UserProfileQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserProfileQL+Schema.swift"; path = "../amplify/generated/models/UserProfileQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC19F2C4E966300F50B5B /* FollowQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowQL.swift; path = ../amplify/generated/models/FollowQL.swift; sourceTree = "<group>"; };
-		17EDC1A02C4E966300F50B5B /* AmplifyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AmplifyModels.swift; path = ../amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
-		17EDC1A12C4E966300F50B5B /* BlockQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlockQL.swift; path = ../amplify/generated/models/BlockQL.swift; sourceTree = "<group>"; };
-		17EDC1A22C4E966300F50B5B /* FollowQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "FollowQL+Schema.swift"; path = "../amplify/generated/models/FollowQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1A32C4E966300F50B5B /* LikedLumeQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LikedLumeQL+Schema.swift"; path = "../amplify/generated/models/LikedLumeQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1A42C4E966300F50B5B /* NotificationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationType.swift; path = ../amplify/generated/models/NotificationType.swift; sourceTree = "<group>"; };
-		17EDC1A52C4E966300F50B5B /* SkinSettingsAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingsAttributes.swift; sourceTree = "<group>"; };
-		17EDC1A62C4E966300F50B5B /* TagTrackQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TagTrackQL.swift; path = ../amplify/generated/models/TagTrackQL.swift; sourceTree = "<group>"; };
-		17EDC1A72C4E966300F50B5B /* AccountState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountState.swift; path = ../amplify/generated/models/AccountState.swift; sourceTree = "<group>"; };
-		17EDC1A82C4E966300F50B5B /* BlockQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "BlockQL+Schema.swift"; path = "../amplify/generated/models/BlockQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1A92C4E966400F50B5B /* InvitationQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InvitationQL.swift; path = ../amplify/generated/models/InvitationQL.swift; sourceTree = "<group>"; };
-		17EDC1AA2C4E966400F50B5B /* CommentQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CommentQL+Schema.swift"; path = "../amplify/generated/models/CommentQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1AB2C4E966400F50B5B /* InvitationOrganizationQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "InvitationOrganizationQL+Schema.swift"; path = "../amplify/generated/models/InvitationOrganizationQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1AC2C4E966400F50B5B /* BlockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlockStatus.swift; path = ../amplify/generated/models/BlockStatus.swift; sourceTree = "<group>"; };
-		17EDC1AD2C4E966400F50B5B /* CosmeticQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticQL.swift; path = ../amplify/generated/models/CosmeticQL.swift; sourceTree = "<group>"; };
-		17EDC1AE2C4E966400F50B5B /* TagCosmeticQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TagCosmeticQL.swift; path = ../amplify/generated/models/TagCosmeticQL.swift; sourceTree = "<group>"; };
-		17EDC1AF2C4E966400F50B5B /* TagTrackQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TagTrackQL+Schema.swift"; path = "../amplify/generated/models/TagTrackQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1B02C4E966400F50B5B /* SkinSettingsAttributes+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkinSettingsAttributes+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1B12C4E966400F50B5B /* NotificationQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationQL.swift; path = ../amplify/generated/models/NotificationQL.swift; sourceTree = "<group>"; };
-		17EDC1B22C4E966400F50B5B /* LumeStateQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeStateQL.swift; path = ../amplify/generated/models/LumeStateQL.swift; sourceTree = "<group>"; };
-		17EDC1B32C4E966400F50B5B /* ProductColor+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ProductColor+Schema.swift"; path = "../amplify/generated/models/ProductColor+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1B42C4E966400F50B5B /* TagCosmeticQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TagCosmeticQL+Schema.swift"; path = "../amplify/generated/models/TagCosmeticQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1B52C4E966400F50B5B /* CosmeticPrice+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CosmeticPrice+Schema.swift"; path = "../amplify/generated/models/CosmeticPrice+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1B62C4E966400F50B5B /* UserProfileQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserProfileQL.swift; path = ../amplify/generated/models/UserProfileQL.swift; sourceTree = "<group>"; };
-		17EDC1B72C4E966400F50B5B /* SkinConcerns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinConcerns.swift; path = ../amplify/generated/models/SkinConcerns.swift; sourceTree = "<group>"; };
-		17EDC1B82C4E966400F50B5B /* SkinSensitivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinSensitivity.swift; path = ../amplify/generated/models/SkinSensitivity.swift; sourceTree = "<group>"; };
-		17EDC1B92C4E966400F50B5B /* UserStateQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserStateQL+Schema.swift"; path = "../amplify/generated/models/UserStateQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1BA2C4E966400F50B5B /* CommentQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CommentQL.swift; path = ../amplify/generated/models/CommentQL.swift; sourceTree = "<group>"; };
-		17EDC1BB2C4E966400F50B5B /* CosmeticBrandQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CosmeticBrandQL+Schema.swift"; path = "../amplify/generated/models/CosmeticBrandQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1BC2C4E966400F50B5B /* SkinType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinType.swift; path = ../amplify/generated/models/SkinType.swift; sourceTree = "<group>"; };
-		17EDC1BD2C4E966400F50B5B /* LikedLumeQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LikedLumeQL.swift; path = ../amplify/generated/models/LikedLumeQL.swift; sourceTree = "<group>"; };
-		17EDC1BE2C4E966400F50B5B /* InvitationQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "InvitationQL+Schema.swift"; path = "../amplify/generated/models/InvitationQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1BF2C4E966400F50B5B /* LumeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeState.swift; path = ../amplify/generated/models/LumeState.swift; sourceTree = "<group>"; };
-		17EDC1C02C4E966400F50B5B /* CosmeticQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CosmeticQL+Schema.swift"; path = "../amplify/generated/models/CosmeticQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1C12C4E966400F50B5B /* NotificationQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NotificationQL+Schema.swift"; path = "../amplify/generated/models/NotificationQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1C22C4E966500F50B5B /* LumeQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LumeQL+Schema.swift"; path = "../amplify/generated/models/LumeQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1C32C4E966500F50B5B /* CosmeticBrandQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticBrandQL.swift; path = ../amplify/generated/models/CosmeticBrandQL.swift; sourceTree = "<group>"; };
-		17EDC1C42C4E966500F50B5B /* LumeStateQL+Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LumeStateQL+Schema.swift"; path = "../amplify/generated/models/LumeStateQL+Schema.swift"; sourceTree = "<group>"; };
-		17EDC1C52C4E966500F50B5B /* ProductColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductColor.swift; path = ../amplify/generated/models/ProductColor.swift; sourceTree = "<group>"; };
-		17EDC1C62C4E966500F50B5B /* LumeQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LumeQL.swift; path = ../amplify/generated/models/LumeQL.swift; sourceTree = "<group>"; };
 		17FA395C2C4A98AF00B739BA /* CreateAccountIntroductionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountIntroductionViewController.swift; sourceTree = "<group>"; };
 		17FA9F442BEE44B000CC28AC /* NotificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		17FFBFA12BD616D900682EE2 /* Lumena.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumena.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -416,52 +438,63 @@
 		170B06BD2C4902A600F6320D /* AmplifyModels */ = {
 			isa = PBXGroup;
 			children = (
-				17EDC1A72C4E966300F50B5B /* AccountState.swift */,
-				17EDC1A02C4E966300F50B5B /* AmplifyModels.swift */,
-				17EDC1A12C4E966300F50B5B /* BlockQL.swift */,
-				17EDC1A82C4E966300F50B5B /* BlockQL+Schema.swift */,
-				17EDC1AC2C4E966400F50B5B /* BlockStatus.swift */,
-				17EDC1BA2C4E966400F50B5B /* CommentQL.swift */,
-				17EDC1AA2C4E966400F50B5B /* CommentQL+Schema.swift */,
-				17EDC1C32C4E966500F50B5B /* CosmeticBrandQL.swift */,
-				17EDC1BB2C4E966400F50B5B /* CosmeticBrandQL+Schema.swift */,
-				17EDC19C2C4E966300F50B5B /* CosmeticPrice.swift */,
-				17EDC1B52C4E966400F50B5B /* CosmeticPrice+Schema.swift */,
-				17EDC1AD2C4E966400F50B5B /* CosmeticQL.swift */,
-				17EDC1C02C4E966400F50B5B /* CosmeticQL+Schema.swift */,
-				17EDC19F2C4E966300F50B5B /* FollowQL.swift */,
-				17EDC1A22C4E966300F50B5B /* FollowQL+Schema.swift */,
-				17EDC19D2C4E966300F50B5B /* FollowStatus.swift */,
-				17EDC19A2C4E966300F50B5B /* InvitationOrganizationQL.swift */,
-				17EDC1AB2C4E966400F50B5B /* InvitationOrganizationQL+Schema.swift */,
-				17EDC1A92C4E966400F50B5B /* InvitationQL.swift */,
-				17EDC1BE2C4E966400F50B5B /* InvitationQL+Schema.swift */,
-				17EDC1BD2C4E966400F50B5B /* LikedLumeQL.swift */,
-				17EDC1A32C4E966300F50B5B /* LikedLumeQL+Schema.swift */,
-				17EDC1C62C4E966500F50B5B /* LumeQL.swift */,
-				17EDC1C22C4E966500F50B5B /* LumeQL+Schema.swift */,
-				17EDC1BF2C4E966400F50B5B /* LumeState.swift */,
-				17EDC1B22C4E966400F50B5B /* LumeStateQL.swift */,
-				17EDC1C42C4E966500F50B5B /* LumeStateQL+Schema.swift */,
-				17EDC1B12C4E966400F50B5B /* NotificationQL.swift */,
-				17EDC1C12C4E966400F50B5B /* NotificationQL+Schema.swift */,
-				17EDC1A42C4E966300F50B5B /* NotificationType.swift */,
-				17EDC1C52C4E966500F50B5B /* ProductColor.swift */,
-				17EDC1B32C4E966400F50B5B /* ProductColor+Schema.swift */,
-				17EDC1B72C4E966400F50B5B /* SkinConcerns.swift */,
-				17EDC19B2C4E966300F50B5B /* SkinPersonalColor.swift */,
-				17EDC1B82C4E966400F50B5B /* SkinSensitivity.swift */,
-				17EDC1A52C4E966300F50B5B /* SkinSettingsAttributes.swift */,
-				17EDC1B02C4E966400F50B5B /* SkinSettingsAttributes+Schema.swift */,
-				17EDC1BC2C4E966400F50B5B /* SkinType.swift */,
-				17EDC1AE2C4E966400F50B5B /* TagCosmeticQL.swift */,
-				17EDC1B42C4E966400F50B5B /* TagCosmeticQL+Schema.swift */,
-				17EDC1A62C4E966300F50B5B /* TagTrackQL.swift */,
-				17EDC1AF2C4E966400F50B5B /* TagTrackQL+Schema.swift */,
-				17EDC1B62C4E966400F50B5B /* UserProfileQL.swift */,
-				17EDC19E2C4E966300F50B5B /* UserProfileQL+Schema.swift */,
-				17EDC1992C4E966300F50B5B /* UserStateQL.swift */,
-				17EDC1B92C4E966400F50B5B /* UserStateQL+Schema.swift */,
+				1751B88F2C76810900E8F20F /* AccountState.swift */,
+				1751B88D2C76810900E8F20F /* AmplifyModels.swift */,
+				1751B8682C76810600E8F20F /* BlockQL.swift */,
+				1751B8602C76810600E8F20F /* BlockQL+Schema.swift */,
+				1751B8662C76810600E8F20F /* BlockStatus.swift */,
+				1751B85C2C76810600E8F20F /* CommentQL.swift */,
+				1751B88A2C76810800E8F20F /* CommentQL+Schema.swift */,
+				1751B85D2C76810600E8F20F /* CosmeticAmount.swift */,
+				1751B87A2C76810700E8F20F /* CosmeticAmount+Schema.swift */,
+				1751B88E2C76810900E8F20F /* CosmeticBrandQL.swift */,
+				1751B87C2C76810800E8F20F /* CosmeticBrandQL+Schema.swift */,
+				1751B8572C76810600E8F20F /* CosmeticPrice.swift */,
+				1751B87E2C76810800E8F20F /* CosmeticPrice+Schema.swift */,
+				1751B8792C76810700E8F20F /* CosmeticQL.swift */,
+				1751B85A2C76810600E8F20F /* CosmeticQL+Schema.swift */,
+				1751B88C2C76810900E8F20F /* CosmeticSearchIndex.swift */,
+				1751B85E2C76810600E8F20F /* CosmeticSearchIndex+Schema.swift */,
+				1751B8862C76810800E8F20F /* CosmeticSearchIndexStatus.swift */,
+				1751B8762C76810700E8F20F /* CosmeticSearchTagFrequency.swift */,
+				1751B8702C76810700E8F20F /* CosmeticSearchTagFrequency+Schema.swift */,
+				1751B8632C76810600E8F20F /* CosmeticVariant.swift */,
+				1751B8882C76810800E8F20F /* CosmeticVariant+Schema.swift */,
+				1751B8692C76810600E8F20F /* FollowQL.swift */,
+				1751B86E2C76810700E8F20F /* FollowQL+Schema.swift */,
+				1751B8592C76810600E8F20F /* FollowStatus.swift */,
+				1751B8652C76810600E8F20F /* IndividualSearchCosmetic.swift */,
+				1751B8772C76810700E8F20F /* IndividualSearchCosmetic+Schema.swift */,
+				1751B8832C76810800E8F20F /* IngredientQL.swift */,
+				1751B8672C76810600E8F20F /* IngredientQL+Schema.swift */,
+				1751B8752C76810700E8F20F /* InvitationOrganizationQL.swift */,
+				1751B8712C76810700E8F20F /* InvitationOrganizationQL+Schema.swift */,
+				1751B8822C76810800E8F20F /* InvitationQL.swift */,
+				1751B85F2C76810600E8F20F /* InvitationQL+Schema.swift */,
+				1751B86C2C76810700E8F20F /* LikedLumeQL.swift */,
+				1751B86D2C76810700E8F20F /* LikedLumeQL+Schema.swift */,
+				1751B8622C76810600E8F20F /* LumeQL.swift */,
+				1751B87D2C76810800E8F20F /* LumeQL+Schema.swift */,
+				1751B86A2C76810700E8F20F /* LumeState.swift */,
+				1751B8642C76810600E8F20F /* LumeStateQL.swift */,
+				1751B88B2C76810900E8F20F /* LumeStateQL+Schema.swift */,
+				1751B8802C76810800E8F20F /* NotificationQL.swift */,
+				1751B8722C76810700E8F20F /* NotificationQL+Schema.swift */,
+				1751B8552C76810500E8F20F /* NotificationType.swift */,
+				1751B8782C76810700E8F20F /* SkinConcerns.swift */,
+				1751B86B2C76810700E8F20F /* SkinPersonalColor.swift */,
+				1751B8742C76810700E8F20F /* SkinSensitivity.swift */,
+				1751B8872C76810800E8F20F /* SkinSettingsAttributesQL.swift */,
+				1751B8612C76810600E8F20F /* SkinSettingsAttributesQL+Schema.swift */,
+				1751B8852C76810800E8F20F /* SkinType.swift */,
+				1751B85B2C76810600E8F20F /* TagCosmeticQL.swift */,
+				1751B8562C76810600E8F20F /* TagCosmeticQL+Schema.swift */,
+				1751B86F2C76810700E8F20F /* TagTrackQL.swift */,
+				1751B8582C76810600E8F20F /* TagTrackQL+Schema.swift */,
+				1751B87B2C76810700E8F20F /* UserProfileQL.swift */,
+				1751B8892C76810800E8F20F /* UserProfileQL+Schema.swift */,
+				1751B8842C76810800E8F20F /* UserStateQL.swift */,
+				1751B8812C76810800E8F20F /* UserStateQL+Schema.swift */,
 			);
 			path = AmplifyModels;
 			sourceTree = "<group>";
@@ -1054,53 +1087,64 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17EDC1C72C4E966500F50B5B /* UserStateQL.swift in Sources */,
-				17EDC1C82C4E966500F50B5B /* InvitationOrganizationQL.swift in Sources */,
-				17EDC1C92C4E966500F50B5B /* SkinPersonalColor.swift in Sources */,
-				17EDC1CA2C4E966500F50B5B /* CosmeticPrice.swift in Sources */,
-				17EDC1CB2C4E966500F50B5B /* FollowStatus.swift in Sources */,
+				1751B8902C76810900E8F20F /* NotificationType.swift in Sources */,
+				1751B8912C76810900E8F20F /* TagCosmeticQL+Schema.swift in Sources */,
+				1751B8922C76810900E8F20F /* CosmeticPrice.swift in Sources */,
+				1751B8932C76810900E8F20F /* TagTrackQL+Schema.swift in Sources */,
+				1751B8942C76810900E8F20F /* FollowStatus.swift in Sources */,
+				1751B8952C76810900E8F20F /* CosmeticQL+Schema.swift in Sources */,
+				1751B8962C76810900E8F20F /* TagCosmeticQL.swift in Sources */,
+				1751B8972C76810900E8F20F /* CommentQL.swift in Sources */,
+				1751B8982C76810900E8F20F /* CosmeticAmount.swift in Sources */,
+				1751B8992C76810900E8F20F /* CosmeticSearchIndex+Schema.swift in Sources */,
+				1751B89A2C76810900E8F20F /* InvitationQL+Schema.swift in Sources */,
+				1751B89B2C76810900E8F20F /* BlockQL+Schema.swift in Sources */,
+				1751B89C2C76810900E8F20F /* SkinSettingsAttributesQL+Schema.swift in Sources */,
+				1751B89D2C76810900E8F20F /* LumeQL.swift in Sources */,
+				1751B89E2C76810900E8F20F /* CosmeticVariant.swift in Sources */,
+				1751B89F2C76810900E8F20F /* LumeStateQL.swift in Sources */,
+				1751B8A02C76810900E8F20F /* IndividualSearchCosmetic.swift in Sources */,
+				1751B8A12C76810900E8F20F /* BlockStatus.swift in Sources */,
+				1751B8A22C76810900E8F20F /* IngredientQL+Schema.swift in Sources */,
+				1751B8A32C76810900E8F20F /* BlockQL.swift in Sources */,
+				1751B8A42C76810900E8F20F /* FollowQL.swift in Sources */,
+				1751B8A52C76810900E8F20F /* LumeState.swift in Sources */,
+				1751B8A62C76810900E8F20F /* SkinPersonalColor.swift in Sources */,
+				1751B8A72C76810900E8F20F /* LikedLumeQL.swift in Sources */,
+				1751B8A82C76810900E8F20F /* LikedLumeQL+Schema.swift in Sources */,
+				1751B8A92C76810900E8F20F /* FollowQL+Schema.swift in Sources */,
+				1751B8AA2C76810900E8F20F /* TagTrackQL.swift in Sources */,
+				1751B8AB2C76810900E8F20F /* CosmeticSearchTagFrequency+Schema.swift in Sources */,
+				1751B8AC2C76810900E8F20F /* InvitationOrganizationQL+Schema.swift in Sources */,
+				1751B8AD2C76810900E8F20F /* NotificationQL+Schema.swift in Sources */,
+				1751B8AF2C76810900E8F20F /* SkinSensitivity.swift in Sources */,
+				1751B8B02C76810900E8F20F /* InvitationOrganizationQL.swift in Sources */,
+				1751B8B12C76810900E8F20F /* CosmeticSearchTagFrequency.swift in Sources */,
+				1751B8B22C76810900E8F20F /* IndividualSearchCosmetic+Schema.swift in Sources */,
+				1751B8B32C76810900E8F20F /* SkinConcerns.swift in Sources */,
+				1751B8B42C76810900E8F20F /* CosmeticQL.swift in Sources */,
+				1751B8B52C76810900E8F20F /* CosmeticAmount+Schema.swift in Sources */,
+				1751B8B62C76810900E8F20F /* UserProfileQL.swift in Sources */,
+				1751B8B72C76810900E8F20F /* CosmeticBrandQL+Schema.swift in Sources */,
+				1751B8B82C76810900E8F20F /* LumeQL+Schema.swift in Sources */,
+				1751B8B92C76810900E8F20F /* CosmeticPrice+Schema.swift in Sources */,
+				1751B8BB2C76810900E8F20F /* NotificationQL.swift in Sources */,
+				1751B8BC2C76810900E8F20F /* UserStateQL+Schema.swift in Sources */,
+				1751B8BD2C76810900E8F20F /* InvitationQL.swift in Sources */,
+				1751B8BE2C76810900E8F20F /* IngredientQL.swift in Sources */,
+				1751B8BF2C76810900E8F20F /* UserStateQL.swift in Sources */,
+				1751B8C02C76810900E8F20F /* SkinType.swift in Sources */,
+				1751B8C12C76810900E8F20F /* CosmeticSearchIndexStatus.swift in Sources */,
+				1751B8C22C76810900E8F20F /* SkinSettingsAttributesQL.swift in Sources */,
+				1751B8C32C76810900E8F20F /* CosmeticVariant+Schema.swift in Sources */,
+				1751B8C42C76810900E8F20F /* UserProfileQL+Schema.swift in Sources */,
+				1751B8C52C76810900E8F20F /* CommentQL+Schema.swift in Sources */,
+				1751B8C62C76810900E8F20F /* LumeStateQL+Schema.swift in Sources */,
+				1751B8C72C76810900E8F20F /* CosmeticSearchIndex.swift in Sources */,
+				1751B8C82C76810900E8F20F /* AmplifyModels.swift in Sources */,
+				1751B8C92C76810900E8F20F /* CosmeticBrandQL.swift in Sources */,
+				1751B8CA2C76810900E8F20F /* AccountState.swift in Sources */,
 				175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */,
-				17EDC1CC2C4E966500F50B5B /* UserProfileQL+Schema.swift in Sources */,
-				17EDC1CD2C4E966500F50B5B /* FollowQL.swift in Sources */,
-				17EDC1CE2C4E966500F50B5B /* AmplifyModels.swift in Sources */,
-				17EDC1CF2C4E966500F50B5B /* BlockQL.swift in Sources */,
-				17EDC1D02C4E966500F50B5B /* FollowQL+Schema.swift in Sources */,
-				17EDC1D12C4E966500F50B5B /* LikedLumeQL+Schema.swift in Sources */,
-				17EDC1D22C4E966500F50B5B /* NotificationType.swift in Sources */,
-				17EDC1D32C4E966500F50B5B /* SkinSettingsAttributes.swift in Sources */,
-				17EDC1D42C4E966500F50B5B /* TagTrackQL.swift in Sources */,
-				17EDC1D52C4E966500F50B5B /* AccountState.swift in Sources */,
-				17EDC1D62C4E966500F50B5B /* BlockQL+Schema.swift in Sources */,
-				17EDC1D72C4E966500F50B5B /* InvitationQL.swift in Sources */,
-				17EDC1D82C4E966500F50B5B /* CommentQL+Schema.swift in Sources */,
-				17EDC1D92C4E966500F50B5B /* InvitationOrganizationQL+Schema.swift in Sources */,
-				17EDC1DA2C4E966500F50B5B /* BlockStatus.swift in Sources */,
-				17EDC1DB2C4E966500F50B5B /* CosmeticQL.swift in Sources */,
-				17EDC1DC2C4E966500F50B5B /* TagCosmeticQL.swift in Sources */,
-				17EDC1DD2C4E966500F50B5B /* TagTrackQL+Schema.swift in Sources */,
-				17EDC1DE2C4E966500F50B5B /* SkinSettingsAttributes+Schema.swift in Sources */,
-				17EDC1DF2C4E966500F50B5B /* NotificationQL.swift in Sources */,
-				17EDC1E02C4E966500F50B5B /* LumeStateQL.swift in Sources */,
-				17EDC1E12C4E966500F50B5B /* ProductColor+Schema.swift in Sources */,
-				17EDC1E22C4E966500F50B5B /* TagCosmeticQL+Schema.swift in Sources */,
-				17EDC1E32C4E966500F50B5B /* CosmeticPrice+Schema.swift in Sources */,
-				17EDC1E42C4E966500F50B5B /* UserProfileQL.swift in Sources */,
-				17EDC1E52C4E966500F50B5B /* SkinConcerns.swift in Sources */,
-				17EDC1E62C4E966500F50B5B /* SkinSensitivity.swift in Sources */,
-				17EDC1E72C4E966500F50B5B /* UserStateQL+Schema.swift in Sources */,
-				17EDC1E82C4E966500F50B5B /* CommentQL.swift in Sources */,
-				17EDC1E92C4E966500F50B5B /* CosmeticBrandQL+Schema.swift in Sources */,
-				17EDC1EA2C4E966500F50B5B /* SkinType.swift in Sources */,
-				17EDC1EB2C4E966500F50B5B /* LikedLumeQL.swift in Sources */,
-				17EDC1EC2C4E966500F50B5B /* InvitationQL+Schema.swift in Sources */,
-				17EDC1ED2C4E966500F50B5B /* LumeState.swift in Sources */,
-				17EDC1EE2C4E966500F50B5B /* CosmeticQL+Schema.swift in Sources */,
-				17EDC1EF2C4E966500F50B5B /* NotificationQL+Schema.swift in Sources */,
-				17EDC1F02C4E966500F50B5B /* LumeQL+Schema.swift in Sources */,
-				17EDC1F12C4E966500F50B5B /* CosmeticBrandQL.swift in Sources */,
-				17EDC1F22C4E966500F50B5B /* LumeStateQL+Schema.swift in Sources */,
-				17EDC1F32C4E966500F50B5B /* ProductColor.swift in Sources */,
-				17EDC1F42C4E966500F50B5B /* LumeQL.swift in Sources */,
 				17FA39532C49064000B739BA /* ReadingDataEditorView.swift in Sources */,
 				17FA39542C49064000B739BA /* ReadingListView.swift in Sources */,
 				175AFF7A2C6B6694005EA8EC /* CameraRecordButtonUIView.swift in Sources */,

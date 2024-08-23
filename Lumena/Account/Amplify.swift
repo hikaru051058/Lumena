@@ -493,8 +493,6 @@ struct APImessageStruct: Decodable {
     }
 }
 
-
-
 enum APIError: Error {
     case invalidURL
     case encodingError
@@ -607,9 +605,9 @@ class GraphQL {
                 }
                 
                 // Debug: Print raw JSON string
-                //                if let json = String(data: data, encoding: .utf8) {
-                //                    print("Raw JSON received: \(json)")
-                //                }
+//                                if let json = String(data: data, encoding: .utf8) {
+//                                    print("Raw JSON received: \(json)")
+//                                }
                 
                 switch httpResponse.statusCode {
                 case 200:
@@ -829,11 +827,17 @@ class GraphQL {
         let urlString = "https://tyipo1o3a5.execute-api.ap-northeast-1.amazonaws.com/RandomCosmeticReturnStage?number=20"
         let apiResponse: APIResponse<[CosmeticQL]> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
         
+        print("fetchRandomCosmetic: called API")
+        
         guard let body = apiResponse.body else {
+            print("fetchRandomCosmetic: no Data")
             throw APIError.noData
         }
         
+        print("fetchRandomCosmetic: mapping Cosmetic")
         let cosmetics = body.map{Cosmetic.init(ql:$0)}
+        
+        print("fetchRandomCosmetic: before Return")
         return cosmetics
     }
     
@@ -971,7 +975,7 @@ class GraphQL {
         return body
     }
     
-    func SearchUserLikedPost(userID: String, postId: String) async throws -> Bool {
+    func searchUserLikedPost(userID: String, postId: String) async throws -> Bool {
         let encodedUserID = userID.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         let encodedPostId = postId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         
@@ -1019,8 +1023,16 @@ class GraphQL {
             throw APIError.noData
         }
         
-        let cosmeticArr = body.map{ Cosmetic(ql: $0) }
-        return cosmeticArr
+        return body.map({Cosmetic(ql: $0)})
+        
+//        var fetchedCosmetics: [Cosmetic]  = []
+//        do {
+//            fetchedCosmetics = try await GraphQL.shared.fetchCosmetic(cosmeticIDs: body)
+//        } catch {
+//            print(error)
+//        }
+//        
+//        return fetchedCosmetics
     }
     
     

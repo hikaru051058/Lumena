@@ -1446,14 +1446,15 @@ struct PrepPost: View {
                                         }
                                         
                                         let cosmetics = try await GraphQL.shared.searchCosmeticQL(searchKeyword: searchTerm)
+                                        
+                                        print("searchCosmetics: \(cosmetics.count)")
+                                        
                                         // Append new cosmetics to existing list
                                         cosmeticsWrapper.cosmetics.append(contentsOf: cosmetics.filter { newCosmetic in
                                             !cosmeticsWrapper.cosmetics.contains(where: { $0.cosmeticID == newCosmetic.cosmeticID })
                                         })
                                         // Filter the list locally
-                                        cosmeticsWrapper.cosmetics = cosmeticsWrapper.cosmetics.filter { cosmetic in
-                                            cosmetic.productName.contains(searchTerm) || cosmetic.companyID.contains(searchTerm)
-                                        }
+                                        cosmeticsWrapper.cosmetics = cosmetics
                                         withAnimation {
                                             SearchOutputShow = true
                                         }

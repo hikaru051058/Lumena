@@ -7,7 +7,7 @@ extension CosmeticBrandQL {
    public enum CodingKeys: String, ModelKey {
     case id
     case name
-    case websiteLink
+    case websiteURL
     case description
   }
   
@@ -26,7 +26,7 @@ extension CosmeticBrandQL {
     model.fields(
       .id(),
       .field(cosmeticBrandQL.name, is: .optional, ofType: .string),
-      .field(cosmeticBrandQL.websiteLink, is: .optional, ofType: .string),
+      .field(cosmeticBrandQL.websiteURL, is: .optional, ofType: .string),
       .field(cosmeticBrandQL.description, is: .optional, ofType: .string)
     )
     }

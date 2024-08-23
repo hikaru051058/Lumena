@@ -114,28 +114,28 @@ struct IndividualCosmeticsTagView: View {
                     
                         HStack {
                             
-                            if cosmetic.price != "0" {
-                                Text("$\(cosmetic.price)")
-                                    .font(.callout)
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
+//                            if cosmetic.price != "0" {
+//                                Text("$\(cosmetic.price)")
+//                                    .font(.callout)
+//                                
+//                                Rectangle()
+//                                    .frame(width: 1, height: 25)
+//                                    .foregroundColor(.gray)
+//                                    .padding(.horizontal, 2)
+//                            }
+//                            
+//                            if cosmetic.amount != "" {
+//                                Text(cosmetic.amount)
+//                                
+//                                Rectangle()
+//                                    .frame(width: 1, height: 25)
+//                                    .foregroundColor(.gray)
+//                                    .padding(.horizontal, 2)
+//                            }
                             
-                            if cosmetic.amount != "" {
-                                Text(cosmetic.amount)
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
                             
-                            if !cosmetic.productUrl.isEmpty {
-                                if let link = cosmetic.productUrl.first,
-                                   let url = URL(string: link!)
+                            if !cosmetic.isProductURLEmpty() {
+                                if let url = cosmetic.returnProductURL()
                                 {
                                     Image(systemName: "link.circle.fill")
                                         .foregroundColor(Color(uiColor: UIColor.arinBlue))
@@ -254,25 +254,25 @@ struct IndividualTagCosmeticsTagView: View {
                         
                         HStack {
                             
-                            if cosmetic?.price != "0" {
-                                Text("$\(cosmetic?.price ?? "")")
-                                    .font(.callout)
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
-                            
-                            if cosmetic?.amount != "" {
-                                
-                                Text(cosmetic?.amount ?? "null")
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                            }
+//                            if cosmetic?.price != "0" {
+//                                Text("$\(cosmetic?.price ?? "")")
+//                                    .font(.callout)
+//                                
+//                                Rectangle()
+//                                    .frame(width: 1, height: 25)
+//                                    .foregroundColor(.gray)
+//                                    .padding(.horizontal, 2)
+//                            }
+//                            
+//                            if cosmetic?.amount != "" {
+//                                
+//                                Text(cosmetic?.amount ?? "null")
+//                                
+//                                Rectangle()
+//                                    .frame(width: 1, height: 25)
+//                                    .foregroundColor(.gray)
+//                                    .padding(.horizontal, 2)
+//                            }
                             
                             if let link = TagCosmetic.attachedURL,
                                 let url = URL(string: link)
@@ -583,31 +583,30 @@ struct TagIndividualCosmeticsTagView: View {
                     
                     HStack {
                         
-                        if cosmetic.price != "null" {
-                            Text("$\(cosmetic.price)")
-                            //Text(cosmetic.id.uuidString)
-                                .font(.callout)
-                            
-                            Rectangle()
-                                .frame(width: 1, height: 25)
-                                .foregroundColor(.gray)
-                                .padding(.horizontal, 2)
-                        }
+//                        if cosmetic.price != "null" {
+//                            Text("$\(cosmetic.price)")
+//                            //Text(cosmetic.id.uuidString)
+//                                .font(.callout)
+//                            
+//                            Rectangle()
+//                                .frame(width: 1, height: 25)
+//                                .foregroundColor(.gray)
+//                                .padding(.horizontal, 2)
+//                        }
+//                        
+//                        
+//                        if cosmetic.amount != "" {
+//                            
+//                            Text(cosmetic.amount)
+//                            
+//                            Rectangle()
+//                                .frame(width: 1, height: 25)
+//                                .foregroundColor(.gray)
+//                                .padding(.horizontal, 2)
+//                        }
                         
-                        
-                        if cosmetic.amount != "" {
-                            
-                            Text(cosmetic.amount)
-                            
-                            Rectangle()
-                                .frame(width: 1, height: 25)
-                                .foregroundColor(.gray)
-                                .padding(.horizontal, 2)
-                        }
-                        
-                        if !cosmetic.productUrl.isEmpty {
-                            if let link = cosmetic.productUrl.first,
-                               let url = URL(string: link!)
+                        if !cosmetic.isProductURLEmpty() {
+                            if let url = cosmetic.returnProductURL()
                             {
                                 Image(systemName: "link.circle.fill")
                                     .foregroundColor(Color(uiColor: UIColor.arinBlue))
@@ -776,12 +775,12 @@ struct RatingIndividualListView: View {
                             
                             HStack {
                                 
-                                Text(tagCosmetic.cosmeticItem!.amount)
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
+//                                Text(tagCosmetic.cosmeticItem!.amount)
+//                                
+//                                Rectangle()
+//                                    .frame(width: 1, height: 25)
+//                                    .foregroundColor(.gray)
+//                                    .padding(.horizontal, 2)
                                 
                                 
                                 if !productAuthenticated {
@@ -1122,23 +1121,24 @@ struct SideButtonIndividualTagCosmeticsTagView: View {
                         
                         HStack {
                             
-                            if cosmetic?.price != "0" {
-                                Text("$\(cosmetic?.price ?? "null")")
-                                    .font(.callout)
-                            }
+//                            if cosmetic?.price != "0" {
+//                                Text("$\(cosmetic?.price ?? "null")")
+//                                    .font(.callout)
+//                            }
+//                            
+//                            if cosmetic?.amount != "" {
+//                                
+//                                Rectangle()
+//                                    .frame(width: 1, height: 25)
+//                                    .foregroundColor(.gray)
+//                                    .padding(.horizontal, 2)
+//                                
+//                                Text(cosmetic?.amount ?? "null")
+//                            }
                             
-                            if cosmetic?.amount != "" {
-                                
-                                Rectangle()
-                                    .frame(width: 1, height: 25)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                                
-                                Text(cosmetic?.amount ?? "null")
-                            }
-                            
-                            if let link = cosmetic?.productUrl.first,
-                               let url = URL(string: link ?? "")
+                            if let cosme = cosmetic, 
+                                !cosme.isProductURLEmpty(),
+                                let url = cosme.returnProductURL()
                             {
                                 
                                 Rectangle()
@@ -1259,8 +1259,7 @@ struct SideButtonIndividualTagCosmeticsTagView: View {
             let CosmeticID = TagCosmetic.cosmeticID
             cosmetic = CosmeticManager.shared.getCosmetic(withID: CosmeticID)
             
-            if let link = cosmetic?.productUrl.first,
-               let url = URL(string: link ?? "")
+            if let url = cosmetic?.returnProductURL()
             {
                 self.url = url
             }

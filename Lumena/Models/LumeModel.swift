@@ -1264,7 +1264,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         }
         
         Task {
-            let response = try await GraphQL.shared.SearchUserLikedPost(userID: userIdentityID, postId: self.postID)
+            let response = try await GraphQL.shared.searchUserLikedPost(userID: userIdentityID, postId: self.postID)
             
             DispatchQueue.main.async {
                 self.userLiked = response

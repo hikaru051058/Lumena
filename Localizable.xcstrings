@@ -74,9 +74,6 @@
         }
       }
     },
-    "$%@" : {
-
-    },
     "1-2時間" : {
       "comment" : "SkinSetting Page Survey Options",
       "extractionState" : "manual",

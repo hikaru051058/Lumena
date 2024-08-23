@@ -345,6 +345,8 @@ class SkinSettingsProfileBubbleViewController: UIViewController {
         stackView2.addArrangedSubview(SkinSettingsProfileBubbleIndividualViewController(text: skinSettings.concerns.rawValue, backgroundColor: .arinDarkPink))
         stackView2.addArrangedSubview(SkinSettingsProfileBubbleIndividualViewController(text: "虹彩色", backgroundColor: UIColor.color(from: skinSettings.eyeColor)))
         stackView2.addArrangedSubview(SkinSettingsProfileBubbleIndividualViewController(text: skinSettings.personalColor.rawValue, backgroundColor: .arinBlue))
+        
+        view.layoutIfNeeded()
     }
 }
 

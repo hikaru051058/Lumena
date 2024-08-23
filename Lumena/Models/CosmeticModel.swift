@@ -121,49 +121,47 @@ class CosmeticsWrapper: ObservableObject {
 
 class Cosmetic: Identifiable, ObservableObject {
     let id: UUID
-    let cosmeticID: String
-    var barcode: String
+    var cosmeticID: String
     var productName: String
     var companyID: String
-    var price: String
-    var amount: String
+    
     @Published var productImages: [ImageExtractorAsset]?
     
-    var description: String
-    var category: String
+    var totTagCount: Int?
+    var authenticated: Bool?
+    var description: String?
+    var rating: Double?
+    var category: String?
+    var productType: String?
+    var imageURL: [String]?
+    var productUrl: String?
     
-    var totTagCount: Int
-    var authenticated: Bool
-    var productUrl: [String?]
-    var createdAt: Int
-    var updatedAt: Int
-    var productColors: [ProductColor]
-    var productType: String
-    var rating: Double
-    var criteriaTags: [String]
-    var type: String
-    var imageURL: [String]
+    var createdAt: Int?
+    var updatedAt: Int?
+    
+    var variants: [CosmeticVariant]? = []
+    var criteriaTags: [String]? = []
+    var ingredients: [String]? = []
+    
+    var barcode: [String]? = []
     
     init(id: String = "",
-         cosmeticID: String = "",
-         barcode: String = "",
-         productName: String = "null",
-         companyID: String = "null",
-         price: String = "0",
-         amount: String = "null",
-         productImages: [ImageExtractorAsset] = [],
-         description: String = "null",
-         category: String = "null",
-         totTagCount: Int = 0,
-         authenticated: Bool = false,
-         productUrl: [String?] = [],
-         createdAt: Int = 0,
-         updatedAt: Int = 0,
-         productColors: [ProductColor] = [],
-         productType: String = "",
-         rating: Double = 0.0,
-         criteriaTags: [String] = [],
-         type: String = "",
+             cosmeticID: String = "",
+             barcode: [String] = [],
+             productName: String = "null",
+             companyID: String = "null",
+             productImages: [ImageExtractorAsset] = [],
+             description: String = "null",
+             category: String = "null",
+             totTagCount: Int = 0,
+             authenticated: Bool = false,
+             productUrl: String = "",
+             createdAt: Int = 0,
+             updatedAt: Int = 0,
+             productType: String = "",
+             rating: Double = 0.0,
+             criteriaTags: [String] = [],
+             variants: [CosmeticVariant] = [],
          imageURL: [String] = []) {
         
         self.id = UUID(uuidString: id) ?? UUID()
@@ -171,8 +169,6 @@ class Cosmetic: Identifiable, ObservableObject {
         self.barcode = barcode
         self.productName = productName
         self.companyID = companyID
-        self.price = price
-        self.amount = amount
         self.productImages = productImages
         self.description = description
         self.category = category
@@ -181,37 +177,40 @@ class Cosmetic: Identifiable, ObservableObject {
         self.productUrl = productUrl
         self.createdAt = createdAt
         self.updatedAt = updatedAt
-        self.productColors = productColors
         self.productType = productType
         self.rating = rating
         self.criteriaTags = criteriaTags
-        self.type = type
+        self.variants = variants
         self.imageURL = imageURL
     }
     
     convenience init(ql: CosmeticQL) {
-        let priceString = "\(ql.price?.priceSign ?? "")\(ql.price?.price ?? 0)"
+        
+        var newImageURL: [String] = []
+        var newIngredients: [String] = []
+        
+        if let qlVariants = ql.variants {
+            for variant in qlVariants {
+                newImageURL.append(contentsOf: variant.imageURL ?? [])
+                newIngredients.append(contentsOf: variant.ingredientIDs ?? [])
+            }
+        }
         
         self.init(
             id: ql.id,
             cosmeticID: ql.id,
-            barcode: ql.barcode ?? "",
             productName: ql.productName,
             companyID: ql.cosmeticbrandqlID,
-            price: priceString,
-            amount: ql.amount ?? "",
             description: ql.description ?? "",
             category: ql.category ?? "",
             totTagCount: ql.totPostTagCount ?? 0,
-            authenticated: ql.authenticated,
-            productUrl: [ql.productLink ?? ""],
+            authenticated: ql.authenticated ?? false,
             createdAt: Int(ql.createdAt!),
             updatedAt: Int(ql.updatedAt!),
-            productColors: ql.productColors ?? [],
             productType: ql.productType ?? "",
             rating: ql.rating ?? 0.0,
             criteriaTags: ql.criteriaTags ?? [],
-            imageURL: ql.imageLink ?? []
+            variants: ql.variants ?? []
         )
         
         Task {
@@ -221,30 +220,47 @@ class Cosmetic: Identifiable, ObservableObject {
     }
     
     func toCosmeticQL() -> CosmeticQL {
-        let priceSign = self.price.first.map { String($0) } ?? ""
-        let priceValue = Int(self.price.dropFirst()) ?? 0
-        let price = CosmeticPrice(price: Double(priceValue), priceSign: priceSign)
-        
         return CosmeticQL(
             id: self.cosmeticID,
             productName: self.productName,
-            price: price,
-            amount: self.amount,
-            totPostTagCount: self.totTagCount,
-            authenticated: self.authenticated,
+//            totPostTagCount: self.totTagCount,
+            authenticated: self.authenticated ?? false,
             cosmeticbrandqlID: self.companyID,
             description: self.description,
-            rating: self.rating,
+//            rating: self.rating,
             category: self.category,
-            productType: self.productType, 
-            imageLink: self.imageURL,
-            productLink: self.productUrl.first ?? "",
-            createdAt: self.createdAt,
+            productType: self.productType,
+            imageURL: self.imageURL,
+            productURL: self.productUrl,
+//            createdAt: self.createdAt,
             updatedAt: self.updatedAt,
-            productColors: self.productColors,
-            barcode: self.barcode,
-            criteriaTags: self.criteriaTags
+            variants: self.variants
+//            criteriaTags: self.criteriaTags
         )
+    }
+}
+
+extension Cosmetic {
+    
+    func returnProductURL() -> URL? {
+        guard let productURL = self.productUrl, !productURL.isEmpty else { return nil }
+        return URL(string: productURL)
+    }
+    
+    func returnImageURL() -> [URL]? {
+        guard let imageURL = self.imageURL, !imageURL.isEmpty else { return nil }
+        let newURLs = imageURL.compactMap { URL(string: $0) }
+        return newURLs.isEmpty ? nil : newURLs
+    }
+    
+    func isProductURLEmpty() -> Bool {
+        guard let productURL = self.productUrl, !productURL.isEmpty else { return true }
+        return false
+    }
+    
+    func isImageURLEmpty() -> Bool {
+        guard let imageURL = self.imageURL, !imageURL.isEmpty else { return true }
+        return false
     }
 }
 
@@ -363,8 +379,6 @@ extension Cosmetic {
             self.barcode = cosmetic.barcode
             self.productName = cosmetic.productName
             self.companyID = cosmetic.companyID
-            self.price = cosmetic.price
-            self.amount = cosmetic.amount
             self.productImages = cosmetic.productImages
             self.description = cosmetic.description
             self.category = cosmetic.category
@@ -373,16 +387,16 @@ extension Cosmetic {
             self.productUrl = cosmetic.productUrl
             self.createdAt = cosmetic.createdAt
             self.updatedAt = cosmetic.updatedAt
-            self.productColors = cosmetic.productColors
             self.productType = cosmetic.productType
             self.rating = cosmetic.rating
             self.criteriaTags = cosmetic.criteriaTags
-            self.type = cosmetic.type
             self.imageURL = cosmetic.imageURL
         }
     }
 }
 
+
+// upload
 extension Cosmetic {
     
     func uploadCosmeticQL(progressHandler: @escaping (Double) -> Void) async throws -> String {
@@ -434,12 +448,13 @@ extension Cosmetic {
     }
     
     func downloadProductImages() async {
-        if self.imageURL.isEmpty { return }
+        
+        guard let imageURL = self.returnImageURL() else { return }
+        
         let downloader = ImageDownloader()
         
         await withTaskGroup(of: ImageExtractorAsset?.self) { group in
-            for urlString in imageURL {
-                guard let url = URL(string: urlString) else { continue }
+            for url in imageURL {
                 group.addTask {
                     return try? await ImageExtractorAsset.create(from: url)
                 }
@@ -458,6 +473,23 @@ extension Cosmetic {
             self.productImages = assets
         }
     }
+    
+    func generateCosmeticQLID() -> String {
+        // Sanitize and replace spaces with underscores
+        let sanitizedProductName = self.productName.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_")
+        let sanitizedCompanyName = self.companyID.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_")
+        
+        // Use fallback values if necessary
+        let finalProductName = sanitizedProductName.isEmpty ? "Unknown_Product" : sanitizedProductName
+        let finalCompanyName = sanitizedCompanyName.isEmpty ? "Unknown_Brand" : sanitizedCompanyName
+        
+        // Concatenate the sanitized strings
+        let cosmeticQLID = "\(finalProductName)-\(finalCompanyName)"
+        self.cosmeticID = cosmeticQLID
+        
+        return cosmeticQLID
+    }
+
 }
 
 extension Cosmetic: Equatable {

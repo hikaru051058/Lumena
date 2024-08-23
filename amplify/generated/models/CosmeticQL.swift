@@ -5,47 +5,41 @@ import Foundation
 public struct CosmeticQL: Model {
   public let id: String
   public var productName: String
-  public var price: CosmeticPrice?
-  public var amount: String?
   public var totPostTagCount: Int?
-  public var authenticated: Bool
+  public var authenticated: Bool?
   public var cosmeticbrandqlID: String
   public var cosmeticbrandql: CosmeticBrandQL?
   public var description: String?
   public var rating: Double?
   public var category: String?
   public var productType: String?
-  public var imageLink: [String]?
-  public var productLink: String?
+  public var imageURL: [String]?
+  public var productURL: String?
   public var createdAt: Int?
   public var updatedAt: Int?
-  public var productColors: [ProductColor]?
-  public var barcode: String?
+  public var variants: [CosmeticVariant]?
   public var criteriaTags: [String]?
+  public var ingredients: [String]?
   
   public init(id: String = UUID().uuidString,
       productName: String,
-      price: CosmeticPrice? = nil,
-      amount: String? = nil,
       totPostTagCount: Int? = nil,
-      authenticated: Bool,
+      authenticated: Bool? = nil,
       cosmeticbrandqlID: String,
       cosmeticbrandql: CosmeticBrandQL? = nil,
       description: String? = nil,
       rating: Double? = nil,
       category: String? = nil,
       productType: String? = nil,
-      imageLink: [String]? = [],
-      productLink: String? = nil,
+      imageURL: [String]? = [],
+      productURL: String? = nil,
       createdAt: Int? = nil,
       updatedAt: Int? = nil,
-      productColors: [ProductColor]? = [],
-      barcode: String? = nil,
-      criteriaTags: [String]? = []) {
+      variants: [CosmeticVariant]? = [],
+      criteriaTags: [String]? = [],
+      ingredients: [String]? = []) {
       self.id = id
       self.productName = productName
-      self.price = price
-      self.amount = amount
       self.totPostTagCount = totPostTagCount
       self.authenticated = authenticated
       self.cosmeticbrandqlID = cosmeticbrandqlID
@@ -54,12 +48,12 @@ public struct CosmeticQL: Model {
       self.rating = rating
       self.category = category
       self.productType = productType
-      self.imageLink = imageLink
-      self.productLink = productLink
+      self.imageURL = imageURL
+      self.productURL = productURL
       self.createdAt = createdAt
       self.updatedAt = updatedAt
-      self.productColors = productColors
-      self.barcode = barcode
+      self.variants = variants
       self.criteriaTags = criteriaTags
+      self.ingredients = ingredients
   }
 }

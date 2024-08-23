@@ -1,3 +1,59 @@
+type CosmeticSearchTagFrequency {
+  word: String
+  clickCount: Int
+  extractionCount: Int
+}
+
+enum CosmeticSearchIndexStatus {
+  ARCHIVED
+  PENDING
+  RESTRICTED
+}
+
+type IndividualSearchCosmetic {
+  cosmeticID: String
+  clickedCount: Int
+}
+
+type CosmeticSearchIndex @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  topCosmtics: [IndividualSearchCosmetic]
+  cosmeticCount: Int
+  lastUpdated: AWSTimestamp
+  tags: [CosmeticSearchTagFrequency]
+  integrityCheckSum: String
+  searchTermStatus: CosmeticSearchIndexStatus
+  jsonFileCount: Int
+}
+
+type CosmeticVariant {
+  variantName: String
+  hexCode: String
+  description: String
+  additionalInfo: String
+  amount: CosmeticAmount
+  price: CosmeticPrice
+  productURL: [AWSURL]
+  barcode: String
+  ingredientIDs: [ID]
+  imageURL: [AWSURL]
+  rating: Float
+}
+
+type IngredientQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String
+  effectOnSkin: [Float]
+  synonyms: [String]
+  casNumbers: [String]
+}
+
+type CosmeticAmount {
+  value: Float
+  unit: String
+}
+
 type SkinSettingsAttributesQL {
   skinSensitivity: SkinSensitivity
   skinUVBathing: String
@@ -14,15 +70,10 @@ type CosmeticPrice {
   currency: String
 }
 
-type ProductColor {
-  hexValue: String
-  colorName: String
-}
-
 type CosmeticBrandQL @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
-  websiteLink: String
+  websiteURL: AWSURL
   description: String
 }
 
@@ -183,23 +234,21 @@ type CommentQL @model @auth(rules: [{allow: public}]) {
 type CosmeticQL @model @auth(rules: [{allow: public}]) {
   id: ID!
   productName: String!
-  price: CosmeticPrice
-  amount: String
   totPostTagCount: Int
-  authenticated: Boolean!
+  authenticated: Boolean
   cosmeticbrandqlID: ID!
   cosmeticbrandql: CosmeticBrandQL @connection(fields: ["cosmeticbrandqlID"])
   description: String
   rating: Float
   category: String
   productType: String
-  imageLink: [String]
-  productLink: String
+  imageURL: [AWSURL]
+  productURL: AWSURL
   createdAt: AWSTimestamp
   updatedAt: AWSTimestamp
-  productColors: [ProductColor]
-  barcode: String
+  variants: [CosmeticVariant]
   criteriaTags: [String]
+  ingredients: [String]
 }
 
 type TagTrackQL {
