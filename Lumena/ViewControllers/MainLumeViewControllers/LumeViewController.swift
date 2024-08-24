@@ -321,7 +321,6 @@ class LumeVerticalInfiniteScrollViewController: UIViewController, UIScrollViewDe
     private func fetchLumes(completion: @escaping (_ success: Bool) -> Void) {
         Task {
             do {
-                
                 let returnedLumes = try await GraphQL.shared.fetchRandomLumes()
                 // Use a set to track existing lume IDs for fast lookup
                 var existingIds = Set(lumes.map { $0.postID })
@@ -1468,7 +1467,6 @@ class VideoContentViewController: LumeContentViewController {
         }
     }
 }
-
 
 // ImageContentViewController is responsible for displaying image content
 class ImageContentViewController: LumeContentViewController {

@@ -13,9 +13,9 @@ import XLPagerTabStrip
 
 
 class LumeSideButtonsViewController: UIViewController, ObservableObject, LumeIndividualDataUpdateDelegate {
+    
     func didUpdateDescriptionHeight(_ height: CGFloat?) {
     }
-    
     
     @Published var lume: Lume
     @Published var currentLume: UUID?
@@ -673,13 +673,18 @@ extension String {
 }
 
 
+protocol LumeBottomButtonsViewDelegate: AnyObject {
+    func didRequestNavigation(to profileID: String)
+}
+
 class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeIndividualDataUpdateDelegate {
     
-    private var sideButtonProfileHost: UIHostingController<SideButtonProfileView>?
     var sideButtonDescriptionView: DescriptionExpandableViewController!
     
     private var profileViewBottomConstraint: NSLayoutConstraint!
     private var descriptionViewTopConstraint: NSLayoutConstraint!
+    
+    weak var delegate: LumeBottomButtonsViewDelegate?
     
     @Published var lume: Lume
     @Published var currentLume: UUID?
@@ -693,8 +698,8 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
     }
     var profile: ProfileSettings? {
         didSet {
-            // Notify the UI to update whenever profile changes
             refreshProfileView.toggle()
+            updateProfileInfo(profileImage: self.profile?.profileImage?.image, username: self.profile?.preferredUsername)
         }
     }
     
@@ -703,6 +708,10 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
     
     let buttonConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular, scale: .default)
     let buttonPadding: CGFloat = 5.0
+    
+    var profileImageButton: UIButton!
+    var usernameButton: UIButton!
+    var followButton: FollowBubbleButton!
 
     init(lume: Lume, userLiked: Bool, userLoggedIn: Bool) {
         self.lume = lume
@@ -722,6 +731,7 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        profile = lume.returnPostUser()
     }
     
     private func setupUI() {
@@ -732,43 +742,171 @@ class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeI
     }
 }
 
-// profile button
-extension LumeBottomButtonsViewController {
+extension LumeBottomButtonsViewController: FollowBubbleButtonDelegate {
     
     private func setupProfileButton() {
-        let sideButtonProfileView = SideButtonProfileView(
-            sideButtonsController: self,
-            postUserID: lume.postUserIID,
-            onNavigateProfile: navigateToProfile
-        )
-        sideButtonProfileHost = UIHostingController(rootView: sideButtonProfileView)
+        // Create the profile image button
+        profileImageButton = createProfileImageButton()
         
-        guard let profileView = sideButtonProfileHost?.view else { return }
-        profileView.translatesAutoresizingMaskIntoConstraints = false
-        profileView.backgroundColor = UIColor.clear
+        // Create the username button
+        usernameButton = createUsernameButton()
         
-        profileView.layer.shadowColor = UIColor.black.cgColor
-        profileView.layer.shadowOpacity = 0.25
-        profileView.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
-        profileView.layer.shadowRadius = 0.25
-        profileView.layer.masksToBounds = false
+        // Create the follow button using FollowBubbleButton
+        followButton = FollowBubbleButton()
+        followButton.delegate = self
         
-        self.addChild(sideButtonProfileHost!)
-        view.addSubview(profileView)
-        sideButtonProfileHost?.didMove(toParent: self)
-        profileViewBottomConstraint = profileView.bottomAnchor.constraint(equalTo: sideButtonDescriptionView.topAnchor)
+        // Create a horizontal stack view to contain profile image and username button
+        let profileStackView = UIStackView(arrangedSubviews: [profileImageButton, usernameButton])
+        profileStackView.axis = .horizontal
+        profileStackView.spacing = 8
+        profileStackView.alignment = .center
         
-        // Set up the constraints
+        // Create the container view for the profile button section
+        let profileContainerView = UIView()
+        profileContainerView.backgroundColor = .clear
+        
+        // Add the stack view and follow button to the container view
+        profileContainerView.addSubview(profileStackView)
+        profileContainerView.addSubview(followButton)
+        
+        // Add the container view to the main view
+        view.addSubview(profileContainerView)
+        
+        // Set up constraints for profileContainerView and its subviews
+        profileContainerView.translatesAutoresizingMaskIntoConstraints = false
+        profileStackView.translatesAutoresizingMaskIntoConstraints = false
+        followButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        profileViewBottomConstraint = profileContainerView.bottomAnchor.constraint(equalTo: sideButtonDescriptionView.topAnchor, constant: -8)
+        
         NSLayoutConstraint.activate([
-            profileView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            profileViewBottomConstraint
+            // Profile container view constraints
+            profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            profileContainerView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -60),
+            profileContainerView.topAnchor.constraint(equalTo: sideButtonDescriptionView.topAnchor, constant: -53),
+            profileViewBottomConstraint,
+            
+            // Profile stack view constraints
+            profileStackView.leadingAnchor.constraint(equalTo: profileContainerView.leadingAnchor),
+            profileStackView.centerYAnchor.constraint(equalTo: profileContainerView.centerYAnchor),
+            
+            // Follow button constraints
+            followButton.leadingAnchor.constraint(equalTo: profileStackView.trailingAnchor, constant: 8),
+            followButton.trailingAnchor.constraint(lessThanOrEqualTo: profileContainerView.trailingAnchor, constant: -8),
+            followButton.centerYAnchor.constraint(equalTo: profileContainerView.centerYAnchor),
         ])
+        
+        // Set visibility based on username text
+        usernameButton.isHidden = usernameButton.title(for: .normal)?.isEmpty ?? true
+        
+        // Add shadow to the profile container view
+        profileContainerView.layer.shadowColor = UIColor.black.cgColor
+        profileContainerView.layer.shadowOpacity = 0.25
+        profileContainerView.layer.shadowOffset = CGSize(width: 0.5, height: 0.5)
+        profileContainerView.layer.shadowRadius = 0.25
+        profileContainerView.layer.masksToBounds = false
     }
     
-    func navigateToProfile() {
-        DispatchQueue.main.async { [self] in
-            let profileVC = TwitterParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == GI.shared.identityID)
-            self.navigationController?.pushViewController(profileVC, animated: true)
+    private func createProfileImageButton() -> UIButton {
+        let button = UIButton()
+        button.contentMode = .scaleAspectFill
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 45 / 2.0 // Set corner radius to half the width/height for a circle
+        button.widthAnchor.constraint(equalToConstant: 45).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        
+        // Set the profile image or fallback image
+        if let profileImage = profile?.profileImage?.image {
+            button.setImage(profileImage, for: .normal)
+        } else {
+            button.setImage(createDefaultProfileImage(), for: .normal)
+        }
+        
+        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+        
+        return button
+    }
+    
+    private func createUsernameButton() -> UIButton {
+        let button = UIButton()
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        button.setTitleColor(.white, for: .normal)
+        button.contentHorizontalAlignment = .left
+        
+        if let username = profile?.preferredUsername {
+            button.setTitle(username, for: .normal)
+        }
+        
+        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+        
+        return button
+    }
+    
+    @objc private func profileButtonTapped() {
+        delegate?.didRequestNavigation(to: lume.postUserIID)  // Use the delegate to trigger navigation
+    }
+    
+    private func createDefaultProfileImage() -> UIImage? {
+        // Create a circular image with a white background and gray person.fill icon
+        let size = CGSize(width: 45, height: 45)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        let context = UIGraphicsGetCurrentContext()
+        
+        // Draw the gray circle background
+        let circlePath = UIBezierPath(ovalIn: CGRect(origin: .zero, size: size))
+        context?.setFillColor(UIColor.systemGray.cgColor)
+        circlePath.fill()
+        
+        // Draw the person.fill icon in white
+        if let personImage = UIImage(systemName: "person.fill") {
+            let iconRect = CGRect(x: 5, y: 5, width: 35, height: 35) // Adjust the size and position as needed
+            personImage.withTintColor(.white).draw(in: iconRect)
+        }
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image
+    }
+    
+    private func getFollowStat() async -> Bool {
+        let postUserID = lume.postUserIID
+        if let userIdentityID = AuthenticationManager.shared.identityID {
+            let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: postUserID)
+            return (status == .following) || (status == .mutual)
+        }
+        return true
+    }
+    
+    func didUpdateFollowStat(_ following: Bool) {
+        let postUserID = lume.postUserIID
+        if let userIdentityID = AuthenticationManager.shared.identityID {
+            ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: postUserID, follow: following)
+        }
+    }
+    
+    func updateProfileInfo(profileImage: UIImage?, username: String?) {
+        // Update profile image
+        if let profileImage = profileImage {
+            profileImageButton.setImage(profileImage, for: .normal)
+        } else {
+            profileImageButton.setImage(createDefaultProfileImage(), for: .normal)
+        }
+        
+        // Update username
+        if let username = username, !username.isEmpty {
+            usernameButton.setTitle(username, for: .normal)
+            usernameButton.isHidden = false
+        } else {
+            usernameButton.setTitle(nil, for: .normal)
+            usernameButton.isHidden = true
+        }
+        
+        // Update follow button status
+        DispatchQueue.main.async {
+            Task {
+                self.followButton.updateFollowStatus(isFollowing: await self.getFollowStat())
+            }
         }
     }
     
@@ -784,113 +922,92 @@ extension LumeBottomButtonsViewController {
         navController.modalPresentationStyle = .automatic
         present(navController, animated: true, completion: nil)
     }
+}
+
+
+protocol FollowBubbleButtonDelegate: AnyObject {
+    func didUpdateFollowStat(_ following: Bool)
+}
+
+class FollowBubbleButton: UIButton {
     
-    struct SideButtonProfileView: View {
-        @ObservedObject var sideButtonsController: LumeBottomButtonsViewController
-        @State var postUserID: String
-        @State private var followButton: Bool = false
-        @State private var profileImage: UIImage? = nil
-
-        var onNavigateProfile: (() -> Void)?
-
-        var body: some View {
-            HStack {
-                if let userIdentityID = GI.shared.identityID, postUserID != userIdentityID {
-                    if AuthenticationManager.shared.authStatus == .authenticated {
-                        Button(action: { onNavigateProfile?() }) {
-                            profileImageView()
-                            
-                            Text(sideButtonsController.profile?.preferredUsername ?? "")
-                                .font(.footnote)
-                                .fontWeight(.bold)
-                                .foregroundStyle(Color.white)
-                        }
-                        
-                        followButtonView(userIdentityID: userIdentityID)
-                    }
-                }
-                Spacer()
-            }
-            .onAppear {
-                fetchRelationshipStatus()
-                if let userProfile = sideButtonsController.profile {
-                    profileImage = userProfile.profileImage?.image
-                }
-                NotificationCenter.default.addObserver(forName: .didChangeFollowStatus, object: nil, queue: .main) { _ in
-                    self.fetchRelationshipStatus()
-                }
-            }
-            .onChange(of: sideButtonsController.refreshProfileView) { _ in
-                fetchRelationshipStatus()
-            }
-            .onChange(of: sideButtonsController.profile) { newProfile in
-                profileImage = newProfile?.profileImage?.image
-            }
-            .padding(.vertical, 8)
-        }
-
-        func fetchRelationshipStatus() {
-            guard let userIdentityID = GI.shared.identityID else { return }
-            DispatchQueue.main.async {
-                Task {
-                    let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: postUserID)
-                    followButton = (status == .following) || (status == .mutual)
-                }
-            }
-        }
-
-        @ViewBuilder
-        private func profileImageView() -> some View {
-            ZStack {
-                if let profileImage = self.profileImage {
-                    Image(uiImage: profileImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 42, height: 42)
-                        .clipShape(Circle())
-                } else {
-                    
-                    Image(systemName: "person.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 42, height: 42)
-                        .foregroundColor(.white)
-                        .background(Color.gray)
-                        .clipShape(Circle())
-                }
-            }
-        }
-
-        @ViewBuilder
-        private func followButtonView(userIdentityID: String) -> some View {
-            ZStack {
-                RoundedRectangle(cornerRadius: 22)
-                    .frame(width: (followButton ? 22 : 50), height: 22)
-                    .foregroundColor(followButton ? Color(red: 0.552, green: 0.724, blue: 0.831) : Color(red: 0.946, green: 0.76, blue: 0.839))
-                Group {
-                    Text(followButton ? "" : "フォロー")
-                        .font(.system(size: 10))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    Image(systemName: followButton ? "checkmark" : "")
-                        .font(.system(size: 10))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-            }
-            .onTapGesture {
-                toggleFollow(userIdentityID: userIdentityID)
-            }
-        }
-
-        private func toggleFollow(userIdentityID: String) {
-            let isCurrentlyFollowing = ProfileManager.shared.isFollowing(userIdentityID, to: postUserID)
-            ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: postUserID, follow: !isCurrentlyFollowing)
-            withAnimation {
-                followButton.toggle()
-                let generator = UIImpactFeedbackGenerator(style: .light)
-                generator.impactOccurred()
-            }
+    weak var delegate: FollowBubbleButtonDelegate?
+    
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 10, weight: .bold)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.lineBreakMode = .byCharWrapping
+        return label
+    }()
+    
+    private var following: Bool = false
+    private var widthConstraint: NSLayoutConstraint!
+    private var heightConstraint: NSLayoutConstraint!
+    
+    init(following: Bool = false) {
+        
+        self.following = following
+        super.init(frame: .zero)
+        
+        self.backgroundColor = following ? .arinBlue : .arinPink
+        self.layer.cornerRadius = 11
+        self.clipsToBounds = true
+        
+        label.text = NSLocalizedString("フォロー", comment: "")
+        addSubview(label)
+        
+        // Add constraints to mimic fixed size and padding in SwiftUI
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -2),
+            label.topAnchor.constraint(equalTo: topAnchor, constant: 2),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -2),
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
+        
+        // Set initial width and height constraints
+        widthConstraint = widthAnchor.constraint(equalToConstant: following ? 22 : 60)
+        heightConstraint = heightAnchor.constraint(equalToConstant: 22)
+        NSLayoutConstraint.activate([
+            widthConstraint,
+            heightConstraint,
+            centerXAnchor.constraint(equalTo: centerXAnchor),
+            centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+        
+        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc private func buttonTapped() {
+        following.toggle()
+        delegate?.didUpdateFollowStat(following)
+        updateUI()
+    }
+    
+    private func updateUI(animation: Bool = true) {
+        // Update label text based on following state
+        label.text = following ? "✓" : NSLocalizedString("フォロー", comment: "")
+        
+        UIView.animate(withDuration: animation ? 0.4 : 0, animations: {
+            self.widthConstraint.constant = self.following ? 22 : 60
+            self.backgroundColor = self.following ? .arinBlue : .arinPink
+            self.superview?.layoutIfNeeded()
+        })
+    }
+    
+    func updateFollowStatus(isFollowing: Bool) {
+        DispatchQueue.main.async { [self] in
+            following = isFollowing
+            updateUI(animation: false)
         }
     }
 }
@@ -1087,7 +1204,7 @@ class BottomIslandViewController: UIViewController {
     }
     
     func navigateToProfile() {
-        guard let UserProfileIdentity = GI.shared.identityID else { return }
+        guard let UserProfileIdentity = AuthenticationManager.shared.identityID else { return }
         let profileVC = TwitterParallaxViewController(userIdentityID: UserProfileIdentity, isAccountUser: true)
         navigationController?.pushViewController(profileVC, animated: true)
     }
@@ -1362,7 +1479,7 @@ protocol DescriptionExpandableViewControllerDelegate: AnyObject {
     func didUpdateHeight(_ height: CGFloat)
 }
 
-class DescriptionExpandableViewController: UIView {
+class DescriptionExpandableViewController: UIView, ShimmeringViewProtocol {
     
     private let scrollView = UIScrollView()
     private let descriptionLabel = UILabel()
@@ -1374,6 +1491,12 @@ class DescriptionExpandableViewController: UIView {
     
     private var topFadeLayer: CAGradientLayer?
     private var bottomFadeLayer: CAGradientLayer?
+    
+    var shimmeringAnimatedItems: [UIView] {
+        [
+            scrollView
+        ]
+    }
     
     weak var lumeBottomViewControllerdelegate: DescriptionExpandableViewControllerDelegate?
     weak var lumeIndividualViewControllerdelegate: DescriptionExpandableViewControllerDelegate?
@@ -1401,6 +1524,8 @@ class DescriptionExpandableViewController: UIView {
         scrollView.showsVerticalScrollIndicator = false
 //        scrollView.backgroundColor = .gray
         addSubview(scrollView)
+        
+        startShimmerEffect()
         
         // Configure the label
         descriptionLabel.text = text
@@ -1443,6 +1568,8 @@ class DescriptionExpandableViewController: UIView {
         // Add tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDescription))
         descriptionLabel.addGestureRecognizer(tapGesture)
+        
+        stopShimmerEffect()
     }
     
     @objc func toggleDescription() {
@@ -1521,7 +1648,6 @@ class DescriptionExpandableViewController: UIView {
     
     func getCurrentHeight() -> CGFloat {
         let heightReturn = min(maximumExpandedHeight, descriptionLabel.requiredHeight(for: bounds.width))
-        print(heightReturn)
         return heightReturn
     }
     
@@ -1554,6 +1680,19 @@ class DescriptionExpandableViewController: UIView {
                 self.topFadeLayer?.opacity = 1.0
                 self.bottomFadeLayer?.opacity = 1.0
             }
+        }
+    }
+    
+    func startShimmerEffect() {
+        // Start the shimmer animation
+        DispatchQueue.main.async {
+            self.setTemplateWithSubviews(true, viewBackgroundColor: .clear)
+        }
+    }
+    
+    func stopShimmerEffect() {
+        DispatchQueue.main.async {
+            self.setTemplateWithSubviews(false)
         }
     }
 }

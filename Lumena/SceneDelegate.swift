@@ -13,14 +13,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    var lumes: [Lume] = []
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        //_ = AuthenticationManager.shared
-        window.rootViewController = UINavigationController(rootViewController: LoadingViewController())
+        window.rootViewController = UINavigationController(rootViewController: newLumeHorizontalViewController())
         self.window = window
         window.makeKeyAndVisible()
     }

@@ -69,6 +69,13 @@
 		1751B8C82C76810900E8F20F /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88D2C76810900E8F20F /* AmplifyModels.swift */; };
 		1751B8C92C76810900E8F20F /* CosmeticBrandQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88E2C76810900E8F20F /* CosmeticBrandQL.swift */; };
 		1751B8CA2C76810900E8F20F /* AccountState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B88F2C76810900E8F20F /* AccountState.swift */; };
+		1751B8CC2C78EED500E8F20F /* newLumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8CB2C78EED500E8F20F /* newLumeViewController.swift */; };
+		1751B8E02C7A26A600E8F20F /* ShimmeringViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DA2C7A26A600E8F20F /* ShimmeringViewProtocol.swift */; };
+		1751B8E12C7A26A600E8F20F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DB2C7A26A600E8F20F /* Constants.swift */; };
+		1751B8E22C7A26A600E8F20F /* UIView+Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DC2C7A26A600E8F20F /* UIView+Template.swift */; };
+		1751B8E32C7A26A600E8F20F /* UIView+ShimmerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DD2C7A26A600E8F20F /* UIView+ShimmerExtensions.swift */; };
+		1751B8E42C7A26A600E8F20F /* UIView+Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DE2C7A26A600E8F20F /* UIView+Shimmer.swift */; };
+		1751B8E52C7A26A600E8F20F /* UIView_Shimmer.h in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DF2C7A26A600E8F20F /* UIView_Shimmer.h */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
 		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
 		175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */; };
@@ -282,6 +289,14 @@
 		1751B88D2C76810900E8F20F /* AmplifyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AmplifyModels.swift; path = ../amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
 		1751B88E2C76810900E8F20F /* CosmeticBrandQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CosmeticBrandQL.swift; path = ../amplify/generated/models/CosmeticBrandQL.swift; sourceTree = "<group>"; };
 		1751B88F2C76810900E8F20F /* AccountState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountState.swift; path = ../amplify/generated/models/AccountState.swift; sourceTree = "<group>"; };
+		1751B8CB2C78EED500E8F20F /* newLumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = newLumeViewController.swift; sourceTree = "<group>"; };
+		1751B8DA2C7A26A600E8F20F /* ShimmeringViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmeringViewProtocol.swift; sourceTree = "<group>"; };
+		1751B8DB2C7A26A600E8F20F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		1751B8DC2C7A26A600E8F20F /* UIView+Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Template.swift"; sourceTree = "<group>"; };
+		1751B8DD2C7A26A600E8F20F /* UIView+ShimmerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ShimmerExtensions.swift"; sourceTree = "<group>"; };
+		1751B8DE2C7A26A600E8F20F /* UIView+Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shimmer.swift"; sourceTree = "<group>"; };
+		1751B8DF2C7A26A600E8F20F /* UIView_Shimmer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIView_Shimmer.h; path = "../../../Downloads/UIView-Shimmer-master/Sources/UIView-Shimmer/UIView_Shimmer.h"; sourceTree = "<group>"; };
+		1751B8E62C7A26AE00E8F20F /* UIView_Shimmer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIView_Shimmer.h; path = "../../../../../../../Downloads/UIView-Shimmer-master/Sources/UIView-Shimmer/UIView_Shimmer.h"; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
 		175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCreationViewController.swift; sourceTree = "<group>"; };
@@ -525,6 +540,7 @@
 			isa = PBXGroup;
 			children = (
 				17BAE1BC2BE6E85600E7C7C9 /* LumeViewController.swift */,
+				1751B8CB2C78EED500E8F20F /* newLumeViewController.swift */,
 				175709A82BE78F4400643C40 /* SideButtonViewController.swift */,
 				177E442A2C6E88C600EFD2D1 /* CommentsListViewController.swift */,
 			);
@@ -549,6 +565,19 @@
 				17C0ABA42BFEA90000FA027A /* DescriptionBoxViewController.swift */,
 			);
 			path = DescriptionBox;
+			sourceTree = "<group>";
+		};
+		1751B8D22C7A25FE00E8F20F /* Shimmer */ = {
+			isa = PBXGroup;
+			children = (
+				1751B8DB2C7A26A600E8F20F /* Constants.swift */,
+				1751B8DA2C7A26A600E8F20F /* ShimmeringViewProtocol.swift */,
+				1751B8E62C7A26AE00E8F20F /* UIView_Shimmer.h */,
+				1751B8DD2C7A26A600E8F20F /* UIView+ShimmerExtensions.swift */,
+				1751B8DE2C7A26A600E8F20F /* UIView+Shimmer.swift */,
+				1751B8DC2C7A26A600E8F20F /* UIView+Template.swift */,
+			);
+			path = Shimmer;
 			sourceTree = "<group>";
 		};
 		1777D7B72C57CBCE00C09067 /* PostAudioPlayer */ = {
@@ -622,6 +651,7 @@
 		1782B1182C66A85B00AC1686 /* SubViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				1751B8D22C7A25FE00E8F20F /* Shimmer */,
 				1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */,
 				1798E7D72BD6238500793A2C /* LoadingViewController.swift */,
 				17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */,
@@ -758,6 +788,7 @@
 		17FFBF982BD616D900682EE2 = {
 			isa = PBXGroup;
 			children = (
+				1751B8DF2C7A26A600E8F20F /* UIView_Shimmer.h */,
 				173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */,
 				17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */,
 				17FFBFA32BD616D900682EE2 /* Lumena */,
@@ -1087,6 +1118,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1751B8E02C7A26A600E8F20F /* ShimmeringViewProtocol.swift in Sources */,
+				1751B8E12C7A26A600E8F20F /* Constants.swift in Sources */,
+				1751B8E22C7A26A600E8F20F /* UIView+Template.swift in Sources */,
+				1751B8E32C7A26A600E8F20F /* UIView+ShimmerExtensions.swift in Sources */,
+				1751B8E42C7A26A600E8F20F /* UIView+Shimmer.swift in Sources */,
+				1751B8E52C7A26A600E8F20F /* UIView_Shimmer.h in Sources */,
 				1751B8902C76810900E8F20F /* NotificationType.swift in Sources */,
 				1751B8912C76810900E8F20F /* TagCosmeticQL+Schema.swift in Sources */,
 				1751B8922C76810900E8F20F /* CosmeticPrice.swift in Sources */,
@@ -1201,6 +1238,7 @@
 				17FFC03B2BD6190900682EE2 /* GI.swift in Sources */,
 				17B7A3D22C04104E00777CC1 /* UIScrollView+Extensions.swift in Sources */,
 				17FFC0492BD6190900682EE2 /* ProductSubmission.swift in Sources */,
+				1751B8CC2C78EED500E8F20F /* newLumeViewController.swift in Sources */,
 				17B7A3BD2C04104E00777CC1 /* DetailScreen.swift in Sources */,
 				171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */,
 				17B7A3CC2C04104E00777CC1 /* CellReuse.swift in Sources */,

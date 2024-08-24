@@ -1117,8 +1117,10 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     private func handleVoiceOverChange() {
         if voiceOver.audioLevels.count != 0 {
             tagMusic.audioPlayer?.volume = 0.7
+            muteVideos(mute: true)
         } else {
             tagMusic.audioPlayer?.volume = 1.0
+            muteVideos(mute: false)
         }
     }
     
@@ -1164,7 +1166,9 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     func playAudio(repeatAudio: Bool = false) {
         if self.voiceOver.hasRecording {
             self.muteVideos(mute: true)
-            self.voiceOver.play(repeatAudio: repeatAudio)
+            DispatchQueue.main.async {
+                self.voiceOver.play(repeatAudio: repeatAudio)
+            }
         }
         self.tagMusic.playAudio(from: 0.0, to: Float(self.voiceOver.recordingDuration), repeat: repeatAudio)
     }

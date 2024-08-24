@@ -43,7 +43,7 @@ class AudioRecordingData: NSObject, ObservableObject, AVAudioRecorderDelegate, A
     }
     
     var hasRecording: Bool {
-        return !audioSegments.isEmpty
+        return !audioSegments.isEmpty || (finalAudioURL != nil)
     }
     
     private var audioRecorder: AVAudioRecorder?
@@ -112,9 +112,7 @@ class AudioRecordingData: NSObject, ObservableObject, AVAudioRecorderDelegate, A
             let playerItem = AVPlayerItem(url: finalAudioURL)
             audioPlayer = AVPlayer(playerItem: playerItem)
         }
-        self.isMuted = VideoDataStore.shared.mute
         audioPlayer?.isMuted = self.isMuted
-        
         audioPlayer?.play()
         isPlaying = true
     }

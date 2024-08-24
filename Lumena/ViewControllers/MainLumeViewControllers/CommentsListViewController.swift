@@ -307,6 +307,8 @@ class CommentTextInputViewController: UIViewController {
         // Add profile image view to the main view
         if let userIdentityID = AuthenticationManager.shared.identityID {
             profileImageView.image = ProfileManager.shared.returnProfileImage(userIdentityID: userIdentityID)?.image
+        } else {
+            profileImageView.image = UIImage(systemName: "person.circle.fill")
         }
         
         view.addSubview(profileImageView)
