@@ -26,6 +26,12 @@ class CameraToggleButtonUIButton: UIButton {
     }
     private var showLight = false
     
+    var buttonColor: UIColor = .white {
+        didSet {
+            updateButtonStyles()
+        }
+    }
+    
     weak var delegate: CameraToggleButtonUIButtonDelegate?
     
     override init(frame: CGRect) {
@@ -40,7 +46,7 @@ class CameraToggleButtonUIButton: UIButton {
     
     private func setupUI() {
         // Configure the main button's appearance
-        self.backgroundColor = .primary
+        self.backgroundColor = .clear
         
         let background = UIButton(type: .system)
         background.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
@@ -51,6 +57,7 @@ class CameraToggleButtonUIButton: UIButton {
         cameraButton = UIButton(type: .system)
         cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .normal)
         cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
+        cameraButton.tintColor = buttonColor
         cameraButton.translatesAutoresizingMaskIntoConstraints = false
         addSubview(cameraButton)
         
@@ -58,6 +65,7 @@ class CameraToggleButtonUIButton: UIButton {
         videoButton = UIButton(type: .system)
         videoButton.setImage(UIImage(systemName: "video.fill"), for: .normal)
         videoButton.addTarget(self, action: #selector(videoButtonTapped), for: .touchUpInside)
+        videoButton.tintColor = buttonColor
         videoButton.translatesAutoresizingMaskIntoConstraints = false
         addSubview(videoButton)
         
@@ -92,8 +100,8 @@ class CameraToggleButtonUIButton: UIButton {
         videoButton.transform = CGAffineTransform(scaleX: videoScale, y: videoScale)
         
         // Update tint colors
-        cameraButton.tintColor = (cameraMode == .video) ? .secondaryLabel : (showLight ? .label : .white)
-        videoButton.tintColor = (cameraMode == .video) ? (showLight ? .label : .white) : .secondaryLabel
+        cameraButton.tintColor = (cameraMode == .video) ? .secondaryLabel : (showLight ? .label : buttonColor)
+        videoButton.tintColor = (cameraMode == .video) ? (showLight ? .label : buttonColor) : .secondaryLabel
         
         // Animate the transformations
         UIView.animate(withDuration: 0.15) {

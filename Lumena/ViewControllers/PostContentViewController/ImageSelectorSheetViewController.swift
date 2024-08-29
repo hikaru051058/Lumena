@@ -13,6 +13,12 @@ class ImageSelectorSheetViewController: UIViewController {
     private var verticalImageScrollView: VerticalScrollPhotoLibraryViewController!
     private var horizontalImageScrollView: HorizontalScrollPhotoLibraryViewController!
     
+    private var horizontalScrollViewHeightConstraint: NSLayoutConstraint!
+    private var horizontalScrollViewInitialHeight: CGFloat = 0.0
+    
+    // Array to hold selected PHAssets
+    private var selectedAssets: [PHAsset] = []
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -20,6 +26,7 @@ class ImageSelectorSheetViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .background
         setupUI()
     }
     
@@ -31,24 +38,87 @@ class ImageSelectorSheetViewController: UIViewController {
 
 extension ImageSelectorSheetViewController {
     
+    func addSelectedAsset(_ asset: PHAsset) {
+        if !selectedAssets.contains(asset) {
+            selectedAssets.append(asset)
+            horizontalImageScrollView.updateWithSelectedImages(selectedAssets)
+            
+//            verticalImageScrollView.updateCellForAsset(asset, setSelected: true)
+            
+            // If there are selected assets, set the height to full and hide the label
+            horizontalScrollViewHeightConstraint.constant = view.frame.height * 0.3
+            horizontalScrollViewInitialHeight = view.frame.height * 0.3
+            
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    func removeSelectedAsset(_ asset: PHAsset) {
+        if let index = selectedAssets.firstIndex(of: asset) {
+            selectedAssets.remove(at: index)
+            horizontalImageScrollView.updateWithSelectedImages(selectedAssets)
+            
+            verticalImageScrollView.updateCellForAsset(asset, setSelected: false)
+            
+            // If there are no selected assets, shrink the height and show the label
+            if selectedAssets.isEmpty {
+                horizontalScrollViewHeightConstraint.constant = view.frame.height * 0.15
+                horizontalScrollViewInitialHeight = view.frame.height * 0.15
+                
+                UIView.animate(withDuration: 0.3) {
+                    self.view.layoutIfNeeded()
+                }
+            }
+        }
+    }
+}
+
+extension ImageSelectorSheetViewController {
+    
     private func setupHorizontalImageScrollView() {
         horizontalImageScrollView = HorizontalScrollPhotoLibraryViewController()
+        horizontalImageScrollView.delegate = self
         addChild(horizontalImageScrollView)
         view.addSubview(horizontalImageScrollView.view)
         horizontalImageScrollView.didMove(toParent: self)
         
         horizontalImageScrollView.view.translatesAutoresizingMaskIntoConstraints = false
         
+        // Create the height constraint with an initial height
+        horizontalScrollViewHeightConstraint = horizontalImageScrollView.view.heightAnchor.constraint(equalToConstant: view.frame.height * 0.15)
+        
         NSLayoutConstraint.activate([
             horizontalImageScrollView.view.widthAnchor.constraint(equalTo: view.widthAnchor),
             horizontalImageScrollView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             horizontalImageScrollView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: (view.frame.height * 0.025)),
-            horizontalImageScrollView.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: (view.frame.height * 0.3)),
+            horizontalScrollViewHeightConstraint // Activate the height constraint
         ])
+        
+        horizontalScrollViewInitialHeight = view.frame.height * 0.15
     }
 }
 
 extension ImageSelectorSheetViewController: ImageSelectionDelegate {
+    
+    func didSelectImage(_ asset: PHAsset) {
+        addSelectedAsset(asset)
+    }
+    
+    func didUnselectImage(_ asset: PHAsset) {
+        removeSelectedAsset(asset)
+    }
+    
+    func didVerticallyScroll(_ yOffset: CGFloat) {
+        DispatchQueue.main.async {
+            if self.selectedAssets.isEmpty {
+                self.horizontalScrollViewHeightConstraint.constant = (self.horizontalScrollViewInitialHeight - min(yOffset, self.horizontalScrollViewInitialHeight))
+            } else {
+                self.horizontalScrollViewHeightConstraint.constant = self.view.frame.height * 0.3
+            }
+        }
+    }
     
     private func setupVerticalImageScrollView() {
         verticalImageScrollView = VerticalScrollPhotoLibraryViewController()
@@ -65,18 +135,14 @@ extension ImageSelectorSheetViewController: ImageSelectionDelegate {
             verticalImageScrollView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
-    
-    func didSelectImages(_ assets: [PHAsset]) {
-        // Update the horizontal scroll view to display all selected images
-        horizontalImageScrollView.updateWithSelectedImages(assets)
-    }
 }
-
 
 // MARK: - VerticalScrollPhotoLibraryViewController
 
 protocol ImageSelectionDelegate: AnyObject {
-    func didSelectImages(_ assets: [PHAsset])
+    func didSelectImage(_ asset: PHAsset)
+    func didUnselectImage(_ asset: PHAsset)
+    func didVerticallyScroll(_ yOffset: CGFloat)
 }
 
 class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -108,6 +174,7 @@ class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionVi
         layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         layout.minimumInteritemSpacing = cellSpacing
         layout.minimumLineSpacing = cellSpacing
+        layout.footerReferenceSize = CGSize(width: view.frame.width, height: UIScreen.main.bounds.height * 0.4)
         
         // Initialize collection view
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
@@ -115,6 +182,7 @@ class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionVi
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(VerticalPhotoLibraryCell.self, forCellWithReuseIdentifier: "PhotoLibraryCell")
+        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "FooterView")
         
         // Add collection view to the view controller's view
         view.addSubview(collectionView)
@@ -173,6 +241,19 @@ class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionVi
         cell.setSelected(selectedAssets.contains(asset))
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "FooterView", for: indexPath)
+            footerView.backgroundColor = .clear // You can customize this view as needed
+            return footerView
+        }
+        return UICollectionReusableView()
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: 50) // Adjust height as needed
+    }
 
     // MARK: - UICollectionViewDelegate
     
@@ -181,12 +262,13 @@ class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionVi
         
         if selectedAssets.contains(asset) {
             selectedAssets.remove(asset)
+            delegate?.didUnselectImage(asset)
         } else {
             selectedAssets.insert(asset)
+            delegate?.didSelectImage(asset)
         }
         
         collectionView.reloadItems(at: [indexPath])
-        delegate?.didSelectImages(Array(selectedAssets))
         
         // Present the full-size image viewer
 //        let fullSizeVC = FullSizePhotoViewController()
@@ -201,10 +283,30 @@ class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionVi
         let contentHeight = scrollView.contentSize.height
         let yOffset = scrollView.contentOffset.y
         
+        delegate?.didVerticallyScroll(yOffset)
+        
         let threshold = contentHeight - visibleHeight - visibleHeight / 3
         
         if yOffset > threshold && !isLoading {
             fetchMoreAssets()
+        }
+    }
+    
+    func updateCellForAsset(_ asset: PHAsset, setSelected: Bool) {
+        if let index = assets.firstIndex(of: asset) {
+            let indexPath = IndexPath(item: index, section: 0)
+            if let cell = collectionView.cellForItem(at: indexPath) as? VerticalPhotoLibraryCell {
+                cell.setSelected(setSelected)
+            }
+            
+            if setSelected {
+                selectedAssets.insert(asset)
+            } else {
+                selectedAssets.remove(asset)
+            }
+            
+            // Optionally, you can reload the cell to ensure proper UI update
+            collectionView.reloadItems(at: [indexPath])
         }
     }
 }
@@ -215,23 +317,35 @@ class VerticalPhotoLibraryCell: UICollectionViewCell {
     
     let imageView = UIImageView()
     let selectionIndicator = UILabel() // A label to show the selection indicator
+    private let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
     var cornerRadius: CGFloat = 0.0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        // Setup imageView
         contentView.addSubview(imageView)
         imageView.frame = contentView.bounds
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = cornerRadius
         imageView.clipsToBounds = true
         
-        // Add selection indicator
+        // Setup blur effect view
+        blurEffectView.frame = contentView.bounds
+        blurEffectView.layer.cornerRadius = cornerRadius
+        blurEffectView.clipsToBounds = true
+        blurEffectView.isHidden = true // Initially hidden
+        contentView.addSubview(blurEffectView)
+        
+        // Setup selection indicator
         selectionIndicator.text = "✓"
         selectionIndicator.textColor = .white
         selectionIndicator.font = UIFont.boldSystemFont(ofSize: 18)
         selectionIndicator.isHidden = true // Initially hidden
         contentView.addSubview(selectionIndicator)
+        
+        // Setup Auto Layout constraints for the selection indicator
         selectionIndicator.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             selectionIndicator.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
@@ -260,9 +374,21 @@ class VerticalPhotoLibraryCell: UICollectionViewCell {
     }
     
     func setSelected(_ selected: Bool) {
-        selectionIndicator.isHidden = !selected
+        DispatchQueue.main.async { [self] in
+            blurEffectView.isHidden = !selected
+            selectionIndicator.isHidden = !selected
+            self.layoutIfNeeded()
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // Adjust the frames of imageView and blurEffectView to match contentView
+        imageView.frame = contentView.bounds
+        blurEffectView.frame = contentView.bounds
     }
 }
+
 
 // MARK: - FullSizePhotoViewController
 
@@ -371,39 +497,49 @@ class ImageViewController: UIViewController {
     }
 }
 
-
-
-
 // MARK: - HorizontalPhotoScrollViewController
 
-class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, HorizontalPhotoLibraryCellDelegate {
 
     var collectionView: UICollectionView!
     var assets: [PHAsset] = []
     var fetchResult: PHFetchResult<PHAsset>?
     var isLoading = false
+    
+    var noImageSelectedLabel: UILabel!
 
     // Configurable properties
-    var cornerRadius: CGFloat = 24.0 // Corner radius for the images
+    var cornerRadius: CGFloat = 12.0
     var imageSpacing: CGFloat = 12.0
+    
+    weak var delegate: ImageSelectionDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .background
+
+        setupCollectionView()
+        setupNoImageSelectedLabel()
+//        fetchInitialAssets()
+    }
+    
+    private func setupCollectionView() {
 
         // Configure the layout
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = imageSpacing
         layout.minimumLineSpacing = imageSpacing
+        
+        // Add padding at the front and back
+        let padding: CGFloat = 16.0
+        layout.sectionInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
 
         // Initialize collection view without a frame
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(HorizontalPhotoLibraryCell.self, forCellWithReuseIdentifier: "PhotoLibraryCell")
-        collectionView.backgroundColor = .background
+//        collectionView.backgroundColor = .background
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isPagingEnabled = false // Disable paging
         collectionView.translatesAutoresizingMaskIntoConstraints = false // Enable Auto Layout
@@ -418,21 +554,28 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-
-        // Request authorization and fetch the first batch of assets
-//        PHPhotoLibrary.requestAuthorization { status in
-//            if status == .authorized {
-//                DispatchQueue.main.async {
-//                    self.initializeFetchResult()
-//                    self.fetchMoreAssets()
-//                }
-//            }
-//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    private func setupNoImageSelectedLabel() {
+        noImageSelectedLabel = UILabel()
+        noImageSelectedLabel.text = "No image has been selected"
+        noImageSelectedLabel.textColor = .gray
+        noImageSelectedLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        noImageSelectedLabel.textAlignment = .center
+        noImageSelectedLabel.isHidden = false
+        noImageSelectedLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(noImageSelectedLabel)
+        
+        NSLayoutConstraint.activate([
+            noImageSelectedLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noImageSelectedLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
     // Initialize the fetch result with all the assets, but do not fetch them all at once
@@ -440,6 +583,18 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         self.fetchResult = PHAsset.fetchAssets(with: fetchOptions)
+    }
+    
+    func fetchInitialAssets() {
+        // Request authorization and fetch the first batch of assets
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                DispatchQueue.main.async {
+                    self.initializeFetchResult()
+                    self.fetchMoreAssets()
+                }
+            }
+        }
     }
 
     func fetchMoreAssets() {
@@ -463,6 +618,7 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
     func updateWithSelectedImages(_ assets: [PHAsset]) {
         DispatchQueue.main.async {
             self.assets = assets
+            self.noImageSelectedLabel.isHidden = !assets.isEmpty
             self.collectionView.reloadData()
             self.collectionView.layoutIfNeeded()
         }
@@ -477,6 +633,7 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoLibraryCell", for: indexPath) as! HorizontalPhotoLibraryCell
         let asset = assets[indexPath.item]
+        cell.delegate = self
         cell.configure(with: asset, cornerRadius: cornerRadius)
         return cell
     }
@@ -492,28 +649,40 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
         return CGSize(width: itemWidth, height: itemHeight)
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let visibleWidth = scrollView.frame.width
-        let contentWidth = scrollView.contentSize.width
-        let xOffset = scrollView.contentOffset.x
-
-        let threshold = contentWidth - visibleWidth - visibleWidth / 3
-
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        let visibleWidth = scrollView.frame.width
+//        let contentWidth = scrollView.contentSize.width
+//        let xOffset = scrollView.contentOffset.x
+//
+//        let threshold = contentWidth - visibleWidth - visibleWidth / 3
+//
 //        if xOffset > threshold && !isLoading {
 //            fetchMoreAssets()
 //        }
+//    }
+    
+    func didUnselectAsset(asset: PHAsset) {
+        delegate?.didUnselectImage(asset)
     }
+}
+
+protocol HorizontalPhotoLibraryCellDelegate: AnyObject {
+    func didUnselectAsset(asset: PHAsset)
 }
 
 class HorizontalPhotoLibraryCell: UICollectionViewCell {
 
     private var imageView: UIImageView!
+    private var closeButton: UIButton!
     private var asset: PHAsset?
     private var cornerRadius: CGFloat = 24.0
+    
+    weak var delegate: HorizontalPhotoLibraryCellDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupImageView()
+        setupCloseButton()
     }
 
     required init?(coder: NSCoder) {
@@ -534,6 +703,26 @@ class HorizontalPhotoLibraryCell: UICollectionViewCell {
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
+    
+    private func setupCloseButton() {
+        closeButton = UIButton(type: .custom)
+        closeButton.setTitle("✕", for: .normal)
+        closeButton.setTitleColor(.white, for: .normal)
+        closeButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        closeButton.layer.cornerRadius = 12
+        closeButton.clipsToBounds = true
+        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+
+        contentView.addSubview(closeButton)
+
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            closeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            closeButton.widthAnchor.constraint(equalToConstant: 24),
+            closeButton.heightAnchor.constraint(equalToConstant: 24)
+        ])
+    }
 
     func configure(with asset: PHAsset, cornerRadius: CGFloat) {
         self.asset = asset
@@ -542,17 +731,24 @@ class HorizontalPhotoLibraryCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         setNeedsLayout()  // Trigger layout update to load the image
     }
-//
-//    override func prepareForReuse() {
-//        super.prepareForReuse()
-//        imageView.image = nil
-//        imageView.isHidden = true
-//    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         if let asset = asset {
             loadImage(asset: asset)
+        }
+    }
+    
+    @objc private func closeButtonTapped() {
+        if let asset = self.asset {
+            delegate?.didUnselectAsset(asset: asset)
+        } else {
+            print("No PHAsset to remove from the Horizontal Scroll")
         }
     }
     

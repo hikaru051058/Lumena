@@ -493,14 +493,24 @@ extension ProfileManager {
 
 extension ProfileManager {
     
-    func returnProfileImage(userIdentityID: String) -> profileImage? {
-        let userProfile = getProfile(withID: userIdentityID)
-        return userProfile.profileImage
+    func returnProfileImage(userIdentityID: String) async -> profileImage? {
+        do {
+            let userProfile = try await getProfile(withID: userIdentityID)
+            return userProfile.profileImage
+        } catch {
+            print(error)
+        }
+        return nil
     }
     
-    func returnBackgroundImage(userIdentityID: String) -> profileImage? {
-        let userProfile = getProfile(withID: userIdentityID)
-        return userProfile.backgroundImage
+    func returnBackgroundImage(userIdentityID: String) async -> profileImage? {
+        do {
+            let userProfile = try await getProfile(withID: userIdentityID)
+            return userProfile.backgroundImage
+        } catch {
+            print(error)
+        }
+        return nil
     }
 }
 

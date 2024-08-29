@@ -1038,6 +1038,34 @@ extension Color {
     }
 }
 
+class PrepPostViewController: UIViewController {
+    private var hostingController: UIHostingController<PrepPost>?
+    var postLume: Lume
+    
+    init(postLume: Lume) {
+        self.postLume = postLume
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let prepPostView = PrepPost(postLume: postLume)
+
+        hostingController = UIHostingController(rootView: prepPostView)
+        guard let hostingController = hostingController else { return }
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.pinToEdges(of: view)
+        hostingController.didMove(toParent: self)
+    }
+}
+
 struct PrepPost: View {
     
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
@@ -1749,7 +1777,7 @@ struct PrepPost: View {
                                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                                        let window = windowScene.windows.first {
                                         // Initialize the main view controller you want to display
-                                        let mainViewController = LumeHorizontalTabViewController(userLoggedIn: true)  // Replace MainViewController with your main view controller
+                                        let mainViewController = newLumeHorizontalViewController()  // Replace MainViewController with your main view controller
 
                                         // Wrap the main view controller in your custom navigation controller
                                         let navigationController = FakeModalNavigationController(rootViewController: mainViewController)

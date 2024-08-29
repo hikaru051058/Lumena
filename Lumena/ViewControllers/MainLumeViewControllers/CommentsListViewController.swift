@@ -263,6 +263,7 @@ class CommentTextInputViewController: UIViewController {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle.fill")
+        imageView.tintColor = .arinPink
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 20
@@ -303,14 +304,12 @@ class CommentTextInputViewController: UIViewController {
         addActionButton()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateProfileImage()
+    }
+    
     private func setupView() {
-        // Add profile image view to the main view
-        if let userIdentityID = AuthenticationManager.shared.identityID {
-            profileImageView.image = ProfileManager.shared.returnProfileImage(userIdentityID: userIdentityID)?.image
-        } else {
-            profileImageView.image = UIImage(systemName: "person.circle.fill")
-        }
-        
         view.addSubview(profileImageView)
         
         // Set constraints for the profile image view
@@ -320,6 +319,21 @@ class CommentTextInputViewController: UIViewController {
             profileImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40)
         ])
+    }
+    
+    func updateProfileImage() {
+        if let userIdentityID = AuthenticationManager.shared.identityID {
+           DispatchQueue.main.async {
+               Task {
+                   let newImage = await ProfileManager.shared.returnProfileImage(userIdentityID: userIdentityID)?.image
+                   if newImage != nil {
+                       self.profileImageView.image = newImage
+                       self.profileImageView.layoutIfNeeded()
+                       self.view.layoutIfNeeded()
+                   }
+               }
+           }
+       }
     }
     
     private func addTextField() {

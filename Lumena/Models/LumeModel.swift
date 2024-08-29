@@ -911,10 +911,10 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     func uploadLumeQL(completion: @escaping (Result<Void, LumeUploadError>) -> Void) {
         let s3Prefix = "s3://lumena225d91d9ee5c43d99341141978c6b54c25223-lumenaenv/public/"
         
-        let ReelID = "\(GI.shared.identityID ?? "null"):\(Int(Date.now.timeIntervalSince1970))"
-        let ReelLocationS3 = "\(GI.shared.identityID ?? "null")/\(ReelID)"
+        let ReelID = "\(AuthenticationManager.shared.identityID ?? "null"):\(Int(Date.now.timeIntervalSince1970))"
+        let ReelLocationS3 = "\(AuthenticationManager.shared.identityID ?? "null")/\(ReelID)"
         
-        self.postUserIID = GI.shared.identityID!
+        self.postUserIID = AuthenticationManager.shared.identityID!
         
         self.postID = ReelID
         postURL.removeAll()
@@ -959,8 +959,10 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                     }
                 }
                 
-                let voiceOverURLPath = await self.voiceOver.uploadFinalAudio(filePath: ReelLocationS3)
-                self.voiceOverURL.append("\(voiceOverURLPath)")
+                if self.voiceOver.hasRecording {
+                    let voiceOverURLPath = await self.voiceOver.uploadFinalAudio(filePath: ReelLocationS3)
+                    self.voiceOverURL.append(voiceOverURLPath)
+                }
                 
                 let _ = try await GraphQL.shared.createModel(self.toLumeQL())
                 

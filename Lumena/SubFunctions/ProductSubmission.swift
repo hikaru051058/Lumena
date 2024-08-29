@@ -380,7 +380,7 @@ struct ProductSubmission: View {
         uploading = true
         errorRetryUpload = false
         
-        cosmeticModel = Cosmetic(id: Barcode, productName: productName, companyID: companyName, productImages: selectedImageItems, productType: type)
+        cosmeticModel = Cosmetic(id: Barcode, cosmeticID: "\(productName)-\(companyName)", productName: productName, companyID: companyName, productImages: selectedImageItems, productType: type)
         
         Task {
             do {

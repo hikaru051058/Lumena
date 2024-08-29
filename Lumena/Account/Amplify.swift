@@ -1095,4 +1095,24 @@ class GraphQL {
         
         return body
     }
+    
+    func postCosmeticQLUploadProcess(cosmeticID: String) {
+        Task {
+            let baseURL = " https://vttvbc03bc.execute-api.ap-northeast-1.amazonaws.com/v1/processCosmeticQL"
+            var components = URLComponents(string: baseURL)!
+            
+            // Adding query parameters
+            components.queryItems = [
+                URLQueryItem(name: "cosmeticqlID", value: cosmeticID)
+            ]
+            
+            // Ensure the URL is valid
+            guard let urlString = components.string else {
+                throw APIError.invalidURL
+            }
+            
+            // Make the API call
+            let apiResponse: APIResponse<String> = try await baseAPICall(urlString: urlString, httpMethod: "POST")
+        }
+    }
 }

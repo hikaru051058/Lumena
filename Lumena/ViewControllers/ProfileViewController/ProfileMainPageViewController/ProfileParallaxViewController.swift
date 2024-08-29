@@ -1,0 +1,472 @@
+//
+//  ProfileParallaxViewController.swift
+//  test
+//
+//  Created by 島田晃 on 2024/05/14.
+//
+
+import UIKit
+import TwitterProfile
+import XLPagerTabStrip
+import SwiftUI
+import Combine
+
+
+protocol RefreshDelegate: AnyObject {
+    func didStartRefreshing()
+    func didEndRefreshing()
+}
+
+protocol ProfileParallaxViewControllerDelegate: AnyObject {
+    func showLoginSheetView()
+    func didUpdateFollowStat(_ isFollowing: Bool)
+}
+
+class ProfileParallaxViewController: UIViewController, TPDataSource, TPProgressDelegate, UINavigationControllerDelegate {
+    
+    weak var delegate: ProfileParallaxViewControllerDelegate?
+    
+    var headerVC: HeaderViewController?
+    var bottomVC: ProfileXLPagerTabStripViewController!
+    var backgroundVC: ProfileBackgroundViewController!
+    
+    private var viewLoading: Bool = true
+    var isBackButtonTapped = false
+    var isSettingsButtonTapped = false
+    var isAccountUser: Bool = false
+    
+    var userIdentityID: String!
+    
+    @ObservedObject var profile: ProfileSettings = ProfileSettings() {
+        didSet {
+            ProfileManager.shared.updateProfile(profile)
+            print("Updated Profile")
+        }
+    }
+    
+    var profileSettings: ProfileSettingsViewController!
+    
+    private let transitionAnimator = SharedTransitionAnimator()
+    private var originalDelegate: UINavigationControllerDelegate?
+    
+    weak var refreshDelegate: RefreshDelegate?
+    let refresh = UIRefreshControl()
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(userIdentityID: String, profile: ProfileSettings = ProfileSettings(), isAccountUser: Bool = false) {
+        self.userIdentityID = userIdentityID
+        self._profile = ObservedObject(wrappedValue: profile)
+        self.isAccountUser = isAccountUser
+        super.init(nibName: nil, bundle: nil)
+        fetchUserProfile()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .primary
+        self.tp_configure(with: self, delegate: self)
+        self.navigationController?.interactivePopGestureRecognizer!.delegate = self;
+        originalDelegate = self
+        setupBackgroundViewController()
+        fetchUserProfile()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.delegate = nil
+        viewLoading = true
+    }
+    
+    func fetchUserProfile() {
+        Task {
+            do {
+                if ProfileManager.shared.hasProfile(id: userIdentityID) {
+                    let newProfile = try await ProfileManager.shared.getProfile(withID: self.userIdentityID)
+                    self._profile = ObservedObject(wrappedValue: newProfile)
+                }
+                
+                if viewLoading {
+                    let fetchedProfiles = try await GraphQL.shared.fetchUserProfileQL(userIDs: [userIdentityID])
+                    guard let fetchedProfile = fetchedProfiles.first else {
+                        print("Error: No user profile has been returned in Profile page for \(String(describing: userIdentityID))")
+                        return
+                    }
+                    self._profile = ObservedObject(wrappedValue: ProfileSettings(ql: fetchedProfile))
+                    
+                    self.headerVC?.updateProfile(profile: profile)
+                    self.bottomVC?.updateProfile(profile: profile)
+                    self.backgroundVC?.updateProfile()
+                    viewLoading = false
+                    
+                    ProfileManager.shared.updateProfile(profile)
+                }
+            }
+        }
+    }
+    
+    // MARK: TPDataSource
+    func headerViewController() -> UIViewController {
+        headerVC = HeaderViewController(profile: profile, userIdentityID: userIdentityID, isAccountUser: isAccountUser)
+        headerVC?.backButtonDelegate = self
+        headerVC?.delegate = self
+        return headerVC!
+    }
+    
+    func bottomViewController() -> UIViewController & PagerAwareProtocol {
+        bottomVC = ProfileXLPagerTabStripViewController(profile: profile, userIdentityID: userIdentityID)
+        bottomVC.refreshDelegate = self
+        return bottomVC
+    }
+    
+    // Stop scrolling header at this point
+    func minHeaderHeight() -> CGFloat {
+        return (topInset + 44)
+    }
+    
+    // MARK: TPProgressDelegate
+    func tp_scrollView(_ scrollView: UIScrollView, didUpdate progress: CGFloat) {
+        headerVC?.update(with: progress, minHeaderHeight: minHeaderHeight())
+    }
+    
+    func tp_scrollViewDidLoad(_ scrollView: UIScrollView) {
+        //refresh.tintColor = .background
+        refresh.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+        let refreshView = UIView(frame: CGRect(x: 0, y: 44, width: 0, height: 0))
+        scrollView.addSubview(refreshView)
+        refreshView.addSubview(refresh)
+    }
+    
+    // MARK: UINavigationControllerDelegate
+    func navigationController(_ navigationController: UINavigationController,
+                              animationControllerFor operation: UINavigationController.Operation,
+                              from fromVC: UIViewController,
+                              to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        // Bypass transition animation if back button was tapped
+        if isBackButtonTapped || isSettingsButtonTapped{
+            // Reset the flag
+            isBackButtonTapped = false
+            isSettingsButtonTapped = false
+            return nil
+        }
+        
+        if let bottomVC = bottomVC.currentViewController as? BottomViewController {
+            return bottomVC.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
+        }
+        
+        if fromVC is ProfileParallaxViewController, toVC is DetailScreen {
+            transitionAnimator.transition = .push
+            return transitionAnimator
+        }
+        if toVC is ProfileParallaxViewController, fromVC is DetailScreen {
+            transitionAnimator.transition = .pop
+            return transitionAnimator
+        }
+        
+        return nil
+    }
+    
+    private func setupBackgroundViewController() {
+        backgroundVC = ProfileBackgroundViewController(profile: profile, userIdentityID: userIdentityID)
+        addChild(backgroundVC)
+        view.insertSubview(backgroundVC.view, at: 0)
+        backgroundVC.didMove(toParent: self)
+        
+        backgroundVC.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            backgroundVC.view.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
+    @objc func returnButton() {
+        if let navigationController = self.view.window?.rootViewController as? UINavigationController {
+            navigationController.popViewController(animated: true)
+        } else {
+            // Handle the case where there is no navigation controller
+            print("No navigation controller found")
+        }
+    }
+}
+
+// MARK: - RefreshDelegate
+
+extension ProfileParallaxViewController: RefreshDelegate {
+    
+    @objc func handleRefreshControl() {
+        print("refreshing")
+        refreshDelegate = bottomVC
+        refreshDelegate?.didStartRefreshing()
+        
+        self.fetchUserProfile()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.refresh.endRefreshing()
+            self.refreshDelegate?.didEndRefreshing()
+        }
+    }
+    
+    func didStartRefreshing() {
+        print("Started refreshing in TwitterParallaxViewController")
+        // Add any specific logic you want to execute when refresh starts
+    }
+    
+    func didEndRefreshing() {
+        print("Ended refreshing in TwitterParallaxViewController")
+        // Add any specific logic you want to execute when refresh ends
+    }
+}
+
+// MARK: - SharedTransitioning
+
+extension ProfileParallaxViewController: SharedTransitioning {
+    var sharedFrame: CGRect {
+        guard let bottomVC = bottomVC,
+              let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath,
+              let cell = (bottomVC.currentViewController as? BottomViewController)?.collectionView.cellForItem(at: selectedIndexPath),
+              let frame = cell.frameInWindow else { return .zero }
+        return frame
+    }
+
+    func prepare(for transition: SharedTransitionAnimator.Transition) {
+        guard let bottomVC = bottomVC,
+              let selectedIndexPath = (bottomVC.currentViewController as? BottomViewController)?.selectedIndexPath else { return }
+        
+        (bottomVC.currentViewController as? BottomViewController)?.collectionView.verticalScrollItemVisible(at: selectedIndexPath, with: 40, animated: false)
+    }
+    
+    func reduceViewSize() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        })
+    }
+    
+    func restoreViewSize() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.transform = CGAffineTransform.identity
+        })
+    }
+}
+
+extension ProfileParallaxViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+}
+
+extension ProfileParallaxViewController: ProfileToolButtonDelegate {
+    
+    func didTapBackButton() {
+        self.isBackButtonTapped = true
+        self.navigationController?.delegate = originalDelegate
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    func didTapFollowRequestButton() {
+        print("tapped follow request")
+    }
+    
+    func didTapSettingsButton() {
+        self.isSettingsButtonTapped = true
+        if profileSettings == nil {
+            profileSettings = ProfileSettingsViewController(profile: profile)
+            profileSettings.delegate = self
+        } else {
+            profileSettings.updateProfile(profile: profile)
+        }
+        self.navigationController?.delegate = originalDelegate
+        self.navigationController?.pushViewController(profileSettings, animated: true)
+    }
+    
+    func didTapOtherOptionButton() {
+        // Create the alert controller
+        let alertController = UIAlertController(title: NSLocalizedString("オプションの選択", comment: ""), message: nil, preferredStyle: .actionSheet)
+        
+        let blockAction = UIAlertAction(title: NSLocalizedString("ブロック", comment: ""), style: .destructive) { _ in
+            // Handle cancel action if needed
+            print("User tapped Block")
+            
+            if AuthenticationManager.shared.authStatus != AuthStatus.authenticated {
+                let loginAlert = UIAlertController(title: NSLocalizedString("ログインが必要です", comment: ""), message: NSLocalizedString("ユーザーをブロックするには、Lumenaアカウントにサインインしてください", comment: ""), preferredStyle: .alert)
+                let okAction = UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel)
+                let loginAction = UIAlertAction(title: NSLocalizedString("ログイン", comment: ""), style: .default) { _ in
+                    self.logoutAndNavigateToLumeHorizontalTabViewController()
+                }
+                
+                loginAlert.addAction(okAction)
+                loginAlert.addAction(loginAction)
+                self.present(loginAlert, animated: true, completion: nil)
+                return
+            }
+            
+            let username = self.profile.preferredUsername
+            let blockUserNameMessage = String(format: NSLocalizedString("block_message", comment: ""), username)
+            
+            let blockAlertController = UIAlertController(title: blockUserNameMessage, message: nil, preferredStyle: .alert)
+            
+            let blockBlock = UIAlertAction(title: NSLocalizedString("ブロック", comment: ""), style: .destructive) { [self] _ in
+                
+                Task {
+                    do {
+                        if let userIdentityID = AuthenticationManager.shared.identityID {
+                            try await ProfileManager.shared.blockUser(fromUserID: userIdentityID, toUserID: profile.identityID)
+                        }
+                    } catch {
+                        print(error)
+                    }
+                }
+                
+                let thankYouAlert = UIAlertController(title: NSLocalizedString("ブロックしました", comment: ""), message: NSLocalizedString("ブロック解除はプロファイル設定画面から行えます", comment: ""), preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default)
+                thankYouAlert.addAction(okAction)
+                
+                self.present(thankYouAlert, animated: true, completion: nil)
+            }
+            
+            let cancelBlock = UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel) { _ in
+                // Handle cancel action if needed
+                print("User tapped Cancel")
+                
+            }
+            
+            blockAlertController.addAction(blockBlock)
+            blockAlertController.addAction(cancelBlock)
+            
+            // Present the alert controller
+            self.present(blockAlertController, animated: true, completion: nil)
+        }
+        
+        let reportAction = UIAlertAction(title: NSLocalizedString("報告", comment: ""), style: .destructive) { _ in
+            // Handle confirm action
+            
+            let thankYouAlert = UIAlertController(title: NSLocalizedString("ご報告ありがとうございます", comment: ""), message: NSLocalizedString("いただいた情報は、Lumenaコミュニティーをより安全かつ、楽しめる場にするために役立たせていただきます", comment: ""), preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            thankYouAlert.addAction(okAction)
+            
+            self.present(thankYouAlert, animated: true, completion: nil)
+        }
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("キャンセル", comment: ""), style: .cancel) { _ in
+            // Handle confirm action
+            print("User tapped Cancel")
+        }
+        
+        // Add actions to the alert controller
+        alertController.addAction(blockAction)
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        
+        // Present the alert controller
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func logoutAndNavigateToLumeHorizontalTabViewController() {
+        
+        if let viewControllers = navigationController?.viewControllers {
+            for viewController in viewControllers {
+                if viewController is newLumeHorizontalViewController {
+                    self.navigationController?.delegate = self
+                    self.navigationController?.popViewController(animated: true)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        if let lumeVC = viewController as? newLumeHorizontalViewController {
+                            lumeVC.showLoginSheet()
+                        }
+                    }
+                    return
+                }
+            }
+        }
+        
+        self.navigationController?.delegate = self
+        self.navigationController?.popViewController(animated: true)
+        
+        // After navigation is complete, present the login sheet
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if let rootVC = self.navigationController?.viewControllers.first as? newLumeHorizontalViewController {
+                rootVC.showLoginSheet()
+            }
+        }
+    }
+}
+
+extension ProfileParallaxViewController: HeaderViewControllerDelegate {
+    func didUpdateFollowStat(_ isFollowing: Bool) {
+        delegate?.didUpdateFollowStat(isFollowing)
+    }
+    
+    func showLoginSheetView() {
+        delegate?.showLoginSheetView()
+    }
+}
+
+// MARK: - ProfileSettingsDelegate
+
+extension ProfileParallaxViewController: ProfileSettingsDelegate {
+    func didUpdateUserName(_ newUserName: String) {
+        self.profile.preferredUsername = newUserName
+        self.updateProfile()
+        self.headerVC?.updateUserNameLabel(with: newUserName)
+        print("ProfileSettingsDelegate: \(newUserName): didUpdateUserName @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateFirstName(_ newFirstName: String) {
+        self.profile.givenName = newFirstName
+        self.updateProfile()
+        self.headerVC?.updateUserGivenNameLabel(with: newFirstName)
+        print("ProfileSettingsDelegate: \(newFirstName): didUpdateFirstName @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateDescription(_ newDescription: String) {
+        self.profile.bio = newDescription
+        self.updateProfile()
+        self.headerVC?.updateBioLabel(with: newDescription)
+        print("ProfileSettingsDelegate: \(newDescription): didUpdateDescription @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateProfileImage(_ newProfileImage: UIImage) {
+        self.profile.profileImage?.image = newProfileImage
+        self.updateProfile()
+        self.headerVC?.updateUserProfileImageView(with: newProfileImage)
+//        self.backgroundVC.updateColors(for: newProfileImage, colorScheme: traitCollection.userInterfaceStyle)
+        print("ProfileSettingsDelegate: \(newProfileImage): didUpdateProfileImage @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateBackgroundImage(_ newBackgroundImage: UIImage) {
+        self.profile.backgroundImage?.image = newBackgroundImage
+        self.updateProfile()
+        self.backgroundVC.updateBackgroundImage(newBackgroundImage)
+        self.backgroundVC.view.layoutIfNeeded()
+        self.view.layoutIfNeeded()
+        print("ProfileSettingsDelegate: \(newBackgroundImage): didUpdateBackgroundImage @ TwitterParallaxViewController")
+    }
+    
+    func didUpdateSkinSettings(_ newSkinSettings: SkinSettingsAttributes) {
+        self.profile.skinSetting = newSkinSettings
+        self.updateProfile()
+        self.headerVC?.updateSkinSettings(newSkinSettings: newSkinSettings)
+        print("ProfileSettingsDelegate: \(newSkinSettings): didUpdateSkinSettings @ TwitterParallaxViewController")
+    }
+    
+    private func updateProfile() {
+        ProfileManager.shared.updateProfile(self.profile)
+        print("Updated Profile: \(profile)")
+    }
+}

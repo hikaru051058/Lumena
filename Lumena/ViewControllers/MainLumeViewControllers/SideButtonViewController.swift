@@ -112,7 +112,7 @@ extension LumeSideButtonsViewController {
     
     func navigateToProfile() {
         DispatchQueue.main.async { [self] in
-            let profileVC = TwitterParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == GI.shared.identityID)
+            let profileVC = ProfileParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == GI.shared.identityID)
             self.navigationController?.pushViewController(profileVC, animated: true)
         }
     }
@@ -505,20 +505,22 @@ class MarqueeTextViewController: UIViewController {
     
     var text: String
     var font: UIFont
+    var textColor: UIColor
     var leftFade: CGFloat
     var rightFade: CGFloat
     var startDelay: Double
     var alignment: Alignment
     
-    // Custom initializer with default values
-    init(text: String = "", font: UIFont = UIFont.systemFont(ofSize: 16), leftFade: CGFloat = 16, rightFade: CGFloat = 16, startDelay: Double = 3, alignment: Alignment = .leading) {
+    // Custom initializer with color parameter
+    init(text: String = "", font: UIFont = UIFont.systemFont(ofSize: 16), textColor: UIColor = .white, leftFade: CGFloat = 16, rightFade: CGFloat = 16, startDelay: Double = 3, alignment: Alignment = .leading) {
         self.text = text
         self.font = font
+        self.textColor = textColor
         self.leftFade = leftFade
         self.rightFade = rightFade
         self.startDelay = startDelay
         self.alignment = alignment
-        super.init(nibName: nil, bundle: nil) // Proper call to the superclass initializer
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -529,7 +531,7 @@ class MarqueeTextViewController: UIViewController {
         super.viewDidLoad()
         
         // Create the SwiftUI view that we wish to host
-        let marqueeView = MarqueeText(text: text, font: font, leftFade: leftFade, rightFade: rightFade, startDelay: startDelay, alignment: alignment)
+        let marqueeView = MarqueeText(text: text, font: font, textColor: textColor, leftFade: leftFade, rightFade: rightFade, startDelay: startDelay, alignment: alignment)
         
         hostingController = UIHostingController(rootView: marqueeView)
         guard let hostingView = hostingController?.view else { return }
@@ -549,9 +551,11 @@ class MarqueeTextViewController: UIViewController {
     }
 }
 
+
 public struct MarqueeText : View {
     public var text: String
     public var font: UIFont
+    public var textColor: UIColor = .primary
     public var leftFade: CGFloat
     public var rightFade: CGFloat
     public var startDelay: Double
@@ -579,6 +583,7 @@ public struct MarqueeText : View {
                         Text(self.text)
                             .lineLimit(1)
                             .font(.init(font))
+                            .foregroundColor(Color(textColor))
                             .offset(x: self.animate ? -stringWidth - stringHeight * 2 : 0)
                             .animation(self.animate ? animation : nullAnimation, value: self.animate)
                             .onAppear {
@@ -594,6 +599,7 @@ public struct MarqueeText : View {
                         Text(self.text)
                             .lineLimit(1)
                             .font(.init(font))
+                            .foregroundColor(Color(textColor))
                             .offset(x: self.animate ? 0 : stringWidth + stringHeight * 2)
                             .animation(self.animate ? animation : nullAnimation, value: self.animate)
                             .onAppear {
@@ -627,6 +633,7 @@ public struct MarqueeText : View {
                 } else {
                     Text(self.text)
                         .font(.init(font))
+                        .foregroundColor(Color(textColor))
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: alignment)
                         .padding(.leading)
                         .shadow(color: .black.opacity(0.5), radius: 1, x: 0, y: 1)
@@ -639,9 +646,10 @@ public struct MarqueeText : View {
         .onDisappear { self.animate = false }
     }
     
-    public init(text: String, font: UIFont, leftFade: CGFloat, rightFade: CGFloat, startDelay: Double, alignment: Alignment? = nil) {
+    public init(text: String, font: UIFont, textColor: UIColor, leftFade: CGFloat, rightFade: CGFloat, startDelay: Double, alignment: Alignment? = nil) {
         self.text = text
         self.font = font
+        self.textColor = textColor
         self.leftFade = leftFade
         self.rightFade = rightFade
         self.startDelay = startDelay
@@ -675,6 +683,7 @@ extension String {
 
 protocol LumeBottomButtonsViewDelegate: AnyObject {
     func didRequestNavigation(to profileID: String)
+    func showLoginSheetView()
 }
 
 class LumeBottomButtonsViewController: UIViewController, ObservableObject, LumeIndividualDataUpdateDelegate {
@@ -879,9 +888,13 @@ extension LumeBottomButtonsViewController: FollowBubbleButtonDelegate {
     }
     
     func didUpdateFollowStat(_ following: Bool) {
-        let postUserID = lume.postUserIID
-        if let userIdentityID = AuthenticationManager.shared.identityID {
-            ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: postUserID, follow: following)
+        if AuthenticationManager.shared.authStatus != .authenticated {
+            delegate?.showLoginSheetView()
+        } else {
+            let postUserID = lume.postUserIID
+            if let userIdentityID = AuthenticationManager.shared.identityID {
+                ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: postUserID, follow: following)
+            }
         }
     }
     
@@ -908,19 +921,6 @@ extension LumeBottomButtonsViewController: FollowBubbleButtonDelegate {
                 self.followButton.updateFollowStatus(isFollowing: await self.getFollowStat())
             }
         }
-    }
-    
-    func showLoginSheet() {
-        let loginVC = LoginViewController()
-        loginVC.onLoginSuccess = {
-            NotificationCenter.default.post(name: .authStatusChanged, object: nil, userInfo: ["status": "login"])
-            if AuthenticationManager.shared.authStatus == .authenticated {
-                self.dismiss(animated: true, completion: nil)
-            }
-        }
-        let navController = UINavigationController(rootViewController: loginVC)
-        navController.modalPresentationStyle = .automatic
-        present(navController, animated: true, completion: nil)
     }
 }
 
@@ -988,9 +988,13 @@ class FollowBubbleButton: UIButton {
     }
     
     @objc private func buttonTapped() {
-        following.toggle()
-        delegate?.didUpdateFollowStat(following)
-        updateUI()
+        if AuthenticationManager.shared.authStatus != .authenticated {
+            delegate?.didUpdateFollowStat(false)
+        } else {
+            following.toggle()
+            delegate?.didUpdateFollowStat(following)
+            updateUI()
+        }
     }
     
     private func updateUI(animation: Bool = true) {
@@ -1205,7 +1209,7 @@ class BottomIslandViewController: UIViewController {
     
     func navigateToProfile() {
         guard let UserProfileIdentity = AuthenticationManager.shared.identityID else { return }
-        let profileVC = TwitterParallaxViewController(userIdentityID: UserProfileIdentity, isAccountUser: true)
+        let profileVC = ProfileParallaxViewController(userIdentityID: UserProfileIdentity, isAccountUser: true)
         navigationController?.pushViewController(profileVC, animated: true)
     }
     

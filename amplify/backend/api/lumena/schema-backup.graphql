@@ -1,0 +1,305 @@
+type CosmeticSearchTagFrequency {
+  word: String
+  clickCount: Int
+  extractionCount: Int
+}
+
+enum CosmeticSearchIndexStatus {
+  ARCHIVED
+  PENDING
+  RESTRICTED
+}
+
+type IndividualSearchCosmetic {
+  cosmeticID: String
+  clickedCount: Int
+}
+
+type CosmeticSearchIndex @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  topCosmtics: [IndividualSearchCosmetic]
+  cosmeticCount: Int
+  lastUpdated: AWSTimestamp
+  tags: [CosmeticSearchTagFrequency]
+  integrityCheckSum: String
+  searchTermStatus: CosmeticSearchIndexStatus
+  jsonFileCount: Int
+}
+
+type CosmeticVariant {
+  variantName: String
+  hexCode: String
+  description: String
+  additionalInfo: String
+  amount: CosmeticAmount
+  price: CosmeticPrice
+  productURL: [AWSURL]
+  barcode: String
+  ingredientIDs: [ID]
+  imageURL: [AWSURL]
+  rating: Float
+}
+
+type IngredientQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String
+  effectOnSkin: [Float]
+  synonyms: [String]
+  casNumbers: [String]
+}
+
+type CosmeticAmount {
+  value: Float
+  unit: String
+}
+
+type SkinSettingsAttributesQL {
+  skinSensitivity: SkinSensitivity
+  skinUVBathing: String
+  skinType: SkinType
+  skinPersonalColor: SkinPersonalColor
+  skinEyeColor: String
+  skinColor: String
+  skinConcerns: SkinConcerns
+}
+
+type CosmeticPrice {
+  price: Float
+  priceSign: String
+  currency: String
+}
+
+type CosmeticBrandQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  websiteURL: AWSURL
+  description: String
+}
+
+enum BlockStatus {
+  BLOCKED
+  BLOCKING
+  MUTUAL
+}
+
+type NotificationQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  notificationType: NotificationType!
+  message: String!
+  userprofileqlID: ID!
+  userProfile: UserProfileQL @connection(fields: ["userprofileqlID"])
+  validTill: AWSTimestamp
+  createdAt: AWSTimestamp
+  updatedAt: AWSTimestamp
+}
+
+enum NotificationType {
+  APPLE
+  GOOGLE
+}
+
+enum SkinSensitivity {
+  EXTREMELY_SENSITIVE
+  VERY_SENSITIVE
+  SENSITIVE
+  SLIGHTLY_SENSITIVE
+  NOT_SENSITIVE
+}
+
+enum SkinType {
+  OILY
+  COMBINATION
+  NORMAL
+  SENSITIVE
+  DRY
+}
+
+enum SkinPersonalColor {
+  LIGHT_SUMMER
+  COOL_SUMMER
+  SOFT_SUMMER
+  SOFT_AUTUMN
+  DARK_AUTUMN
+  DARK_WINTER
+  COOL_WINTER
+  BRIGHT_WINTER
+  BRIGHT_SPRING
+  WARM_SPRING
+  LIGHT_SPRING
+}
+
+enum SkinConcerns {
+  ACNE
+  PSORIASIS
+  DRY_SKIN
+  PIGMENTATION
+  DERMATITIS
+}
+
+type InvitationOrganizationQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  organizationName: String
+  validTill: AWSTimestamp
+  userprofileqlID: ID!
+}
+
+type InvitationQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  invitationCode: String
+  timestamp: AWSTimestamp
+  userprofileqlID: ID!
+  userprofileql: UserProfileQL @connection(fields: ["userprofileqlID"])
+  invitationorganizationqlID: ID!
+  invitationorganizationql: InvitationOrganizationQL @connection(fields: ["invitationorganizationqlID"])
+}
+
+type BlockQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userprofileqlID: ID!
+  blockeduserprofileqlID: ID!
+  status: BlockStatus
+}
+
+enum LumeState {
+  VISIBLE
+  HIDDEN
+  DELETED
+  REPORTED
+}
+
+type LumeStateQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  state: LumeState
+  timestamp: AWSTimestamp
+  reason: String
+  changedBy: String
+  lumeqlID: ID!
+  lume: LumeQL @connection(fields: ["lumeqlID"])
+}
+
+type UserStateQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  UserState: AccountState
+  timestamp: AWSTimestamp
+  reason: String
+  changedBy: String
+  userprofileqlID: ID!
+  userprofileql: UserProfileQL @connection(fields: ["userprofileqlID"])
+}
+
+enum AccountState {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DELETED
+  BANNED
+}
+
+enum FollowStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type FollowQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  timestamp: AWSTimestamp
+  followingID: ID!
+  following: UserProfileQL @connection(fields: ["followingID"])
+  followerID: ID!
+  follower: UserProfileQL @connection(fields: ["followerID"])
+  status: FollowStatus
+}
+
+type LikedLumeQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  timestamp: AWSTimestamp
+  lumeQLID: ID!
+  lume: LumeQL @connection(fields: ["lumeQLID"])
+  userprofileqlID: ID!
+  userprofileql: UserProfileQL @connection(fields: ["userprofileqlID"])
+}
+
+type CommentQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  timestamp: AWSTimestamp!
+  comment: String!
+  lumeQLID: ID!
+  lume: LumeQL @connection(fields: ["lumeQLID"])
+  userprofileqlID: ID!
+  userprofileql: UserProfileQL @connection(fields: ["userprofileqlID"])
+}
+
+type CosmeticQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  productName: String!
+  totPostTagCount: Int
+  authenticated: Boolean
+  cosmeticbrandqlID: ID!
+  cosmeticbrandql: CosmeticBrandQL @connection(fields: ["cosmeticbrandqlID"])
+  description: String
+  rating: Float
+  category: String
+  productType: String
+  imageURL: [AWSURL]
+  productURL: AWSURL
+  createdAt: AWSTimestamp
+  updatedAt: AWSTimestamp
+  variants: [CosmeticVariant]
+  criteriaTags: [String]
+  ingredients: [String]
+}
+
+type TagTrackQL {
+  trackID: String!
+  tagMusicRange: [Float!]
+}
+
+type TagCosmeticQL {
+  cosmeticID: String!
+  authProduct: Boolean!
+  recommend: Float
+  effect: Float
+  fading: Float
+  feeling: Float
+  attachedURL: String
+}
+
+type LumeQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  postURL: [AWSURL]
+  timestamp: AWSTimestamp!
+  tagProducts: [TagCosmeticQL]
+  tagMusic: TagTrackQL
+  description: String
+  userprofileqlID: ID!
+  userprofileql: UserProfileQL @connection(fields: ["userprofileqlID"])
+  likeCount: Int
+  commentCount: Int
+  hashTags: [String]
+  zipURL: String
+  lumeAuth: Boolean
+  voiceOverURL: [AWSURL]
+}
+
+type UserProfileQL @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  followingUsers: [String]
+  followerUsers: [String]
+  username: String!
+  DOB: AWSTimestamp
+  firstName: String
+  lockState: Boolean
+  profileImage: String
+  backgroundImage: String
+  followerCount: Int
+  followingCount: Int
+  bio: String
+  postCount: Int
+  profileImageLastModified: Int
+  backgroundImageLastModified: Int
+  skinSettings: SkinSettingsAttributesQL
+  skinStreaks: Int
+}
+ 

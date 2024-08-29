@@ -21,6 +21,8 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
     }
     private var initialized: Bool = false
     
+    private var isMuted: Bool = false
+    
     init(userLoggedIn: Bool = false) {
         self.userLoggedIn = userLoggedIn
         super.init(nibName: nil, bundle: nil)
@@ -33,11 +35,10 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        checkUserLoggedIn()
         setupUploadProgressBar()
         setupCustomTabBar()
         setupBottomIsland()
-        
         NotificationCenter.default.addObserver(self, selector: #selector(authSuccessHandler), name: .authStatusChanged, object: nil)
     }
     
@@ -49,9 +50,6 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
             moveToViewController(at: defaultIndex, animated: false)
             initialized = true
         }
-        
-        navigationController?.navigationBar.tintColor = .arinGreen
-        navigationController?.navigationBar.backgroundColor = .arinYellow
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -84,6 +82,14 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
         return pageViewControllers
     }
     
+    override func moveToViewController(at index: Int, animated: Bool) {
+        super.moveToViewController(at: index, animated: animated)
+        
+        if let verticalVC = pageViewControllers[index] as? newLumeVerticalViewController {
+            verticalVC.toggleMuteInVertical(self.isMuted)
+        }
+    }
+    
     @objc private func authSuccessHandler(notification: Notification) {
         DispatchQueue.main.async {
             self.userLoggedIn = AuthenticationManager.shared.authStatus == .authenticated
@@ -111,10 +117,10 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
         
         bottomIslandViewController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            bottomIslandViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomIslandViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomIslandViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5),
-            bottomIslandViewController.view.heightAnchor.constraint(equalToConstant: 40)
+            bottomIslandViewController.view.heightAnchor.constraint(equalToConstant: 40),
+            bottomIslandViewController.view.widthAnchor.constraint(equalToConstant: 130),
+            bottomIslandViewController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
         
         view.bringSubviewToFront(bottomIslandViewController.view)
@@ -205,13 +211,34 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
         navController.modalPresentationStyle = .automatic
         present(navController, animated: true, completion: nil)
     }
+    
+    func checkUserLoggedIn() {
+        if AuthenticationManager.shared.authStatus == .authenticated {
+            userLoggedIn = true
+            DispatchQueue.main.async {
+                self.reloadData()
+            }
+        }
+    }
+}
+
+extension newLumeHorizontalViewController: newLumeVerticalViewControllerDelegate {
+    func didUpdateMuteStatus(_ isMuted: Bool) {
+        self.isMuted = isMuted
+    }
 }
 
 /// FIXED VIDEO PLAYBACK LOGIC ISSUE
 /// FIXED VIDEO MUTE LOGIC
 /// FIXED UI COMPONENTS
 
+protocol newLumeVerticalViewControllerDelegate: AnyObject {
+    func didUpdateMuteStatus(_ isMuted: Bool)
+}
+
 class newLumeVerticalViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    weak var delegate: newLumeVerticalViewControllerDelegate?
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -223,7 +250,7 @@ class newLumeVerticalViewController: UIViewController, UICollectionViewDataSourc
         collectionView.isPagingEnabled = true
         collectionView.showsVerticalScrollIndicator = false
         collectionView.scrollsToTop = false
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .black
         collectionView.contentInset = .zero // Ensure no content insets
         return collectionView
     }()
@@ -271,11 +298,13 @@ class newLumeVerticalViewController: UIViewController, UICollectionViewDataSourc
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        playMedia()
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        pauseMedia()
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
@@ -406,13 +435,40 @@ class newLumeVerticalViewController: UIViewController, UICollectionViewDataSourc
 extension newLumeVerticalViewController: newLumeIndividualViewCellDelegate {
 
     func didToggleMute(isMuted: Bool) {
+        toggleMuteInVertical(isMuted)
+        delegate?.didUpdateMuteStatus(isMuted)
+    }
+    
+    func toggleMuteInVertical(_ isMuted: Bool) {
         self.isMuted = isMuted
         applyMuteStateToVisibleCells()
     }
     
     func didRequestNavigation(to profileID: String) {
-        let profileVC = TwitterParallaxViewController(userIdentityID: profileID)
+        showProfileView(profileID: profileID)
+    }
+    
+    func showLoginSheetView() {
+        showLoginSheet()
+    }
+    
+    func showProfileView(profileID: String) {
+        let profileVC = ProfileParallaxViewController(userIdentityID: profileID)
+        profileVC.delegate = self
         navigationController?.pushViewController(profileVC, animated: true)
+    }
+    
+    func showLoginSheet() {
+        let loginVC = LoginViewController()
+        loginVC.onLoginSuccess = {
+            NotificationCenter.default.post(name: .authStatusChanged, object: nil, userInfo: ["status": "login"])
+            if AuthenticationManager.shared.authStatus == .authenticated {
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+        let navController = UINavigationController(rootViewController: loginVC)
+        navController.modalPresentationStyle = .automatic
+        present(navController, animated: true, completion: nil)
     }
     
     private func applyMuteStateToVisibleCells() {
@@ -420,6 +476,16 @@ extension newLumeVerticalViewController: newLumeIndividualViewCellDelegate {
         for cell in visibleCells {
             if let lumeCell = cell as? newLumeIndividualViewCell {
                 lumeCell.setMute(isMuted: isMuted)
+            }
+        }
+    }
+}
+
+extension newLumeVerticalViewController: ProfileParallaxViewControllerDelegate {
+    func didUpdateFollowStat(_ isFollowing: Bool) {
+        for cell in collectionView.visibleCells {
+            if let lumeCell = cell as? newLumeIndividualViewCell {
+                lumeCell.updateFollowButtonStat(isFollowing)
             }
         }
     }
@@ -472,14 +538,14 @@ extension newLumeVerticalViewController {
         DispatchQueue.main.async {
             if success {
                 self.collectionView.reloadData() // Reload the collection view with the new data
-                self.isLoadingMoreData = false
+                self.applyMuteStateToVisibleCells()
             } else {
                 print("Failed to fetch more lumes.")
-                self.isLoadingMoreData = false
             }
+            self.isLoadingMoreData = false
         }
     }
-    
+   
     @objc private func authSuccessHandler() {
         DispatchQueue.main.async {
             // Handle authentication success
@@ -493,13 +559,30 @@ extension newLumeVerticalViewController: IndicatorInfoProvider {
     }
 }
 
-
+extension newLumeVerticalViewController {
+    
+    func pauseMedia() {
+        for cell in collectionView.visibleCells {
+            if let lumeCell = cell as? newLumeIndividualViewCell {
+                lumeCell.onDisappear() // Pause video and audio
+            }
+        }
+    }
+    
+    func playMedia() {
+        for cell in collectionView.visibleCells {
+            if let lumeCell = cell as? newLumeIndividualViewCell {
+                lumeCell.onAppear() // Play video and audio
+            }
+        }
+    }
+}
 
 protocol newLumeIndividualViewCellDelegate: AnyObject {
     func didToggleMute(isMuted: Bool)
     func didRequestNavigation(to profileID: String)
+    func showLoginSheetView()
 }
-
 
 class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -509,9 +592,18 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .black
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
+    }()
+    
+    private let pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.currentPageIndicatorTintColor = .white
+        pageControl.pageIndicatorTintColor = .gray
+        pageControl.hidesForSinglePage = true
+        return pageControl
     }()
     
     weak var delegate: newLumeIndividualViewCellDelegate?
@@ -535,6 +627,7 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCollectionView()
+        setupPageControl()
         addTapGesture()
     }
     
@@ -557,6 +650,11 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
         contentData = []
         contentCollectionView.reloadData()
         pauseAllVideos()
+        
+        darkView.alpha = 0.0
+        
+        // Reset the page control
+        pageControl.currentPage = 0
     }
     
     private func setupCollectionView() {
@@ -629,6 +727,7 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
                     let mockLume = try await LumeManager.shared.getLume(withID: modelID)
                     self.lume = mockLume
                     self.contentData = mockLume.contents
+                    self.pageControl.numberOfPages = contentData.count
                     contentCollectionView.reloadData()
                     setupSideButtonsViewController()
                     setupBottomButtonsViewController()
@@ -708,6 +807,9 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
                 }
             }
         }
+        
+        let currentPage = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
+        pageControl.currentPage = currentPage
     }
     
     func playVisibleVideo() {
@@ -732,8 +834,8 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
     }
 }
 
+// MARK: - Side and Bottom Buttons Setup
 extension newLumeIndividualViewCell {
-    // MARK: - Side and Bottom Buttons Setup
     
     private func setupSideButtonsViewController() {
         let userLoggedInStatus = AuthenticationManager.shared.authStatus == .authenticated
@@ -746,6 +848,38 @@ extension newLumeIndividualViewCell {
             sideButtonsViewController.view.widthAnchor.constraint(equalToConstant: 50),
             sideButtonsViewController.view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -bottomPadding),
         ])
+    }
+}
+
+extension newLumeIndividualViewCell {
+    
+    private func setupPageControl() {
+        contentView.addSubview(pageControl)
+        
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            pageControl.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -35),
+            pageControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+
+            pageControl.heightAnchor.constraint(equalToConstant: 40),
+            pageControl.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.25),
+        ])
+        
+        pageControl.addTarget(self, action: #selector(pageControlValueChanged), for: .valueChanged)
+    }
+    
+    @objc private func pageControlValueChanged(_ sender: UIPageControl) {
+        let page = sender.currentPage
+        let indexPath = IndexPath(item: page, section: 0)
+        
+        // Scroll to the selected page
+        contentCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        
+        // Play video for the new page
+        if let cell = contentCollectionView.cellForItem(at: indexPath) as? LumeContentCell {
+            cell.playVideo()
+            lastPlayedIndexPath = indexPath
+        }
     }
 }
 
@@ -813,33 +947,56 @@ extension newLumeIndividualViewCell: DescriptionExpandableViewControllerDelegate
     private func updateLikeStatusOnUI(_ liked: Bool) {
         sideButtonsViewController.toggleLike()
     }
-}
-
-extension newLumeIndividualViewCell: LumeBottomButtonsViewDelegate {
-    func didRequestNavigation(to profileID: String) {
-        delegate?.didRequestNavigation(to: profileID)
+    
+    func updateFollowButtonStat(_ isFollowing: Bool) {
+        DispatchQueue.main.async{ [self] in
+            bottomButtonsViewController.followButton.updateFollowStatus(isFollowing: isFollowing)
+            bottomButtonsViewController.view.layoutIfNeeded()
+        }
     }
 }
 
+extension newLumeIndividualViewCell: LumeBottomButtonsViewDelegate {
+    
+    func didRequestNavigation(to profileID: String) {
+        delegate?.didRequestNavigation(to: profileID)
+    }
+    
+    func showLoginSheetView() {
+        delegate?.showLoginSheetView()
+    }
+}
 
 class LumeContentCell: UICollectionViewCell {
-    
     private let contentImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.backgroundColor = .black
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()
     
     private var videoPlayerView: VideoPlayerView? // Custom view to handle video playback
+    private var spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.color = .white
+        spinner.hidesWhenStopped = true
+        return spinner
+    }()
+    
+    private var currentScale: CGFloat = 1.0
     
     var isVideoContent: Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(contentImageView)
+        contentView.addSubview(spinner)
         contentImageView.frame = contentView.bounds
-        // Set a random background color
+        spinner.center = contentView.center
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
+        contentView.addGestureRecognizer(pinchGesture)
     }
     
     required init?(coder: NSCoder) {
@@ -858,12 +1015,46 @@ class LumeContentCell: UICollectionViewCell {
         switch content {
         case .image(let imageContent):
             contentImageView.isHidden = false
-            contentImageView.image = imageContent.image
             isVideoContent = false
+            setupImageContentView(with: imageContent)
         case .video(let videoContent):
             contentImageView.isHidden = true
             setupVideoPlayer(with: videoContent, isMuted: isMuted)
             isVideoContent = true
+        }
+    }
+    
+    private func setupImageContentView(with imageContent: LumeImage) {
+        guard let image = imageContent.image else {
+            // Handle loading image from the network asynchronously
+            spinner.startAnimating()
+            Task {
+                if let loadedImage = await imageContent.loadAgain() {
+                    DispatchQueue.main.async {
+                        self.updateImageView(with: loadedImage)
+                        self.spinner.stopAnimating()
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.spinner.stopAnimating()
+                        // Handle error (e.g., display a placeholder image or error message)
+                    }
+                }
+            }
+            return
+        }
+        // Image is already available
+        updateImageView(with: image)
+    }
+    
+    private func updateImageView(with image: UIImage) {
+        contentImageView.image = image
+        let imageAspectRatio = image.size.width / image.size.height
+        
+        if imageAspectRatio > 1.0 {
+            contentImageView.contentMode = .scaleAspectFit
+        } else {
+            contentImageView.contentMode = .scaleAspectFill
         }
     }
     
@@ -874,6 +1065,43 @@ class LumeContentCell: UICollectionViewCell {
         videoPlayerView?.setMute(isMuted: isMuted)
     }
     
+    @objc private func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
+        guard let viewToZoom = isVideoContent ? videoPlayerView : contentImageView else { return }
+
+        switch gesture.state {
+        case .began:
+            // Calculate the initial anchor point based on the pinch location
+            let pinchCenter = gesture.location(in: viewToZoom)
+            let anchorPoint = CGPoint(x: pinchCenter.x / viewToZoom.bounds.width, y: pinchCenter.y / viewToZoom.bounds.height)
+
+            // Set the anchor point and adjust the position to maintain the current appearance
+            viewToZoom.layer.anchorPoint = anchorPoint
+            let locationInSuperview = gesture.location(in: viewToZoom.superview)
+            viewToZoom.center = locationInSuperview
+            
+        case .changed:
+            // Scale the view around the pinch center
+            let scale = gesture.scale
+            viewToZoom.transform = viewToZoom.transform.scaledBy(x: scale, y: scale)
+            gesture.scale = 1.0
+            
+            // Update the view's position based on the movement of the fingers
+            let pinchCenter = gesture.location(in: viewToZoom.superview)
+            viewToZoom.center = pinchCenter
+            
+        case .ended, .cancelled:
+            // Animate back to the original scale and position
+            UIView.animate(withDuration: 0.3, animations: {
+                viewToZoom.transform = CGAffineTransform.identity
+                viewToZoom.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                viewToZoom.center = self.contentView.center
+            })
+
+        default:
+            break
+        }
+    }
+    
     func playVideo() {
         videoPlayerView?.play()
     }
@@ -881,7 +1109,7 @@ class LumeContentCell: UICollectionViewCell {
     func pauseVideo() {
         videoPlayerView?.pause()
     }
-    
+
     func setMute(isMuted: Bool) {
         videoPlayerView?.setMute(isMuted: isMuted)
     }

@@ -14,34 +14,29 @@
   },
   "api": {
     "lumena": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_IAM"
-            }
-          ],
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 30,
-              "description": "api key description"
+              "apiKeyExpirationDays": 7
             }
-          }
+          },
+          "additionalAuthenticationProviders": []
         },
-        "GraphQLAPIIdOutput": "deyrfakjnrfwvlmduw7pw3e7li",
-        "GraphQLAPIEndpointOutput": "https://vgpfq374fzadznuuqu2gd5te6i.appsync-api.ap-northeast-1.amazonaws.com/graphql",
-        "GraphQLAPIKeyOutput": "da2-xexoyy4sm5ftppaan672nilyky"
+        "GraphQLAPIIdOutput": "4uij5li7pbeh3dq4ymtlbfrqci",
+        "GraphQLAPIEndpointOutput": "https://ebfby4orjbhadppkjjlbnyixey.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-lq6ynwrvu5hrrdga7mwfsn3nma"
       },
-      "providerPlugin": "awscloudformation",
-      "service": "AppSync",
-      "lastPushTimeStamp": "2024-04-06T14:41:42.841Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apilumena"
       },
-      "lastPushDirHash": "kMQRhZOck0MubkH+n6NefNN28CY="
+      "lastPushTimeStamp": "2024-04-22T13:46:31.503Z",
+      "lastPushDirHash": "yVHKAkp6Qk/HA4ECWC8ziuCVNoQ="
     }
   },
   "auth": {
@@ -57,8 +52,7 @@
         "AppClientID": "2pvjj9ob0j25rna955nroudltq",
         "AppClientIDWeb": "2pvjj9ob0j25rna955nroudltq",
         "IdentityPoolId": "ap-northeast-1:9bb60b28-ab79-4667-a3dc-8729cd5e33ec",
-        "IdentityPoolName": "LumenaIDPool",
-        "CreatedSNSRole": "arn:aws:iam::794140493526:role/service-role/CognitoSNSConfirmationRole"
+        "IdentityPoolName": "LumenaIDPool"
       },
       "frontendAuthConfig": {
         "socialProviders": [],
@@ -80,13 +74,10 @@
             "REQUIRES_NUMBERS"
           ]
         },
-        "mfaConfiguration": "OPTIONAL",
-        "mfaTypes": [
-          "SMS",
-          "TOTP"
-        ],
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [],
         "verificationMechanisms": [
-          "PHONE_NUMBER"
+          "EMAIL"
         ]
       },
       "lastPushTimeStamp": "2024-01-13T03:02:54.782Z"
@@ -101,11 +92,12 @@
         "BucketName": "lumena225d91d9ee5c43d99341141978c6b54c25223-lumenaenv",
         "Region": "ap-northeast-1"
       },
-      "lastPushTimeStamp": "2024-04-06T14:41:42.780Z",
+      "lastPushTimeStamp": "2024-04-22T13:46:26.532Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
         "logicalId": "storages3e9f6c0eb"
       }
     }
-  }
+  },
+  "analytics": {}
 }

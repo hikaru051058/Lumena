@@ -35,7 +35,7 @@ class LoadingViewController: UIViewController {
     }
     
     func navigateToMain(userLoggedIn: Bool = true) {
-        let mainVC = LumeHorizontalTabViewController(userLoggedIn: userLoggedIn)
+        let mainVC = newLumeHorizontalViewController()
         navigationController?.pushViewController(mainVC, animated: true)
     }
     

@@ -62,6 +62,8 @@ struct CreateAccountIntroView: View {
     @State private var createAccountPage: createAccountIntroPagePrompts = .onLumena
     @State private var showDescription: Bool = false
     
+    @State private var newProfileSettings: ProfileSettings? = nil
+    
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -221,7 +223,7 @@ struct CreateAccountIntroView: View {
                             createAccountPage = nextCreateAccountPage
                             showDescription = false
                         } else {
-                            onNavigateSkinSetting(GI.shared.profileSettings ?? ProfileManager.shared.getProfile(withID: GI.shared.identityID!))
+                            onNavigateSkinSetting((newProfileSettings ?? GI.shared.profileSettings)!)
                         }
                     }
                     
@@ -238,6 +240,13 @@ struct CreateAccountIntroView: View {
                             .foregroundColor(Color(UIColor.background))
                     }
                     .padding(.bottom)
+                }
+                .task {
+                    do {
+                        newProfileSettings = try await ProfileManager.shared.getProfile(withID: AuthenticationManager.shared.identityID!)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
             .padding(.all)

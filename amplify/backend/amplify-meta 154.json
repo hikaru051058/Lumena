@@ -21,11 +21,12 @@
         "Region": "ap-northeast-1",
         "Id": "42e2b31b9b9846a6a74a16cfde42e2ae"
       },
-      "lastPushTimeStamp": "2024-07-15T07:30:47.132Z",
+      "lastPushTimeStamp": "2024-07-17T14:22:37.745Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/analytics/pinpoint-cloudformation-template.json",
         "logicalId": "analyticslumena"
-      }
+      },
+      "lastPushDirHash": "SHCv6lPLlbs3rnBRJ4DPykvjq9I="
     }
   },
   "api": {
@@ -52,12 +53,12 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync",
-      "lastPushTimeStamp": "2024-07-15T07:30:47.191Z",
+      "lastPushTimeStamp": "2024-07-17T14:22:37.745Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apilumena"
       },
-      "lastPushDirHash": "dWeQI1oiKtd59LtS4RvxiRk6Brk="
+      "lastPushDirHash": "8cJHs/ixo3jaSSLdW5erome57kE="
     }
   },
   "auth": {
@@ -101,7 +102,7 @@
           "EMAIL"
         ]
       },
-      "lastPushTimeStamp": "2024-01-13T03:02:54.782Z"
+      "lastPushTimeStamp": "2024-07-17T14:22:37.745Z"
     }
   },
   "notifications": {
@@ -152,11 +153,12 @@
         "BucketName": "lumena225d91d9ee5c43d99341141978c6b54c25223-lumenaenv",
         "Region": "ap-northeast-1"
       },
-      "lastPushTimeStamp": "2024-07-15T07:30:47.136Z",
+      "lastPushTimeStamp": "2024-07-17T14:22:37.745Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
         "logicalId": "storages3e9f6c0eb"
-      }
+      },
+      "lastPushDirHash": "UCvHCKPdpGy707fkrsag7KkyRYg="
     }
   }
 }

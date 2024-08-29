@@ -394,11 +394,11 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
     private func logoutAndNavigateToLumeHorizontalTabViewController() {
         if let viewControllers = navigationController?.viewControllers {
             for viewController in viewControllers {
-                if viewController is LumeHorizontalTabViewController {
+                if viewController is newLumeHorizontalViewController {
                     navigationController?.popToViewController(viewController, animated: true)
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        if let lumeVC = viewController as? LumeHorizontalTabViewController {
+                        if let lumeVC = viewController as? newLumeHorizontalViewController {
                             lumeVC.showLoginSheet()
                         }
                     }
@@ -412,7 +412,7 @@ class ProfileSettingsViewController: UIViewController, UIImagePickerControllerDe
         
         // After navigation is complete, present the login sheet
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            if let rootVC = self.navigationController?.viewControllers.first as? LumeHorizontalTabViewController {
+            if let rootVC = self.navigationController?.viewControllers.first as? newLumeHorizontalViewController {
                 rootVC.showLoginSheet()
             }
         }

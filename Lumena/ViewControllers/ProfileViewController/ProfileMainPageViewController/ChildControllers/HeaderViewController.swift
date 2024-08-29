@@ -10,6 +10,11 @@ import UIKit
 import SwiftUI
 import Combine
 
+protocol HeaderViewControllerDelegate: AnyObject {
+    func didUpdateFollowStat(_ isFollowing: Bool)
+    func showLoginSheetView()
+}
+
 class HeaderViewController: UIViewController {
     
     var coverImageHeightConstraint: NSLayoutConstraint!
@@ -40,7 +45,8 @@ class HeaderViewController: UIViewController {
     var bottomViewController: BottomViewController!
     var profileStatFollowNumber: ProfileStatsViewController!
     var profileStatSkinSettings: SkinSettingsProfileBubbleViewController! //UIHostingController<skinSettingsProfileBubbleView>!
-    var followButtonVC: UIHostingController<ProfileFollowButtonView>!
+//    var followButtonVC: UIHostingController<ProfileFollowButtonView>!
+    var followBubbleButton: ProfileViewFollowBubbleButton!
     var expandableTextViewController: ExpandableTextViewController!
     
     private var expandableTextViewBottomAnchor: NSLayoutConstraint!
@@ -49,7 +55,7 @@ class HeaderViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = 4
+        stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -73,6 +79,7 @@ class HeaderViewController: UIViewController {
     var userIdentityID: String!
     
     weak var backButtonDelegate: ProfileToolButtonDelegate?
+    weak var delegate: HeaderViewControllerDelegate?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -184,8 +191,8 @@ extension HeaderViewController {
         stackView.layer.zPosition = profileInfoZPosition
         titleView.layer.zPosition = profileInfoZPosition
         
-        if followButtonVC != nil {
-            view.bringSubviewToFront(followButtonVC.view)
+        if followBubbleButton != nil {
+            view.bringSubviewToFront(followBubbleButton)
         }
         view.bringSubviewToFront(stackView)
         
@@ -305,8 +312,8 @@ extension HeaderViewController {
         if expandableTextViewController != nil {
             let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: expandableTextViewController.bottomAnchor, constant: 16)
             profileBackgroundBottomAnchor.isActive = true
-        } else if followButtonVC != nil {
-            let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: followButtonVC.view.bottomAnchor, constant: 16)
+        } else if followBubbleButton != nil {
+            let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: followBubbleButton.bottomAnchor, constant: 16)
             profileBackgroundBottomAnchor.isActive = true
         } else if profileStatSkinSettings != nil {
             let profileBackgroundBottomAnchor = profileBackground.bottomAnchor.constraint(equalTo: profileStatSkinSettings.view.bottomAnchor, constant: 16)
@@ -371,6 +378,28 @@ extension HeaderViewController {
             toolBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             toolBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
+    }
+}
+
+extension HeaderViewController: ProfileViewFollowBubbleButtonDelegate {
+    
+    private func getFollowStat() async -> Bool {
+        if let loginUserIID = AuthenticationManager.shared.identityID {
+            let status = await ProfileManager.shared.getRelationshipStat(fromUserID: loginUserIID, toUserID: userIdentityID)
+            return (status == .following) || (status == .mutual)
+        }
+        return true
+    }
+    
+    func didUpdateFollowStat(_ following: Bool) {
+        if AuthenticationManager.shared.authStatus != .authenticated {
+            delegate?.showLoginSheetView()
+        } else {
+            if let loginUserIID = AuthenticationManager.shared.identityID {
+                ProfileManager.shared.updateFollowingStatus(fromUserID: loginUserIID, toUserID: userIdentityID, follow: following)
+                delegate?.didUpdateFollowStat(following)
+            }
+        }
     }
 }
 
@@ -524,27 +553,56 @@ extension HeaderViewController: ExpandableTextViewControllerDelegate {
         view.bringSubviewToFront(profileStatSkinSettings.view)
     }
 
+//    private func addFollowButton(to stackkView: UIStackView) {
+//        if isAccountUser {
+//            return
+//        }
+//        
+//        followButtonVC = UIHostingController(rootView: ProfileFollowButtonView(otherUserIdentityID: profile.identityID, onNavigateLogin: {
+//            self.logoutAndNavigateToLumeHorizontalTabViewController()
+//        }))
+//        
+//        addChild(followButtonVC)
+//        followButtonVC.view.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.addArrangedSubview(followButtonVC.view)
+//        NSLayoutConstraint.activate([
+//            followButtonVC.view.widthAnchor.constraint(equalToConstant: 100),
+//            followButtonVC.view.heightAnchor.constraint(equalToConstant: 30)
+//        ])
+//        followButtonVC.didMove(toParent: self)
+//        
+//        view.bringSubviewToFront(followButtonVC.view)
+//    }
+
     private func addFollowButton(to stackView: UIStackView) {
         if isAccountUser {
             return
         }
-        
-        followButtonVC = UIHostingController(rootView: ProfileFollowButtonView(otherUserIdentityID: profile.identityID, onNavigateLogin: {
-            self.logoutAndNavigateToLumeHorizontalTabViewController()
-        }))
-        
-        addChild(followButtonVC)
-        followButtonVC.view.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addArrangedSubview(followButtonVC.view)
-        NSLayoutConstraint.activate([
-            followButtonVC.view.widthAnchor.constraint(equalToConstant: 100),
-            followButtonVC.view.heightAnchor.constraint(equalToConstant: 30)
-        ])
-        followButtonVC.didMove(toParent: self)
-        
-        view.bringSubviewToFront(followButtonVC.view)
-    }
 
+        followBubbleButton = ProfileViewFollowBubbleButton(following: false)
+        followBubbleButton.delegate = self
+
+        stackView.addArrangedSubview(followBubbleButton)
+        
+        followBubbleButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            followBubbleButton.widthAnchor.constraint(equalToConstant: 75),
+            followBubbleButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
+        
+        view.bringSubviewToFront(followBubbleButton)
+        
+        // Asynchronously fetch the follow status and update the button
+        DispatchQueue.main.async { [self] in
+            Task {
+                let isFollowing = await getFollowStat()
+                followBubbleButton.updateFollowStatus(isFollowing: isFollowing)
+                followBubbleButton.layoutIfNeeded()
+                view.layoutIfNeeded()
+            }
+        }
+    }
+    
     private func addExpandableTextViewController(to stackView: UIStackView) {
         
         let descriptionText = profile.bio
@@ -556,14 +614,14 @@ extension HeaderViewController: ExpandableTextViewControllerDelegate {
         
         let textBoxHeight = profile.bio.isEmpty ? 0 : max(expandableTextViewController.getCurrentHeight(), 32) + 16
         
-        if followButtonVC != nil {
+        if followBubbleButton != nil {
             
             DispatchQueue.main.async { [self] in
-                expandableTextViewBottomAnchor = expandableTextViewController.bottomAnchor.constraint(equalTo: followButtonVC.view.bottomAnchor, constant: textBoxHeight)
+                expandableTextViewBottomAnchor = expandableTextViewController.bottomAnchor.constraint(equalTo: followBubbleButton.bottomAnchor, constant: textBoxHeight)
                 expandableTextViewBottomAnchor.isActive = true
                 
                 NSLayoutConstraint.activate([
-                    expandableTextViewController.topAnchor.constraint(equalTo: followButtonVC.view.safeAreaLayoutGuide.bottomAnchor),
+                    expandableTextViewController.topAnchor.constraint(equalTo: followBubbleButton.safeAreaLayoutGuide.bottomAnchor),
                     expandableTextViewController.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
                     expandableTextViewController.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
                 ])
@@ -590,12 +648,12 @@ extension HeaderViewController: ExpandableTextViewControllerDelegate {
         
         if let viewControllers = navigationController?.viewControllers {
             for viewController in viewControllers {
-                if viewController is LumeHorizontalTabViewController {
+                if viewController is newLumeHorizontalViewController {
                     self.navigationController?.delegate = backButtonDelegate as? any UINavigationControllerDelegate
                     self.navigationController?.popViewController(animated: true)
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        if let lumeVC = viewController as? LumeHorizontalTabViewController {
+                        if let lumeVC = viewController as? newLumeHorizontalViewController {
                             lumeVC.showLoginSheet()
                         }
                     }
@@ -609,7 +667,7 @@ extension HeaderViewController: ExpandableTextViewControllerDelegate {
         
         // After navigation is complete, present the login sheet
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            if let rootVC = self.navigationController?.viewControllers.first as? LumeHorizontalTabViewController {
+            if let rootVC = self.navigationController?.viewControllers.first as? newLumeHorizontalViewController {
                 rootVC.showLoginSheet()
             }
         }
@@ -700,8 +758,8 @@ extension HeaderViewController {
                     titleOffset = max(min(0, (profileStatFollowNumber.view.convert(profileStatFollowNumber.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
                 }
             } else {
-                if followButtonVC != nil {
-                    titleOffset = max(min(0, (followButtonVC.view.convert(followButtonVC.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
+                if followBubbleButton != nil {
+                    titleOffset = max(min(0, (followBubbleButton.convert(followBubbleButton.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
                 } else {
                     titleOffset = max(min(0, (profileStatSkinSettings.view.convert(profileStatSkinSettings.view.bounds, to: nil).minY - minHeaderHeight)), -titleView.frame.height)
                 }

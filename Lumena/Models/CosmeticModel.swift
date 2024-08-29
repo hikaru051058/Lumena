@@ -205,8 +205,8 @@ class Cosmetic: Identifiable, ObservableObject {
             category: ql.category ?? "",
             totTagCount: ql.totPostTagCount ?? 0,
             authenticated: ql.authenticated ?? false,
-            createdAt: Int(ql.createdAt!),
-            updatedAt: Int(ql.updatedAt!),
+            createdAt: Int(ql.createdAt ?? 0),
+            updatedAt: Int(ql.updatedAt ?? 0) ,
             productType: ql.productType ?? "",
             rating: ql.rating ?? 0.0,
             criteriaTags: ql.criteriaTags ?? [],
@@ -428,6 +428,8 @@ extension Cosmetic {
         // Try creating a CosmeticQL model asynchronously
         _ = try await GraphQL.shared.createModel(self.toCosmeticQL())
         print("CosmeticQL model created successfully.")
+        
+        GraphQL.shared.postCosmeticQLUploadProcess(cosmeticID: self.cosmeticID)
         
         return "Upload successful"
     }

@@ -51,6 +51,12 @@ enum CameraProcessStatus {
     case toggling
 }
 
+enum TimerState {
+    case noTimer
+    case threeSeconds
+    case tenSeconds
+}
+
 protocol CameraViewControllerDelegate: AnyObject {
     func didToggleCameraMode(_ cameraMode: CameraMode)
     func didUpdateDuration(_ duration: CGFloat)
@@ -126,11 +132,18 @@ class CameraViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemGray
+        
         // Check camera permission
-        checkCameraPermission()
+//        checkCameraPermission()
         
         // Setup the UI
         setupUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        checkCameraPermission()
     }
     
     func checkCameraPermission() {
@@ -227,7 +240,7 @@ class CameraViewController: UIViewController {
     }
     
     func configureCameraSession(type: CameraType, position: AVCaptureDevice.Position) {
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             do {
                 self.captureSession.beginConfiguration()
@@ -268,14 +281,8 @@ class CameraViewController: UIViewController {
                     }
                 }
                 
-                // Set up outputs
-                if self.captureSession.canAddOutput(self.movieOutput) {
-                    self.captureSession.addOutput(self.movieOutput)
-                }
-                
-                if self.captureSession.canAddOutput(self.photoOutput) {
-                    self.captureSession.addOutput(self.photoOutput)
-                }
+                // Configure and add video output
+                self.configureVideoOutput()
                 
                 self.captureSession.commitConfiguration()
                 
@@ -301,6 +308,35 @@ extension CameraViewController {
     }
 }
 
+extension CameraViewController {
+
+    func startCamera() {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            
+            // Ensure the capture session is not already running
+            guard !self.captureSession.isRunning else { return }
+            
+            // Commit any configuration changes if necessary
+            self.captureSession.commitConfiguration()
+            
+            // Safely start the capture session
+            self.captureSession.startRunning()
+        }
+    }
+
+    func stopCamera() {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            
+            // Ensure the capture session is running
+            guard self.captureSession.isRunning else { return }
+            
+            // Safely stop the capture session
+            self.captureSession.stopRunning()
+        }
+    }
+}
 
 // MARK: - UI
 extension CameraViewController {
@@ -309,16 +345,20 @@ extension CameraViewController {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Ensure that all UI-related tasks are performed on the main thread
+            // Remove any existing preview layer before setting up a new one
             self.videoPreviewLayer?.removeFromSuperlayer()
+            
+            // Create a new preview layer with the capture session
             self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
             self.videoPreviewLayer?.videoGravity = .resizeAspectFill
             self.videoPreviewLayer?.frame = self.cameraView.bounds
+            
+            // Add the preview layer to the view
             self.cameraView.layer.addSublayer(self.videoPreviewLayer!)
             
-            // Start the session on a background thread to avoid UI blocking
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.captureSession.startRunning()
+            // Start the capture session on a background thread
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.captureSession.startRunning()
             }
         }
     }
@@ -400,7 +440,27 @@ extension CameraViewController {
     @objc func toggleCameraMode() {
         delegate?.didUpdateDuration(self.recordedDuration)
         cameraMode = cameraMode == .photo ? .video : .photo
+        
+        removeExistingOutputs()
+        
+        if cameraMode == .photo {
+            configurePhotoOutput()
+        } else {
+            configureVideoOutput()
+        }
         view.layoutIfNeeded()
+    }
+    
+    private func removeExistingOutputs() {
+        // Remove photo output if it exists
+        if captureSession.outputs.contains(photoOutput) {
+            captureSession.removeOutput(photoOutput)
+        }
+        
+        // Remove video output if it exists
+        if captureSession.outputs.contains(movieOutput) {
+            captureSession.removeOutput(movieOutput)
+        }
     }
     
     func setCameraMode(_ cameraMode: CameraMode) {
@@ -419,6 +479,48 @@ extension CameraViewController {
 // MARK: - AVCapturePhotoCaptureDelegate
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
     
+    private func configurePhotoOutput() {
+        // Ensure the current device is available
+        guard let currentDevice = self.currentDevice else {
+            print("Error: Current device is not available.")
+            return
+        }
+        
+        // Get the supported maximum photo dimensions for the current format
+        let supportedMaxPhotoDimensions = currentDevice.activeFormat.supportedMaxPhotoDimensions
+        if let largestDimension = supportedMaxPhotoDimensions.last {
+            self.photoOutput.maxPhotoDimensions = largestDimension
+            print("Photo output configured with the largest dimension: \(largestDimension).")
+        } else {
+            print("Error: Could not determine the largest dimension.")
+            return
+        }
+        
+        self.photoOutput.maxPhotoQualityPrioritization = .quality
+        
+        // Enable Live Photo capture if supported
+//        if self.photoOutput.isLivePhotoCaptureSupported {
+//            self.photoOutput.isLivePhotoCaptureEnabled = true
+//            print("Live Photo capture is enabled.")
+//        } else {
+//            self.photoOutput.isLivePhotoCaptureEnabled = false
+//            print("Live Photo capture is not supported on this device.")
+//        }
+        
+//        // Set the flash mode based on device capabilities
+//        if currentDevice.isFlashAvailable {
+//            self.photoOutput.photoSettingsForSceneMonitoring?.flashMode = .auto
+//        }
+        
+        // Add photo output to the capture session if possible
+        if self.captureSession.canAddOutput(self.photoOutput) {
+            self.captureSession.addOutput(self.photoOutput)
+            print("Photo output added to the capture session.")
+        } else {
+            print("Error: Could not add photo output to the capture session.")
+        }
+    }
+
     @objc func capturePhoto() {
         let formats = photoOutput.supportedPhotoPixelFormatTypes(for: .tif)
         
@@ -431,6 +533,26 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
         } else {
             print("No pixel format types available for TIFF")
         }
+    }
+    
+    @objc private func captureLivePhoto() {
+        guard photoOutput.connection(with: .video) != nil else { return }
+
+        let settings = AVCapturePhotoSettings()
+        
+        let supportedMaxPhotoDimensions = self.currentDevice?.activeFormat.supportedMaxPhotoDimensions
+        let largestDimesnion = supportedMaxPhotoDimensions?.last
+        
+        settings.maxPhotoDimensions = largestDimesnion!
+        
+        if photoOutput.isLivePhotoCaptureSupported {
+            let livePhotoFileName = UUID().uuidString
+            let livePhotoDirectory = FileManager.default.temporaryDirectory
+            let livePhotoFileURL = livePhotoDirectory.appendingPathComponent(livePhotoFileName)
+            settings.livePhotoMovieFileURL = livePhotoFileURL
+        }
+
+        photoOutput.capturePhoto(with: settings, delegate: self)
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
@@ -446,10 +568,72 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             content.append(.image(LumeImage(image: image)))
         }
     }
+
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishRecordingLivePhotoMovieForEventualFileAt outputFileURL: URL, resolvedSettings: AVCaptureResolvedPhotoSettings) {
+        // Handle the completion of Live Photo capture
+        print("Live Photo captured at \(outputFileURL)")
+    }
 }
 
 // MARK: - AVCaptureFileOutputRecordingDelegate
 extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
+    
+    private func configureVideoOutput() {
+        captureSession.beginConfiguration()
+        
+        // Video Output Configuration
+        movieOutput = AVCaptureMovieFileOutput()
+        
+        // Set a maximum duration for the recording if desired
+        movieOutput.maxRecordedDuration = CMTimeMake(value: 300, timescale: 1) // 5 minutes max
+
+        // Ensure the session can add the movie output
+        if captureSession.canAddOutput(movieOutput) {
+            captureSession.addOutput(movieOutput)
+        }
+
+        // Configure the connection
+        if let connection = movieOutput.connection(with: .video) {
+            if connection.isVideoStabilizationSupported {
+                connection.preferredVideoStabilizationMode = .auto  // Best stabilization option
+            }
+            
+            // Set video orientation to portrait
+            connection.videoOrientation = .portrait
+            
+            // Choose the best available codec
+//            if #available(iOS 13.0, *) {
+//                if movieOutput.availableVideoCodecTypes.contains(.hevc) {
+//                    movieOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: connection)
+//                } else {
+//                    movieOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: connection)
+//                }
+//            }
+        }
+
+        // Commit configuration changes
+        captureSession.commitConfiguration()
+    }
+    
+    func findBestFormat(for device: AVCaptureDevice, frameRate: Int32) -> AVCaptureDevice.Format? {
+        let formats = device.formats
+        var bestFormat: AVCaptureDevice.Format?
+        var maxDimensions: CMVideoDimensions = CMVideoDimensions(width: 0, height: 0)
+        
+        for format in formats {
+            for range in format.videoSupportedFrameRateRanges {
+                let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+                if range.minFrameRate <= Float64(frameRate) && range.maxFrameRate >= Float64(frameRate) {
+                    if bestFormat == nil || (dimensions.width >= maxDimensions.width && dimensions.height >= maxDimensions.height) {
+                        bestFormat = format
+                        maxDimensions = dimensions
+                    }
+                }
+            }
+        }
+        
+        return bestFormat
+    }
     
     func startRecording() {
         updateCameraProcessStatus(.recording)
@@ -868,6 +1052,29 @@ extension CameraViewController {
                 self.currentDevice = device
             }
             
+//            do {
+//                try currentDevice.lockForConfiguration()
+//                
+//                // Find a format that supports 60 FPS
+//                let supportedFormats = currentDevice.formats.filter { format in
+//                    format.videoSupportedFrameRateRanges.contains { range in
+//                        range.maxFrameRate >= 60
+//                    }
+//                }
+//                
+//                if let bestFormat = supportedFormats.first {
+//                    currentDevice.activeFormat = bestFormat
+//                    currentDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+//                    currentDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+//                } else {
+//                    print("60 FPS is not supported on this device.")
+//                }
+//                
+//                currentDevice.unlockForConfiguration()
+//            } catch {
+//                print("Error setting frame duration: \(error.localizedDescription)")
+//            }
+            
             // Commit the configuration to apply changes
             captureSession.commitConfiguration()
             
@@ -978,7 +1185,7 @@ extension CameraViewController {
 
 // MARK: - flash light
 extension CameraViewController {
-    func setFlashlight(level: Float) {
+    func setFlashlight(level: CGFloat) {
         guard let device = AVCaptureDevice.default(for: .video),
               device.hasTorch else {
             print("Device does not support flashlight functionality")
@@ -988,7 +1195,7 @@ extension CameraViewController {
         do {
             try device.lockForConfiguration()
             if level > 0 {
-                try device.setTorchModeOn(level: level)
+                try device.setTorchModeOn(level: Float(level))
             } else {
                 device.torchMode = .off
             }

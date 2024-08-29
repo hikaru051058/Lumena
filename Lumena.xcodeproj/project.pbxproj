@@ -10,6 +10,9 @@
 		170264702BEACED5004C9444 /* SkinSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */; };
 		170264722BEB0C30004C9444 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170264712BEB0C30004C9444 /* Notifications.swift */; };
 		171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */; };
+		17343E012C80C8070050035D /* TagMusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17343E002C80C8070050035D /* TagMusicViewController.swift */; };
+		17343E032C810A950050035D /* CameraFlashSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17343E022C810A950050035D /* CameraFlashSliderView.swift */; };
+		17343E052C8127260050035D /* TextBasedContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17343E042C8127260050035D /* TextBasedContentViewController.swift */; };
 		173AB86C2BDB0461008D76BB /* UserConfirmationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */; };
 		173AB86E2BDB055A008D76BB /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */; };
 		1751B8902C76810900E8F20F /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8552C76810500E8F20F /* NotificationType.swift */; };
@@ -75,7 +78,6 @@
 		1751B8E22C7A26A600E8F20F /* UIView+Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DC2C7A26A600E8F20F /* UIView+Template.swift */; };
 		1751B8E32C7A26A600E8F20F /* UIView+ShimmerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DD2C7A26A600E8F20F /* UIView+ShimmerExtensions.swift */; };
 		1751B8E42C7A26A600E8F20F /* UIView+Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DE2C7A26A600E8F20F /* UIView+Shimmer.swift */; };
-		1751B8E52C7A26A600E8F20F /* UIView_Shimmer.h in Sources */ = {isa = PBXBuildFile; fileRef = 1751B8DF2C7A26A600E8F20F /* UIView_Shimmer.h */; };
 		175709A92BE78F4400643C40 /* SideButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175709A82BE78F4400643C40 /* SideButtonViewController.swift */; };
 		1757EE702BEE36CF00C3401B /* GradientEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */; };
 		175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */; };
@@ -135,7 +137,7 @@
 		17C0ABB52BFEA90100FA027A /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAA2BFEA90000FA027A /* Colors.swift */; };
 		17C0ABB62BFEA90100FA027A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAB2BFEA90000FA027A /* Extensions.swift */; };
 		17C0ABB72BFEA90100FA027A /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAC2BFEA90000FA027A /* GradientView.swift */; };
-		17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */; };
+		17C0ABB82BFEA90100FA027A /* ProfileParallaxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C0ABAD2BFEA90000FA027A /* ProfileParallaxViewController.swift */; };
 		17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412332C32C5460083C8A5 /* ShimmerViewController.swift */; };
 		17C412362C33C4420083C8A5 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C412352C33C4420083C8A5 /* KeyboardResponder.swift */; };
 		17CA9F4F2C3A334100FDA4EE /* HyperLinkTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */; };
@@ -229,6 +231,9 @@
 		1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingViewController.swift; sourceTree = "<group>"; };
 		170264712BEB0C30004C9444 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
+		17343E002C80C8070050035D /* TagMusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagMusicViewController.swift; sourceTree = "<group>"; };
+		17343E022C810A950050035D /* CameraFlashSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFlashSliderView.swift; sourceTree = "<group>"; };
+		17343E042C8127260050035D /* TextBasedContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextBasedContentViewController.swift; sourceTree = "<group>"; };
 		173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		173AB86B2BDB0461008D76BB /* UserConfirmationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfirmationCodeViewController.swift; sourceTree = "<group>"; };
 		173AB86D2BDB055A008D76BB /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
@@ -295,7 +300,6 @@
 		1751B8DC2C7A26A600E8F20F /* UIView+Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Template.swift"; sourceTree = "<group>"; };
 		1751B8DD2C7A26A600E8F20F /* UIView+ShimmerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ShimmerExtensions.swift"; sourceTree = "<group>"; };
 		1751B8DE2C7A26A600E8F20F /* UIView+Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shimmer.swift"; sourceTree = "<group>"; };
-		1751B8DF2C7A26A600E8F20F /* UIView_Shimmer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIView_Shimmer.h; path = "../../../Downloads/UIView-Shimmer-master/Sources/UIView-Shimmer/UIView_Shimmer.h"; sourceTree = "<group>"; };
 		1751B8E62C7A26AE00E8F20F /* UIView_Shimmer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIView_Shimmer.h; path = "../../../../../../../Downloads/UIView-Shimmer-master/Sources/UIView-Shimmer/UIView_Shimmer.h"; sourceTree = "<group>"; };
 		175709A82BE78F4400643C40 /* SideButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideButtonViewController.swift; sourceTree = "<group>"; };
 		1757EE6F2BEE36CF00C3401B /* GradientEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientEffectViewController.swift; sourceTree = "<group>"; };
@@ -365,7 +369,7 @@
 		17C0ABAA2BFEA90000FA027A /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		17C0ABAB2BFEA90000FA027A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		17C0ABAC2BFEA90000FA027A /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
-		17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterParallaxViewController.swift; sourceTree = "<group>"; };
+		17C0ABAD2BFEA90000FA027A /* ProfileParallaxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileParallaxViewController.swift; sourceTree = "<group>"; };
 		17C412332C32C5460083C8A5 /* ShimmerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShimmerViewController.swift; path = /Users/hikaru/Desktop/FFT/Lumena/Lumena/ViewControllers/ShimmerViewController.swift; sourceTree = "<absolute>"; };
 		17C412352C33C4420083C8A5 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperLinkTextViewController.swift; sourceTree = "<group>"; };
@@ -521,7 +525,7 @@
 				17C0ABAA2BFEA90000FA027A /* Colors.swift */,
 				17C0ABAB2BFEA90000FA027A /* Extensions.swift */,
 				17C0ABAC2BFEA90000FA027A /* GradientView.swift */,
-				17C0ABAD2BFEA90000FA027A /* TwitterParallaxViewController.swift */,
+				17C0ABAD2BFEA90000FA027A /* ProfileParallaxViewController.swift */,
 			);
 			path = ProfileMainPageViewController;
 			sourceTree = "<group>";
@@ -640,10 +644,13 @@
 				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
 				1782B1192C67530400AC1686 /* CameraViewController.swift */,
 				175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */,
+				17343E042C8127260050035D /* TextBasedContentViewController.swift */,
 				175AFF752C6B5C35005EA8EC /* ImageSelectorSheetViewController.swift */,
 				175AFF772C6B6678005EA8EC /* CameraToggleButtonUIView.swift */,
 				175AFF792C6B6694005EA8EC /* CameraRecordButtonUIView.swift */,
 				177E44282C6D52B900EFD2D1 /* CameraImagePickerButtonUIView.swift */,
+				17343E022C810A950050035D /* CameraFlashSliderView.swift */,
+				17343E002C80C8070050035D /* TagMusicViewController.swift */,
 			);
 			path = PostContentViewController;
 			sourceTree = "<group>";
@@ -788,7 +795,6 @@
 		17FFBF982BD616D900682EE2 = {
 			isa = PBXGroup;
 			children = (
-				1751B8DF2C7A26A600E8F20F /* UIView_Shimmer.h */,
 				173AB86A2BD9FAFD008D76BB /* PrivacyInfo.xcprivacy */,
 				17FFC0822BD61E2C00682EE2 /* Localizable.xcstrings */,
 				17FFBFA32BD616D900682EE2 /* Lumena */,
@@ -1123,7 +1129,6 @@
 				1751B8E22C7A26A600E8F20F /* UIView+Template.swift in Sources */,
 				1751B8E32C7A26A600E8F20F /* UIView+ShimmerExtensions.swift in Sources */,
 				1751B8E42C7A26A600E8F20F /* UIView+Shimmer.swift in Sources */,
-				1751B8E52C7A26A600E8F20F /* UIView_Shimmer.h in Sources */,
 				1751B8902C76810900E8F20F /* NotificationType.swift in Sources */,
 				1751B8912C76810900E8F20F /* TagCosmeticQL+Schema.swift in Sources */,
 				1751B8922C76810900E8F20F /* CosmeticPrice.swift in Sources */,
@@ -1172,10 +1177,12 @@
 				1751B8BF2C76810900E8F20F /* UserStateQL.swift in Sources */,
 				1751B8C02C76810900E8F20F /* SkinType.swift in Sources */,
 				1751B8C12C76810900E8F20F /* CosmeticSearchIndexStatus.swift in Sources */,
+				17343E052C8127260050035D /* TextBasedContentViewController.swift in Sources */,
 				1751B8C22C76810900E8F20F /* SkinSettingsAttributesQL.swift in Sources */,
 				1751B8C32C76810900E8F20F /* CosmeticVariant+Schema.swift in Sources */,
 				1751B8C42C76810900E8F20F /* UserProfileQL+Schema.swift in Sources */,
 				1751B8C52C76810900E8F20F /* CommentQL+Schema.swift in Sources */,
+				17343E032C810A950050035D /* CameraFlashSliderView.swift in Sources */,
 				1751B8C62C76810900E8F20F /* LumeStateQL+Schema.swift in Sources */,
 				1751B8C72C76810900E8F20F /* CosmeticSearchIndex.swift in Sources */,
 				1751B8C82C76810900E8F20F /* AmplifyModels.swift in Sources */,
@@ -1254,9 +1261,10 @@
 				17B7A3CB2C04104E00777CC1 /* UIView+Fill.swift in Sources */,
 				17FFC0462BD6190900682EE2 /* ImageExtractor.swift in Sources */,
 				17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */,
+				17343E012C80C8070050035D /* TagMusicViewController.swift in Sources */,
 				179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */,
 				17CA9F4F2C3A334100FDA4EE /* HyperLinkTextViewController.swift in Sources */,
-				17C0ABB82BFEA90100FA027A /* TwitterParallaxViewController.swift in Sources */,
+				17C0ABB82BFEA90100FA027A /* ProfileParallaxViewController.swift in Sources */,
 				17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */,
 				177E442B2C6E88C600EFD2D1 /* CommentsListViewController.swift in Sources */,
 				1798E7D82BD6238500793A2C /* LoadingViewController.swift in Sources */,
@@ -1501,7 +1509,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Lumena/Lumena.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1;
+				CURRENT_PROJECT_VERSION = 1.1.6;
 				DEVELOPMENT_TEAM = 684823BN5K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lumena/Info.plist;
@@ -1516,12 +1524,13 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1543,7 +1552,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Lumena/Lumena.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1;
+				CURRENT_PROJECT_VERSION = 1.1.6;
 				DEVELOPMENT_TEAM = 684823BN5K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lumena/Info.plist;
@@ -1558,12 +1567,13 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

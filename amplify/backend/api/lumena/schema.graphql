@@ -33,10 +33,10 @@ type CosmeticVariant {
   additionalInfo: String
   amount: CosmeticAmount
   price: CosmeticPrice
-  productURL: [AWSURL]
+  productURL: [String]
   barcode: String
   ingredientIDs: [ID]
-  imageURL: [AWSURL]
+  imageURL: [String]
   rating: Float
 }
 
@@ -73,7 +73,7 @@ type CosmeticPrice {
 type CosmeticBrandQL @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
-  websiteURL: AWSURL
+  websiteURL: String
   description: String
 }
 
@@ -242,8 +242,8 @@ type CosmeticQL @model @auth(rules: [{allow: public}]) {
   rating: Float
   category: String
   productType: String
-  imageURL: [AWSURL]
-  productURL: AWSURL
+  imageURL: [String]
+  productURL: String
   createdAt: AWSTimestamp
   updatedAt: AWSTimestamp
   variants: [CosmeticVariant]
@@ -268,7 +268,7 @@ type TagCosmeticQL {
 
 type LumeQL @model @auth(rules: [{allow: public}]) {
   id: ID!
-  postURL: [AWSURL]
+  postURL: [String]
   timestamp: AWSTimestamp!
   tagProducts: [TagCosmeticQL]
   tagMusic: TagTrackQL
@@ -280,7 +280,7 @@ type LumeQL @model @auth(rules: [{allow: public}]) {
   hashTags: [String]
   zipURL: String
   lumeAuth: Boolean
-  voiceOverURL: [AWSURL]
+  voiceOverURL: [String]
 }
 
 type UserProfileQL @model @auth(rules: [{allow: public}]) {

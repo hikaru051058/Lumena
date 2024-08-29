@@ -149,7 +149,7 @@ class LoginViewController: UIViewController {
     
     func navigateToMain() {
         DispatchQueue.main.async {
-            let mainVC = LumeHorizontalTabViewController()
+            let mainVC = newLumeHorizontalViewController()
             self.navigationController?.pushViewController(mainVC, animated: true)
         }
     }

@@ -167,117 +167,6 @@ class ProfileStatsViewController: UIViewController {
     }
 }
 
-
-struct ProfileFollowButtonView: View {
-    
-    @State private var followState: Bool = false
-    private var otherUserIdentityID: String
-    var onNavigateLogin: (() -> Void)?
-    
-    init(otherUserIdentityID: String, onNavigateLogin: (() -> Void)? = nil) {
-        self.otherUserIdentityID = otherUserIdentityID
-        self.onNavigateLogin = onNavigateLogin
-    }
-    
-    var body: some View {
-        Button(action: {
-            toggleFollowState()
-        }) {
-            ZStack {
-                Rectangle()
-                    .frame(width: 100, height: 30)
-                    .cornerRadius(15)
-                    .foregroundColor(followState ? Color(red: 0.552, green: 0.724, blue: 0.831) : Color(red: 0.946, green: 0.76, blue: 0.839))
-                
-                Text(followState ? "フォロー中" : "フォロー")
-                    .fontWeight(.bold)
-                    .font(.callout)
-                    .foregroundColor(.white)
-            }
-        }
-        .onAppear {
-            fetchFollowState()
-            NotificationCenter.default.addObserver(forName: .didChangeFollowStatus, object: nil, queue: .main) { _ in
-                self.fetchFollowState()
-            }
-        }
-    }
-    
-    func toggleFollowState() {
-        guard let userIdentityID = GI.shared.identityID else {
-            print("No user identity id was extracted in toggleFollowState()")
-            return
-        }
-        
-        if AuthenticationManager.shared.authStatus != .authenticated {
-            onNavigateLogin?()
-            return
-        }
-        
-        ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: otherUserIdentityID, follow: !followState)
-        withAnimation {
-            followState.toggle()
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-        }
-    }
-    
-    func fetchFollowState() {
-        guard let userIdentityID = GI.shared.identityID else { return }
-        DispatchQueue.main.async {
-            Task {
-                let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: otherUserIdentityID)
-                self.followState = (status == .following) || (status == .mutual)
-            }
-        }
-    }
-}
-
-//struct skinSettingsProfileBubbleView: View {
-//    
-//    @State var skinSettings: SkinSettingsAttributes = SkinSettingsAttributes()
-//    
-//    var body: some View {
-//        VStack {
-//            HStack {
-//                skinSettingsProfileBubbleIndividualView(text: skinSettings.sensitivity.rawValue, backgroundColor: UIColor.arinDarkPink)
-//                skinSettingsProfileBubbleIndividualView(text: skinSettings.uv.rawValue, backgroundColor: UIColor.arinGreen)
-//                skinSettingsProfileBubbleIndividualView(text: skinSettings.skinType.rawValue, backgroundColor: UIColor.arinYellow)
-//                skinSettingsProfileBubbleIndividualView(text: "Skin Color", backgroundColor: UIColor.color(from: skinSettings.skinColor))
-//            }
-//            
-//            HStack {
-//                skinSettingsProfileBubbleIndividualView(text: skinSettings.concerns.rawValue, backgroundColor: UIColor.arinDarkPink)
-//                skinSettingsProfileBubbleIndividualView(text: "Eye Color", backgroundColor: UIColor.color(from: skinSettings.eyeColor))
-//                skinSettingsProfileBubbleIndividualView(text: skinSettings.personalColor.rawValue, backgroundColor: UIColor.arinBlue)
-//            }
-//        }
-//    }
-//}
-//
-//struct skinSettingsProfileBubbleIndividualView: View {
-//    var text: String
-//    var backgroundColor: UIColor
-//    
-//    var body: some View {
-//        Text(text)
-//            .font(.caption2)
-//            .fontWeight(.bold)
-//            .fixedSize(horizontal: false, vertical: true)
-//            .foregroundStyle(.white)
-//            .multilineTextAlignment(.center)
-//            .frame(width: 75, height: 22)
-//            .padding(.all, 3)
-//            .background(Color(backgroundColor))
-//            .cornerRadius(15)
-//    }
-//}
-//
-//#Preview("skinSettingsProfileBubbleViewPreview") {
-//    skinSettingsProfileBubbleView()
-//}
-
-
 class SkinSettingsProfileBubbleViewController: UIViewController {
     
     private var stackView1: UIStackView!
@@ -395,13 +284,158 @@ class SkinSettingsProfileBubbleIndividualViewController: UIView {
 
 
 
-struct SkinSettingsProfileBubbleViewController_Preview: UIViewControllerRepresentable {
+struct ProfileFollowButtonView: View {
     
-    func makeUIViewController(context: Context) -> SkinSettingsProfileBubbleViewController {
-        return SkinSettingsProfileBubbleViewController(skinSettings: SkinSettingsAttributes())
+    @State private var followState: Bool = false
+    private var otherUserIdentityID: String
+    var onNavigateLogin: (() -> Void)?
+    
+    init(otherUserIdentityID: String, onNavigateLogin: (() -> Void)? = nil) {
+        self.otherUserIdentityID = otherUserIdentityID
+        self.onNavigateLogin = onNavigateLogin
     }
     
-    func updateUIViewController(_ uiViewController: SkinSettingsProfileBubbleViewController, context: Context) {
-        // Update the view controller if needed
+    var body: some View {
+        Button(action: {
+            toggleFollowState()
+        }) {
+            ZStack {
+                Rectangle()
+                    .frame(width: 100, height: 30)
+                    .cornerRadius(15)
+                    .foregroundColor(followState ? Color(red: 0.552, green: 0.724, blue: 0.831) : Color(red: 0.946, green: 0.76, blue: 0.839))
+                
+                Text(followState ? "フォロー中" : "フォロー")
+                    .fontWeight(.bold)
+                    .font(.callout)
+                    .foregroundColor(.white)
+            }
+        }
+        .onAppear {
+            fetchFollowState()
+            NotificationCenter.default.addObserver(forName: .didChangeFollowStatus, object: nil, queue: .main) { _ in
+                self.fetchFollowState()
+            }
+        }
+    }
+    
+    func toggleFollowState() {
+        guard let userIdentityID = GI.shared.identityID else {
+            print("No user identity id was extracted in toggleFollowState()")
+            return
+        }
+        
+        if AuthenticationManager.shared.authStatus != .authenticated {
+            onNavigateLogin?()
+            return
+        }
+        
+        ProfileManager.shared.updateFollowingStatus(fromUserID: userIdentityID, toUserID: otherUserIdentityID, follow: !followState)
+        withAnimation {
+            followState.toggle()
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+        }
+    }
+    
+    func fetchFollowState() {
+        guard let userIdentityID = GI.shared.identityID else { return }
+        DispatchQueue.main.async {
+            Task {
+                let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: otherUserIdentityID)
+                self.followState = (status == .following) || (status == .mutual)
+            }
+        }
+    }
+}
+
+protocol ProfileViewFollowBubbleButtonDelegate: AnyObject {
+    func didUpdateFollowStat(_ following: Bool)
+}
+
+class ProfileViewFollowBubbleButton: UIButton {
+    
+    weak var delegate: ProfileViewFollowBubbleButtonDelegate?
+    
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 10, weight: .bold)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.lineBreakMode = .byCharWrapping
+        return label
+    }()
+    
+    private var following: Bool = false
+    private var widthConstraint: NSLayoutConstraint!
+    private var heightConstraint: NSLayoutConstraint!
+    
+    init(following: Bool = false) {
+        
+        self.following = following
+        super.init(frame: .zero)
+        
+        self.backgroundColor = following ? .arinBlue : .arinPink
+        self.layer.cornerRadius = 15
+        self.clipsToBounds = true
+        
+        label.text = NSLocalizedString("フォロー", comment: "")
+        addSubview(label)
+        
+        // Add constraints to mimic fixed size and padding in SwiftUI
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -2),
+            label.topAnchor.constraint(equalTo: topAnchor, constant: 2),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -2),
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
+        
+        // Set initial width and height constraints
+        widthConstraint = widthAnchor.constraint(equalToConstant: following ? 30 : 75)
+        heightConstraint = heightAnchor.constraint(equalToConstant: 30)
+        NSLayoutConstraint.activate([
+            widthConstraint,
+            heightConstraint,
+            centerXAnchor.constraint(equalTo: centerXAnchor),
+            centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+        
+        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc private func buttonTapped() {
+        if AuthenticationManager.shared.authStatus != .authenticated {
+            delegate?.didUpdateFollowStat(false)
+        } else {
+            following.toggle()
+            delegate?.didUpdateFollowStat(following)
+            updateUI()
+        }
+    }
+    
+    private func updateUI(animation: Bool = true) {
+        // Update label text based on following state
+        label.text = following ? NSLocalizedString("フォロー中", comment: "") : NSLocalizedString("フォロー", comment: "")
+        
+        UIView.animate(withDuration: animation ? 0.4 : 0, animations: {
+//            self.widthConstraint.constant = self.following ? 22 : 60
+            self.backgroundColor = self.following ? .arinBlue : .arinPink
+            self.superview?.layoutIfNeeded()
+        })
+    }
+    
+    func updateFollowStatus(isFollowing: Bool) {
+        DispatchQueue.main.async { [self] in
+            following = isFollowing
+            updateUI(animation: false)
+        }
     }
 }
