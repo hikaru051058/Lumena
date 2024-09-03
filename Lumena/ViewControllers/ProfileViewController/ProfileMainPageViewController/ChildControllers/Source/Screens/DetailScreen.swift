@@ -15,7 +15,8 @@ class DetailScreen: UIViewController {
     private let contentView = UIView()
     private let imageView = ImageView()
     
-    var lumeVerticalScroll: LumeVerticalInfiniteScrollViewController!
+    var lumeVerticalScroll: newLumeVerticalViewController!
+//    var lumeVerticalScroll: LumeVerticalInfiniteScrollViewController!
     private lazy var recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
     var transitionAnimator = SharedTransitionAnimator()
     private var interactionController: SharedTransitionInteractionController?
@@ -58,8 +59,9 @@ class DetailScreen: UIViewController {
         super.viewWillDisappear(animated)
         if isMovingFromParent {
             if let bottomVC = navigationController?.viewControllers.last as? BottomViewController {
-                let currentVisibleIndexPath = lumeVerticalScroll.getCurrentVisibleIndexPath()
-                bottomVC.selectedIndexPath = currentVisibleIndexPath
+                if let currentVisibleIndexPath = lumeVerticalScroll.getCurrentVisibleIndexPath() {
+                    bottomVC.selectedIndexPath = currentVisibleIndexPath
+                }
             }
         }
     }
@@ -81,8 +83,9 @@ extension DetailScreen {
     }
     
     private func setupLumeVerticalSrollViewController() {
+        let lumeIDs = lumes.map { $0.postID }  // Extract postID from each Lume object
+        lumeVerticalScroll = newLumeVerticalViewController(lumes: lumeIDs, autoLoadRandomLumes: false)
         
-        lumeVerticalScroll = LumeVerticalInfiniteScrollViewController(lumes: lumes, loadAutomatically: false, currentLumePostID: currentLumePostID)
         lumeVerticalScroll.view.then {
             view.addSubview($0)
         }.layout {
@@ -92,13 +95,19 @@ extension DetailScreen {
             $0.trailing == view.trailingAnchor
         }
         lumeVerticalScroll.view.alpha = 0
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             UIView.animate(withDuration: 0.1, animations: {
                 self.lumeVerticalScroll.view.alpha = 1
             })
         }
+
+        // Scroll to the initial Lume based on the currentLumePostID
+        if let initialIndex = lumeIDs.firstIndex(of: currentLumePostID) {
+            lumeVerticalScroll.scrollToLume(at: initialIndex)
+        }
     }
+
     
     private func setupImageView() {
         if let thumbnailURL = thumbnailURL {

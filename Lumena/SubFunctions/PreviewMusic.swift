@@ -21,7 +21,6 @@ class LumeAudioPlayer {
     var access_token: String = "null"
     public var tracks: [Track] = []
     
-    
     func fetchData(from urlString: String, completion: @escaping (Data?) -> Void) {
         getAccessToken {
             guard let url = URL(string: urlString) else {
@@ -48,6 +47,27 @@ class LumeAudioPlayer {
             }
             
             task.resume()
+        }
+    }
+    
+    func fetchData(from urlString: String) async -> Data? {
+        await getAccessToken()  // Ensure access token is updated before fetching data
+        
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(self.access_token)", forHTTPHeaderField: "Authorization")
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            return data
+        } catch {
+            print("HTTP Request Failed \(error)")
+            return nil
         }
     }
 
@@ -122,8 +142,6 @@ class LumeAudioPlayer {
             completion(.failure(error))
         }
     }
-
-    
     
     func getSearchResult(query: String, type: String, completion: @escaping ([Track]) -> Void) {
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
@@ -140,6 +158,30 @@ class LumeAudioPlayer {
         }
     }
     
+    func getTrackByID(id: String) async -> URL? {
+        
+        let trackID = id.replacingOccurrences(of: "spotify:track:", with: "")
+        
+        if let jsonData = await fetchData(from: "https://api.spotify.com/v1/tracks/\(trackID)") {
+            do {
+                let jsonDecoder = JSONDecoder()
+                let trackDetail = try jsonDecoder.decode(TrackDetail.self, from: jsonData)
+                
+                if let previewUrlString = trackDetail.preview_url, let previewUrl = URL(string: previewUrlString) {
+                    print("Successfully fetched preview URL for audio: \(previewUrl)")
+                    return previewUrl // Return the URL
+                } else {
+                    return nil // No preview URL available
+                }
+            } catch {
+                print("Failed to decode JSON data: \(error)")
+                return nil
+            }
+        } else {
+            print("Failed to fetch JSON data")
+            return nil
+        }
+    }
     
     func parseJsonDataSearchResult(jsonData: Data, completion: @escaping ([Track]) -> Void) {
         var tracks: [Track] = []
@@ -179,7 +221,6 @@ class LumeAudioPlayer {
             completion([]) // Ensure to call completion even on error to not block the UI
         }
     }
-    
     
     func downloadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
         // Check for cached image
@@ -237,6 +278,31 @@ class LumeAudioPlayer {
 
         task.resume()
     }
+    
+    func getAccessToken() async {
+        guard let url = URL(string: "https://accounts.spotify.com/api/token") else {
+            print("Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("Basic MGE1YTMzZGY4MzRmNDQ1Y2I1OWM2YmNjOGI4YTRiNDU6YmFlNmJlZGQyNjVkNDUwYmFkYjI5YzBmN2MwODNkYzE=", forHTTPHeaderField: "Authorization")
+        request.httpBody = "grant_type=client_credentials".data(using: .utf8)
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            if let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any],
+               let accessToken = jsonResult["access_token"] as? String {
+                UserDefaults.standard.set(accessToken, forKey: "AccessToken")
+                print("Access Token Saved: \(accessToken)")
+                self.access_token = accessToken
+            }
+        } catch {
+            print("HTTP Request Failed \(error)")
+        }
+    }
+
 }
 
 

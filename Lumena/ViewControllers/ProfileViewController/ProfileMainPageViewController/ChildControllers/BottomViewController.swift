@@ -98,6 +98,10 @@ class BottomViewController: UIViewController, UINavigationControllerDelegate {
         super.viewWillAppear(animated)
         navigationController?.delegate = self
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        
+        if let selectedIndexPath = selectedIndexPath {
+            collectionView.scrollToItem(at: selectedIndexPath, at: .centeredVertically, animated: false)
+        }
     }
     
     func updateProfile(profile: ProfileSettings) {
@@ -198,10 +202,17 @@ extension BottomViewController: UICollectionViewDelegate {
         let lume = lumes[indexPath.item]
         if let cell = collectionView.cellForItem(at: indexPath) as? ProfileCell,
            let thumbnailURL = cell.thumbnailURL {
-            let viewController = DetailScreen(lumes: lumes, currentLumePostID: lume.postID, thumbnailURL: thumbnailURL, fitOrFill: cell.fitOrFill, heightScale: cell.heightScale)
+            let viewController = DetailScreen(
+                lumes: lumes,
+                currentLumePostID: lume.postID,
+                thumbnailURL: thumbnailURL,
+                fitOrFill: cell.fitOrFill,
+                heightScale: cell.heightScale
+            )
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
+
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout methods

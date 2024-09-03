@@ -1875,30 +1875,29 @@ struct PrepPost: View {
                 if !postLume.contents.isEmpty {
                     
                     TabView(selection: $currentContent) {
-                        ForEach(postLume.contents) { content in
-                            
+                        ForEach(postLume.contents.filter { content in
+                            if case .text(_) = content {
+                                return false
+                            }
+                            return true
+                        }) { content in
                             switch content {
                             case LumeContent.video(let reelVideo):
                                 // Assuming reelVideo.player is an AVPlayer
-                                
                                 CustomVideoPlayer(player: reelVideo.player!)
                                     .tag(reelVideo.id)
                                     .onChange(of: currentContent) { change in
-                                        
                                         postLume.currentContent = change
-     
+
                                         if change != reelVideo.id {
-                                            
                                             reelVideo.player?.pause()
                                             reelVideo.player?.isMuted = mute
                                         } else {
-                                            
                                             reelVideo.player?.isMuted = mute
                                             reelVideo.player?.play()
                                         }
                                     }
-                                
-                                
+
                             case LumeContent.image(let reelImage):
                                 ZStack {
                                     if let uiImage = reelImage.image {
@@ -1934,10 +1933,14 @@ struct PrepPost: View {
                                     }
                                 }
 
+                            case LumeContent.text(_):
+                                // This case will never be hit because of the filter, but you need to keep the switch exhaustive
+                                EmptyView()
                             }
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .automatic))
+
                     
                     GeometryReader { proxy in
                         Color.clear
@@ -1975,6 +1978,7 @@ struct PrepPost: View {
                 }
                 
                 postLume.playAudio(repeatAudio: true)
+                
             }
             .onDisappear{
                 postLume.stopVideos()
@@ -1982,7 +1986,6 @@ struct PrepPost: View {
             }
             .navigationBarHidden(true)
         }
-        
         
         func manageVideoPlayback(minY: CGFloat, size: CGSize, reel: Lume) {
             // Check if the current reel is the one being displayed and if it's the selected tab

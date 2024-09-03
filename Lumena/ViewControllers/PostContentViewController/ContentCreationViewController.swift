@@ -7,21 +7,38 @@
 
 import Foundation
 import UIKit
+import Photos
 
 class ContentCreationViewController: UIViewController {
     
+    /// Text Based Content
     private var textBasedContentVC: TextBasedContentViewController!
     private var isTextBasedContentViewVisible = false
     
+    /// Main Camera Feed
     private var cameraViewController: CameraViewController!
+    private var countDownLabel: UILabel!
+    
+    /// Camera Capture Button
     private var cameraRecordButton: CameraRecordButtonUIView!
     private var cameraRecordButtonBottomConstraint: NSLayoutConstraint!
+    private var undoButton: UIButton!
+    private var saveButton: UIButton!
+    private let progressView = UIProgressView(progressViewStyle: .default)
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    private var recordingIsInProgress: Bool = false {
+        didSet {
+            hideNonVideoRelatedButtons()
+        }
+    }
     
+    /// Bottom Horizontal Section Buttons
     private var horizontalButtonsStackView: UIStackView!
     private var cameraToggleUIView: CameraToggleButtonUIButton!
     private var imagePickerButton: UIButton!
     private var previewButton: UIButton!
     
+    /// Right Side Vertical Section Buttons
     private var verticalButtonsStackView: UIStackView!
     private var verticalButtonsStackViewBottomConstraint: NSLayoutConstraint!
     private var showSongButton: UIButton!
@@ -29,27 +46,37 @@ class ContentCreationViewController: UIViewController {
     private var timerButton: UIButton!
     private var textBaseButton: UIButton!
     
+    private var sideButtonColor: UIColor = .background
+    private var currentTimerState: TimerState = .noTimer
+    
+    /// Image Selector
+    private var imageSelectorSheetVC: ImageSelectorSheetViewController!
+    
+    /// Left Side Buttons
+    private var backButton: UIButton!
+    
+    /// Flash Light Slider
     private var flashlightSlider: FlashLightCustomSliderView?
     private var sliderIsVisible = false
+    private var lastFlashLevel: CGFloat = 0.0
     
+    /// Variables
     private var postLume: Lume = Lume()
     private var audioPlayer: LumeAudioPlayer = LumeAudioPlayer()
     private var musicListVC: MusicListViewController!
-    
-    private var sideButtonColor: UIColor = .background
-    
-    private var lastFlashLevel: CGFloat = 0.0
-    
-    // Maintain the current timer state
-    var currentTimerState: TimerState = .noTimer {
-        didSet {
-            updateTimerButtonIcon()
-        }
-    }
+    private var isMusicTagged: Bool = false
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.cameraViewController.startCamera()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+//        self.cameraViewController.stopCamera()
+        pauseTaggedMusic()
     }
     
     override func viewDidLoad() {
@@ -62,14 +89,19 @@ class ContentCreationViewController: UIViewController {
         
         setupTextBaseContentViewController()
         
+        setupBackButton()
+        
         setupCameraRecordButton()
         
         setupBottomHorizontalButtonStackUI()
         
         setupSideVerticalButtonStackUI()
+        
     }
 }
 
+
+// MARK: - Camera Feed View
 extension ContentCreationViewController: CameraViewControllerDelegate {
     
     private func setupCameraViewController() {
@@ -90,11 +122,24 @@ extension ContentCreationViewController: CameraViewControllerDelegate {
         
         cameraViewController.view.layer.cornerRadius = 40
         cameraViewController.view.clipsToBounds = true
+        
+        setupTimerView()
+        
+        setupVideoEditHorizontalStack()
+        
+        UIView.animate(withDuration: 0, animations: {
+            self.cameraViewController.view.transform = .identity
+        })
     }
     
     func didToggleCameraMode(_ cameraMode: CameraMode) {
         guard cameraRecordButton != nil else { return }
         cameraRecordButton.cameraMode = cameraMode
+    }
+    
+    func didToggleCameraPosition(_ cameraPosition: CameraPosition) {
+        guard cameraRecordButton != nil else { return }
+        resetFlashLight()
     }
     
     func didUpdateDuration(_ duration: CGFloat) {
@@ -104,17 +149,96 @@ extension ContentCreationViewController: CameraViewControllerDelegate {
     
     func didUpdateCameraStatus(_ cameraStatus: CameraProcessStatus) {
         guard cameraRecordButton != nil else { return }
-        cameraRecordButton.currentCameraProcessStatus = cameraStatus
+        DispatchQueue.main.async {
+            self.cameraRecordButton.currentCameraProcessStatus = cameraStatus
+
+            if cameraStatus == .processing {
+                self.toggleSaveButton(isProcessing: true)
+            } else if cameraStatus == .ready {
+                self.toggleSaveButton(isProcessing: false)
+            }
+        }
     }
     
-    func didUpdateLumeContent(_ lumeContent: [LumeContent]) {
+    func didAddLumeContent(_ lumeContent: LumeContent) {
+        postLume.contents.append(lumeContent)
+        updatePreviewButtonVisibility()
+    }
+    
+    func didRemoveLumeContent(_ lumeContent: LumeContent) {
+        if let index = postLume.contents.firstIndex(where: { $0.id == lumeContent.id }) {
+            postLume.contents.remove(at: index)
+        }
+        updatePreviewButtonVisibility()
     }
 }
 
+// MARK: - Timer View
 extension ContentCreationViewController {
     
+    private func setupTimerView() {
+        countDownLabel = UILabel()
+        countDownLabel.font = UIFont.systemFont(ofSize: 80, weight: .bold)
+        countDownLabel.textColor = .white
+        countDownLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(countDownLabel)
+        
+        NSLayoutConstraint.activate([
+            countDownLabel.centerXAnchor.constraint(equalTo: cameraViewController.view.centerXAnchor),
+            countDownLabel.centerYAnchor.constraint(equalTo: cameraViewController.view.centerYAnchor),
+        ])
+    }
+    
+    private func startCountDown(forTakingPicture: Bool = false) {
+        guard currentTimerState != .noTimer else {
+            if forTakingPicture {
+                cameraViewController.capturePhoto()
+                addCaptureImageFeedback()
+            } else {
+                playTaggedMusic()
+                cameraViewController.startRecording()
+                recordingIsInProgress = true
+            }
+            return
+        }
+
+        var secondsRemaining = currentTimerState.rawValue
+        countDownLabel.text = "\(secondsRemaining)"
+        countDownLabel.isHidden = false
+
+        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self = self else { return }
+
+            if secondsRemaining > 0 {
+                secondsRemaining -= 1
+                self.countDownLabel.text = "\(secondsRemaining)"
+            } else {
+                timer.invalidate()
+                self.countDownLabel.isHidden = true
+                if forTakingPicture {
+                    self.cameraViewController.capturePhoto()
+                    addCaptureImageFeedback()
+                } else {
+                    playTaggedMusic()
+                    self.cameraViewController.startRecording()
+                    recordingIsInProgress = true
+                }
+            }
+        }
+
+        RunLoop.current.add(timer, forMode: .common)
+    }
+}
+
+// MARK: - Text Based View
+extension ContentCreationViewController: TextBasedContentViewControllerDelegate {
+    
     private func setupTextBaseContentViewController() {
-        textBasedContentVC = TextBasedContentViewController(text: "")//postLume.textContent
+        if textBasedContentVC == nil {
+            textBasedContentVC = TextBasedContentViewController(text: postLume.textBaseContent)
+            textBasedContentVC.delegate = self
+        }
         addChild(textBasedContentVC)
         view.addSubview(textBasedContentVC.view)
         textBasedContentVC.didMove(toParent: self)
@@ -133,8 +257,21 @@ extension ContentCreationViewController {
         
         textBasedContentVC.view.alpha = isTextBasedContentViewVisible ? 1 : 0
     }
+    
+    func didUpdateText(_ newText: String) {
+        postLume.textBaseContent = newText
+    }
+    
+    private func calculateBottomOffset() -> CGFloat {
+        let textBaseViewBottomY = textBasedContentVC.view.frame.maxY
+        let viewBottomY = view.frame.maxY
+        let heightDifference = viewBottomY - textBaseViewBottomY
+        
+        return heightDifference
+    }
 }
 
+// MARK: - Record Button
 extension ContentCreationViewController: CameraRecordButtonUIViewDelegate {
     
     private func setupCameraRecordButton() {
@@ -154,17 +291,244 @@ extension ContentCreationViewController: CameraRecordButtonUIViewDelegate {
     }
     
     func didChangeRecordStatus(_ isRecording: Bool) {
-        cameraViewController.captureAction()
+        pauseTaggedMusic()
+        if isRecording {
+            startCountDown()  // Start the countdown before recording
+        } else {
+            cameraViewController.stopRecording()
+        }
+        updateVideoEditButtonVisibility()
     }
     
     func didTakePicture() {
-        cameraViewController.captureAction()
+        startCountDown(forTakingPicture: true)  // Start the countdown before taking a picture
+        updateVideoEditButtonVisibility()
     }
 }
 
+extension ContentCreationViewController {
+    
+    private func addCaptureImageFeedback() {
+        
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
+        UIView.animate(withDuration: 0, animations: {
+            self.cameraViewController.view.alpha = 0.3
+            self.cameraViewController.view.transform = CGAffineTransform(scaleX: 0.98, y: 0.98)
+        }) { _ in
+            UIView.animate(withDuration: 0.15) {
+                self.cameraViewController.view.alpha = 1.0
+                self.cameraViewController.view.transform = .identity
+            }
+        }
+    }
+}
+
+// MARK: - Horizontal Video Editing Button
+extension ContentCreationViewController {
+
+    private func setupVideoEditHorizontalStack() {
+        let horizontalStack = UIView()
+        horizontalStack.backgroundColor = .clear
+        
+        undoButton = setupUndoVideoButton()
+        saveButton = setupSaveVideoButton()
+        progressView.isHidden = true
+        progressView.backgroundColor = .background
+        activityIndicator.isHidden = true
+        saveButton.isHidden = true
+        
+        let saveContainerView = UIView()
+        saveContainerView.backgroundColor = .clear // Make sure background is clear
+        saveContainerView.layer.cornerRadius = saveButton.layer.cornerRadius
+        saveContainerView.layer.masksToBounds = true
+        
+        // Add the save button, progress view, and activity indicator to the container view
+        saveContainerView.addSubview(saveButton)
+        saveContainerView.addSubview(progressView)
+        saveContainerView.addSubview(activityIndicator)
+        
+        horizontalStack.addSubview(undoButton)
+        horizontalStack.addSubview(saveContainerView)
+        
+        view.addSubview(horizontalStack)
+        
+        // Set up constraints for the horizontalStack
+        horizontalStack.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            horizontalStack.leadingAnchor.constraint(equalTo: cameraViewController.view.leadingAnchor, constant: 40),
+            horizontalStack.trailingAnchor.constraint(equalTo: cameraViewController.view.trailingAnchor, constant: -40),
+            horizontalStack.bottomAnchor.constraint(equalTo: cameraViewController.view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            horizontalStack.heightAnchor.constraint(equalToConstant: 40)  // Ensure the stack has a defined height
+        ])
+        
+        // Set up constraints for the undo button
+        undoButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            undoButton.leadingAnchor.constraint(equalTo: horizontalStack.leadingAnchor),
+            undoButton.centerYAnchor.constraint(equalTo: horizontalStack.centerYAnchor),
+            undoButton.widthAnchor.constraint(equalToConstant: 50),  // Define button size
+            undoButton.heightAnchor.constraint(equalToConstant: 35)
+        ])
+        
+        // Set up constraints for the save container view
+        saveContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            saveContainerView.trailingAnchor.constraint(equalTo: horizontalStack.trailingAnchor),
+            saveContainerView.centerYAnchor.constraint(equalTo: horizontalStack.centerYAnchor),
+            saveContainerView.widthAnchor.constraint(equalToConstant: 50),  // Define size
+            saveContainerView.heightAnchor.constraint(equalToConstant: 35)
+        ])
+        
+        // Set up constraints for the save button within the container
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            saveButton.centerXAnchor.constraint(equalTo: saveContainerView.centerXAnchor),
+            saveButton.centerYAnchor.constraint(equalTo: saveContainerView.centerYAnchor),
+            saveButton.widthAnchor.constraint(equalTo: saveContainerView.widthAnchor),
+            saveButton.heightAnchor.constraint(equalTo: saveContainerView.heightAnchor)
+        ])
+        
+        // Set up constraints for the progress view within the container
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            progressView.leadingAnchor.constraint(equalTo: saveContainerView.leadingAnchor),
+            progressView.trailingAnchor.constraint(equalTo: saveContainerView.trailingAnchor),
+            progressView.centerYAnchor.constraint(equalTo: saveContainerView.centerYAnchor),
+            progressView.heightAnchor.constraint(equalTo: horizontalStack.heightAnchor),
+        ])
+        
+        // Set up constraints for the activity indicator within the container
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: saveContainerView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: saveContainerView.centerYAnchor)
+        ])
+        
+        updateVideoEditButtonVisibility()
+    }
+    
+    private func setupButton(withImageName imageName: String, pointSize: CGFloat, target: Any?, action: Selector) -> UIButton {
+        let button = UIButton(type: .custom)  // Set the button type to custom
+        
+        // Setup the icon
+        let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: .regular)
+        let image = UIImage(systemName: imageName, withConfiguration: config)?.withTintColor(.background, renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        
+        // Prevent the image from distorting
+        button.imageView?.contentMode = .scaleAspectFit
+        
+        // Setup the button background
+        button.backgroundColor = .black.withAlphaComponent(0.3)
+        button.layer.cornerRadius = 35/2.0  // Height / 2
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Ensure the button is tappable
+        button.isUserInteractionEnabled = true
+        
+        // Bring the button to the front
+        button.layer.zPosition = 1
+        
+        // Set button action
+        button.addTarget(target, action: action, for: .touchUpInside)
+        
+        // Add constraints for width and height
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalToConstant: 50),
+            button.heightAnchor.constraint(equalToConstant: 35)
+        ])
+        
+        return button
+    }
+
+    // Usage for Undo Button
+    private func setupUndoVideoButton() -> UIButton {
+        return setupButton(withImageName: "arrow.uturn.backward.fill", pointSize: 25, target: self, action: #selector(undoVideoButtonTapped))
+    }
+
+    // Usage for Save Button
+    private func setupSaveVideoButton() -> UIButton {
+        return setupButton(withImageName: "video.fill.badge.checkmark", pointSize: 25, target: self, action: #selector(saveVideoButtonTapped))
+    }
+    
+    private func toggleSaveButton(isProcessing: Bool) {
+        DispatchQueue.main.async {
+            self.saveButton.isHidden = isProcessing
+            self.progressView.isHidden = !isProcessing
+            self.activityIndicator.isHidden = !isProcessing
+            
+            if isProcessing {
+                self.progressView.progress = 0.0
+                self.activityIndicator.startAnimating()
+            } else {
+                self.activityIndicator.stopAnimating()
+            }
+        }
+    }
+    
+    @objc private func saveVideoButtonTapped() {
+        toggleSaveButton(isProcessing: true) // Show progress indicator
+        
+        Task.init {
+            if let _ = cameraViewController.saveVideo() {
+                toggleSaveButton(isProcessing: false) // Hide progress indicator
+                recordingIsInProgress = false
+            } else {
+                print("Error in appending saved video in ContentCreationViewController: No Video (LumeContent) returned from CameraViewController")
+                toggleSaveButton(isProcessing: false) // Hide progress indicator
+            }
+            updateVideoEditButtonVisibility()
+            updatePreviewButtonVisibility()
+        }
+    }
+    
+    @objc private func undoVideoButtonTapped() {
+        cameraViewController.removeLastVideo()
+        updateVideoEditButtonVisibility()
+    }
+    
+    private func updateVideoEditButtonVisibility() {
+        let hasMultipleVideos = cameraViewController.recordedVideoCount() > 1
+        let hasVideosToSave = cameraViewController.recordedVideoCount() != 0
+        
+        // Set alpha based on conditions
+        undoButton.alpha = hasMultipleVideos ? 1 : 0
+        saveButton.alpha = hasVideosToSave ? 1 : 0
+        recordingIsInProgress = hasVideosToSave
+        
+        view.layoutIfNeeded()
+    }
+    
+    private func hideNonVideoRelatedButtons() {
+        // Define the buttons that should be hidden during recording
+        let buttonsToHideDuringRecording: [UIView?] = [
+            showSongButton,    // Button to show music selection
+            textBaseButton,    // Button for text-based content
+            backButton,        // Back button
+            imagePickerButton, // Button for image selector
+            cameraToggleUIView, // Button for toggling the camera
+            saveButton        // Button to save the video
+        ]
+        
+        if recordingIsInProgress {
+            // Hide all non-video-related buttons during recording
+            buttonsToHideDuringRecording.forEach { button in
+                button?.isHidden = true
+            }
+        } else {
+            // Show all buttons when not recording
+            buttonsToHideDuringRecording.forEach { button in
+                button?.isHidden = false
+            }
+        }
+        view.layoutIfNeeded()
+    }
+}
 
 // MARK: - Bottom Control Buttons
-
 extension ContentCreationViewController {
 
     private func setupHorizontalButtonsStackView() {
@@ -200,7 +564,7 @@ extension ContentCreationViewController {
 
     private func setupPhotoSelectorButton() {
         imagePickerButton = UIButton()
-        let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .regular)
         let image = UIImage(systemName: "photo.on.rectangle", withConfiguration: config)?.withTintColor(.arinBlue, renderingMode: .alwaysOriginal)
         
         imagePickerButton.setImage(image, for: .normal)
@@ -215,12 +579,12 @@ extension ContentCreationViewController {
 
     private func setupPreviewButton() {
         previewButton = UIButton()
-        let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .regular)
         let image = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)?.withTintColor(.arinYellow, renderingMode: .alwaysOriginal)
         
         previewButton.setImage(image, for: .normal)
         previewButton.tintColor = .primary
-//        previewButton.isHidden = postLume.contents.isEmpty
+        previewButton.alpha = postLume.contents.isEmpty ? 0 : 1
         previewButton.addTarget(self, action: #selector(navigateToPrepPost), for: .touchUpInside)
     }
 
@@ -232,14 +596,18 @@ extension ContentCreationViewController {
     }
 }
 
-extension ContentCreationViewController: CameraToggleButtonUIButtonDelegate {
+extension ContentCreationViewController: CameraToggleButtonUIButtonDelegate, ImageSelectorSheetViewControllerDelegate {
     
     @objc private func photoSelectorButtonTapped() {
-        let imageSelectorSheetVC = ImageSelectorSheetViewController()
-        imageSelectorSheetVC.modalPresentationStyle = .pageSheet
-        imageSelectorSheetVC.modalTransitionStyle = .coverVertical
-        imageSelectorSheetVC.sheetPresentationController?.prefersGrabberVisible = true
-        self.present(imageSelectorSheetVC, animated: true, completion: nil)
+        if imageSelectorSheetVC == nil {
+            imageSelectorSheetVC = ImageSelectorSheetViewController()
+            imageSelectorSheetVC.delegate = self
+        }
+        let navigationController = UINavigationController(rootViewController: imageSelectorSheetVC)
+        navigationController.modalPresentationStyle = .pageSheet
+        navigationController.modalTransitionStyle = .coverVertical
+        navigationController.sheetPresentationController?.prefersGrabberVisible = true
+        self.present(navigationController, animated: true, completion: nil)
     }
     
     func didToggleCameraModeToggleButton(_ mode: CameraMode) {
@@ -247,16 +615,48 @@ extension ContentCreationViewController: CameraToggleButtonUIButtonDelegate {
     }
     
     @objc func navigateToPrepPost() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [self] in
+            
+            if isMusicTagged {
+                muteAllVideos()
+            } else {
+                unmuteAllVideos()
+            }
+            
+            if postLume.contents.contains(where: { $0.isAuthentic == false }) {
+                postLume.lumeAuth = false
+            } else {
+                postLume.lumeAuth = true
+            }
+            
+            print("Lume Authenticity: \(postLume.lumeAuth)")
+            
             let prepPostVC =  PrepPostViewController(postLume: self.postLume)
             self.navigationController?.pushViewController(prepPostVC, animated: true)
         }
     }
+    
+    func didAddSelectedAsset(_ asset: LumeContent) {
+        // Add the new asset to postLume.contents
+        postLume.contents.append(asset)
+        updatePreviewButtonVisibility()
+    }
+    
+    func didRemoveSelectedAsset(_ asset: LumeContent) {
+        if let index = postLume.contents.firstIndex(where: { $0.localIdentifier == asset.localIdentifier }) {
+            postLume.contents.remove(at: index)
+        }
+        updatePreviewButtonVisibility()
+    }
+
+    private func updatePreviewButtonVisibility() {
+        // Update the preview button's visibility based on the content count
+        previewButton.alpha = postLume.contents.isEmpty ? 0 : 1
+        view.layoutIfNeeded()
+    }
 }
 
-
-// MARK: - Top Side Control Buttons
-
+// MARK: - Top Right Side Control Buttons
 extension ContentCreationViewController {
     
     private func setupVerticalSideButtonsStackView() {
@@ -349,6 +749,11 @@ extension ContentCreationViewController {
         // Update the textBaseButton image
         let textBaseImage = UIImage(systemName: "doc.text.fill", withConfiguration: config)?.withTintColor(sideButtonColor, renderingMode: .alwaysOriginal)
         textBaseButton.setImage(textBaseImage, for: .normal)
+        
+        // Update the backButton image
+        let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .bold, scale: .default)
+        let backButtonImage = UIImage(systemName: "chevron.backward", withConfiguration: buttonImageConfig)?.withTintColor(sideButtonColor, renderingMode: .alwaysOriginal)
+        backButton.setImage(backButtonImage, for: .normal)
     }
 
     func setupSideVerticalButtonStackUI() {
@@ -364,7 +769,7 @@ extension ContentCreationViewController {
     
     @objc private func flashButtonTapped() {
         
-        guard isTextBasedContentViewVisible else { return }
+        guard !isTextBasedContentViewVisible else { return }
         
         if sliderIsVisible {
             hideFlashlightSlider()
@@ -403,7 +808,7 @@ extension ContentCreationViewController {
     
     @objc private func showSongsButtonTapped() {
         
-        guard isTextBasedContentViewVisible else { return }
+        guard !isTextBasedContentViewVisible else { return }
         
         if musicListVC == nil {
             musicListVC = MusicListViewController(audioPlayer: self.audioPlayer)
@@ -418,7 +823,7 @@ extension ContentCreationViewController {
     
     @objc private func timerButtonTapped() {
         
-        guard isTextBasedContentViewVisible else { return }
+        guard !isTextBasedContentViewVisible else { return }
         
         // Toggle the timer state
         switch currentTimerState {
@@ -429,23 +834,30 @@ extension ContentCreationViewController {
         case .tenSeconds:
             currentTimerState = .noTimer
         }
+        
+        updateTimerButtonIcon()
     }
     
     @objc private func textBaseButtonTapped() {
         isTextBasedContentViewVisible.toggle()
         
-            textBasedContentVC.view.endEditing(true)
+        textBasedContentVC.view.endEditing(true)
+        
+        textBasedContentVC.bottomInsetHeight = calculateBottomOffset()
         
         if isTextBasedContentViewVisible {
             // Hide the camera elements and stop the camera
-            cameraViewController.stopCamera()
+//            cameraViewController.stopCamera()
             hideFlashlightSlider()
             sideButtonColor = .secondaryLabel
             updateButtonImages()
         } else {
-            // Reset flashlight level
+            sideButtonColor = .background
+            updateButtonImages()
             didUpdateFlashLevel(0)
         }
+        
+        updateTextBaseButtonIcon()
         
         UIView.animate(withDuration: 1,
                        delay: 0,
@@ -458,12 +870,11 @@ extension ContentCreationViewController {
             self.cameraViewController.view.alpha = self.isTextBasedContentViewVisible ? 0 : 1
             self.cameraRecordButton.alpha = self.isTextBasedContentViewVisible ? 0 : 1
             self.cameraToggleUIView.alpha = self.isTextBasedContentViewVisible ? 0 : 1
+            self.imagePickerButton.alpha = self.isTextBasedContentViewVisible ? 0 : 1
             self.view.layoutIfNeeded()
         }, completion: { _ in
             // Start the camera session only after the animation and configuration are complete
-            if !self.isTextBasedContentViewVisible {
-                self.cameraViewController.startCamera()
-            }
+//            if !self.isTextBasedContens
         })
     }
 }
@@ -490,21 +901,77 @@ extension ContentCreationViewController {
         timerButton.setImage(image, for: .normal)
         timerButton.tintColor = tintColor
     }
+    
+    private func updateTextBaseButtonIcon() {
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let image = UIImage(systemName: "doc.text.fill", withConfiguration: config)
+        let tintColor = isTextBasedContentViewVisible ? UIColor.arinPink : (postLume.textBaseContent.isEmpty ? sideButtonColor : .arinBlue)
+        textBaseButton.setImage(image, for: .normal)
+        textBaseButton.tintColor = tintColor
+    }
 }
 
 extension ContentCreationViewController: MusicListViewControllerDelegate {
     func musicListViewController(_ controller: MusicListViewController, didTagTrack track: Track) {
         postLume.tagMusic = track
+        postLume.tagMusic.initializeAudioPlayer { _ in}
+        isMusicTagged = true
+        muteAllVideos()
     }
     
     func musicListViewController(_ controller: MusicListViewController, didUntagTrack track: Track) {
-        postLume.tagMusic = Track()
+        postLume.tagMusic = Track()  // Reset to an empty Track
+        isMusicTagged = false
+        unmuteAllVideos()
+    }
+    
+    private func playTaggedMusic() {
+        let taggedMusic = postLume.tagMusic
+        if !taggedMusic.uri.isEmpty {
+            if !taggedMusic.isPlaying {
+                taggedMusic.playAudio()
+            }
+        }
+    }
+    
+    private func pauseTaggedMusic() {
+        let taggedMusic = postLume.tagMusic
+        if taggedMusic.isPlaying {
+            taggedMusic.stopAudio()
+        }
+    }
+    
+    private func muteAllVideos() {
+        for content in postLume.contents {
+            switch content {
+            case .video(let lumeVideo):
+                lumeVideo.mute(muteBool: true)
+            case .image(_):
+                continue
+            case .text(_):
+                continue
+            }
+        }
+    }
+    
+    private func unmuteAllVideos() {
+        for content in postLume.contents {
+            switch content {
+            case .video(let lumeVideo):
+                lumeVideo.mute(muteBool: false)
+            case .image(_):
+                continue
+            case .text(_):
+                continue
+            }
+        }
     }
 }
 
 extension ContentCreationViewController: FlashLightCustomSliderViewDelegate {
     
     private func showFlashlightSlider() {
+        
         guard flashlightSlider == nil else { return }
         
         // Create the slider view
@@ -556,6 +1023,24 @@ extension ContentCreationViewController: FlashLightCustomSliderViewDelegate {
         sliderIsVisible = false
     }
     
+    private func resetFlashLight() {
+        UIView.animate(withDuration: 0.3,
+                       delay: 0,
+                       usingSpringWithDamping: 0.5,
+                       initialSpringVelocity: 0.5,
+                       options: [.curveEaseInOut],
+                       animations: {
+            self.hideFlashlightSlider()
+            self.cameraViewController.view.transform = .identity
+            self.textBasedContentVC.view.transform = .identity
+            self.cameraRecordButtonBottomConstraint.constant = -16
+            self.view.backgroundColor = .primary
+            self.cameraViewController.setFlashlight(level: 0)
+            
+            self.view.layoutIfNeeded()
+        })
+    }
+    
     func didUpdateFlashLevel(_ level: CGFloat) {
         
         lastFlashLevel = level
@@ -568,5 +1053,33 @@ extension ContentCreationViewController: FlashLightCustomSliderViewDelegate {
             cameraToggleUIView.buttonColor = sideButtonColor
             updateButtonImages()
         }
+    }
+}
+
+
+// MARK: - Top Left Side Exit Button
+extension ContentCreationViewController {
+    
+    private func setupBackButton() {
+        let buttonImageConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .bold, scale: .default)
+        backButton = UIButton()
+        if let image = UIImage(systemName: "chevron.backward", withConfiguration: buttonImageConfig) {
+            backButton.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+        }
+        backButton.contentMode = .scaleAspectFit
+        backButton.tintColor = sideButtonColor
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(backButton)
+        
+        NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: cameraViewController.view.leadingAnchor, constant: 20),
+            backButton.topAnchor.constraint(equalTo: cameraViewController.view.topAnchor, constant: 30),
+        ])
+    }
+    
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 }

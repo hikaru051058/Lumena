@@ -1214,9 +1214,13 @@ class BottomIslandViewController: UIViewController {
     }
     
     func navigateToCreatePost() {
+//        DispatchQueue.main.async {
+//            let videoRecordVC = VideoHomeViewController()
+//            self.navigationController?.pushViewController(videoRecordVC, animated: true)
+//        }
         DispatchQueue.main.async {
-            let videoRecordVC = VideoHomeViewController()
-            self.navigationController?.pushViewController(videoRecordVC, animated: true)
+            let contentCreationVC = ContentCreationViewController()
+            self.navigationController?.pushViewController(contentCreationVC, animated: true)
         }
     }
     

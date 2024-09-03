@@ -19,6 +19,7 @@ extension LumeQL {
     case zipURL
     case lumeAuth
     case voiceOverURL
+    case textBaseContent
   }
   
   public static let keys = CodingKeys.self
@@ -47,7 +48,8 @@ extension LumeQL {
       .field(lumeQL.hashTags, is: .optional, ofType: .embeddedCollection(of: String.self)),
       .field(lumeQL.zipURL, is: .optional, ofType: .string),
       .field(lumeQL.lumeAuth, is: .optional, ofType: .bool),
-      .field(lumeQL.voiceOverURL, is: .optional, ofType: .embeddedCollection(of: String.self))
+      .field(lumeQL.voiceOverURL, is: .optional, ofType: .embeddedCollection(of: String.self)),
+      .field(lumeQL.textBaseContent, is: .optional, ofType: .string)
     )
     }
 }

@@ -17,6 +17,7 @@ public struct LumeQL: Model {
   public var zipURL: String?
   public var lumeAuth: Bool?
   public var voiceOverURL: [String]?
+  public var textBaseContent: String?
   
   public init(id: String = UUID().uuidString,
       postURL: [String]? = [],
@@ -31,7 +32,8 @@ public struct LumeQL: Model {
       hashTags: [String]? = [],
       zipURL: String? = nil,
       lumeAuth: Bool? = nil,
-      voiceOverURL: [String]? = []) {
+      voiceOverURL: [String]? = [],
+      textBaseContent: String? = nil) {
       self.id = id
       self.postURL = postURL
       self.timestamp = timestamp
@@ -46,5 +48,6 @@ public struct LumeQL: Model {
       self.zipURL = zipURL
       self.lumeAuth = lumeAuth
       self.voiceOverURL = voiceOverURL
+      self.textBaseContent = textBaseContent
   }
 }

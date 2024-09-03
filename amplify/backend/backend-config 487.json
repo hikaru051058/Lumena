@@ -23,29 +23,102 @@
     }
   },
   "auth": {
-    "lumenaf54fc147": {
+    "lumena99b2d053": {
       "customAuth": false,
       "dependsOn": [],
-      "frontendAuthConfig": {
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
-          "passwordPolicyMinLength": 8
-        },
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "socialProviders": [],
-        "usernameAttributes": [],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      },
       "providerPlugin": "awscloudformation",
-      "service": "Cognito"
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_lumena99b2d053_allowUnauthenticatedIdentities": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_authRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_authRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_identityPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_identityPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_unauthRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_unauthRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
+    },
+    "AMPLIFY_auth_lumena99b2d053_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "lumena99b2d053"
+        }
+      ]
     }
   },
   "storage": {

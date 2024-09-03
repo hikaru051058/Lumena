@@ -1054,6 +1054,8 @@ extension LumeIndividualViewController {
         case .image(let imageContent):
             let imageViewController = ImageContentViewController(contentID: contentUUID, imageContent: imageContent)
             return imageViewController
+        case .text(_):
+            return UIViewController()
         }
     }
     

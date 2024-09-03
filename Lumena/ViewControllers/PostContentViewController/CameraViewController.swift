@@ -51,17 +51,19 @@ enum CameraProcessStatus {
     case toggling
 }
 
-enum TimerState {
-    case noTimer
-    case threeSeconds
-    case tenSeconds
+enum TimerState: Int {
+    case noTimer = 0
+    case threeSeconds = 3
+    case tenSeconds = 10
 }
 
 protocol CameraViewControllerDelegate: AnyObject {
     func didToggleCameraMode(_ cameraMode: CameraMode)
+    func didToggleCameraPosition(_ cameraPosition: CameraPosition)
     func didUpdateDuration(_ duration: CGFloat)
     func didUpdateCameraStatus(_ cameraStatus: CameraProcessStatus)
-    func didUpdateLumeContent(_ lumeContent: [LumeContent])
+    func didAddLumeContent(_ lumeContent: LumeContent)
+    func didRemoveLumeContent(_ lumeContent: LumeContent)
 }
 
 class CameraViewController: UIViewController {
@@ -92,15 +94,26 @@ class CameraViewController: UIViewController {
 //    }
     private var recordedURLs: [URL] = []
     private var previewURL: URL?
+    private var saveImageToLibrary: Bool = false
     
     private var recordedDuration: CGFloat = 0.0
     private var recordingTimer: Timer?
     private var maxRecordingDuration: CGFloat = 60.0  // Max duration in seconds (1:30 minutes)
     
+    private var cameraPermissionChecked: Bool = false
+    
     public var cameraMode: CameraMode = .video {
         didSet {
             delegate?.didUpdateDuration(self.recordedDuration)
             delegate?.didToggleCameraMode(self.cameraMode)
+            
+            removeExistingOutputs()
+            
+            if cameraMode == .photo {
+                configurePhotoOutput()
+            } else {
+                configureVideoOutput()
+            }
         }
     }
     public var currentCameraType: CameraType = .wide {
@@ -121,11 +134,7 @@ class CameraViewController: UIViewController {
     
     private let previewButton = UIButton(type: .system)
     
-    public var content: [LumeContent] = [] {
-        didSet {
-            delegate?.didUpdateLumeContent(self.content)
-        }
-    }
+    public var content: [LumeContent] = []
     
     weak var delegate: CameraViewControllerDelegate?
     
@@ -134,19 +143,26 @@ class CameraViewController: UIViewController {
         
         view.backgroundColor = .systemGray
         
-        // Check camera permission
-//        checkCameraPermission()
-        
-        // Setup the UI
+        checkCameraPermission()
         setupUI()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        checkCameraPermission()
+        
+        // Ensure the session is configured properly
+        if captureSession.inputs.isEmpty {
+            configureCameraSession(type: currentCameraType, position: .back)
+        }
+        
+        // Ensure the session is running
+        if !captureSession.isRunning {
+            captureSession.startRunning()
+        }
     }
-    
+
     func checkCameraPermission() {
+        
         let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         
         switch cameraAuthorizationStatus {
@@ -161,6 +177,7 @@ class CameraViewController: UIViewController {
                 }
             }
         case .authorized:
+            self.configureAudioSession()
             self.checkAudioPermission()
         case .denied, .restricted:
             showPermissionAlert()
@@ -221,6 +238,16 @@ class CameraViewController: UIViewController {
         cameraView.layer.masksToBounds = true
     }
     
+    func configureAudioSession() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playAndRecord, options: [.mixWithOthers])
+            try audioSession.setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error.localizedDescription)")
+        }
+    }
+    
     func detectAvailableCameras() {
         let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera, .builtInTrueDepthCamera], mediaType: .video, position: .unspecified).devices
         
@@ -278,19 +305,73 @@ class CameraViewController: UIViewController {
                     let audioInput = try AVCaptureDeviceInput(device: audioDevice)
                     if self.captureSession.canAddInput(audioInput) {
                         self.captureSession.addInput(audioInput)
+                    } else {
+                        print("Could not add audio input")
                     }
+                } else {
+                    print("No audio device available")
                 }
                 
-                // Configure and add video output
-                self.configureVideoOutput()
+                self.setupFrameRate(cameraDevice: cameraDevice)
                 
+                if cameraMode == .photo {
+                    configurePhotoOutput()
+                } else {
+                    configureVideoOutput()
+                }
+                
+                // Commit configuration changes before starting the session
                 self.captureSession.commitConfiguration()
+
+                // Start the session after configuration is done
+                self.startCamera()
                 
                 self.setupPreviewLayer()
-                
+
             } catch {
                 print("Error configuring camera: \(error.localizedDescription)")
             }
+        }
+    }
+
+    private func setupFrameRate(cameraDevice: AVCaptureDevice) {
+        // Configure the video device to use 60 FPS if supported
+        do{
+            try cameraDevice.lockForConfiguration()
+            if let bestFormat = self.findBestFormat(for: cameraDevice, frameRate: 60) {
+                cameraDevice.activeFormat = bestFormat
+                cameraDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+                cameraDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+            } else {
+                print("60 FPS is not supported on this device.")
+            }
+            cameraDevice.unlockForConfiguration()
+            
+            // Check for supported frame rates
+            let supportedFrameRates = cameraDevice.activeFormat.videoSupportedFrameRateRanges
+            guard let firstSupportedFrameRateRange = supportedFrameRates.first else {
+                print("No supported frame rates available.")
+                return
+            }
+            let maxSupportedFrameRate = firstSupportedFrameRateRange.maxFrameRate
+
+            if let bestFormat = self.findBestFormat(for: cameraDevice, frameRate: 60) {
+                try cameraDevice.lockForConfiguration()
+                cameraDevice.activeFormat = bestFormat
+                if maxSupportedFrameRate >= 60 {
+                    // 60 fps supported, setting frame duration
+                    cameraDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+                    cameraDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+                } else {
+                    // Fallback to the highest supported frame rate within range
+                    cameraDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: Int32(maxSupportedFrameRate))
+                    cameraDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: Int32(maxSupportedFrameRate))
+                    print("60 fps not supported, using \(maxSupportedFrameRate) fps instead.")
+                }
+                cameraDevice.unlockForConfiguration()
+            }
+        } catch {
+            print(error)
         }
     }
     
@@ -367,32 +448,52 @@ extension CameraViewController {
         view.addSubview(cameraView)
         cameraView.frame = view.bounds
         addFadeOutLayer()
-        setupPreviewButton()
+//        setupPreviewButton()
         updateCameraProcessStatus(.ready)
     }
     
-    func setupPreviewButton() {
-        previewButton.setTitle("Preview", for: .normal)
-        previewButton.isHidden = true
-        previewButton.addTarget(self, action: #selector(previewMergedVideo), for: .touchUpInside)
-        previewButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(previewButton)
-        NSLayoutConstraint.activate([
-            previewButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            previewButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-        ])
-    }
+//    func setupPreviewButton() {
+//        previewButton.setTitle("Preview", for: .normal)
+//        previewButton.isHidden = true
+//        previewButton.addTarget(self, action: #selector(previewMergedVideo), for: .touchUpInside)
+//        previewButton.translatesAutoresizingMaskIntoConstraints = false
+//        view.addSubview(previewButton)
+//        NSLayoutConstraint.activate([
+//            previewButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+//            previewButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+//        ])
+//    }
+//    
+//    @objc func previewMergedVideo() {
+//        guard let previewURL = previewURL else { return }
+//        
+//        let player = AVPlayer(url: previewURL)
+//        let playerViewController = AVPlayerViewController()
+//        
+//        playerViewController.player = player
+//        present(playerViewController, animated: true) {
+//            playerViewController.player?.play()
+//        }
+//    }
     
-    @objc func previewMergedVideo() {
-        guard let previewURL = previewURL else { return }
+    func saveVideo() -> LumeContent? {
+        guard let previewURL = previewURL else { return nil }
         
-        let player = AVPlayer(url: previewURL)
-        let playerViewController = AVPlayerViewController()
+        var lumeVideo = LumeContent.video(LumeVideo(player: AVPlayer(url: previewURL)))
+        lumeVideo.setAuthenticity(to: true)
+        content.append(lumeVideo)
         
-        playerViewController.player = player
-        present(playerViewController, animated: true) {
-            playerViewController.player?.play()
-        }
+        // Notify delegate that content has been added
+        delegate?.didAddLumeContent(lumeVideo)
+        
+        recordedURLs.removeAll()
+        self.previewURL = nil
+        recordedDuration = 0.0
+        delegate?.didUpdateDuration(recordedDuration)
+        
+        updateCameraProcessStatus(.ready)
+        
+        return lumeVideo
     }
     
     private func addFadeOutLayer() {
@@ -429,11 +530,15 @@ extension CameraViewController {
         case .photo:
             capturePhoto()
         case .video:
-            if isRecording {
-                stopRecording()
-            } else {
-                startRecording()
-            }
+            toggleRecording() // Use a new method to toggle recording status
+        }
+    }
+
+    func toggleRecording() {
+        if isRecording {
+            stopRecording()
+        } else {
+            startRecording()
         }
     }
     
@@ -448,7 +553,6 @@ extension CameraViewController {
         } else {
             configureVideoOutput()
         }
-        view.layoutIfNeeded()
     }
     
     private func removeExistingOutputs() {
@@ -474,12 +578,25 @@ extension CameraViewController {
             previewButton.isHidden = false
         }
     }
+    
+    func recordedVideoCount() -> Int {
+        return self.recordedURLs.count
+    }
 }
 
 // MARK: - AVCapturePhotoCaptureDelegate
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
     
     private func configurePhotoOutput() {
+        
+        // Add photo output to the capture session if possible
+        if self.captureSession.canAddOutput(self.photoOutput) {
+            self.captureSession.addOutput(self.photoOutput)
+            print("Photo output added to the capture session.")
+        } else {
+            print("Error: Could not add photo output to the capture session.")
+        }
+        
         // Ensure the current device is available
         guard let currentDevice = self.currentDevice else {
             print("Error: Current device is not available.")
@@ -511,28 +628,35 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
 //        if currentDevice.isFlashAvailable {
 //            self.photoOutput.photoSettingsForSceneMonitoring?.flashMode = .auto
 //        }
-        
-        // Add photo output to the capture session if possible
-        if self.captureSession.canAddOutput(self.photoOutput) {
-            self.captureSession.addOutput(self.photoOutput)
-            print("Photo output added to the capture session.")
-        } else {
-            print("Error: Could not add photo output to the capture session.")
-        }
     }
 
     @objc func capturePhoto() {
-        let formats = photoOutput.supportedPhotoPixelFormatTypes(for: .tif)
+        var settings: AVCapturePhotoSettings
         
-        if let uncompressedPixelType = formats.first {
-            let settings = AVCapturePhotoSettings(format: [
-                kCVPixelBufferPixelFormatTypeKey as String : uncompressedPixelType
+        // Configure settings based on available codecs
+        if photoOutput.availablePhotoCodecTypes.contains(.jpeg) {
+            settings = AVCapturePhotoSettings(format: [
+                AVVideoCodecKey: AVVideoCodecType.jpeg
             ])
-            photoOutput.capturePhoto(with: settings, delegate: self)
-            updateCameraProcessStatus(.ready)
+        } else if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+            settings = AVCapturePhotoSettings(format: [
+                AVVideoCodecKey: AVVideoCodecType.hevc
+            ])
         } else {
-            print("No pixel format types available for TIFF")
+            // Default to system settings if specific formats are unavailable
+            settings = AVCapturePhotoSettings()
         }
+        
+        // Set maximum photo dimensions instead of high resolution
+        if let currentDevice = currentDevice {
+            if let largestDimension = currentDevice.activeFormat.supportedMaxPhotoDimensions.last {
+                settings.maxPhotoDimensions = largestDimension
+            }
+        }
+        
+        // Capture the photo with the specified settings
+        photoOutput.capturePhoto(with: settings, delegate: self)
+        updateCameraProcessStatus(.ready)
     }
     
     @objc private func captureLivePhoto() {
@@ -560,12 +684,18 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             print("Photo capture error: \(error)")
         } else if let imageData = photo.fileDataRepresentation(),
                   let image = UIImage(data: imageData) {
-            let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            let temporaryFilename = ProcessInfo().globallyUniqueString + ".jpg"
-            _ = temporaryDirectoryURL.appendingPathComponent(temporaryFilename)
+            // Create LumeContent from the captured image
+            var lumeImage = LumeContent.image(LumeImage(image: image))
+            lumeImage.setAuthenticity(to: true)
+            content.append(lumeImage)
             
-            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-            content.append(.image(LumeImage(image: image)))
+            // Notify the delegate that a new LumeContent (image) has been added
+            delegate?.didAddLumeContent(lumeImage)
+            
+            // Optionally save the image to the library
+            if saveImageToLibrary {
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+            }
         }
     }
 
@@ -578,10 +708,9 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
 // MARK: - AVCaptureFileOutputRecordingDelegate
 extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     
-    private func configureVideoOutput() {
+    func configureVideoOutput() {
         captureSession.beginConfiguration()
         
-        // Video Output Configuration
         movieOutput = AVCaptureMovieFileOutput()
         
         // Set a maximum duration for the recording if desired
@@ -590,6 +719,10 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
         // Ensure the session can add the movie output
         if captureSession.canAddOutput(movieOutput) {
             captureSession.addOutput(movieOutput)
+        } else {
+            print("Could not add movie output to capture session")
+            updateCameraProcessStatus(.camerError)
+            return
         }
 
         // Configure the connection
@@ -598,21 +731,28 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
                 connection.preferredVideoStabilizationMode = .auto  // Best stabilization option
             }
             
-            // Set video orientation to portrait
-            connection.videoOrientation = .portrait
-            
-            // Choose the best available codec
-//            if #available(iOS 13.0, *) {
-//                if movieOutput.availableVideoCodecTypes.contains(.hevc) {
-//                    movieOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: connection)
-//                } else {
-//                    movieOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: connection)
-//                }
-//            }
+            // Set video orientation to match the current device orientation
+            connection.videoOrientation = currentVideoOrientation()
         }
 
-        // Commit configuration changes
         captureSession.commitConfiguration()
+    }
+
+    func currentVideoOrientation() -> AVCaptureVideoOrientation {
+        let deviceOrientation = UIDevice.current.orientation
+
+        switch deviceOrientation {
+        case .portrait:
+            return .portrait
+        case .portraitUpsideDown:
+            return .portraitUpsideDown
+        case .landscapeLeft:
+            return .landscapeRight // Note: This is flipped because when the device is landscapeLeft, the home button is on the right.
+        case .landscapeRight:
+            return .landscapeLeft // Note: This is flipped because when the device is landscapeRight, the home button is on the left.
+        default:
+            return .portrait
+        }
     }
     
     func findBestFormat(for device: AVCaptureDevice, frameRate: Int32) -> AVCaptureDevice.Format? {
@@ -688,6 +828,7 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
         if self.recordedURLs.count == 1 {
             self.previewURL = finalOutputURL
             updateUIAfterRecording()  // Call here to ensure the UI updates
+            updateCameraProcessStatus(.ready)
             return
         }
         
@@ -708,12 +849,14 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     func mergeVideos(assets: [AVURLAsset]) {
         Task.init {
             do {
+                self.updateCameraProcessStatus(.processing)
                 let exporter = try await mergeVideosProcess(assets: assets)
                 let finalURL = try await exportVideo(exporter: exporter)
                 
                 DispatchQueue.main.async {
                     self.previewURL = finalURL
                     self.updateUIAfterRecording()  // Update UI after successful export
+                    self.updateCameraProcessStatus(.ready)
                 }
             } catch {
                 // Handle error
@@ -754,6 +897,7 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     func mergeVideosProcess(assets: [AVURLAsset]) async throws -> AVAssetExportSession {
         let composition = AVMutableComposition()
         var lastTime: CMTime = .zero
+        let targetFrameRate: Float64 = 60.0  // Targeting 60 FPS
         
         guard let videoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: Int32(kCMPersistentTrackID_Invalid)) else {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create video track"])
@@ -769,25 +913,21 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
                 let audioTracks = try await asset.loadTracks(withMediaType: .audio)
                 let duration = try await asset.load(.duration)
                 
-                guard !videoTracks.isEmpty else {
-                    throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No video tracks found in asset at \(asset.url.absoluteString)"])
+                guard let videoAssetTrack = videoTracks.first else {
+                    continue
                 }
-
-                // Directly use the time range without scaling
+                
+                // Check the asset's nominal frame rate
+                let nominalFrameRate: Float = try await videoAssetTrack.load(.nominalFrameRate)
+                if Double(nominalFrameRate) < targetFrameRate {
+                    print("Warning: Asset frame rate is lower than 60 fps (\(nominalFrameRate) fps). Adjusting...")
+                }
+                
                 let timeRange = CMTimeRange(start: .zero, duration: duration)
-                
-                try videoTrack.insertTimeRange(timeRange, of: videoTracks[0], at: lastTime)
-                print("Inserted video track at time: \(CMTimeGetSeconds(lastTime))")
-                
-                // Safe Check if Video has Audio
-                if !audioTracks.isEmpty {
-                    try audioTrack.insertTimeRange(timeRange, of: audioTracks[0], at: lastTime)
-                    print("Inserted audio track at time: \(CMTimeGetSeconds(lastTime))")
-                } else {
-                    print("No audio tracks found for this asset.")
+                try videoTrack.insertTimeRange(timeRange, of: videoAssetTrack, at: lastTime)
+                if let audioAssetTrack = audioTracks.first {
+                    try audioTrack.insertTimeRange(timeRange, of: audioAssetTrack, at: lastTime)
                 }
-                
-                // Update last time to keep track of the total duration
                 lastTime = CMTimeAdd(lastTime, duration)
             } catch {
                 print("Error processing asset: \(asset.url), error: \(error.localizedDescription)")
@@ -795,29 +935,21 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
             }
         }
         
-        // Ensure the composition has content before proceeding
-        guard composition.tracks.count > 0 else {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No valid tracks found in the composition."])
-        }
+        // Temp Output URL
+        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory() + "Lume-\(UUID().uuidString).mp4")
         
-        // MARK: Temp Output URL
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory() + "Lume-\(Date()).mp4")
-        
-        // Create a video composition to apply the rotation
-        let videoComposition = AVMutableVideoComposition()
-        
-        // Rotate the frame by 90 degrees
-        let videoSize = videoTrack.naturalSize
-        videoComposition.renderSize = CGSize(width: videoSize.height, height: videoSize.width)
-        videoComposition.frameDuration = CMTime(value: 1, timescale: 30)
+        // Create a video composition to enforce 60 FPS and apply the rotation
+        let videoComposition = AVMutableVideoComposition(propertiesOf: composition)
+        videoComposition.renderSize = CGSize(width: videoTrack.naturalSize.height, height: videoTrack.naturalSize.width)
+        videoComposition.frameDuration = CMTime(value: 1, timescale: CMTimeScale(targetFrameRate))
         
         let instruction = AVMutableVideoCompositionInstruction()
         instruction.timeRange = CMTimeRange(start: .zero, duration: lastTime)
         
         let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
         
-        // Apply 90-degree rotation at the center without translating
-        let rotationTransform = CGAffineTransform(translationX: videoSize.height, y: 0)
+        // Apply rotation transform for 90 degrees clockwise with origin at the center
+        let rotationTransform = CGAffineTransform(translationX: videoTrack.naturalSize.height, y: 0)
             .rotated(by: .pi / 2)
         
         layerInstruction.setTransform(rotationTransform, at: .zero)
@@ -825,19 +957,22 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
         instruction.layerInstructions = [layerInstruction]
         videoComposition.instructions = [instruction]
         
-        // Create an export session
+        // Create an export session with enforced 60 FPS
         guard let exporter = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetHighestQuality) else {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create AVAssetExportSession"])
         }
         
-        exporter.outputFileType = .mov
+        exporter.outputFileType = .mp4
         exporter.outputURL = tempURL
         exporter.videoComposition = videoComposition
+        
+        // Set the expected frame rate for the export
+        exporter.videoComposition = videoComposition
+        exporter.timeRange = CMTimeRange(start: .zero, duration: lastTime)
         
         return exporter
     }
 
-    
     func removeLastVideo() {
         // Check if there is more than one video recorded
         guard recordedURLs.count > 1 else { return }
@@ -858,13 +993,7 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
                 let finalURL = try await exportVideo(exporter: exporter)
                 
                 DispatchQueue.main.async {
-                    if let unwrappedPreviewURL = self.previewURL {
-                        print("\(unwrappedPreviewURL) : \(finalURL)")
-                        self.previewURL = unwrappedPreviewURL
-                    } else {
-                        print("\(finalURL) : nil")
-                        self.previewURL = finalURL
-                    }
+                    self.previewURL = finalURL
                     
                     // Update the total duration of the final merged video
                     let asset = AVURLAsset(url: finalURL)
@@ -900,6 +1029,7 @@ extension CameraViewController {
     @objc func handleDoubleTapToFlip(_ gesture: UITapGestureRecognizer) {
         currentZoomFactor = 1.0
         currentCameraPosition = (currentCameraPosition == .back) ? .front : .back
+        delegate?.didToggleCameraPosition(currentCameraPosition)
     }
 }
 
@@ -1050,31 +1180,30 @@ extension CameraViewController {
             if captureSession.canAddInput(newInput) {
                 captureSession.addInput(newInput)
                 self.currentDevice = device
+                
+                // Configure the video device to use 60 FPS if supported
+                try device.lockForConfiguration()
+                if let bestFormat = self.findBestFormat(for: device, frameRate: 60) {
+                    device.activeFormat = bestFormat
+                    device.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+                    device.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+                } else {
+                    print("60 FPS is not supported on this device.")
+                }
+                device.unlockForConfiguration()
             }
-            
-//            do {
-//                try currentDevice.lockForConfiguration()
-//                
-//                // Find a format that supports 60 FPS
-//                let supportedFormats = currentDevice.formats.filter { format in
-//                    format.videoSupportedFrameRateRanges.contains { range in
-//                        range.maxFrameRate >= 60
-//                    }
-//                }
-//                
-//                if let bestFormat = supportedFormats.first {
-//                    currentDevice.activeFormat = bestFormat
-//                    currentDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
-//                    currentDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+//            
+//            // Re-add the audio input if it was removed
+//            if let audioDevice = AVCaptureDevice.default(for: .audio) {
+//                let audioInput = try AVCaptureDeviceInput(device: audioDevice)
+//                if captureSession.canAddInput(audioInput) {
+//                    captureSession.addInput(audioInput)
+//                    print("Audio input re-added successfully after camera switch.")
 //                } else {
-//                    print("60 FPS is not supported on this device.")
+//                    print("Failed to re-add audio input after camera switch.")
 //                }
-//                
-//                currentDevice.unlockForConfiguration()
-//            } catch {
-//                print("Error setting frame duration: \(error.localizedDescription)")
 //            }
-            
+//            
             // Commit the configuration to apply changes
             captureSession.commitConfiguration()
             

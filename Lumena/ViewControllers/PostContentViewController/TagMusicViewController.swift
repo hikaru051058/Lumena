@@ -68,6 +68,15 @@ class MusicListViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Pause any music that is currently playing
+        if let lastTaggedTrack = lastTaggedTrack, lastTaggedTrack.isPlaying {
+            lastTaggedTrack.stopAudio()
+        }
+    }
+    
     private func setupNavigationBar() {
         navigationItem.title = "音楽"
         

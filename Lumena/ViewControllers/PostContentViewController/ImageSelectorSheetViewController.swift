@@ -8,7 +8,14 @@
 import UIKit
 import Photos
 
+protocol ImageSelectorSheetViewControllerDelegate: AnyObject {
+    func didAddSelectedAsset(_ asset: LumeContent)
+    func didRemoveSelectedAsset(_ asset: LumeContent)
+}
+
 class ImageSelectorSheetViewController: UIViewController {
+    
+    weak var delegate: ImageSelectorSheetViewControllerDelegate?
     
     private var verticalImageScrollView: VerticalScrollPhotoLibraryViewController!
     private var horizontalImageScrollView: HorizontalScrollPhotoLibraryViewController!
@@ -16,23 +23,48 @@ class ImageSelectorSheetViewController: UIViewController {
     private var horizontalScrollViewHeightConstraint: NSLayoutConstraint!
     private var horizontalScrollViewInitialHeight: CGFloat = 0.0
     
+    private var doneButton: UIBarButtonItem!
+    
     // Array to hold selected PHAssets
-    private var selectedAssets: [PHAsset] = []
+    private var selectedAssets: [PHAsset] = [] {
+        didSet {
+            updateNavigationBarButtonLabel()
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
         setupUI()
+        setupNavigationBar()
     }
     
     private func setupUI() {
         setupHorizontalImageScrollView()
         setupVerticalImageScrollView()
+    }
+}
+
+extension ImageSelectorSheetViewController {
+    
+    private func setupNavigationBar() {
+        doneButton = UIBarButtonItem(title: "Close", style: .done, target: self, action: #selector(doneButtonTapped))
+        doneButton.tintColor = .arinBlue
+        navigationItem.rightBarButtonItem = doneButton
+    }
+    
+    @objc private func doneButtonTapped() {
+        navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
+    private func updateNavigationBarButtonLabel() {
+        let buttonTitle = selectedAssets.isEmpty ? "Close" : "Done"
+        doneButton.title = buttonTitle
     }
 }
 
@@ -44,6 +76,11 @@ extension ImageSelectorSheetViewController {
             horizontalImageScrollView.updateWithSelectedImages(selectedAssets)
             
 //            verticalImageScrollView.updateCellForAsset(asset, setSelected: true)
+            
+            // Notify the delegate that an asset was added
+            if let lumeContent = convertPHAssetToLumeContent(asset) {
+                delegate?.didAddSelectedAsset(lumeContent)
+            }
             
             // If there are selected assets, set the height to full and hide the label
             horizontalScrollViewHeightConstraint.constant = view.frame.height * 0.3
@@ -62,6 +99,11 @@ extension ImageSelectorSheetViewController {
             
             verticalImageScrollView.updateCellForAsset(asset, setSelected: false)
             
+            // Notify the delegate that an asset was removed
+            if let lumeContent = convertPHAssetToLumeContent(asset) {
+                delegate?.didRemoveSelectedAsset(lumeContent)
+            }
+            
             // If there are no selected assets, shrink the height and show the label
             if selectedAssets.isEmpty {
                 horizontalScrollViewHeightConstraint.constant = view.frame.height * 0.15
@@ -72,6 +114,58 @@ extension ImageSelectorSheetViewController {
                 }
             }
         }
+    }
+}
+
+extension ImageSelectorSheetViewController {
+    
+    private func convertPHAssetToLumeContent(_ asset: PHAsset) -> LumeContent? {
+        let localIdentifier = asset.localIdentifier
+        
+        if asset.mediaType == .video {
+            guard let url = getVideoUrl(from: asset) else { return nil }
+            let player = AVPlayer(url: url)
+            let lumeVideo = LumeVideo(localIdentifier: localIdentifier, player: player)
+            lumeVideo.lumeVideoAuth = false
+            return .video(lumeVideo)
+        } else {
+            guard let image = getImage(from: asset) else { return nil }
+            let lumeImage = LumeImage(localIdentifier: localIdentifier, image: image)
+            lumeImage.lumeImageAuth = false
+            return .image(lumeImage)
+        }
+    }
+    
+    private func getVideoUrl(from asset: PHAsset) -> URL? {
+        let options = PHVideoRequestOptions()
+        options.isNetworkAccessAllowed = true
+        var videoUrl: URL?
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        PHImageManager.default().requestAVAsset(forVideo: asset, options: options) { avAsset, _, _ in
+            if let urlAsset = avAsset as? AVURLAsset {
+                videoUrl = urlAsset.url
+            }
+            semaphore.signal()
+        }
+        
+        semaphore.wait()
+        return videoUrl
+    }
+    
+    private func getImage(from asset: PHAsset) -> UIImage? {
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+        options.isNetworkAccessAllowed = true
+        
+        var image: UIImage?
+        let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+        
+        PHImageManager.default().requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: options) { result, _ in
+            image = result
+        }
+        
+        return image
     }
 }
 
@@ -92,7 +186,7 @@ extension ImageSelectorSheetViewController {
         NSLayoutConstraint.activate([
             horizontalImageScrollView.view.widthAnchor.constraint(equalTo: view.widthAnchor),
             horizontalImageScrollView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            horizontalImageScrollView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: (view.frame.height * 0.025)),
+            horizontalImageScrollView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),//, constant: (view.frame.height * 0.025)),
             horizontalScrollViewHeightConstraint // Activate the height constraint
         ])
         
@@ -198,10 +292,10 @@ class VerticalScrollPhotoLibraryViewController: UIViewController, UICollectionVi
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        navigationController?.setNavigationBarHidden(true, animated: animated)
+//    }
 
     // Initialize the fetch result with all the assets, but do not fetch them all at once
     func initializeFetchResult() {
@@ -556,10 +650,10 @@ class HorizontalScrollPhotoLibraryViewController: UIViewController, UICollection
         ])
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        navigationController?.setNavigationBarHidden(true, animated: animated)
+//    }
     
     private func setupNoImageSelectedLabel() {
         noImageSelectedLabel = UILabel()

@@ -263,7 +263,13 @@ struct ProfileReelsPlayer: View {
             if !reel.contents.isEmpty {
                 
                 TabView(selection: $reel.currentContent) {
-                    ForEach(reel.contents) { content in
+                    ForEach(reel.contents.filter { content in
+                        // Only include video and image content, exclude text content
+                        if case .text(_) = content {
+                            return false
+                        }
+                        return true
+                    }) { content in
                         switch content {
                         case LumeContent.video(let reelVideo):
                             CustomVideoPlayer(player: reelVideo.player!)
@@ -283,10 +289,13 @@ struct ProfileReelsPlayer: View {
                                     LoadingSpinner()
                                 }
                             }
+                            .tag(reelImage.id)
+                            
+                        default:
+                            EmptyView() // In case new content types are added in the future
                         }
                     }
                 }
-                //.tabViewStyle(PageTabViewStyle())
                 .tabViewStyle(.page(indexDisplayMode: .automatic))
                 .onDisappear{
                     reelLocation = reel.id

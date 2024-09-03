@@ -11,16 +11,29 @@ import SwiftUI
 import AVFAudio
 import AVFoundation
 
-
 //create audioplayer for each tracks
 class Track: ObservableObject, Equatable, Identifiable {
     var id: String { uri }
-    let trackID: String
+    var trackID: String {
+        didSet {
+            Task {
+                self.previewUrl = await LumeAudioPlayer.shared.getTrackByID(id: self.trackID)
+                let _ = await self.initializeAudioPlayer()
+            }
+        }
+    }
     let artistName: String
     let trackName: String
-    let previewUrl: URL?
+    var previewUrl: URL?
     var image: UIImage?
-    let uri: String
+    var uri: String {
+        didSet {
+            Task {
+                self.previewUrl = await LumeAudioPlayer.shared.getTrackByID(id: self.uri)
+                let _ = await self.initializeAudioPlayer()
+            }
+        }
+    }
     
     //for selecting tagging range of the music
     var tagMusicRange: ClosedRange<Float> = 0...30
@@ -34,7 +47,6 @@ class Track: ObservableObject, Equatable, Identifiable {
     }
     
     private var playbackTimer: Timer?
-    
     
     static func == (lhs: Track, rhs: Track) -> Bool {
         return lhs.uri == rhs.uri
@@ -215,6 +227,30 @@ class Track: ObservableObject, Equatable, Identifiable {
         }
     }
     
+    func initializeAudioPlayer() async -> Bool {
+        if self.audioPlayer == nil {
+            print("AudioPlayer for \(trackName) needs to be initialized")
+            
+            if let previewURL = previewUrl {
+                do {
+                    if let url = try await downloadFileFromURL(url: previewURL) {
+                        let player = try AVAudioPlayer(contentsOf: url)
+                        self.audioPlayer = player
+                        return true
+                    }
+                } catch {
+                    print("Error initializing AVAudioPlayer for \(trackName): \(error.localizedDescription)")
+                    return false
+                }
+            } else {
+                print("Error initializing AVAudioPlayer for \(trackName): No Preview URL available.")
+                return false
+            }
+        }
+        
+        return true
+    }
+    
     
     // Tagging music
     // Use two Floats to define the range
@@ -237,9 +273,7 @@ class Track: ObservableObject, Equatable, Identifiable {
         tagMusicRange = range
     }
     
-    
     // Sub Functions
-    
     func downloadFileFromURL(url: URL, completion: @escaping (URL?) -> Void){
         let downloadTask = URLSession.shared.downloadTask(with: url) { customURL, response, error in
             if let error = error {
@@ -252,8 +286,22 @@ class Track: ObservableObject, Equatable, Identifiable {
         downloadTask.resume()
     }
     
+    func downloadFileFromURL(url: URL) async throws -> URL? {
+        do {
+            let (fileURL, _) = try await URLSession.shared.download(from: url)
+            return fileURL
+        } catch {
+            print("Error downloading file: \(error)")
+            throw error
+        }
+    }
+    
     private func mute(mute: Bool = false) {
         self.audioPlayer?.volume = mute ? 0.0 : 1.0
+    }
+    
+    func hasMusic() -> Bool {
+        return self.trackID != ""
     }
 }
 

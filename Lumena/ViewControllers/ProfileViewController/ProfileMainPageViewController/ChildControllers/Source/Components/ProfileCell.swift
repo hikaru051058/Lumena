@@ -5,14 +5,17 @@
 //
 
 import UIKit
+import AVKit
 
 class ProfileCell: UICollectionViewCell {
 
     // MARK: UI Properties
 
     private let imageView = ImageView()
+    private var playerLayer: AVPlayerLayer?
+    private var player: AVPlayer?
     
-    var thumbnailURL: URL? // Add this property
+    var thumbnailURL: URL?
     var fitOrFill: UIView.ContentMode = .scaleAspectFill
     var heightScale: CGFloat = 0.0
 
@@ -30,33 +33,162 @@ class ProfileCell: UICollectionViewCell {
     // MARK: Data
 
     func setup(with lume: Lume) {
+        // Stop any previous video playback
+        stopVideoPlayback()
         
-//        imageView.setImage(from: lume.getThumbnailURL()!)  <- use this function which will return either image url or video url
-        
-        Task {
-            if let thumbnail = await lume.getThumbnailImage() {
-                
-                var thumbnailAspectRatio: CGSize
-                if thumbnail.size.width > thumbnail.size.height {
-                    thumbnailAspectRatio = thumbnail.size
-                    thumbnailAspectRatio.width = thumbnailAspectRatio.width
-                    thumbnailAspectRatio.height = thumbnailAspectRatio.height
-                } else {
-                    thumbnailAspectRatio = UIScreen.main.bounds.size
-                }
-                
-                let croppedThumbnail = cropImage(thumbnail, to: thumbnailAspectRatio)
-                if let tempURL = saveImageToTemporaryDirectory(image: croppedThumbnail) {
-                    thumbnailURL = tempURL
-                    imageView.setImage(from: tempURL)
+        DispatchQueue.main.async { [self] in
+            if let firstContent = lume.contents.first {
+                switch firstContent {
+                case .image(let lumeImage):
+                    // Fetch and display the image thumbnail
+                    Task {
+                        if let thumbnail = await lume.getThumbnailImage() {
+                            
+                            var thumbnailAspectRatio: CGSize
+                            if thumbnail.size.width > thumbnail.size.height {
+                                thumbnailAspectRatio = thumbnail.size
+                                thumbnailAspectRatio.width = thumbnailAspectRatio.width
+                                thumbnailAspectRatio.height = thumbnailAspectRatio.height
+                            } else {
+                                thumbnailAspectRatio = UIScreen.main.bounds.size
+                            }
+                            
+                            let croppedThumbnail = cropImage(thumbnail, to: thumbnailAspectRatio)
+                            if let tempURL = saveImageToTemporaryDirectory(image: croppedThumbnail) {
+                                thumbnailURL = tempURL
+                                imageView.setImage(from: tempURL)
+                            }
+                        }
+                    }
+                    
+                case .video(let lumeVideo):
+                    // Setup and play the video in the cell
+                    if let videoURL = lumeVideo.getVideoURL() {
+                        setupVideoPlayer(with: videoURL)
+                    } else {
+                        print("Failed to retrieve video URL.")
+                    }
+                    
+                    var thumbnail: UIImage = UIImage()
+                    
+                    if let asset = player?.currentItem,
+                        let newThumbnail = generateThumbnail(asset: asset.asset) {
+                        thumbnail = newThumbnail
+                    }
+                    
+                    var thumbnailAspectRatio: CGSize
+                    if thumbnail.size.width > thumbnail.size.height {
+                        thumbnailAspectRatio = thumbnail.size
+                        thumbnailAspectRatio.width = thumbnailAspectRatio.width
+                        thumbnailAspectRatio.height = thumbnailAspectRatio.height
+                    } else {
+                        thumbnailAspectRatio = UIScreen.main.bounds.size
+                    }
+                    
+                    let croppedThumbnail = cropImage(thumbnail, to: thumbnailAspectRatio)
+                    if let tempURL = saveImageToTemporaryDirectory(image: croppedThumbnail) {
+                        thumbnailURL = tempURL
+                        imageView.setImage(from: tempURL)
+                    }
+                    
+                case .text(let lumeText):
+                    // Generate and display a text thumbnail
+                    imageView.image = generateTextThumbnail(from: lumeText)
+                    
                 }
             } else {
-                // Handle case where thumbnail generation fails
+                // Handle case where there's no content
                 if let placeholderURL = Bundle.main.url(forResource: "placeholder", withExtension: "jpg") {
                     imageView.setImage(from: placeholderURL)
                 }
             }
         }
+    }
+    
+    private func generateThumbnail(asset: AVAsset) -> UIImage? {
+        
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+
+        do {
+            let thumbnailImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 60), actualTime: nil)
+            return UIImage(cgImage: thumbnailImage)
+        } catch let error {
+            print(error)
+        }
+
+        return nil
+    }
+
+    private func setupVideoPlayer(with url: URL) {
+        // Setup the video player
+        player = AVPlayer(url: url)
+        player?.isMuted = true
+        
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer?.frame = imageView.bounds
+        playerLayer?.videoGravity = .resizeAspectFill
+        imageView.layer.addSublayer(playerLayer!)
+        
+        // Play the video after a brief delay to ensure the UI is updated
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
+            self.player?.play()
+            
+            var thumbnail: UIImage = UIImage()
+            
+            if let asset = player?.currentItem,
+                let newThumbnail = generateThumbnail(asset: asset.asset) {
+                thumbnail = newThumbnail
+            }
+            
+            var thumbnailAspectRatio: CGSize
+            if thumbnail.size.width > thumbnail.size.height {
+                thumbnailAspectRatio = thumbnail.size
+                thumbnailAspectRatio.width = thumbnailAspectRatio.width
+                thumbnailAspectRatio.height = thumbnailAspectRatio.height
+            } else {
+                thumbnailAspectRatio = UIScreen.main.bounds.size
+            }
+            
+            let croppedThumbnail = cropImage(thumbnail, to: thumbnailAspectRatio)
+            if let tempURL = saveImageToTemporaryDirectory(image: croppedThumbnail) {
+                thumbnailURL = tempURL
+                imageView.setImage(from: tempURL)
+            }
+        }
+    }
+
+    private func stopVideoPlayback() {
+        player?.pause()
+        playerLayer?.removeFromSuperlayer()
+        player = nil
+        playerLayer = nil
+    }
+
+    private func generateTextThumbnail(from text: String) -> UIImage? {
+        // Create a thumbnail image with the text content
+        let size = CGSize(width: 300, height: 300)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        
+        defer { UIGraphicsEndImageContext() }
+        
+        UIColor(named: "arinBlue")?.setFill()
+        UIRectFill(CGRect(origin: .zero, size: size))
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+            .foregroundColor: UIColor.white,
+            .paragraphStyle: paragraphStyle
+        ]
+        
+        let textRect = CGRect(x: 10, y: 10, width: size.width - 20, height: size.height - 20)
+        let attributedText = NSAttributedString(string: text, attributes: attributes)
+        
+        attributedText.draw(in: textRect)
+        
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
 
     private func cropImage(_ image: UIImage, to size: CGSize) -> UIImage {
@@ -110,6 +242,7 @@ extension ProfileCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        stopVideoPlayback() // Stop video playback and reset the player
         thumbnailURL = nil
     }
 }

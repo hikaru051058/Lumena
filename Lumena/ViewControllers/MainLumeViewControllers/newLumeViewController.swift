@@ -86,9 +86,11 @@ class newLumeHorizontalViewController: ButtonBarPagerTabStripViewController {
         super.moveToViewController(at: index, animated: animated)
         
         if let verticalVC = pageViewControllers[index] as? newLumeVerticalViewController {
+            verticalVC.delegate = self // added here
             verticalVC.toggleMuteInVertical(self.isMuted)
         }
     }
+
     
     @objc private func authSuccessHandler(notification: Notification) {
         DispatchQueue.main.async {
@@ -332,6 +334,16 @@ class newLumeVerticalViewController: UIViewController, UICollectionViewDataSourc
     
     private func loadInitialData() async {
         await loadInitialLumes()
+    }
+    
+    func scrollToLume(at index: Int) {
+        let indexPath = IndexPath(item: index, section: 0)
+        collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
+    }
+    
+    func getCurrentVisibleIndexPath() -> IndexPath? {
+        let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+        return visibleIndexPaths.sorted().first // Return the first visible item
     }
     
     // MARK: - UICollectionViewDataSource
@@ -594,6 +606,7 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .black
         collectionView.isPagingEnabled = true
+        collectionView.bounces = false
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
@@ -637,6 +650,8 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
+        lume?.stopAudio()
         
         // Remove the previous side buttons view controller's view if it exists
         sideButtonsViewController?.view.removeFromSuperview()
@@ -695,7 +710,7 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
     
     private func applyMuteState() {
         if let lume = self.lume {
-            if lume.voiceOverURL.isEmpty { // assume all videos are already muted at the appear
+            if lume.voiceOverURL.isEmpty && lume.tagMusic.trackID == "" { // assume all videos are already muted at the appear
                 for cell in contentCollectionView.visibleCells {
                     if let contentCell = cell as? LumeContentCell, contentCell.isVideoContent {
                         contentCell.setMute(isMuted: isMuted)
@@ -723,11 +738,17 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
         DispatchQueue.main.async { [self] in
             Task {
                 do {
-                    //                    let mockLume = try await GraphQL.shared.fetchSingleReelQL(reelQLId: modelID)
                     let mockLume = try await LumeManager.shared.getLume(withID: modelID)
                     self.lume = mockLume
-                    self.contentData = mockLume.contents
+
+                    // Check if textBaseContent exists
+                    if !mockLume.textBaseContent.isEmpty {
+                        contentData.append(.text(mockLume.textBaseContent))
+                    }
+
+                    self.contentData.append(contentsOf: mockLume.contents)
                     self.pageControl.numberOfPages = contentData.count
+                    
                     contentCollectionView.reloadData()
                     setupSideButtonsViewController()
                     setupBottomButtonsViewController()
@@ -742,20 +763,24 @@ class newLumeIndividualViewCell: UICollectionViewCell, UICollectionViewDataSourc
         // Store the original mute state
         originalMuteState = isMuted
         lume?.mute(mute: isMuted)
-        applyMuteState()
         
         // Temporarily mute if a voice-over exists
         if lume?.voiceOver.hasRecording == true {
             isMuted = true
         }
-
+        if ((lume?.musicTag) != nil) {
+            isMuted = true
+        }
+        
+        applyMuteState()
+        
         playVisibleVideo()
         lume?.playAudio(repeatAudio: true)
     }
 
     func onDisappear() {
-        pauseAllVideos()
         lume?.stopAudio()
+        pauseAllVideos()
     }
     
     // MARK: - UICollectionViewDataSource
@@ -976,6 +1001,14 @@ class LumeContentCell: UICollectionViewCell {
         return imageView
     }()
     
+    private let textLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+    
     private var videoPlayerView: VideoPlayerView? // Custom view to handle video playback
     private var spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
@@ -995,6 +1028,10 @@ class LumeContentCell: UICollectionViewCell {
         contentImageView.frame = contentView.bounds
         spinner.center = contentView.center
         
+        contentView.addSubview(textLabel)
+        textLabel.frame = contentView.bounds
+        textLabel.isHidden = true
+        
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
         contentView.addGestureRecognizer(pinchGesture)
     }
@@ -1006,6 +1043,8 @@ class LumeContentCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         contentImageView.image = nil
+        textLabel.text = nil
+        textLabel.isHidden = true
         videoPlayerView?.removeFromSuperview()
         videoPlayerView = nil
         isVideoContent = false
@@ -1015,12 +1054,22 @@ class LumeContentCell: UICollectionViewCell {
         switch content {
         case .image(let imageContent):
             contentImageView.isHidden = false
+            textLabel.isHidden = true
             isVideoContent = false
             setupImageContentView(with: imageContent)
+            
         case .video(let videoContent):
             contentImageView.isHidden = true
+            textLabel.isHidden = true
             setupVideoPlayer(with: videoContent, isMuted: isMuted)
             isVideoContent = true
+            
+        case .text(let textContent):
+            contentImageView.isHidden = true
+            textLabel.isHidden = false
+            textLabel.text = textContent
+            contentView.backgroundColor = UIColor(named: "arinBlue")
+            // Additional configuration for text, like making it scrollable if too long
         }
     }
     
@@ -1114,6 +1163,7 @@ class LumeContentCell: UICollectionViewCell {
         videoPlayerView?.setMute(isMuted: isMuted)
     }
 }
+
 
 class VideoPlayerView: UIView {
     

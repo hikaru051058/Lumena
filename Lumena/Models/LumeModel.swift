@@ -62,14 +62,15 @@ class VideoThumbnailGeneratorManager: ACThumbnailGeneratorDelegate {
 }
 
 class LumeVideo: Identifiable {
-    
     let id = UUID()
+    var localIdentifier: String = ""
     var player: AVPlayer?
     var url: URL?
     var thumbnail: UIImage?
     var lumeVideoAuth: Bool = false
     
-    init(player: AVPlayer? = nil, url: URL? = nil, lumeAuth: Bool = false) {
+    init(localIdentifier: String = "", player: AVPlayer? = nil, url: URL? = nil, lumeAuth: Bool = false) {
+        self.localIdentifier = localIdentifier
         self.player = player
         self.url = url
         if let url = url {
@@ -93,12 +94,21 @@ class LumeVideo: Identifiable {
         }
     }
     
-    func generateThumbnailAsync() async -> UIImage? {
-        await withCheckedContinuation { continuation in
-            generateThumbnail { image in
-                continuation.resume(returning: image)
-            }
+    func generateThumbnail() -> UIImage? {
+        guard let url = self.url else {
+            return nil
         }
+        let asset: AVAsset = AVAsset(url: url)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+
+        do {
+            let thumbnailImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 60), actualTime: nil)
+            return UIImage(cgImage: thumbnailImage)
+        } catch let error {
+            print(error)
+        }
+
+        return nil
     }
     
     func seekVideo(to progress: CGFloat) {
@@ -269,6 +279,7 @@ class LumeVideo: Identifiable {
 
 class LumeImage: Identifiable, ObservableObject {
     let id = UUID()
+    var localIdentifier: String = ""
     @Published var image: UIImage?
     private var cancellable: AnyCancellable?
     var url: URL?
@@ -279,7 +290,8 @@ class LumeImage: Identifiable, ObservableObject {
         loadImage()
     }
     
-    init(image: UIImage, url: URL? = nil, lumeAuth: Bool = false) {
+    init(localIdentifier: String = "", image: UIImage, url: URL? = nil, lumeAuth: Bool = false) {
+        self.localIdentifier = localIdentifier
         self.image = image
         self.url = url
         self.lumeImageAuth = lumeAuth
@@ -415,25 +427,54 @@ class LumeImage: Identifiable, ObservableObject {
 enum LumeContent: Identifiable {
     case video(LumeVideo)
     case image(LumeImage)
-    
+    case text(String) // New case for text content
+
     var id: UUID {
         switch self {
         case .video(let lumeVideo):
             return lumeVideo.id
         case .image(let lumeImage):
             return lumeImage.id
+        case .text:
+            return UUID() // Generate a unique ID for each text content
         }
     }
     
-    func lumeAuth(auth: Bool) {
+    var localIdentifier: String {
+        switch self {
+        case .video(let lumeVideo):
+            return lumeVideo.localIdentifier
+        case .image(let lumeImage):
+            return lumeImage.localIdentifier
+        case .text:
+            return UUID().uuidString // Provide a unique identifier for text content
+        }
+    }
+    
+    var isAuthentic: Bool {
+        switch self {
+        case .video(let lumeVideo):
+            return lumeVideo.lumeVideoAuth
+        case .image(let lumeImage):
+            return lumeImage.lumeImageAuth
+        case .text:
+            return true // Assume text is always authentic
+        }
+    }
+    
+    mutating func setAuthenticity(to auth: Bool) {
         switch self {
         case .video(let lumeVideo):
             lumeVideo.lumeVideoAuth = auth
         case .image(let lumeImage):
             lumeImage.lumeImageAuth = auth
+        case .text:
+            break // No need to set authenticity for text
         }
     }
 }
+
+
 
 class LumesWrapper: ObservableObject {
     @Published var Lumes: [Lume] = []
@@ -650,10 +691,12 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             self.lumeAuth = checkAuth()
             Task {
                 self.longestDuration = await checkLongestVideoDuration()
-                print(longestDuration)
+                print("longestDuration: \(longestDuration)")
             }
         }
     }
+    
+    var textBaseContent: String = ""
     
     var currentContent: UUID = UUID()
     var previousContent: UUID = UUID()
@@ -678,7 +721,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     
     init() {}
     
-    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], voiceOverURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [LumeContent] = [], currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
+    init(id: UUID = UUID(), postID: String = "", postUserIID: String = "", postURL: [String] = [], voiceOverURL: [String] = [], likedUsers: [String] = [], postDescription: String = "", userComments: [Comment] = [], tagProducts: [TagCosmetic] = [], tagMusic: Track = Track(), userLiked: Bool = false, likeCnt: Int = 0, contents: [LumeContent] = [], textBaseContent: String = "", currentContent: UUID = UUID(), userAlgoStruct: userAlgorithm = userAlgorithm(), timestamp: Date = Date(), zipURL: String = "", lumeAuth: Bool = false) {
         
         if let postUUID = UUID(uuidString: postID) {
             self.id = postUUID
@@ -698,6 +741,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         self.tagMusic = tagMusic
         self.userLiked = userLiked
         self.contents = contents
+        self.textBaseContent = textBaseContent
         
         // Set currentContent to the UUID of the first item in contents if it's not empty
         if let firstContent = contents.first {
@@ -730,6 +774,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             self.tagMusic = lume.tagMusic
             self.userLiked = lume.userLiked
             self.contents = lume.contents
+            self.textBaseContent = lume.textBaseContent
             self.currentContent = lume.currentContent
             self.previousContent = lume.previousContent
             self.thumbnail = lume.thumbnail
@@ -742,7 +787,11 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     convenience init(ql: LumeQL, autoDownload: Bool = true) {
         let postID = UUID(uuidString: ql.id) ?? UUID()
         let tagProducts = ql.tagProducts?.compactMap {TagCosmetic(ql: $0)} ?? []
-        let tagMusic = Track(trackID: ql.tagMusic?.trackID ?? "")
+        
+        var tagMusic = Track()
+        if let qlTagMusicQL = ql.tagMusic {
+            tagMusic = Track(ql: qlTagMusicQL)
+        }
         let postDescription = ql.description ?? ""
         
         // Handle optional timestamp
@@ -776,6 +825,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             userLiked: userLiked,
             likeCnt: likeCnt,
             contents: [],
+            textBaseContent: ql.textBaseContent ?? "",
             currentContent: UUID(),
             userAlgoStruct: userAlgorithm(),
             timestamp: timestamp,
@@ -855,10 +905,10 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             description: self.postDescription,
             userprofileqlID: self.postUserIID,
             lumeAuth: self.lumeAuth,
-            voiceOverURL: self.voiceOverURL
+            voiceOverURL: self.voiceOverURL,
+            textBaseContent: self.textBaseContent
         )
     }
-    
     
     //download process
     func fetchAndProcessLume(completion: @escaping (fetchAndProcessReelResult) -> Void) {
@@ -901,7 +951,14 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             case .image(let lumeImage):
                 currentContent = lumeImage.id
                 previousContent = lumeImage.id
+            case .text:
+                currentContent = UUID() // Assign a new unique ID for the text content
+                previousContent = currentContent // Since it's the first content, set both current and previous to the same
             }
+        }
+        
+        if self.tagMusic.trackID != "" {
+            muteVideos()
         }
         
         completion(.success(self))
@@ -949,13 +1006,17 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                     }
                     
                     switch content {
-                    case .video(let reelVideo):
-                        let videoName = try await handleVideoUpload(video: reelVideo, index: index, ReelLocationS3: ReelLocationS3, progressUpdate: updateProgress)
-                        self.postURL.append("\(s3Prefix)\(videoName)")
-                        
-                    case .image(let reelImage):
-                        let imageName = try await handleImageUpload(image: reelImage, index: index, ReelLocationS3: ReelLocationS3, progressUpdate: updateProgress)
-                        self.postURL.append("\(s3Prefix)\(imageName)")
+                        case .video(let reelVideo):
+                            let videoName = try await handleVideoUpload(video: reelVideo, index: index, ReelLocationS3: ReelLocationS3, progressUpdate: updateProgress)
+                            self.postURL.append("\(s3Prefix)\(videoName)")
+                            
+                        case .image(let reelImage):
+                            let imageName = try await handleImageUpload(image: reelImage, index: index, ReelLocationS3: ReelLocationS3, progressUpdate: updateProgress)
+                            self.postURL.append("\(s3Prefix)\(imageName)")
+
+                    case .text(_):
+                            // Handle the text content
+                            break
                     }
                 }
                 
@@ -996,7 +1057,6 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         NotificationCenter.default.removeObserver(self)
     }
     
-
     func handleVideoUpload(video reelVideo: LumeVideo, index: Int, ReelLocationS3: String, progressUpdate: @escaping (Double) -> Void) async throws -> String {
         guard let asset = reelVideo.player?.currentItem?.asset else {
             fatalError("Video asset is unavailable.")
@@ -1102,16 +1162,23 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     }
     
     func playVideo(mute: Bool = false, seek: CMTime = CMTime.zero) {
-        
         self.stopVideo()
         
-        if let currentContentToPlay = self.contents.first(where: {$0.id == self.currentContent}){
+        // Check if the Lume has tagged music or recorded narration
+        var shouldMuteVideos = false
+        if self.tagMusic.trackID != "" {
+            shouldMuteVideos = true
+        } else if self.voiceOver.hasRecording {
+            shouldMuteVideos = true
+        }
+
+        // Mute or unmute videos based on the above conditions
+        if let currentContentToPlay = self.contents.first(where: { $0.id == self.currentContent }) {
             if case .video(let videoPlayer) = currentContentToPlay {
                 videoPlayer.player?.play()
                 videoPlayer.player?.seek(to: seek)
-                videoPlayer.player?.isMuted = mute
+                videoPlayer.mute(muteBool: shouldMuteVideos || mute)  // Mute if shouldMuteVideos is true or mute is true
             }
-            
             self.previousContent = self.currentContent
         }
     }
@@ -1137,6 +1204,8 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                 if lumeImage.lumeImageAuth == false {
                     return false
                 }
+            case .text(_):
+                return false
             }
         }
         return true
@@ -1151,13 +1220,14 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
                 do {
                     let duration = try await lumeVideo.getTotalDuration()
                     let totalSeconds = CMTimeGetSeconds(duration)
-                    if CGFloat(totalSeconds) > longestDuration {
-                        longestDuration = CGFloat(totalSeconds)
-                    }
+                    longestDuration = max( CGFloat(totalSeconds), longestDuration)
                 } catch {
                     print("Failed to get duration: \(error.localizedDescription)")
                 }
             case .image:
+                continue
+                
+            case .text(_):
                 continue
             }
         }
@@ -1171,13 +1241,29 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             DispatchQueue.main.async {
                 self.voiceOver.play(repeatAudio: repeatAudio)
             }
+            DispatchQueue.main.async { [self] in
+                Task {
+                    self.tagMusic.previewUrl = await LumeAudioPlayer.shared.getTrackByID(id: self.tagMusic.trackID)
+                    let _ = await self.tagMusic.initializeAudioPlayer()
+                    self.tagMusic.playAudio(from: 0.0, to: Float(self.longestDuration), repeat: repeatAudio)
+                }
+            }
+        } else {
+            DispatchQueue.main.async { [self] in
+                Task {
+                    self.tagMusic.previewUrl = await LumeAudioPlayer.shared.getTrackByID(id: self.tagMusic.trackID)
+                    let _ = await self.tagMusic.initializeAudioPlayer()
+                    self.tagMusic.playAudio(from: 0.0, to: Float(self.longestDuration), repeat: repeatAudio)
+                }
+            }
         }
-        self.tagMusic.playAudio(from: 0.0, to: Float(self.voiceOver.recordingDuration), repeat: repeatAudio)
     }
     
     func stopAudio() {
-        self.voiceOver.stop()
-        self.tagMusic.stopAudio()
+        DispatchQueue.main.async { [self] in
+            self.voiceOver.stop()
+            self.tagMusic.resetAudioPlayer()
+        }
     }
     
     private func setupVoiceOver() {
@@ -1186,7 +1272,6 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     }
     
     //like
-    
     private var lastConfirmedLiked: Bool?
     private var lastServerConfirmedLikeCount: Int = 0
     private var likeDebounceTimer: Timer?
@@ -1345,49 +1430,89 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
 extension Lume {
     
     func getThumbnailImage() async -> UIImage? {
-        guard let firstContent = contents.first else { return nil }
+        for content in contents {
+            switch content {
+            case .video(let reelVideo):
+                // Use the async method from LumeVideo class
+                if let videoThumbnail = reelVideo.generateThumbnail() {
+                    self.thumbnail = videoThumbnail
+                    return videoThumbnail
+                } else {
+                    return nil
+                }
 
-        switch firstContent {
-        case .video(let reelVideo):
-            // Use the async method from LumeVideo class
-            if let videoThumbnail = await reelVideo.generateThumbnailAsync() {
-                self.thumbnail = videoThumbnail
-                print("Thumbnail generated successfully.")
-                return videoThumbnail
-            } else {
-                // Handle the case where thumbnail generation failed
-                print("Failed to generate thumbnail.")
-                return nil
-            }
-
-        case .image(let reelImage):
-            // Directly return the image if available, otherwise fetch from URL
-            if let image = reelImage.image {
-                self.thumbnail = image
-                return image
-            } else if let url = reelImage.url {
-                // Use a static method or initializer from LumeImage class that fetches the image
-                let fetchedThumbnail = await reelImage.fetchThumbnail(from: url)
-                self.thumbnail = fetchedThumbnail
-                return fetchedThumbnail
-            } else {
-                return nil
+            case .image(let reelImage):
+                // Directly return the image if available, otherwise fetch from URL
+                if let image = reelImage.image {
+                    self.thumbnail = image
+                    return image
+                } else if let url = reelImage.url {
+                    // Use a static method or initializer from LumeImage class that fetches the image
+                    let fetchedThumbnail = await reelImage.fetchThumbnail(from: url)
+                    self.thumbnail = fetchedThumbnail
+                    return fetchedThumbnail
+                } else {
+                    return nil
+                }
+                
+            case .text(let lumeText):
+                // If this is the only content, generate a thumbnail from the text
+                if contents.count == 1 {
+                    return generateTextThumbnail(from: lumeText)
+                }
+                // Continue to the next content if more contents are available
             }
         }
+        return nil
+    }
+
+    private func generateTextThumbnail(from text: String) -> UIImage? {
+        // Create a thumbnail image with the text content, with arinBlue background
+        let size = CGSize(width: 300, height: 300)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        
+        defer { UIGraphicsEndImageContext() }
+        
+        UIColor(named: "arinBlue")?.setFill()
+        UIRectFill(CGRect(origin: .zero, size: size))
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+            .foregroundColor: UIColor.white,
+            .paragraphStyle: paragraphStyle
+        ]
+        
+        let textRect = CGRect(x: 10, y: 10, width: size.width - 20, height: size.height - 20)
+        let attributedText = NSAttributedString(string: text, attributes: attributes)
+        
+        attributedText.draw(in: textRect)
+        
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
     
     func getThumbnailURL() -> URL? {
-        guard let firstContent = contents.first else { return nil }
-        
-        switch firstContent {
-        case .video(let reelVideo):
-            // Use the method from LumeVideo class
-            return reelVideo.getVideoURL()
-            
-        case .image(let reelImage):
-            // Directly return the image if available, otherwise fetch from URL
-            return reelImage.getThumbnailURL()
+        for content in contents {
+            switch content {
+            case .video(let reelVideo):
+                // Use the method from LumeVideo class
+                return reelVideo.getVideoURL()
+                
+            case .image(let reelImage):
+                // Directly return the image URL if available
+                return reelImage.getThumbnailURL()
+                
+            case .text(_):
+                // If this is the only content, there's no URL for text, return nil
+                if contents.count == 1 {
+                    return nil
+                }
+                // Continue to the next content if more contents are available
+            }
         }
+        return nil
     }
     
     func loadThumbnailAsync() {
@@ -1412,8 +1537,6 @@ extension Lume {
         }
     }
 }
-
-
 
 enum LumeUploadError: Error {
     case exportFailed(Error)

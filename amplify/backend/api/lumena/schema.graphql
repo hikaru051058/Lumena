@@ -281,6 +281,7 @@ type LumeQL @model @auth(rules: [{allow: public}]) {
   zipURL: String
   lumeAuth: Boolean
   voiceOverURL: [String]
+  textBaseContent: String
 }
 
 type UserProfileQL @model @auth(rules: [{allow: public}]) {

@@ -12,31 +12,52 @@
       "AmplifyAppId": "dm4uqqonysgwi"
     }
   },
+  "analytics": {
+    "lumena": {
+      "providerPlugin": "awscloudformation",
+      "service": "Pinpoint",
+      "output": {
+        "appName": "lumena-lumenaenv",
+        "Region": "ap-northeast-1",
+        "Id": "42e2b31b9b9846a6a74a16cfde42e2ae"
+      },
+      "lastPushTimeStamp": "2024-08-20T20:36:47.855Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/analytics/pinpoint-cloudformation-template.json",
+        "logicalId": "analyticslumena"
+      }
+    }
+  },
   "api": {
     "lumena": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "output": {
         "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
             }
-          },
-          "additionalAuthenticationProviders": []
+          }
         },
         "GraphQLAPIIdOutput": "4uij5li7pbeh3dq4ymtlbfrqci",
         "GraphQLAPIEndpointOutput": "https://ebfby4orjbhadppkjjlbnyixey.appsync-api.ap-northeast-1.amazonaws.com/graphql",
-        "GraphQLAPIKeyOutput": "da2-lq6ynwrvu5hrrdga7mwfsn3nma"
+        "GraphQLAPIKeyOutput": "da2-tblnwf4xxvbhheysuv6kvzv6na"
       },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2024-08-20T20:36:47.920Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apilumena"
       },
-      "lastPushTimeStamp": "2024-04-22T13:46:31.503Z",
-      "lastPushDirHash": "yVHKAkp6Qk/HA4ECWC8ziuCVNoQ="
+      "lastPushDirHash": "cyJBVZgrM5IqdxppNpnCH+rQwcM="
     }
   },
   "auth": {
@@ -80,7 +101,46 @@
           "EMAIL"
         ]
       },
-      "lastPushTimeStamp": "2024-01-13T03:02:54.782Z"
+      "lastPushTimeStamp": "2024-07-17T14:22:37.745Z"
+    }
+  },
+  "notifications": {
+    "lumena": {
+      "Id": "42e2b31b9b9846a6a74a16cfde42e2ae",
+      "ResourceName": "lumena",
+      "Name": "lumena-lumenaenv",
+      "service": "Pinpoint",
+      "output": {
+        "Id": "42e2b31b9b9846a6a74a16cfde42e2ae",
+        "Name": "lumena-lumenaenv",
+        "Region": "ap-northeast-1",
+        "APNS": {
+          "ApplicationId": "42e2b31b9b9846a6a74a16cfde42e2ae",
+          "CreationDate": "2024-04-24T05:54:33.268Z",
+          "DefaultAuthenticationMethod": "Key",
+          "Enabled": true,
+          "HasCredential": false,
+          "HasTokenKey": true,
+          "Id": "apns",
+          "IsArchived": false,
+          "LastModifiedDate": "2024-04-24T05:54:33.268Z",
+          "Platform": "APNS",
+          "Version": 1
+        },
+        "FCM": {
+          "ApplicationId": "42e2b31b9b9846a6a74a16cfde42e2ae",
+          "CreationDate": "2024-04-24T05:55:00.535Z",
+          "Enabled": true,
+          "HasCredential": true,
+          "HasFcmServiceCredentials": false,
+          "Id": "gcm",
+          "IsArchived": false,
+          "LastModifiedDate": "2024-04-24T05:55:00.535Z",
+          "Platform": "GCM",
+          "Version": 1
+        },
+        "regulatedResourceName": "lumena"
+      }
     }
   },
   "storage": {
@@ -92,12 +152,11 @@
         "BucketName": "lumena225d91d9ee5c43d99341141978c6b54c25223-lumenaenv",
         "Region": "ap-northeast-1"
       },
-      "lastPushTimeStamp": "2024-04-22T13:46:26.532Z",
+      "lastPushTimeStamp": "2024-08-20T20:36:47.859Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
         "logicalId": "storages3e9f6c0eb"
       }
     }
-  },
-  "analytics": {}
+  }
 }
