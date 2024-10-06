@@ -1214,6 +1214,10 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     func checkLongestVideoDuration() async -> CGFloat {
         var longestDuration: CGFloat = 0
         
+        guard self.contents.isEmpty else {
+            return 0.0
+        }
+        
         for indivContent in self.contents {
             switch indivContent {
             case .video(let lumeVideo):

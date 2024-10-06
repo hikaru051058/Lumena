@@ -642,7 +642,6 @@ struct SkinSetting: View {
                                     selectedOption = nextOption(after: selectedOption)
                                 }
                             }
-//                            updateSkinSetting()
                         }) {
                             ZStack {
                                 Rectangle()

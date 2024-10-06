@@ -561,6 +561,8 @@ struct UserConfirmationCodeView: View {
     
     @State var email: String
     
+    @State var profile: ProfileSettings? = nil
+    
     @State private var confirmationCode: String = ""
     @State private var promptMessage: String = "メールの確認のため、６桁の番号を送信させていただきました。見つからない場合は、再送信のボタンを押してください"
     
@@ -576,7 +578,7 @@ struct UserConfirmationCodeView: View {
     
     @State private var keyboardHeight: CGFloat = 0
     
-    var onNavigateIntroView: () -> Void = {}
+    var onNavigateIntroView: (ProfileSettings) -> Void = { _ in }
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -594,7 +596,7 @@ struct UserConfirmationCodeView: View {
                     }, label: {
                         
                         Image(systemName: "chevron.backward")
-                            .font(.title)
+                            .font(Font.system(size: 25).weight(.bold))
                     })
                     
                     Text("アカウント認証")
@@ -757,7 +759,16 @@ struct UserConfirmationCodeView: View {
                 do {
                     _ = try await AuthenticationManager.shared.signIn(username: username, password: password, manualAuthStat: true)
                     confirmState = true
-                    onNavigateIntroView()
+                    if let newIdentityID = AuthenticationManager.shared.identityID {
+                        do {
+                            profile = try await ProfileManager.shared.getProfile(withID: newIdentityID)
+                            onNavigateIntroView(profile!)
+                        } catch {
+                            print("Error: Could not fetch the user profile for \(newIdentityID) - \(error)")
+                        }
+                    } else {
+                        print("Error: No identity ID was returned from AuthenticationManager in UserConfirmationView")
+                    }
                 } catch {
                     print("Sign-in after confirmation failed with error: \(error)")
                     errorMessage = "\((error))"

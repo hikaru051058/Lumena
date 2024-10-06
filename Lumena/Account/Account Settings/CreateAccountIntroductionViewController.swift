@@ -17,10 +17,20 @@ enum createAccountIntroPagePrompts {
 
 class CreateAccountIntroViewController: UIViewController {
     private var hostingController: UIHostingController<CreateAccountIntroView>?
+    private var profileSettings: ProfileSettings
+    
+    init(profileSettings: ProfileSettings) {
+        self.profileSettings = profileSettings
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented for UserConfirmationCodeViewController")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let createAccountIntroView = CreateAccountIntroView(onNavigateSkinSetting: navigateSkinSetting)
+        let createAccountIntroView = CreateAccountIntroView(onNavigateSkinSetting: navigateSkinSetting, newProfileSettings: profileSettings)
 
         hostingController = UIHostingController(rootView: createAccountIntroView)
         guard let hostingController = hostingController else { return }
@@ -62,7 +72,7 @@ struct CreateAccountIntroView: View {
     @State private var createAccountPage: createAccountIntroPagePrompts = .onLumena
     @State private var showDescription: Bool = false
     
-    @State private var newProfileSettings: ProfileSettings? = nil
+    @State var newProfileSettings: ProfileSettings? = nil
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -223,7 +233,11 @@ struct CreateAccountIntroView: View {
                             createAccountPage = nextCreateAccountPage
                             showDescription = false
                         } else {
-                            onNavigateSkinSetting((newProfileSettings ?? GI.shared.profileSettings)!)
+                            if let newProfileSettings = newProfileSettings {
+                                onNavigateSkinSetting(newProfileSettings)
+                            } else {
+                                print("Error: No profile to pass in at Create account to navigate skin settings")
+                            }
                         }
                     }
                     
@@ -243,7 +257,11 @@ struct CreateAccountIntroView: View {
                 }
                 .task {
                     do {
-                        newProfileSettings = try await ProfileManager.shared.getProfile(withID: AuthenticationManager.shared.identityID!)
+                        if let newProfileIdentityID = AuthenticationManager.shared.identityID {
+                            newProfileSettings = try await ProfileManager.shared.getProfile(withID: newProfileIdentityID)
+                        } else {
+                            print("Error: Could not fetch newProfileIdentityID")
+                        }
                     } catch {
                         print(error)
                     }

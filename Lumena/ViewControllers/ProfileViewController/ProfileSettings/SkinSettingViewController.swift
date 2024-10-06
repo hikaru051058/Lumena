@@ -71,7 +71,6 @@ class SkinSettingViewController: UIViewController {
         
         // Notify delegate when view controller is dismissed
         if isMovingFromParent || isBeingDismissed {
-            print("ProfileSettingsDelegate: @SkinSettingViewController -> \(self.skinSettingsModel.skinSettings)")
             delegate?.skinSettingViewControllerDidDismiss(self.skinSettingsModel.skinSettings)
         }
     }

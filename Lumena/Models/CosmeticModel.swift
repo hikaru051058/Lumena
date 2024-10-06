@@ -145,6 +145,8 @@ class Cosmetic: Identifiable, ObservableObject {
     
     var barcode: [String]? = []
     
+    var cosmeticBrandQL: CosmeticBrandQL?
+    
     init(id: String = "",
              cosmeticID: String = "",
              barcode: [String] = [],
@@ -162,7 +164,9 @@ class Cosmetic: Identifiable, ObservableObject {
              rating: Double = 0.0,
              criteriaTags: [String] = [],
              variants: [CosmeticVariant] = [],
-         imageURL: [String] = []) {
+             imageURL: [String] = [],
+             cosmeticBrandQL: CosmeticBrandQL = CosmeticBrandQL()
+    ) {
         
         self.id = UUID(uuidString: id) ?? UUID()
         self.cosmeticID = cosmeticID
@@ -182,6 +186,7 @@ class Cosmetic: Identifiable, ObservableObject {
         self.criteriaTags = criteriaTags
         self.variants = variants
         self.imageURL = imageURL
+        self.cosmeticBrandQL = cosmeticBrandQL
     }
     
     convenience init(ql: CosmeticQL) {
@@ -214,6 +219,7 @@ class Cosmetic: Identifiable, ObservableObject {
         )
         
         Task {
+            await self.fetchCosmeticBrandQL()
             await self.downloadProductImages()
             CosmeticManager.shared.updateCosmetic(self)
         }
@@ -261,6 +267,10 @@ extension Cosmetic {
     func isImageURLEmpty() -> Bool {
         guard let imageURL = self.imageURL, !imageURL.isEmpty else { return true }
         return false
+    }
+    
+    private func fetchCosmeticBrandQL() async {
+        self.cosmeticBrandQL = await CosmeticBrandManager.shared.getCosmeticBrandQL(withID: companyID)
     }
 }
 
@@ -395,7 +405,6 @@ extension Cosmetic {
     }
 }
 
-
 // upload
 extension Cosmetic {
     
@@ -497,5 +506,31 @@ extension Cosmetic {
 extension Cosmetic: Equatable {
     static func == (lhs: Cosmetic, rhs: Cosmetic) -> Bool {
         return lhs.id == rhs.id
+    }
+}
+
+
+class CosmeticBrandManager: ObservableObject {
+    
+    static let shared = CosmeticBrandManager()
+    
+    @Published var cosmeticBrands: [String: CosmeticBrandQL] = [:]
+    
+    func getCosmeticBrandQL(withID id: String) async -> CosmeticBrandQL? {
+        if let existingCosmeticBrandQL = cosmeticBrands[id] {
+            return existingCosmeticBrandQL
+        } else {
+            if id == "" {
+                print("NULL id detected in getCosmeticBrandQL async")
+            }
+            do {
+                let returnedModel = try await GraphQL.shared.queryAmplify(for: CosmeticBrandQL.self, modelID: id)
+                self.cosmeticBrands[id] =  returnedModel
+                return returnedModel
+            } catch {
+                print(error)
+            }
+            return nil
+        }
     }
 }

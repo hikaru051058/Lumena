@@ -54,9 +54,9 @@ class UserConfirmationCodeViewController: UIViewController {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
-    func navigateCreateAccountIntro() {
+    func navigateCreateAccountIntro(profileSettings: ProfileSettings) {
         DispatchQueue.main.async {
-            let createAccountIntroVC = CreateAccountIntroViewController()
+            let createAccountIntroVC = CreateAccountIntroViewController(profileSettings: profileSettings)
             self.isModalInPresentation = true
             self.navigationController?.pushViewController(createAccountIntroVC, animated: true)
         }

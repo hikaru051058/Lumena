@@ -109,7 +109,8 @@ struct IndividualCosmeticsTagView: View {
                         Text(cosmetic.productName)
                             .font(.headline)
                         
-                        Text(cosmetic.companyID)
+                        Text(cosmetic.cosmeticBrandQL?.name?.replacingOccurrences(of: "_", with: " ") ??
+                             cosmetic.companyID.replacingOccurrences(of: "_", with: " "))
                             .font(.caption)
                     
                         HStack {
@@ -249,7 +250,8 @@ struct IndividualTagCosmeticsTagView: View {
                         Text(cosmetic?.productName ?? "null")
                             .font(.headline)
                         
-                        Text(cosmetic?.companyID ?? "null")
+                        Text((cosmetic?.cosmeticBrandQL?.name?.replacingOccurrences(of: "_", with: " ") ??
+                              cosmetic?.companyID.replacingOccurrences(of: "_", with: " ")) ?? "null")
                             .font(.caption)
                         
                         HStack {
@@ -578,7 +580,8 @@ struct TagIndividualCosmeticsTagView: View {
                     Text(cosmetic.productName)
                         .font(.headline)
                     
-                    Text(cosmetic.companyID)
+                    Text(cosmetic.cosmeticBrandQL?.name?.replacingOccurrences(of: "_", with: " ") ??
+                         cosmetic.companyID.replacingOccurrences(of: "_", with: " "))
                         .font(.caption)
                     
                     HStack {
@@ -769,7 +772,8 @@ struct RatingIndividualListView: View {
                                 Text(tagCosmetic.cosmeticItem!.productName)
                                     .font(.headline)
                                 
-                                Text(tagCosmetic.cosmeticItem!.companyID)
+                                Text(tagCosmetic.cosmeticItem!.cosmeticBrandQL?.name?.replacingOccurrences(of: "_", with: " ") ??
+                                     tagCosmetic.cosmeticItem!.companyID.replacingOccurrences(of: "_", with: " "))
                                     .font(.caption)
                             }
                             
@@ -1116,7 +1120,8 @@ struct SideButtonIndividualTagCosmeticsTagView: View {
                         Text(cosmetic?.productName ?? "null")
                             .font(.headline)
                         
-                        Text(cosmetic?.companyID ?? "null")
+                        Text((cosmetic?.cosmeticBrandQL?.name?.replacingOccurrences(of: "_", with: " ") ??
+                              cosmetic?.companyID.replacingOccurrences(of: "_", with: " ")) ?? "null")
                             .font(.caption)
                         
                         HStack {

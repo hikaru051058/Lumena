@@ -141,9 +141,8 @@ class AuthenticationManager: ObservableObject {
                 messageLabel = "Signed In successful"
                 if !manualAuthStat {
                     self.authStatus = .authenticated
-                    let result = try await fetchAuthDetails()
-                    print(result)
                 }
+                let _ = try await fetchAuthDetails(manualAuth: manualAuthStat)
                 return .success
             case .confirmSignInWithTOTPCode, .continueSignInWithTOTPSetup(_), .continueSignInWithMFASelection(_):
                 throw AuthError.unknown
@@ -206,7 +205,6 @@ class AuthenticationManager: ObservableObject {
         let deliveryDetails = try await Amplify.Auth.sendVerificationCode(forUserAttributeKey: .email)
         return "Resend code sent to - \(deliveryDetails)"
     }
-
     
     func confirmSignUp(username: String, confirmationCode: String) async throws {
         do {
@@ -232,23 +230,40 @@ class AuthenticationManager: ObservableObject {
             
         } catch {
             print("UserProfileQL does not exist, proceeding to create a new profile.")
-            // Fetch user attributes from Amplify/Auth
+            do {
+                guard let newProfile = try await generateNewProfile(identityID: identityID) else { return "Error: Could not generate new profile" }
+                ProfileManager.shared.updateProfile(newProfile)
+                return "Successfully generated ProfileSettings for the current user"
+            } catch {
+                print("Error: Could not generate new profile in fetchCognioUserAttributes - \(error)")
+            }
+            throw error
+        }
+    }
+    
+    private func generateNewProfile(identityID: String) async throws -> ProfileSettings? {
+        do {
             let amplifyAttributes = try await Amplify.Auth.fetchUserAttributes()
             let newProfileSettings = ProfileSettings(from: amplifyAttributes)
             newProfileSettings.identityID = identityID
-            try await newProfileSettings.fetchUserLumes()
-            try await newProfileSettings.fetchUserImages()
-
+            do {
+                try await newProfileSettings.fetchUserLumes()
+                try await newProfileSettings.fetchUserImages()
+            } catch {
+                print("Error: Could not fetch user lumes and profile images")
+            }
             // Try creating a new user profile
             if let _ = try await GraphQL.shared.createModel(newProfileSettings.toUserProfileQL()) {
                 GI.shared.profileSettings = newProfileSettings
                 print("Successfully created new UserProfileQL due to it being missing for the current user")
+                return newProfileSettings
             } else {
                 throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: Unsuccessful in creating UserProfileQL for the current user"])
             }
-            
-            throw error
+        } catch {
+            print("Error: Could not create new UserProfileQL in fetchCognitoUserAttributes - \(error)")
         }
+        return nil
     }
     
     func deleteUser() async throws -> String {
@@ -276,7 +291,6 @@ class AuthenticationManager: ObservableObject {
         try await Amplify.Auth.confirmResetPassword(for: username, with: newPassword, confirmationCode: confirmationCode)
         return "Reset completed"
     }
-
     
     func updateUserAttributes(attributeName: AuthUserAttributeKey, value: String) async throws -> String {
         if let userProfileQLToUpdate = GI.shared.profileSettings?.toUserProfileQL() {
@@ -294,9 +308,14 @@ class AuthenticationManager: ObservableObject {
         }
     }
     
-    func fetchAuthDetails() async throws -> String {
+    func fetchAuthDetails(manualAuth: Bool = false) async throws -> String {
         
         if fetchedAuth {
+            if let _ = identityID {
+                DispatchQueue.main.async {
+                    self.authStatus = .authenticated
+                }
+            }
             return "Already fetched auth details"
         }
         
@@ -307,24 +326,13 @@ class AuthenticationManager: ObservableObject {
             let identityId = try identityProvider.getIdentityId().get()
             
             // Fetch user profile using identityID and save it in the cache
-            Task {
-                do  {
-                    let _ = try await ProfileManager.shared.getProfile(withID: identityId)
+            do  {
+                let _ = try await ProfileManager.shared.getProfile(withID: identityId)
+            } catch {
+                do {
+                    _ = try await generateNewProfile(identityID: identityId)
                 } catch {
-                    let amplifyAttributes = try await Amplify.Auth.fetchUserAttributes()
-                    let newProfileSettings = ProfileSettings(from: amplifyAttributes)
-                    newProfileSettings.identityID = identityId
-                    
-                    _ = UserStateQL(UserState: .active, timestamp: Int(Date.timeIntervalSinceReferenceDate), reason: "fetchAuth acc", userprofileqlID: identityId)
-//                    do {
-//                        let message = try await GraphQL.shared.createModel(newUserStateQL)
-//                        print(message as Any)
-//                    } catch {
-//                        print("Error in creating UserStateQL: \(error)")
-//                    }
-                    
-                    // Save the newly created profile to the database
-                    let _ = try await GraphQL.shared.createModel(newProfileSettings.toUserProfileQL())
+                    print("Error: Could not generate new profile for \(identityId) - \(error)")
                 }
             }
             
@@ -332,11 +340,16 @@ class AuthenticationManager: ObservableObject {
             UserDefaults.standard.set(identityId, forKey: "userIdentityID")
             
             DispatchQueue.main.async {
-                self.authStatus = .authenticated
+                if !manualAuth {
+                    self.authStatus = .authenticated
+                }
                 self.identityID = identityId
             }
             
             GI.shared.identityID = identityId
+            AuthenticationManager.shared.identityID = identityId
+            
+            print("identityId: \(identityId)")
             
             Task {
                 do {
@@ -359,7 +372,7 @@ class AuthenticationManager: ObservableObject {
             _ = try cognitoTokenProvider.getCognitoTokens().get()
         }
 
-        return "Auth details fetched successfully."
+        return AuthenticationManager.shared.identityID ?? ""
     }
 }
 
@@ -492,15 +505,65 @@ struct APImessageStruct: Decodable {
         case message
     }
 }
+//
+//enum APIError: Error {
+//    case invalidURL
+//    case encodingError
+//    case noData
+//    case requestFailed
+//    case badResponse(Int)
+//    case custom(Error)
+//    case decodingError(Error?)
+//}
 
-enum APIError: Error {
+enum APIError: Error, LocalizedError {
     case invalidURL
     case encodingError
-    case noData
     case requestFailed
-    case badResponse(Int)
-    case custom(Error)
-    case decodingError(Error?)
+    case badResponse(Int)  // Include status code
+    case custom(Error)     // Wrap other errors
+    case decodingError(Error?)  // Optional underlying error
+    case noData
+    case noCosmeticsFound(String)
+    case decodingFailed(String)
+    
+    // Localized error description for each case
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "The provided URL is invalid."
+        case .encodingError:
+            return "There was an error encoding the data."
+        case .requestFailed:
+            return "The request to the server failed."
+        case .badResponse(let statusCode):
+            return "Received a bad response from the server. Status code: \(statusCode)."
+        case .custom(let error):
+            return "An unexpected error occurred: \(error.localizedDescription)"
+        case .decodingError(let error):
+            return "Failed to decode the response. \(error?.localizedDescription ?? "Unknown error.")"
+        case .noData:
+            return "No data was returned from the server."
+        case .noCosmeticsFound(let message):
+            return message
+        case .decodingFailed(let message):
+            return message
+        }
+    }
+    
+    // Optionally, you could add a `recoverySuggestion` or `failureReason`
+    var recoverySuggestion: String? {
+        switch self {
+        case .invalidURL:
+            return "Please check the URL and try again."
+        case .encodingError, .decodingError, .decodingFailed:
+            return "Please ensure the data is in the correct format."
+        case .requestFailed, .badResponse:
+            return "Please check your network connection and try again."
+        default:
+            return nil
+        }
+    }
 }
 
 
@@ -1006,35 +1069,52 @@ class GraphQL {
     // MARK: -- API Doccument not updated from below
     
     func searchCosmeticQL(searchKeyword: String) async throws -> [Cosmetic] {
+        let baseURL = "https://s853vsbclh.execute-api.ap-northeast-1.amazonaws.com/v1/searchCosmeticOpensearch"
         
-        let baseURL = "https://os9xlcvkn2.execute-api.ap-northeast-1.amazonaws.com/prod/search"
+        // Construct URL with query parameters
         var components = URLComponents(string: baseURL)!
         components.queryItems = [
             URLQueryItem(name: "q", value: searchKeyword),
+            URLQueryItem(name: "limit", value: "30"),
         ]
         
+        // Ensure the URL is valid
         guard let urlString = components.string else {
-            throw NSError(domain: "InvalidURL", code: 0, userInfo: nil)
+            throw APIError.invalidURL
         }
         
-        let apiResponse: APIResponse<[CosmeticQL]> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
-        
-        guard let body = apiResponse.body else {
-            throw APIError.noData
+        do {
+            // Perform API call and decode response into APIResponse<[CosmeticQL]>
+            let apiResponse: APIResponse<[CosmeticQL]> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
+            
+            // Check if the body of the response is present
+            guard let body = apiResponse.body else {
+                throw APIError.noData
+            }
+            
+            // Return the converted cosmetics
+            return body.map { Cosmetic(ql: $0) }
+            
+        } catch let decodingError as DecodingError {
+            // Handle decoding error
+            print("Decoding error: \(decodingError)")
+            throw APIError.decodingError(decodingError)
+            
+        } catch let apiError as APIError {
+            // Re-throw specific API errors for further handling
+            throw apiError
+            
+        } catch let urlError as URLError {
+            // Handle URL errors
+            print("Request failed with error: \(urlError)")
+            throw APIError.requestFailed
+            
+        } catch {
+            // Handle other unexpected errors
+            print("Unexpected error: \(error)")
+            throw APIError.custom(error)
         }
-        
-        return body.map({Cosmetic(ql: $0)})
-        
-//        var fetchedCosmetics: [Cosmetic]  = []
-//        do {
-//            fetchedCosmetics = try await GraphQL.shared.fetchCosmetic(cosmeticIDs: body)
-//        } catch {
-//            print(error)
-//        }
-//        
-//        return fetchedCosmetics
     }
-    
     
     func blockUser(blockuserprofileqlID: String, blockAction: BlockAction) async throws {
         // Base URL
@@ -1112,7 +1192,9 @@ class GraphQL {
             }
             
             // Make the API call
-            let apiResponse: APIResponse<String> = try await baseAPICall(urlString: urlString, httpMethod: "POST")
+            let _ : APIResponse<String> = try await baseAPICall(urlString: urlString, httpMethod: "POST")
+            
+            
         }
     }
 }

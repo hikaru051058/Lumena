@@ -7,48 +7,80 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6F3D0306-B471-4A70-867B-14D8C8152F3F"
-            shouldBeEnabled = "No"
+            uuid = "62BFF6B6-32E1-4E21-B421-3880649C6749"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Lumena/ViewControllers/MainLumeViewControllers/newLumeViewController.swift"
+            filePath = "Lumena/Account/Account Settings/CreateAccount.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "722"
-            endingLineNumber = "722"
-            landmarkName = "applyMuteState()"
+            startingLineNumber = "767"
+            endingLineNumber = "767"
+            landmarkName = "confirmationAction()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "995C451C-D852-4C04-AAC2-BFE90E538066"
+            uuid = "8080938F-151B-4D2B-BCEE-3D9E869381BA"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Lumena/ViewControllers/MainLumeViewControllers/newLumeViewController.swift"
+            filePath = "Lumena/Account/Account Settings/CreateAccount.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "730"
-            endingLineNumber = "730"
-            landmarkName = "applyMuteState()"
+            startingLineNumber = "770"
+            endingLineNumber = "770"
+            landmarkName = "confirmationAction()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A924471E-5C73-4A68-A2C7-1878744B3A90"
+            uuid = "6E8DA031-EF38-4F55-8E6D-92709B07FD0F"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Lumena/ViewControllers/MainLumeViewControllers/newLumeViewController.swift"
+            filePath = "Lumena/Account/Account Settings/CreateAccount.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "716"
-            endingLineNumber = "716"
-            landmarkName = "applyMuteState()"
+            startingLineNumber = "775"
+            endingLineNumber = "775"
+            landmarkName = "confirmationAction()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "11329F3D-FA93-44E3-8821-F8417AA69DB4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Account/Account Settings/CreateAccount.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "781"
+            endingLineNumber = "781"
+            landmarkName = "confirmationAction()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B891B368-4595-47C8-8CC4-9177568B949B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Account/Account Settings/CreateAccount.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "765"
+            endingLineNumber = "765"
+            landmarkName = "confirmationAction()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

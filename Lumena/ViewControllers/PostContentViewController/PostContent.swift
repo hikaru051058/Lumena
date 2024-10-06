@@ -1475,20 +1475,35 @@ struct PrepPost: View {
                                         
                                         let cosmetics = try await GraphQL.shared.searchCosmeticQL(searchKeyword: searchTerm)
                                         
-                                        print("searchCosmetics: \(cosmetics.count)")
-                                        
-                                        // Append new cosmetics to existing list
+                                        // Append new cosmetics to the existing list if not already present
                                         cosmeticsWrapper.cosmetics.append(contentsOf: cosmetics.filter { newCosmetic in
                                             !cosmeticsWrapper.cosmetics.contains(where: { $0.cosmeticID == newCosmetic.cosmeticID })
                                         })
-                                        // Filter the list locally
+                                        
+                                        // Update the list of cosmetics
                                         cosmeticsWrapper.cosmetics = cosmetics
                                         withAnimation {
                                             SearchOutputShow = true
                                         }
+                                        
+                                    } catch let apiError as APIError {
+                                        // Handle specific API errors
+                                        print(apiError.errorDescription ?? "An unknown error occurred")
+                                        // You could show an alert or message to the user here
+                                        cosmeticsWrapper.cosmetics = []  // Clear cosmetics list if the error is related to search results
+                                        withAnimation {
+                                            SearchOutputShow = true
+                                        }
+                                        
                                     } catch {
-                                        print(error)
+                                        // Handle any other unexpected errors
+                                        print("Unexpected error: \(error.localizedDescription)")
+                                        cosmeticsWrapper.cosmetics = []  // Clear cosmetics list in case of error
+                                        withAnimation {
+                                            SearchOutputShow = true
+                                        }
                                     }
+                                    
                                     isLoading = false
                                 }
                             })
@@ -1644,7 +1659,13 @@ struct PrepPost: View {
                                 Spacer()
                             }
                         } else {
-                            ProductView(postLume: postLume, tagAny: $tagAny, filterTag: $filterTag, url: $url, isShowingBrowser: $isShowingBrowser, cosmeticsWrapper: cosmeticsWrapper)
+                            if cosmeticsWrapper.cosmetics.isEmpty {
+                                Text("No cosmetics could be found")
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            } else {
+                                ProductView(postLume: postLume, tagAny: $tagAny, filterTag: $filterTag, url: $url, isShowingBrowser: $isShowingBrowser, cosmeticsWrapper: cosmeticsWrapper)
+                            }
                         }
                         
                         VStack{
