@@ -624,7 +624,7 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
     @Published var streaksStartDate: Int?
     @Published var lastUpdateTimestamp: Int?
     
-    @Published var skinSetting: SkinSettingsAttributes? {
+    @Published var skinSetting: SkinSettingsAttributes = SkinSettingsAttributes() {
         didSet {
             DispatchQueue.main.async {
                 ProfileManager.shared.updateProfile(self)
@@ -755,19 +755,19 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
                     print("Error: attribute.value is not a valid integer string")
                 }
             case .custom("SkinSensitivity"):
-                skinSetting?.sensitivity = SensitivityOptions(rawValue: attribute.value)!
+                skinSetting.sensitivity = SensitivityOptions(rawValue: attribute.value)!
             case .custom("SkinUVBathing"):
-                skinSetting?.uv = UVOptions(rawValue: attribute.value)!
+                skinSetting.uv = UVOptions(rawValue: attribute.value)!
             case .custom("SkinType"):
-                skinSetting?.skinType = SkinTypeOptions(rawValue: attribute.value)!
+                skinSetting.skinType = SkinTypeOptions(rawValue: attribute.value)!
             case .custom("SkinPersonalColor"):
-                skinSetting?.personalColor = PersonalColorOptions(rawValue: attribute.value)!
+                skinSetting.personalColor = PersonalColorOptions(rawValue: attribute.value)!
             case .custom("SkinEyeColor"):
-                skinSetting?.eyeColor = attribute.value
+                skinSetting.eyeColor = attribute.value
             case .custom("SkinColor"):
-                skinSetting?.skinColor = attribute.value
+                skinSetting.skinColor = attribute.value
             case .custom("SkinConcerns"):
-                skinSetting?.concerns = ConcernsOptions(rawValue: attribute.value)!
+                skinSetting.concerns = ConcernsOptions(rawValue: attribute.value)!
                 
             default:
                 continue
@@ -949,9 +949,9 @@ class ProfileSettings: Identifiable, ObservableObject, Equatable, Reflectable {
         attributes.append(AuthUserAttribute(.familyName, value: familyName))
         attributes.append(AuthUserAttribute(.email, value: email))
         attributes.append(AuthUserAttribute(.custom("bio"), value: bio))
-        attributes.append(AuthUserAttribute(.custom("SkinSensitivity"), value: skinSetting?.sensitivity.rawValue ?? ""))
-        attributes.append(AuthUserAttribute(.custom("SkinUVBathing"), value: skinSetting?.uv.rawValue ?? ""))
-        attributes.append(AuthUserAttribute(.custom("SkinType"), value: skinSetting?.skinType.rawValue ?? ""))
+        attributes.append(AuthUserAttribute(.custom("SkinSensitivity"), value: skinSetting.sensitivity.rawValue))
+        attributes.append(AuthUserAttribute(.custom("SkinUVBathing"), value: skinSetting.uv.rawValue))
+        attributes.append(AuthUserAttribute(.custom("SkinType"), value: skinSetting.skinType.rawValue))
         if let pictureURLString = pictureURL?.absoluteString {
             attributes.append(AuthUserAttribute(.picture, value: pictureURLString))
         }
@@ -1074,7 +1074,7 @@ extension ProfileSettings {
     
     func toUserProfileQL() -> UserProfileQL {
         
-        let skinToUserProfileQL = skinSetting?.toUserProfileQLDictionary()
+        let skinToUserProfileQL = skinSetting.toUserProfileQLDictionary()
         
         return UserProfileQL(
             id: self.identityID,

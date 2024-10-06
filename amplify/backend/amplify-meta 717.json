@@ -1,0 +1,103 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-lumena-lumenaenv-25223-authRole",
+      "UnauthRoleArn": "arn:aws:iam::794140493526:role/amplify-lumena-lumenaenv-25223-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::794140493526:role/amplify-lumena-lumenaenv-25223-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-lumena-lumenaenv-25223-deployment",
+      "UnauthRoleName": "amplify-lumena-lumenaenv-25223-unauthRole",
+      "StackName": "amplify-lumena-lumenaenv-25223",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:794140493526:stack/amplify-lumena-lumenaenv-25223/582cf990-525e-11ee-97fc-0e071dbd95bb",
+      "AmplifyAppId": "dm4uqqonysgwi"
+    }
+  },
+  "api": {
+    "lumena": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7
+            }
+          },
+          "additionalAuthenticationProviders": []
+        },
+        "GraphQLAPIIdOutput": "4uij5li7pbeh3dq4ymtlbfrqci",
+        "GraphQLAPIEndpointOutput": "https://ebfby4orjbhadppkjjlbnyixey.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-lq6ynwrvu5hrrdga7mwfsn3nma"
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apilumena"
+      },
+      "lastPushTimeStamp": "2024-04-22T13:46:31.503Z",
+      "lastPushDirHash": "yVHKAkp6Qk/HA4ECWC8ziuCVNoQ="
+    }
+  },
+  "auth": {
+    "lumena99b2d053": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "output": {
+        "UserPoolId": "ap-northeast-1_EOcqD0p1z",
+        "UserPoolName": "LumenaUsers",
+        "AppClientID": "2pvjj9ob0j25rna955nroudltq",
+        "AppClientIDWeb": "2pvjj9ob0j25rna955nroudltq",
+        "IdentityPoolId": "ap-northeast-1:9bb60b28-ab79-4667-a3dc-8729cd5e33ec",
+        "IdentityPoolName": "LumenaIDPool"
+      },
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "GIVEN_NAME",
+          "FAMILY_NAME",
+          "PREFERRED_USERNAME",
+          "PICTURE",
+          "EMAIL",
+          "BIRTHDATE",
+          "PHONE_NUMBER"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS"
+          ]
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "lastPushTimeStamp": "2024-01-13T03:02:54.782Z"
+    }
+  },
+  "storage": {
+    "s3e9f6c0eb": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "output": {
+        "BucketName": "lumena225d91d9ee5c43d99341141978c6b54c25223-lumenaenv",
+        "Region": "ap-northeast-1"
+      },
+      "lastPushTimeStamp": "2024-04-22T13:46:26.532Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-lumena-lumenaenv-25223-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
+        "logicalId": "storages3e9f6c0eb"
+      }
+    }
+  },
+  "analytics": {}
+}

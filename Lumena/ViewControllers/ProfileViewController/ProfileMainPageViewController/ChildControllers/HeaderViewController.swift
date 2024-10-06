@@ -110,9 +110,7 @@ class HeaderViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let profileSkinSetting = profile.skinSetting {
-            profileStatSkinSettings.updateSkinSettings(skinSettings: profileSkinSetting)
-        }
+        profileStatSkinSettings.updateSkinSettings(skinSettings: profile.skinSetting)
         update(with: lastProgress, minHeaderHeight: lastMinHeaderHeight)
     }
     

@@ -981,7 +981,7 @@ class GraphQL {
             newUserProfileQL.firstName = profile.givenName
             newUserProfileQL.lockState = profile.lockState
             newUserProfileQL.bio = profile.bio
-            newUserProfileQL.skinSettings = profile.skinSetting?.toUserProfileQLDictionary()
+            newUserProfileQL.skinSettings = profile.skinSetting.toUserProfileQLDictionary()
             
             do {
                 try await GraphQL.shared.updateModel(newUserProfileQL)

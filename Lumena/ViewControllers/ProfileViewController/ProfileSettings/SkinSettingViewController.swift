@@ -34,7 +34,7 @@ class SkinSettingViewController: UIViewController {
     init(profile: ProfileSettings, mainOrSetting: Bool = false) {
         self.profile = profile
         self.mainOrSetting = mainOrSetting
-        self.skinSettingsModel = SkinSettingsModel(skinSettings: profile.skinSetting ?? SkinSettingsAttributes())
+        self.skinSettingsModel = SkinSettingsModel(skinSettings: profile.skinSetting)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -45,7 +45,7 @@ class SkinSettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Initialize your SwiftUI view
-        let skinSettingView = SkinSetting(skinSettingsModel: skinSettingsModel, MainOrSetting: mainOrSetting, onNavigate: navigateToMain)
+        let skinSettingView = SkinSetting(skinSettingsModel: self.skinSettingsModel, MainOrSetting: mainOrSetting, onNavigate: navigateToMain)
 
         // Create a hosting controller with SwiftUI view
         hostingController = UIHostingController(rootView: skinSettingView)
@@ -68,16 +68,23 @@ class SkinSettingViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        // Notify delegate when view controller is dismissed
+        // Update the profile.skinSetting with the latest values
         if isMovingFromParent || isBeingDismissed {
-            delegate?.skinSettingViewControllerDidDismiss(self.skinSettingsModel.skinSettings)
+            DispatchQueue.main.async {
+                Task {
+                    self.profile.skinSetting = self.skinSettingsModel.skinSettings
+                    try await self.profile.updateUserProfileQL()
+                    self.delegate?.skinSettingViewControllerDidDismiss(self.profile.skinSetting)
+                }
+            }
         }
     }
     
     func navigateToMain() {
         Task {
             do {
+                self.profile.skinSetting = self.skinSettingsModel.skinSettings
+                try await self.profile.updateUserProfileQL()
                 let _ = try await AuthenticationManager.shared.fetchAuthDetails()
             } catch {
                 print(error)
