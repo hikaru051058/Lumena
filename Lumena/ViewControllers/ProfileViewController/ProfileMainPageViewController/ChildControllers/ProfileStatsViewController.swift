@@ -320,7 +320,7 @@ struct ProfileFollowButtonView: View {
     }
     
     func toggleFollowState() {
-        guard let userIdentityID = GI.shared.identityID else {
+        guard let userIdentityID = AuthenticationManager.shared.identityID else {
             print("No user identity id was extracted in toggleFollowState()")
             return
         }
@@ -339,7 +339,7 @@ struct ProfileFollowButtonView: View {
     }
     
     func fetchFollowState() {
-        guard let userIdentityID = GI.shared.identityID else { return }
+        guard let userIdentityID = AuthenticationManager.shared.identityID else { return }
         DispatchQueue.main.async {
             Task {
                 let status = await ProfileManager.shared.getRelationshipStat(fromUserID: userIdentityID, toUserID: otherUserIdentityID)

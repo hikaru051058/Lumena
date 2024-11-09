@@ -132,6 +132,8 @@ class CameraViewController: UIViewController {
         }
     }
     
+    private var availableCameraTypes: [CameraType] = []
+    
     private let previewButton = UIButton(type: .system)
     
     public var content: [LumeContent] = []
@@ -249,28 +251,86 @@ class CameraViewController: UIViewController {
     }
     
     func detectAvailableCameras() {
-        let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera, .builtInTrueDepthCamera], mediaType: .video, position: .unspecified).devices
+        let devices = AVCaptureDevice.DiscoverySession(
+            deviceTypes: [
+                .builtInWideAngleCamera,
+                .builtInTelephotoCamera,
+                .builtInUltraWideCamera,
+                .builtInTrueDepthCamera
+            ],
+            mediaType: .video,
+            position: .unspecified
+        ).devices
         
         for device in devices {
             if device.deviceType == .builtInWideAngleCamera && device.position == .back {
                 wideCamera = device
+                if !availableCameraTypes.contains(.wide) {
+                    availableCameraTypes.append(.wide)
+                }
             } else if device.deviceType == .builtInTelephotoCamera {
                 telephotoCamera = device
+                if !availableCameraTypes.contains(.telephoto) {
+                    availableCameraTypes.append(.telephoto)
+                }
             } else if device.deviceType == .builtInUltraWideCamera {
                 ultraWideCamera = device
+                if !availableCameraTypes.contains(.ultraWide) {
+                    availableCameraTypes.append(.ultraWide)
+                }
             } else if device.deviceType == .builtInWideAngleCamera && device.position == .front {
                 frontCamera = device
             }
         }
         
-        currentDevice = wideCamera
+        // Set default camera
+        if wideCamera != nil {
+            currentDevice = wideCamera
+            currentCameraType = .wide
+        } else if let firstAvailableCameraType = availableCameraTypes.first {
+            currentCameraType = firstAvailableCameraType
+            currentDevice = getCameraDevice(for: currentCameraType, position: currentCameraPosition)
+        } else {
+            // No cameras available, handle appropriately
+            DispatchQueue.main.async {
+                self.showNoCamerasAvailableAlert()
+            }
+        }
+    }
+    
+    func showNoCamerasAvailableAlert() {
+        let alert = UIAlertController(title: "Camera Unavailable", message: "No cameras are available on this device.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func configureCameraSession(type: CameraType, position: AVCaptureDevice.Position) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
+            
+            // Check if the requested camera type is available
+            guard self.availableCameraTypes.contains(type) else {
+                print("Requested camera type \(type) is not available. Falling back to default.")
+                // Fallback to an available camera type
+                if let defaultType = self.availableCameraTypes.first, defaultType != type {
+                    // Avoid infinite recursion by ensuring the default type is different
+                    self.configureCameraSession(type: defaultType, position: position)
+                } else {
+                    // No other camera types available, handle error
+                    DispatchQueue.main.async {
+                        self.showNoCamerasAvailableAlert()
+                    }
+                }
+                return
+            }
+            
             do {
                 self.captureSession.beginConfiguration()
+                
+                // Remove all inputs before adding new ones
+                for input in self.captureSession.inputs {
+                    self.captureSession.removeInput(input)
+                }
                 
                 // Add video input
                 let deviceType: AVCaptureDevice.DeviceType
@@ -285,51 +345,71 @@ class CameraViewController: UIViewController {
                 
                 guard let cameraDevice = AVCaptureDevice.default(deviceType, for: .video, position: position) else {
                     print("Requested camera not available")
+                    self.captureSession.commitConfiguration()
+                    DispatchQueue.main.async {
+                        self.showNoCamerasAvailableAlert()
+                    }
                     return
                 }
                 
                 let videoInput = try AVCaptureDeviceInput(device: cameraDevice)
                 
-                // Remove all inputs before adding new ones
-                for input in self.captureSession.inputs {
-                    self.captureSession.removeInput(input)
-                }
-                
                 if self.captureSession.canAddInput(videoInput) {
                     self.captureSession.addInput(videoInput)
                     self.currentDevice = cameraDevice
+                } else {
+                    print("Could not add video input to capture session")
+                    self.captureSession.commitConfiguration()
+                    DispatchQueue.main.async {
+                        self.showNoCamerasAvailableAlert()
+                    }
+                    return
                 }
                 
-                // Add audio input
+                // Add audio input if needed
                 if let audioDevice = AVCaptureDevice.default(for: .audio) {
                     let audioInput = try AVCaptureDeviceInput(device: audioDevice)
                     if self.captureSession.canAddInput(audioInput) {
                         self.captureSession.addInput(audioInput)
                     } else {
                         print("Could not add audio input")
+                        // Decide whether to proceed without audio or handle this error
                     }
                 } else {
                     print("No audio device available")
+                    // Decide whether to proceed without audio or handle this error
                 }
                 
                 self.setupFrameRate(cameraDevice: cameraDevice)
                 
-                if cameraMode == .photo {
-                    configurePhotoOutput()
+                // Remove existing outputs before adding new ones
+                for output in self.captureSession.outputs {
+                    self.captureSession.removeOutput(output)
+                }
+                
+                // Configure outputs
+                if self.cameraMode == .photo {
+                    self.configurePhotoOutput()
                 } else {
-                    configureVideoOutput()
+                    self.configureVideoOutput()
                 }
                 
                 // Commit configuration changes before starting the session
                 self.captureSession.commitConfiguration()
-
+                
                 // Start the session after configuration is done
                 self.startCamera()
                 
-                self.setupPreviewLayer()
+                DispatchQueue.main.async {
+                    self.setupPreviewLayer()
+                }
 
             } catch {
                 print("Error configuring camera: \(error.localizedDescription)")
+                self.captureSession.commitConfiguration()
+                DispatchQueue.main.async {
+                    self.showNoCamerasAvailableAlert()
+                }
             }
         }
     }
@@ -435,7 +515,8 @@ extension CameraViewController {
             self.videoPreviewLayer?.frame = self.cameraView.bounds
             
             // Add the preview layer to the view
-            self.cameraView.layer.addSublayer(self.videoPreviewLayer!)
+            guard let videoPreviewLayer = self.videoPreviewLayer else { return }
+            self.cameraView.layer.addSublayer(videoPreviewLayer)
             
             // Start the capture session on a background thread
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
@@ -451,30 +532,6 @@ extension CameraViewController {
 //        setupPreviewButton()
         updateCameraProcessStatus(.ready)
     }
-    
-//    func setupPreviewButton() {
-//        previewButton.setTitle("Preview", for: .normal)
-//        previewButton.isHidden = true
-//        previewButton.addTarget(self, action: #selector(previewMergedVideo), for: .touchUpInside)
-//        previewButton.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(previewButton)
-//        NSLayoutConstraint.activate([
-//            previewButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-//            previewButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-//        ])
-//    }
-//    
-//    @objc func previewMergedVideo() {
-//        guard let previewURL = previewURL else { return }
-//        
-//        let player = AVPlayer(url: previewURL)
-//        let playerViewController = AVPlayerViewController()
-//        
-//        playerViewController.player = player
-//        present(playerViewController, animated: true) {
-//            playerViewController.player?.play()
-//        }
-//    }
     
     func saveVideo() -> LumeContent? {
         guard let previewURL = previewURL else { return nil }
@@ -631,6 +688,16 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
     }
 
     @objc func capturePhoto() {
+        
+        // Check if photoOutput has active video connection
+        guard let connection = photoOutput.connection(with: .video), connection.isActive else {
+            print("No active video connection for photo capture")
+            DispatchQueue.main.async {
+                self.showNoCamerasAvailableAlert()
+            }
+            return
+        }
+        
         var settings: AVCapturePhotoSettings
         
         // Configure settings based on available codecs
@@ -665,9 +732,9 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
         let settings = AVCapturePhotoSettings()
         
         let supportedMaxPhotoDimensions = self.currentDevice?.activeFormat.supportedMaxPhotoDimensions
-        let largestDimesnion = supportedMaxPhotoDimensions?.last
+        guard let largestDimesnion = supportedMaxPhotoDimensions?.last else { return }
         
-        settings.maxPhotoDimensions = largestDimesnion!
+        settings.maxPhotoDimensions = largestDimesnion
         
         if photoOutput.isLivePhotoCaptureSupported {
             let livePhotoFileName = UUID().uuidString
@@ -776,6 +843,15 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     }
     
     func startRecording() {
+        // Check if movieOutput has active video connection
+        guard movieOutput.connection(with: .video)?.isActive == true else {
+            print("No active video connection")
+            DispatchQueue.main.async {
+                self.showNoCamerasAvailableAlert()
+            }
+            return
+        }
+        
         updateCameraProcessStatus(.recording)
         isRecording = true
         startRecordingTimer()
@@ -1083,7 +1159,7 @@ extension CameraViewController {
     
     @objc func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
         guard currentDevice != nil else { return }
-
+        
         if gesture.state == .changed {
             let desiredZoomFactor = currentZoomFactor * gesture.scale
             let clampedZoomFactor = min(max(desiredZoomFactor, 1.0), 7.0)
@@ -1094,36 +1170,36 @@ extension CameraViewController {
             } else {
                 // Handle rear cameras with smoother transitions
                 let mappedZoomFactor: CGFloat
-
-                switch clampedZoomFactor {
-                case 1.0..<1.5:
+                
+                if availableCameraTypes.contains(.ultraWide) && clampedZoomFactor >= 1.0 && clampedZoomFactor < 1.5 {
                     if currentCameraType != .ultraWide {
                         currentCameraType = .ultraWide
                     }
                     mappedZoomFactor = remapZoomFactor(clampedZoomFactor, fromRangeMin: 1.0, fromRangeMax: 1.5, toRangeMin: 1.0, toRangeMax: 2.5)
-                    
-                case 1.5..<4.0:
+                } else if availableCameraTypes.contains(.wide) && clampedZoomFactor >= 1.5 && clampedZoomFactor < 4.0 {
                     if currentCameraType != .wide {
                         currentCameraType = .wide
                     }
                     mappedZoomFactor = remapZoomFactor(clampedZoomFactor, fromRangeMin: 1.5, fromRangeMax: 4.0, toRangeMin: 1.0, toRangeMax: 4.0)
-                    
-                case 4.0...7.0:
+                } else if availableCameraTypes.contains(.telephoto) && clampedZoomFactor >= 4.0 {
                     if currentCameraType != .telephoto {
                         currentCameraType = .telephoto
                     }
                     mappedZoomFactor = remapZoomFactor(clampedZoomFactor, fromRangeMin: 4.0, fromRangeMax: 7.0, toRangeMin: 1.0, toRangeMax: 5.0)
-                    
-                default:
-                    mappedZoomFactor = clampedZoomFactor
+                } else {
+                    // Fallback if the desired camera type is not available
+                    if currentCameraType != .wide {
+                        currentCameraType = .wide
+                    }
+                    mappedZoomFactor = remapZoomFactor(clampedZoomFactor, fromRangeMin: 1.0, fromRangeMax: 7.0, toRangeMin: 1.0, toRangeMax: currentDevice?.activeFormat.videoMaxZoomFactor ?? 5.0)
                 }
-
+                
                 applyZoomFactor(mappedZoomFactor)
             }
             
             currentZoomFactor = clampedZoomFactor
         }
-
+        
         gesture.scale = 1.0
     }
 
@@ -1132,13 +1208,27 @@ extension CameraViewController {
     }
     
     func switchCameraType(to type: CameraType, position: CameraPosition) {
-        // Stop the ongoing recording if it's in progress
+        guard availableCameraTypes.contains(type) else {
+            print("Requested camera type \(type) is not available.")
+            // Optionally, switch to a default or available camera type
+            if let defaultType = availableCameraTypes.first {
+                currentCameraType = defaultType
+            } else {
+                // No available camera types, handle error
+                DispatchQueue.main.async {
+                    self.showNoCamerasAvailableAlert()
+                }
+            }
+            
+            return
+        }
+        
         if isRecording {
             stopRecording(isCameraSwitch: true)
-            performCameraSwitch(to: type, position: position)
+            performCameraSwitch(to: currentCameraType, position: position)
             startRecording()
         } else {
-            performCameraSwitch(to: type, position: position)
+            performCameraSwitch(to: currentCameraType, position: position)
         }
     }
 
@@ -1146,23 +1236,8 @@ extension CameraViewController {
         guard let currentDevice = currentDevice else { return }
         
         // Determine the device based on the requested type and position
-        let newDevice: AVCaptureDevice?
-        
-        switch position {
-        case .front:
-            newDevice = frontCamera
-        case .back:
-            switch type {
-            case .ultraWide:
-                newDevice = ultraWideCamera
-            case .wide:
-                newDevice = wideCamera
-            case .telephoto:
-                newDevice = telephotoCamera
-            }
-        }
-        
-        guard let device = newDevice, device != currentDevice else {
+        guard let device = getCameraDevice(for: type, position: position),
+              device != currentDevice else {
             print("Requested camera not available or already in use")
             return
         }
@@ -1211,15 +1286,20 @@ extension CameraViewController {
             print("Failed to switch camera: \(error)")
         }
     }
-
-    func getCameraDevice(for type: CameraType) -> AVCaptureDevice? {
-        switch type {
-        case .ultraWide:
-            return ultraWideCamera
-        case .wide:
-            return wideCamera
-        case .telephoto:
-            return telephotoCamera
+    
+    func getCameraDevice(for type: CameraType, position: CameraPosition) -> AVCaptureDevice? {
+        switch position {
+        case .front:
+            return frontCamera
+        case .back:
+            switch type {
+            case .ultraWide:
+                return ultraWideCamera ?? wideCamera ?? telephotoCamera
+            case .wide:
+                return wideCamera ?? ultraWideCamera ?? telephotoCamera
+            case .telephoto:
+                return telephotoCamera ?? wideCamera ?? ultraWideCamera
+            }
         }
     }
     
@@ -1227,13 +1307,18 @@ extension CameraViewController {
         // Reset the zoom factor when switching cameras
         currentZoomFactor = 1.0
         
-        // Determine the next camera to switch to based on the current device
-        if currentDevice == wideCamera {
-            currentCameraType = .telephoto
-        } else if currentDevice == telephotoCamera {
-            currentCameraType = .ultraWide
-        } else if currentDevice == ultraWideCamera {
-            currentCameraType = .wide
+        // Get the index of the current camera type
+        if let currentIndex = availableCameraTypes.firstIndex(of: currentCameraType) {
+            // Calculate the next index
+            let nextIndex = (currentIndex + 1) % availableCameraTypes.count
+            currentCameraType = availableCameraTypes[nextIndex]
+            switchCameraType(to: currentCameraType, position: currentCameraPosition)
+        } else {
+            // Fallback to the first available camera type
+            if let firstAvailableType = availableCameraTypes.first {
+                currentCameraType = firstAvailableType
+                switchCameraType(to: currentCameraType, position: currentCameraPosition)
+            }
         }
     }
     

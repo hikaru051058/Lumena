@@ -4,8 +4,6 @@ import Foundation
 
 public struct UserProfileQL: Model {
   public let id: String
-  public var followingUsers: [String]?
-  public var followerUsers: [String]?
   public var username: String
   public var DOB: Int?
   public var firstName: String?
@@ -22,8 +20,6 @@ public struct UserProfileQL: Model {
   public var skinStreaks: Int?
   
   public init(id: String = UUID().uuidString,
-      followingUsers: [String]? = [],
-      followerUsers: [String]? = [],
       username: String,
       DOB: Int? = nil,
       firstName: String? = nil,
@@ -39,8 +35,6 @@ public struct UserProfileQL: Model {
       skinSettings: SkinSettingsAttributesQL? = nil,
       skinStreaks: Int? = nil) {
       self.id = id
-      self.followingUsers = followingUsers
-      self.followerUsers = followerUsers
       self.username = username
       self.DOB = DOB
       self.firstName = firstName

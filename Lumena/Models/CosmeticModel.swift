@@ -516,16 +516,20 @@ class CosmeticBrandManager: ObservableObject {
     
     @Published var cosmeticBrands: [String: CosmeticBrandQL] = [:]
     
+    // Ensure that updates to `cosmeticBrands` happen on the main thread
+    @MainActor
     func getCosmeticBrandQL(withID id: String) async -> CosmeticBrandQL? {
         if let existingCosmeticBrandQL = cosmeticBrands[id] {
             return existingCosmeticBrandQL
         } else {
-            if id == "" {
+            if id.isEmpty {
                 print("NULL id detected in getCosmeticBrandQL async")
+                return nil
             }
             do {
                 let returnedModel = try await GraphQL.shared.queryAmplify(for: CosmeticBrandQL.self, modelID: id)
-                self.cosmeticBrands[id] =  returnedModel
+                // Ensure this operation happens on the main thread
+                cosmeticBrands[id] = returnedModel
                 return returnedModel
             } catch {
                 print(error)
@@ -534,3 +538,4 @@ class CosmeticBrandManager: ObservableObject {
         }
     }
 }
+

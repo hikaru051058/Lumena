@@ -1284,7 +1284,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
         userLiked = userLikeInput
         
         // Update UI immediately and manage local counts
-        if let userProfile = GI.shared.identityID {
+        if let userProfile = AuthenticationManager.shared.identityID {
             if userLiked {
                 if !likedUsers.contains(userProfile) {
                     likedUsers.append(userProfile)
@@ -1311,7 +1311,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     }
 
     private func likeLumeNetworkCall() {
-        guard let identityID = GI.shared.identityID else {
+        guard let identityID = AuthenticationManager.shared.identityID else {
             return
         }
         
@@ -1321,11 +1321,11 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             
             Task {
                 do {
-                    let newLikeCnt = try await GraphQL.shared.likeLume(LumeID: self.postID, identityID: identityID, likeUnlike: userLiked)
+                    try await GraphQL.shared.likeLume(LumeID: self.postID, identityID: identityID, likeUnlike: userLiked)
                     DispatchQueue.main.async {
                         // Update the like count with the latest from the server, synchronize it
-                        self.likeCnt = newLikeCnt
-                        self.lastServerConfirmedLikeCount = newLikeCnt
+                        self.likeCnt = self.userLiked ? self.likeCnt+1 : self.likeCnt-1
+                        self.lastServerConfirmedLikeCount = self.likeCnt
                     }
                 } catch {
                     print(error)
@@ -1336,7 +1336,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
     
     
     func checkUserLikedPost() -> Bool {
-        guard let userIdentityID = GI.shared.identityID else {
+        guard let userIdentityID = AuthenticationManager.shared.identityID else {
             return false
         }
         // Check if user's like status can be determined immediately
@@ -1354,7 +1354,7 @@ class Lume: Identifiable, ObservableObject, Hashable, Reflectable {
             return
         }
         
-        guard let userIdentityID = GI.shared.identityID else {
+        guard let userIdentityID = AuthenticationManager.shared.identityID else {
             return
         }
         

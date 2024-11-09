@@ -6,8 +6,6 @@ extension UserProfileQL {
   // MARK: - CodingKeys 
    public enum CodingKeys: String, ModelKey {
     case id
-    case followingUsers
-    case followerUsers
     case username
     case DOB
     case firstName
@@ -38,8 +36,6 @@ extension UserProfileQL {
     
     model.fields(
       .id(),
-      .field(userProfileQL.followingUsers, is: .optional, ofType: .embeddedCollection(of: String.self)),
-      .field(userProfileQL.followerUsers, is: .optional, ofType: .embeddedCollection(of: String.self)),
       .field(userProfileQL.username, is: .required, ofType: .string),
       .field(userProfileQL.DOB, is: .optional, ofType: .int),
       .field(userProfileQL.firstName, is: .optional, ofType: .string),

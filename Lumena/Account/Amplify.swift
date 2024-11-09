@@ -22,6 +22,7 @@ enum AuthError: Error {
     case passwordResetRequired
     case confirmationRequired
     case invalidResetPassword
+    case sessionExpired
     case unknown
     case success
 
@@ -39,6 +40,8 @@ enum AuthError: Error {
             return "Confirmation required."
         case .invalidResetPassword:
             return "Invalid username field input. Please enter valid user credential."
+        case .sessionExpired:
+            return "Session has expired. Please login again."
         case .unknown:
             return "Please enter valid login credentail or password."
         case .success:
@@ -74,32 +77,63 @@ class AuthenticationManager: ObservableObject {
     }
 
     func checkLocalAuthState() {
+        // Check if the user is authenticated locally (from UserDefaults)
         let isAuthenticated = UserDefaults.standard.bool(forKey: "isAuthenticated")
-        if isAuthenticated {
-            self.authStatus = .authenticated
-        } else {
-            self.authStatus = .unauthenticated
-        }
+        self.authStatus = isAuthenticated ? .authenticated : .unauthenticated
         
-        let userIdentityID = UserDefaults.standard.object(forKey: "userIdentityID") as? String
-        if (userIdentityID != nil) {
+        // Retrieve the stored identity ID if available
+        if let userIdentityID = UserDefaults.standard.string(forKey: "userIdentityID") {
             self.identityID = userIdentityID
-            GI.shared.identityID = userIdentityID
         }
-        
+
         Task {
-            do {
-                let result = try await fetchAuthDetails()
-                print(result)
-                // Request user permission for notifications.
-                let options: UNAuthorizationOptions = [.badge, .alert, .sound]
-                let notificationsAllowed = try await UNUserNotificationCenter.current().requestAuthorization(
-                    options: options
-                )
-                print(notificationsAllowed)
-            } catch {
-                print(error)
+            // Now call the session status check to ensure it's up to date
+            await checkSessionStatus()
+
+            // If authenticated, proceed with fetching additional details or setting up notifications
+            if authStatus == .authenticated {
+                do {
+                    let result = try await fetchAuthDetails()
+                    print(result)
+
+                    // Request notification permissions
+                    let options: UNAuthorizationOptions = [.badge, .alert, .sound]
+                    let notificationsAllowed = try await UNUserNotificationCenter.current().requestAuthorization(options: options)
+                    print(notificationsAllowed)
+                } catch {
+                    print(error)
+                }
             }
+        }
+    }
+
+    func checkSessionStatus() async {
+        do {
+            let session = try await Amplify.Auth.fetchAuthSession()
+            
+            if !session.isSignedIn {
+                // Log out user and update auth status
+                let _ = await signOut()
+                authStatus = .unauthenticated
+                print("Session expired. User has been logged out.")
+            }
+        } catch {
+            await handleSessionError(error)
+        }
+    }
+
+    private func handleSessionError(_ error: Error) async {
+        if let authError = error as? AuthError {
+            switch authError {
+            case .sessionExpired:
+                let _ = await signOut()
+                authStatus = .unauthenticated
+                print("Session expired. User has been logged out.")
+            default:
+                print("Unexpected error: \(authError.localizedDescription)")
+            }
+        } else {
+            print("Error checking session: \(error.localizedDescription)")
         }
     }
     
@@ -171,8 +205,6 @@ class AuthenticationManager: ObservableObject {
             }
             identityID = ""
         }
-        GI.shared.profileSettings = nil
-        GI.shared.identityID = ""
         messageLabel = "Signed Out successful"
         return .success("Signed Out successful")
     }
@@ -194,7 +226,6 @@ class AuthenticationManager: ObservableObject {
         switch signUpResult.nextStep {
         case .confirmUser(let deliveryDetails, _, let userId):
             messageLabel = "Delivery details \(String(describing: deliveryDetails)) for userId: \(String(describing: userId))"
-            GI.shared.profileSettings?.preferredUsername = username
             return "Confirmation code sent"
         default:
             return "SignUp Complete"
@@ -254,7 +285,7 @@ class AuthenticationManager: ObservableObject {
             }
             // Try creating a new user profile
             if let _ = try await GraphQL.shared.createModel(newProfileSettings.toUserProfileQL()) {
-                GI.shared.profileSettings = newProfileSettings
+                ProfileManager.shared.updateProfile(newProfileSettings)
                 print("Successfully created new UserProfileQL due to it being missing for the current user")
                 return newProfileSettings
             } else {
@@ -293,11 +324,18 @@ class AuthenticationManager: ObservableObject {
     }
     
     func updateUserAttributes(attributeName: AuthUserAttributeKey, value: String) async throws -> String {
-        if let userProfileQLToUpdate = GI.shared.profileSettings?.toUserProfileQL() {
-            try await GI.shared.profileSettings?.updateUserProfileQL()
-            let result = try await GraphQL.shared.createModel(userProfileQLToUpdate)
-            print(result ?? "")
+        
+        guard let userIdentityID = AuthenticationManager.shared.identityID
+        else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: Failed to update user attributes in updateUserAttributes"])
         }
+        
+        let profile = try await ProfileManager.shared.getProfile(withID: userIdentityID)
+        
+        let userProfileQLToUpdate = profile.toUserProfileQL()
+        try await profile.updateUserProfileQL()
+        let result = try await GraphQL.shared.createModel(userProfileQLToUpdate)
+        print(result ?? "")
 
         let updateResult = try await Amplify.Auth.update(userAttribute: AuthUserAttribute(attributeName, value: value))
         switch updateResult.nextStep {
@@ -346,7 +384,6 @@ class AuthenticationManager: ObservableObject {
                 self.identityID = identityId
             }
             
-            GI.shared.identityID = identityId
             AuthenticationManager.shared.identityID = identityId
             
             print("identityId: \(identityId)")
@@ -574,6 +611,9 @@ class GraphQL {
     // Generic function for creating a model
     func createModel<ModelType: Model>(_ model: ModelType) async throws -> String? {
         do {
+            
+            await AuthenticationManager.shared.checkSessionStatus()
+            
             let result = try await Amplify.API.mutate(request: .create(model))
             switch result {
             case .success(let createdModel):
@@ -591,6 +631,9 @@ class GraphQL {
     // Generic function for updating a model
     func updateModel<ModelType: Model>(_ model: ModelType) async throws {
         do {
+            
+            await AuthenticationManager.shared.checkSessionStatus()
+            
             let result = try await Amplify.API.mutate(request: .update(model))
             switch result {
                 
@@ -610,6 +653,9 @@ class GraphQL {
     // Generic function for deleting a model
     func deleteModel<ModelType: Model>(_ model: ModelType) async throws {
         do {
+            
+            await AuthenticationManager.shared.checkSessionStatus()
+            
             let result = try await Amplify.API.mutate(request: .delete(model))
             switch result {
             case .success(let deletedModel):
@@ -627,6 +673,7 @@ class GraphQL {
     
     func queryAmplify<ModelType: Model>(for modelType: ModelType.Type, modelID: String) async throws -> ModelType? {
         do {
+            
             let result = try await Amplify.API.query(
                 request: .get(modelType.self, byId: modelID)
             )
@@ -838,7 +885,8 @@ class GraphQL {
     }
     
     func fetchRandomLumes() async throws -> [Lume] {
-        let urlString = "https://lk1umc2vwc.execute-api.ap-northeast-1.amazonaws.com/randomReelReturnAPI?number=20?userId=\(GI.shared.identityID ?? "")"
+        guard let userIdentityID = AuthenticationManager.shared.identityID else { return [] }
+        let urlString = "https://lk1umc2vwc.execute-api.ap-northeast-1.amazonaws.com/randomReelReturnAPI?number=20?userId=\(userIdentityID)"
         let apiResponse: APIResponse<[LumeQL]> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
         
         guard let body = apiResponse.body else {
@@ -846,26 +894,23 @@ class GraphQL {
         }
         
         var lumes = body.map{Lume.init(ql:$0)}
-        
-        if let userIdentityID = GI.shared.identityID {
             
-            do {
-                let blockedUsers = try await ProfileManager.shared.returnBlockedUsers(forUserID: userIdentityID)
-                let blockedUserIDs = Set(blockedUsers.blocked)
-                let blockingUserIDs = Set(blockedUsers.blocking)
-                
-                lumes = lumes.filter { lume in
-                    return !blockedUserIDs.contains(lume.postUserIID) && !blockingUserIDs.contains(lume.postUserIID)
-                }
-            } catch {
-                print(error)
+        do {
+            let blockedUsers = try await ProfileManager.shared.returnBlockedUsers(forUserID: userIdentityID)
+            let blockedUserIDs = Set(blockedUsers.blocked)
+            let blockingUserIDs = Set(blockedUsers.blocking)
+            
+            lumes = lumes.filter { lume in
+                return !blockedUserIDs.contains(lume.postUserIID) && !blockingUserIDs.contains(lume.postUserIID)
             }
+        } catch {
+            print(error)
         }
         return lumes
     }
     
     func fetchUserFollowingLumes() async throws -> [Lume] {
-        guard let userIdentityID = GI.shared.identityID else {
+        guard let userIdentityID = AuthenticationManager.shared.identityID else {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No identityID found for current user"])
         }
         let urlString = "https://ox5mdm7jc1.execute-api.ap-northeast-1.amazonaws.com/FollowingUserPosts?userId=\(userIdentityID)"
@@ -1004,18 +1049,33 @@ class GraphQL {
         return body
     }
     
-    func likeLume(LumeID: String, identityID: String, likeUnlike: Bool = true) async throws -> Int {
-        let action = likeUnlike ? "like" : "unlike"
-        let urlString = "https://d8s36zcm3l.execute-api.ap-northeast-1.amazonaws.com/LikeReeQL?postId=\(LumeID)&userId=\(identityID)&action=\(action)"
-        
-        let apiResponse: APIResponse<LikeResponse> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
-        
-        guard let body = apiResponse.body else {
-            throw APIError.noData
+    func likeLume(LumeID: String, identityID: String, likeUnlike: Bool = true) async throws {
+        let newLikeQL = LikedLumeQL(timestamp: currentTimeStamp(), lumeQLID: LumeID, userprofileqlID: identityID)
+        do {
+            if likeUnlike {
+                let _ = try await GraphQL.shared.createModel(newLikeQL)
+            } else {
+                try await GraphQL.shared.deleteModel(newLikeQL)
+            }
+        } catch {
+            print(error)
         }
-        
-        return body.data.likeCount
     }
+
+    
+//    func likeLume(LumeID: String, identityID: String, likeUnlike: Bool = true) async throws -> Int {
+//        let action = likeUnlike ? "like" : "unlike"
+//        let urlString = "https://d8s36zcm3l.execute-api.ap-northeast-1.amazonaws.com/LikeReeQL?postId=\(LumeID)&userId=\(identityID)&action=\(action)"
+//        
+//        let apiResponse: APIResponse<LikeResponse> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
+//        
+//        guard let body = apiResponse.body else {
+//            throw APIError.noData
+//        }
+//        
+//        return body.data.likeCount
+//    }
+    
     
     func fetchUserLikedPosts(userID: String, limit: Int = 10, lastToken: String = "") async throws -> UserLikedPostsResponse {
         let encodedUserID = userID.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
@@ -1053,18 +1113,34 @@ class GraphQL {
         return body.likeExists
     }
     
-    func followUser(currUserId: String, followUserId: String, followUnfollow: Bool = true) async throws -> String {
-        let action = followUnfollow ? "follow" : "unfollow"
-        let urlString = "https://q14qwpond6.execute-api.ap-northeast-1.amazonaws.com/FollowUserAPI?currUserId=\(currUserId)&followUserId=\(followUserId)&action=\(action)"
-        let apiResponse: APIResponse<FollowUserResponse> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
-        
-        guard let body = apiResponse.body else {
-            throw APIError.noData
+    func followUser(currUserId: String, followUserId: String, followUnfollow: Bool = true) async throws {
+        let newFollowQL = FollowQL(timestamp: currentTimeStamp(), followingID: followUserId, followerID: currUserId, status: FollowStatus.approved)
+        do {
+            if followUnfollow {
+                let _ = try await GraphQL.shared.createModel(newFollowQL)
+            } else {
+                try await GraphQL.shared.deleteModel(newFollowQL)
+            }
+        } catch {
+            print(error)
         }
-        
-        return body.message
     }
     
+//    func followUser(currUserId: String, followUserId: String, followUnfollow: Bool = true) async throws -> String {
+//        let action = followUnfollow ? "follow" : "unfollow"
+//        let urlString = "https://q14qwpond6.execute-api.ap-northeast-1.amazonaws.com/FollowUserAPI?currUserId=\(currUserId)&followUserId=\(followUserId)&action=\(action)"
+//        let apiResponse: APIResponse<FollowUserResponse> = try await baseAPICall(urlString: urlString, httpMethod: "GET")
+//        
+//        guard let body = apiResponse.body else {
+//            throw APIError.noData
+//        }
+//        
+//        return body.message
+//    }
+    
+    private func currentTimeStamp() -> Int {
+        return Int(Date().timeIntervalSince1970)
+    }
     
     // MARK: -- API Doccument not updated from below
     
@@ -1122,7 +1198,7 @@ class GraphQL {
         var components = URLComponents(string: baseURL)!
 
         
-        guard let userProfileID = GI.shared.identityID else {
+        guard let userProfileID = AuthenticationManager.shared.identityID else {
             print("Error: Could not get user identity ID in blockUser")
             throw APIError.invalidURL
         }
@@ -1193,8 +1269,6 @@ class GraphQL {
             
             // Make the API call
             let _ : APIResponse<String> = try await baseAPICall(urlString: urlString, httpMethod: "POST")
-            
-            
         }
     }
 }

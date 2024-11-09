@@ -112,7 +112,7 @@ extension LumeSideButtonsViewController {
     
     func navigateToProfile() {
         DispatchQueue.main.async { [self] in
-            let profileVC = ProfileParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == GI.shared.identityID)
+            let profileVC = ProfileParallaxViewController(userIdentityID: lume.postUserIID, isAccountUser: lume.postUserIID == AuthenticationManager.shared.identityID)
             self.navigationController?.pushViewController(profileVC, animated: true)
         }
     }

@@ -286,8 +286,6 @@ type LumeQL @model @auth(rules: [{allow: public}]) {
 
 type UserProfileQL @model @auth(rules: [{allow: public}]) {
   id: ID!
-  followingUsers: [String]
-  followerUsers: [String]
   username: String!
   DOB: AWSTimestamp
   firstName: String

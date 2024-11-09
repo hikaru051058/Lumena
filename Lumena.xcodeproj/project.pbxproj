@@ -94,6 +94,10 @@
 		177E442B2C6E88C600EFD2D1 /* CommentsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E442A2C6E88C600EFD2D1 /* CommentsListViewController.swift */; };
 		177E442E2C72244500EFD2D1 /* UnblockingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177E442D2C72244500EFD2D1 /* UnblockingViewController.swift */; };
 		1782B11A2C67530400AC1686 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1782B1192C67530400AC1686 /* CameraViewController.swift */; };
+		1784D9E32CDA03E10048E1C8 /* PrepPostStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E22CDA03E10048E1C8 /* PrepPostStatusBarView.swift */; };
+		1784D9E52CDA0B520048E1C8 /* PrepPostMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E42CDA0B520048E1C8 /* PrepPostMainViewController.swift */; };
+		1784D9E72CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */; };
+		1784D9E92CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */; };
 		179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */; };
 		179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */; };
 		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
@@ -325,6 +329,10 @@
 		177E442A2C6E88C600EFD2D1 /* CommentsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsListViewController.swift; sourceTree = "<group>"; };
 		177E442D2C72244500EFD2D1 /* UnblockingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnblockingViewController.swift; sourceTree = "<group>"; };
 		1782B1192C67530400AC1686 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		1784D9E22CDA03E10048E1C8 /* PrepPostStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostStatusBarView.swift; sourceTree = "<group>"; };
+		1784D9E42CDA0B520048E1C8 /* PrepPostMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostMainViewController.swift; sourceTree = "<group>"; };
+		1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostContentCheckViewController.swift; sourceTree = "<group>"; };
+		1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostDescriptionViewController.swift; sourceTree = "<group>"; };
 		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
 		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -641,7 +649,7 @@
 		1782B1172C66A83800AC1686 /* PostContentViewController */ = {
 			isa = PBXGroup;
 			children = (
-				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
+				1784D9E12CD9FE110048E1C8 /* PostPrep */,
 				1782B1192C67530400AC1686 /* CameraViewController.swift */,
 				175AFF732C6A7A3E005EA8EC /* ContentCreationViewController.swift */,
 				17343E042C8127260050035D /* TextBasedContentViewController.swift */,
@@ -664,6 +672,18 @@
 				17CA9F4E2C3A334100FDA4EE /* HyperLinkTextViewController.swift */,
 			);
 			path = SubViewControllers;
+			sourceTree = "<group>";
+		};
+		1784D9E12CD9FE110048E1C8 /* PostPrep */ = {
+			isa = PBXGroup;
+			children = (
+				17FFC0072BD618AC00682EE2 /* PostContent.swift */,
+				1784D9E42CDA0B520048E1C8 /* PrepPostMainViewController.swift */,
+				1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */,
+				1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */,
+				1784D9E22CDA03E10048E1C8 /* PrepPostStatusBarView.swift */,
+			);
+			path = PostPrep;
 			sourceTree = "<group>";
 		};
 		17A7C2192BD66B57008FED83 /* LumenaNotificationAPNAWS */ = {
@@ -1133,6 +1153,7 @@
 				1751B8912C76810900E8F20F /* TagCosmeticQL+Schema.swift in Sources */,
 				1751B8922C76810900E8F20F /* CosmeticPrice.swift in Sources */,
 				1751B8932C76810900E8F20F /* TagTrackQL+Schema.swift in Sources */,
+				1784D9E32CDA03E10048E1C8 /* PrepPostStatusBarView.swift in Sources */,
 				1751B8942C76810900E8F20F /* FollowStatus.swift in Sources */,
 				1751B8952C76810900E8F20F /* CosmeticQL+Schema.swift in Sources */,
 				1751B8962C76810900E8F20F /* TagCosmeticQL.swift in Sources */,
@@ -1187,6 +1208,7 @@
 				1751B8C72C76810900E8F20F /* CosmeticSearchIndex.swift in Sources */,
 				1751B8C82C76810900E8F20F /* AmplifyModels.swift in Sources */,
 				1751B8C92C76810900E8F20F /* CosmeticBrandQL.swift in Sources */,
+				1784D9E52CDA0B520048E1C8 /* PrepPostMainViewController.swift in Sources */,
 				1751B8CA2C76810900E8F20F /* AccountState.swift in Sources */,
 				175AFF742C6A7A3E005EA8EC /* ContentCreationViewController.swift in Sources */,
 				17FA39532C49064000B739BA /* ReadingDataEditorView.swift in Sources */,
@@ -1236,6 +1258,7 @@
 				17FFC0712BD6190900682EE2 /* LoginView.swift in Sources */,
 				17B7A3B52C04104E00777CC1 /* ImageView.swift in Sources */,
 				17B7A3C02C04104E00777CC1 /* SharedTransitionAnimator.swift in Sources */,
+				1784D9E92CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift in Sources */,
 				17FFC0422BD6190900682EE2 /* Camera.swift in Sources */,
 				1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */,
 				17B7A3B42C04104E00777CC1 /* ImageMemoryCache.swift in Sources */,
@@ -1263,6 +1286,7 @@
 				17FFC03E2BD6190900682EE2 /* ProfileModel.swift in Sources */,
 				17343E012C80C8070050035D /* TagMusicViewController.swift in Sources */,
 				179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */,
+				1784D9E72CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift in Sources */,
 				17CA9F4F2C3A334100FDA4EE /* HyperLinkTextViewController.swift in Sources */,
 				17C0ABB82BFEA90100FA027A /* ProfileParallaxViewController.swift in Sources */,
 				17C412342C32C5460083C8A5 /* ShimmerViewController.swift in Sources */,
@@ -1530,7 +1554,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1573,7 +1597,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nucr.gotdns.org.Lumena;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

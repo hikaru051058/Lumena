@@ -1386,7 +1386,6 @@ struct PrepPost: View {
                             Text("\(description.count) / 300")
                                 .foregroundColor(.gray)
                                 .font(.caption)
-                            
                         }
                         
                         
@@ -1676,29 +1675,35 @@ struct PrepPost: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {
-                                    
-                                    withAnimation{
-                                        filterTag.toggle()
-                                    }
-                                    
-                                }){
-                                    ZStack {
-                                        Rectangle()
-                                            .frame(width: 50, height: 50)
-                                            .cornerRadius(50)
-                                            .foregroundColor(.primary)
+                                if tagAny || !postLume.tagProducts.isEmpty {
+                                    Button(action: {
                                         
-                                        Image(systemName: "tag.fill")
-                                            .foregroundColor(colorScheme == .dark ? .black : .white)
+                                        withAnimation{
+                                            filterTag.toggle()
+                                        }
+                                        
+                                    }){
+                                        ZStack {
+                                            Rectangle()
+                                                .frame(width: 50, height: 50)
+                                                .cornerRadius(50)
+                                                .foregroundColor(.primary)
+                                            
+                                            Image(systemName: "tag.fill")
+                                                .foregroundColor(colorScheme == .dark ? .black : .white)
+                                        }
                                     }
                                 }
                                 
                                 Button(action: {
                                     
+                                    if !(tagAny || !postLume.tagProducts.isEmpty) {
+                                        uploadAction()
+                                    }
+                                    
                                     withAnimation{
-                                        selectedOption = "評価"
-                                        completePage = "評価"
+                                        selectedOption = !(tagAny || !postLume.tagProducts.isEmpty) ?  "商品" : "評価"
+                                        completePage = !(tagAny || !postLume.tagProducts.isEmpty) ?  "商品" : "評価"
                                     }
                                     
                                 }){
@@ -1709,7 +1714,7 @@ struct PrepPost: View {
                                             .foregroundColor(.primary)
                                         
                                         HStack{
-                                            Text("次へ")
+                                            Text(!(tagAny || !postLume.tagProducts.isEmpty) ? "投稿" : "次へ")
                                                 .fontWeight(.bold)
                                                 .font(.body)
                                                 .foregroundColor(colorScheme == .dark ? .black : .white)
@@ -1722,10 +1727,41 @@ struct PrepPost: View {
                         }
                         .padding(.horizontal, 30)
                         .padding(.vertical, 20)
-                        .opacity((tagAny || !postLume.tagProducts.isEmpty) ? 1 : 0)
                     }
                     .ignoresSafeArea()
                 }
+            }
+        }
+        
+        func uploadAction() {
+            DispatchQueue.main.async {
+                postLume.uploadLumeQL() { result in
+                    switch result {
+                    case .success:
+                        guard let userIdentityID = AuthenticationManager.shared.identityID else { return }
+                        let profile = ProfileManager.shared.getProfile(withID: userIdentityID)
+                        profile.postContentsID.append(postLume.postID)
+                        
+                    case .failure:
+                        print("Error uploading in PostContent")
+                    }
+                }
+            }
+            
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                // Initialize the main view controller you want to display
+                let mainViewController = newLumeHorizontalViewController()  // Replace MainViewController with your main view controller
+
+                // Wrap the main view controller in your custom navigation controller
+                let navigationController = FakeModalNavigationController(rootViewController: mainViewController)
+
+                // Perform the custom animation transition
+                UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                    window.rootViewController = navigationController
+                }, completion: { _ in
+                    window.makeKeyAndVisible()
+                })
             }
         }
     }
@@ -1778,38 +1814,10 @@ struct PrepPost: View {
                                         selectedOption = "評価"
                                         completePage = "評価"
                                     }
-                                    DispatchQueue.main.async {
-                                        postLume.uploadLumeQL() { result in
-                                            switch result {
-                                                
-                                            case .success:
-                                                
-                                                GI.shared.profileSettings?.postContentsID.append(postLume.postID)
-                                                
-                                            case .failure:
-                                                
-                                                print("Error uploading in PostContent")
-                                            }
-                                        }
-                                    }
+                                    
+                                    uploadAction()
                                     
                                     isPresented.toggle()
-                                     
-                                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                       let window = windowScene.windows.first {
-                                        // Initialize the main view controller you want to display
-                                        let mainViewController = newLumeHorizontalViewController()  // Replace MainViewController with your main view controller
-
-                                        // Wrap the main view controller in your custom navigation controller
-                                        let navigationController = FakeModalNavigationController(rootViewController: mainViewController)
-
-                                        // Perform the custom animation transition
-                                        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
-                                            window.rootViewController = navigationController
-                                        }, completion: { _ in
-                                            window.makeKeyAndVisible()
-                                        })
-                                    }
 
                                 }){
                                     ZStack {
@@ -1841,6 +1849,38 @@ struct PrepPost: View {
                     .ignoresSafeArea()
                 }
                 .padding(.top, 45)
+            }
+        }
+        
+        func uploadAction() {
+            DispatchQueue.main.async {
+                postLume.uploadLumeQL() { result in
+                    switch result {
+                    case .success:
+                        guard let userIdentityID = AuthenticationManager.shared.identityID else { return }
+                        let profile = ProfileManager.shared.getProfile(withID: userIdentityID)
+                        profile.postContentsID.append(postLume.postID)
+
+                    case .failure:
+                        print("Error uploading in PostContent")
+                    }
+                }
+            }
+
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                // Initialize the main view controller you want to display
+                let mainViewController = newLumeHorizontalViewController()  // Replace MainViewController with your main view controller
+
+                // Wrap the main view controller in your custom navigation controller
+                let navigationController = FakeModalNavigationController(rootViewController: mainViewController)
+
+                // Perform the custom animation transition
+                UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                    window.rootViewController = navigationController
+                }, completion: { _ in
+                    window.makeKeyAndVisible()
+                })
             }
         }
     }
@@ -2029,6 +2069,11 @@ struct PrepPost: View {
             }
         }
     }
+}
+
+
+#Preview("PostContentPreview") {
+    PrepPost(postLume: Lume())
 }
 
 class FakeModalNavigationController: UINavigationController {

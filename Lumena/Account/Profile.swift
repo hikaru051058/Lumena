@@ -1235,7 +1235,9 @@ struct OtherUserProfile: View {
                             followState.toggle()
                         }
                         
-                        let loggedInUser = ProfileManager.shared.getProfile(withID: GI.shared.identityID!)
+                        guard let identityID = AuthenticationManager.shared.identityID else { return }
+                        
+                        let loggedInUser = ProfileManager.shared.getProfile(withID: identityID)
                         
                         if followState {
                             loggedInUser.followUser(userID: profile.identityID)

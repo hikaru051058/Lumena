@@ -3,4 +3,320 @@
    uuid = "410ED07F-49BC-4714-8636-BA0CB2BDCB9B"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4D91047D-6E01-429D-A4C1-66824E5FE85D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/ViewControllers/PostContentViewController/PostContent.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1863"
+            endingLineNumber = "1863"
+            landmarkName = "uploadAction()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "31D8A51E-2F13-4C28-8239-A93DE04432FC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Models/LumeModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1011"
+            endingLineNumber = "1011"
+            landmarkName = "uploadLumeQL(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9DAF5812-C2D8-4CC9-B1DA-767E9E9A6533"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Models/LumeModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1015"
+            endingLineNumber = "1015"
+            landmarkName = "uploadLumeQL(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Models/LumeModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1107"
+            endingLineNumber = "1107"
+            landmarkName = "handleVideoUpload(video:index:ReelLocationS3:progressUpdate:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - 8be96d040646f349"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1107"
+                  endingLineNumber = "1107">
+               </Location>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - f419bdb5341bb777"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1107"
+                  endingLineNumber = "1107">
+               </Location>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - cf095d8fe8afcc41"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) await resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1107"
+                  endingLineNumber = "1107">
+               </Location>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - d489ca25da31459b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1061"
+                  endingLineNumber = "1061">
+               </Location>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - d489ca25da317b75"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1107"
+                  endingLineNumber = "1107">
+               </Location>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - 131275b301400ce0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(10) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1061"
+                  endingLineNumber = "1061">
+               </Location>
+               <Location
+                  uuid = "12D09941-3AEC-42FC-86D2-CBB7D5D50F4B - 131275b30140320e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(10) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1107"
+                  endingLineNumber = "1107">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "84647EEF-A9A8-42D0-9FAB-08A17C131E9E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Models/LumeModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1101"
+            endingLineNumber = "1101"
+            landmarkName = "handleVideoUpload(video:index:ReelLocationS3:progressUpdate:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "84647EEF-A9A8-42D0-9FAB-08A17C131E9E - 8be96d040646f28f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1101"
+                  endingLineNumber = "1101">
+               </Location>
+               <Location
+                  uuid = "84647EEF-A9A8-42D0-9FAB-08A17C131E9E - 60ac34c520970985"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) await resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1101"
+                  endingLineNumber = "1101">
+               </Location>
+               <Location
+                  uuid = "84647EEF-A9A8-42D0-9FAB-08A17C131E9E - f419bdb5341bb6b1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1101"
+                  endingLineNumber = "1101">
+               </Location>
+               <Location
+                  uuid = "84647EEF-A9A8-42D0-9FAB-08A17C131E9E - 353a1aaa88c63e5a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1098"
+                  endingLineNumber = "1098">
+               </Location>
+               <Location
+                  uuid = "84647EEF-A9A8-42D0-9FAB-08A17C131E9E - 353a1aaa88c63eb5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1101"
+                  endingLineNumber = "1101">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FD4F7C57-1FF4-43AB-9C63-99CBB551CBA8"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Models/LumeModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1097"
+            endingLineNumber = "1097"
+            landmarkName = "handleVideoUpload(video:index:ReelLocationS3:progressUpdate:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "98CF7585-C3BB-4318-B8C0-D31C4AC3F893"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lumena/Models/LumeModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1100"
+            endingLineNumber = "1100"
+            landmarkName = "handleVideoUpload(video:index:ReelLocationS3:progressUpdate:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "98CF7585-C3BB-4318-B8C0-D31C4AC3F893 - 8be96d040646f2ae"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1100"
+                  endingLineNumber = "1100">
+               </Location>
+               <Location
+                  uuid = "98CF7585-C3BB-4318-B8C0-D31C4AC3F893 - f419bdb5341bb690"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for Lumena.Lume.handleVideoUpload(video: Lumena.LumeVideo, index: Swift.Int, ReelLocationS3: Swift.String, progressUpdate: (Swift.Double) -&gt; ()) async throws -&gt; Swift.String"
+                  moduleName = "Lumena"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hikaru/Desktop/FFT/Lumena/Lumena/Models/LumeModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1100"
+                  endingLineNumber = "1100">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

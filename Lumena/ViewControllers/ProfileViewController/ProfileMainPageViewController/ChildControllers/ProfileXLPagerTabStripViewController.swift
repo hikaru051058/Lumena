@@ -46,7 +46,7 @@ class ProfileXLPagerTabStripViewController: ButtonBarPagerTabStripViewController
         settings.style.selectedBarBackgroundColor = .arinBlue
         settings.style.buttonBarItemTitleColor = .arinBlue
         settings.style.selectedBarHeight = 2
-        settings.style.selectedBarWidthPercentage = userIdentityID == GI.shared.identityID ? 0.5 : 0.25
+        settings.style.selectedBarWidthPercentage = userIdentityID == AuthenticationManager.shared.identityID ? 0.5 : 0.25
 
         super.viewDidLoad()
         
@@ -67,7 +67,7 @@ class ProfileXLPagerTabStripViewController: ButtonBarPagerTabStripViewController
         
         var viewControllers: [UIViewController] = [child_1]
         
-        if userIdentityID == GI.shared.identityID {
+        if userIdentityID == AuthenticationManager.shared.identityID {
             let child_2 = createBottomViewController(pageIndex: 1, title: .likes)
             viewControllers.append(child_2)
         }

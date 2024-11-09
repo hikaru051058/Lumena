@@ -70,7 +70,7 @@ class ProfileManager: ObservableObject {
                     throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error: No ProfileSettings has been returned when called getProfile"])
                 }
                 
-                if let userIdentityID = GI.shared.identityID {
+                if let userIdentityID = AuthenticationManager.shared.identityID {
                     let _ = await fetchRelationshipStat(fromUserID: userIdentityID, toUserID: id)
                 }
                 
@@ -1047,7 +1047,7 @@ extension ProfileSettings {
                 let lumes = try await GraphQL.shared.fetchUserLumas(userProfileID: self.identityID)
                 self.postContentsID = lumes
                 
-                if self.identityID == GI.shared.identityID {
+                if self.identityID == AuthenticationManager.shared.identityID {
                     GI.shared.userPosts = lumes
                 }
                 for PostLume in lumes {
