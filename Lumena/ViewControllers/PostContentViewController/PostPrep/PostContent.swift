@@ -1564,14 +1564,14 @@ struct PrepPost: View {
                         .sheet(isPresented: $isShowingScanner) {
                             VStack {
                                 ZStack {
-                                    ScannerView(scannedCode: $scannedCode, isShowingScanner: $isShowingScanner)
-                                        .aspectRatio(contentMode: .fill)
-                                        .padding(.bottom, UIScreen.main.bounds.height/2)
-                                        .frame(width: UIScreen.main.bounds.width)
-                                        .clipped()
-                                        .cornerRadius(25)
-                                    
-                                    ScanOverlayView() // Add ScanOverlayView here
+//                                    ScannerView(scannedCode: $scannedCode, isShowingScanner: $isShowingScanner)
+//                                        .aspectRatio(contentMode: .fill)
+//                                        .padding(.bottom, UIScreen.main.bounds.height/2)
+//                                        .frame(width: UIScreen.main.bounds.width)
+//                                        .clipped()
+//                                        .cornerRadius(25)
+//                                    
+//                                    ScanOverlayView() // Add ScanOverlayView here
                                     
                                     VStack {
                                         Text("バーコードをスキャン")

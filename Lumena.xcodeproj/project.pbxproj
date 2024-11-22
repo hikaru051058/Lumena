@@ -98,6 +98,7 @@
 		1784D9E52CDA0B520048E1C8 /* PrepPostMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E42CDA0B520048E1C8 /* PrepPostMainViewController.swift */; };
 		1784D9E72CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */; };
 		1784D9E92CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */; };
+		1784D9EB2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9EA2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift */; };
 		179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */; };
 		179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */; };
 		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
@@ -333,6 +334,7 @@
 		1784D9E42CDA0B520048E1C8 /* PrepPostMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostMainViewController.swift; sourceTree = "<group>"; };
 		1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostContentCheckViewController.swift; sourceTree = "<group>"; };
 		1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostDescriptionViewController.swift; sourceTree = "<group>"; };
+		1784D9EA2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostTagProductsViewController.swift; sourceTree = "<group>"; };
 		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
 		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -681,6 +683,7 @@
 				1784D9E42CDA0B520048E1C8 /* PrepPostMainViewController.swift */,
 				1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */,
 				1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */,
+				1784D9EA2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift */,
 				1784D9E22CDA03E10048E1C8 /* PrepPostStatusBarView.swift */,
 			);
 			path = PostPrep;
@@ -1215,6 +1218,7 @@
 				17FA39542C49064000B739BA /* ReadingListView.swift in Sources */,
 				175AFF7A2C6B6694005EA8EC /* CameraRecordButtonUIView.swift in Sources */,
 				17FA39552C49064000B739BA /* AdvancedWebView.swift in Sources */,
+				1784D9EB2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift in Sources */,
 				17FA39562C49064000B739BA /* PlatformIndependentWebView.swift in Sources */,
 				17FA39572C49064000B739BA /* SimpleWebView.swift in Sources */,
 				17FA39582C49064000B739BA /* BrowserView.swift in Sources */,

@@ -20,19 +20,21 @@ class PrepPostProgressOptionsView: UIView {
     
     weak var delegate: PrepPostProgressProtocol?
     
-    private var backButton: UIButton!
-    
     var labels: [String] = [] {
         didSet {
             setupButtons()
         }
     }
     
+    private var isProgrammaticUpdate = false
+
     var selectedIndex: Int = -1 {
-        didSet {
-            updateButtonStyles()
-            delegate?.updateProgress(selectedIndex: selectedIndex) // Notify the delegate about progress change
-        }
+       didSet {
+           if !isProgrammaticUpdate {
+               delegate?.updateProgress(selectedIndex: selectedIndex) // Notify delegate only if not programmatic
+           }
+           updateButtonStyles()
+       }
     }
     
     override init(frame: CGRect) {
@@ -46,7 +48,7 @@ class PrepPostProgressOptionsView: UIView {
     }
     
     private func setupView() {
-        setupBackButton()
+//        setupBackButton()
         
         mainStackView.axis = .horizontal
         mainStackView.alignment = .fill
@@ -58,7 +60,7 @@ class PrepPostProgressOptionsView: UIView {
         optionStackView.distribution = .fillEqually
         optionStackView.spacing = 8
         
-        mainStackView.addArrangedSubview(backButton)
+//        mainStackView.addArrangedSubview(backButton)
         mainStackView.addArrangedSubview(optionStackView)
         
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -87,7 +89,17 @@ class PrepPostProgressOptionsView: UIView {
     }
     
     @objc private func optionTapped(_ sender: UIButton) {
+        if sender.tag == selectedIndex {
+            // Ignore if the tapped option is already selected
+            return
+        }
         selectedIndex = sender.tag
+    }
+    
+    public func updateButton(_ index: Int) {
+       isProgrammaticUpdate = true
+       selectedIndex = index
+       isProgrammaticUpdate = false
     }
     
     private func updateButtonStyles() {
@@ -102,17 +114,5 @@ class PrepPostProgressOptionsView: UIView {
                 }
             })
         }
-    }
-
-    private func setupBackButton() {
-        backButton = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
-        let image = UIImage(systemName: "chevron.backward", withConfiguration: config)?.withTintColor(.arinDarkGreen, renderingMode: .alwaysOriginal)
-        backButton.setImage(image, for: .normal)
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-    }
-    
-    @objc private func backButtonTapped() {
-        print("Back button tapped")
     }
 }

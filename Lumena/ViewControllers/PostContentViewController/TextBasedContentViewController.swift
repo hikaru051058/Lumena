@@ -167,6 +167,7 @@ extension TextBasedContentViewController {
     }
 }
 
+
 struct TextBasedVerticalTextField: View {
     
     @State var placeholder: String
@@ -174,11 +175,14 @@ struct TextBasedVerticalTextField: View {
     var characterLimit: Int
     var onTextChanged: (String) -> Void
     
-    
     var body: some View {
         VStack {
             TextField(NSLocalizedString(placeholder, comment: ""), text: $userInput.text, axis: .vertical)
                 .autocapitalization(.none)
+                .submitLabel(.done) // Set the keyboard to "Done"
+                .onSubmit {
+                    UIApplication.shared.dismissKeyboard()
+                }
                 .onChange(of: userInput.text) { newValue in
                     if userInput.text.count > characterLimit {
                         userInput.text = String(userInput.text.prefix(characterLimit))
@@ -199,6 +203,14 @@ struct TextBasedVerticalTextField: View {
         }
     }
 }
+
+extension UIApplication {
+    /// Dismisses the keyboard by resigning the first responder.
+    func dismissKeyboard() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
 
 
 // MARK: - Submit Button View

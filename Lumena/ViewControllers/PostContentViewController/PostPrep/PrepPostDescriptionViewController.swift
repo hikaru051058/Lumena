@@ -58,8 +58,8 @@ class PrepPostDescriptionViewController: UIViewController {
                 self?.delegate?.didUpdateText(newText)
             }
         )
-        textfield = UIHostingController(rootView: swiftUIView)
         
+        textfield = UIHostingController(rootView: swiftUIView)
         addChild(textfield)
         view.addSubview(textfield.view)
         textfield.didMove(toParent: self)
