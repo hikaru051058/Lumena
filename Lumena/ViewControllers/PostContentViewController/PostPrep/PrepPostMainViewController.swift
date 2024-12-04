@@ -30,6 +30,7 @@ class PostPrepMainViewController: UIViewController {
     private var contentCheckView: PrepPostContentCheckViewController!
     private var descriptonView: PrepPostDescriptionViewController!
     private var productTagView: PrepPostTagProductsViewController!
+    private var productRatingView: PrepPostRatingViewController!
     
     private var backButton: UIButton!
     
@@ -62,6 +63,7 @@ class PostPrepMainViewController: UIViewController {
         setupPrepPostContentCheck()
         setupPrepPostDescription()
         setupPrepPostTagProduct()
+        setupPrepPostRatingView()
         
         if let _ = progressOptionsView {
             progressOptionsView.updateButton(0)
@@ -128,8 +130,23 @@ class PostPrepMainViewController: UIViewController {
         NSLayoutConstraint.activate([
             productTagView.view.topAnchor.constraint(equalTo: progressOptionsView.bottomAnchor),
             productTagView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            productTagView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            productTagView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            productTagView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            productTagView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+    }
+    
+    private func setupPrepPostRatingView() {
+        productRatingView = PrepPostRatingViewController()
+        addChild(productRatingView)
+        view.addSubview(productRatingView.view)
+        productRatingView.didMove(toParent: self)
+        productRatingView.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            productRatingView.view.topAnchor.constraint(equalTo: progressOptionsView.bottomAnchor),
+            productRatingView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            productRatingView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            productRatingView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
     
@@ -141,18 +158,27 @@ class PostPrepMainViewController: UIViewController {
                 contentCheckView.view.alpha = 1
                 descriptonView.view.alpha = 0
                 productTagView.view.alpha = 0
+                productRatingView.view.alpha = 0
             case 1:
                 contentCheckView.view.alpha = 0
                 descriptonView.view.alpha = 1
                 productTagView.view.alpha = 0
+                productRatingView.view.alpha = 0
             case 2:
                 contentCheckView.view.alpha = 0
                 descriptonView.view.alpha = 0
                 productTagView.view.alpha = 1
+                productRatingView.view.alpha = 0
+            case 3:
+                contentCheckView.view.alpha = 0
+                descriptonView.view.alpha = 0
+                productTagView.view.alpha = 0
+                productRatingView.view.alpha = 1
             default:
                 contentCheckView.view.alpha = 0
                 descriptonView.view.alpha = 0
                 productTagView.view.alpha = 0
+                productRatingView.view.alpha = 0
             }
         })
     }

@@ -1,34 +1,33 @@
 //
-//  PrepPostTagProductsViewController.swift
+//  PrepPostRatingViewController.swift
 //  Lumena
 //
-//  Created by 島田晃 on 2024/11/20.
+//  Created by 島田晃 on 2024/11/23.
 //
 
 import Foundation
 import UIKit
 import SwiftUI
 
-#Preview("PrepPostTagProductsViewRepPreview") {
-    PrepPostTagProductsViewRep()
+#Preview("PrepPostRatingViewRepPreview") {
+    PrepPostRatingViewRep()
 }
 
-struct PrepPostTagProductsViewRep: UIViewControllerRepresentable {
+struct PrepPostRatingViewRep: UIViewControllerRepresentable {
     
-    func makeUIViewController(context: Context) -> PrepPostTagProductsViewController {
-        return PrepPostTagProductsViewController()
+    func makeUIViewController(context: Context) -> PrepPostRatingViewController {
+        return PrepPostRatingViewController()
     }
     
-    func updateUIViewController(_ uiViewController: PrepPostTagProductsViewController, context: Context) {
+    func updateUIViewController(_ uiViewController: PrepPostRatingViewController, context: Context) {
         // Update the view controller if needed
     }
 }
 
-class PrepPostTagProductsViewController: UIViewController, BarcodeScannerProtocol {
+class PrepPostRatingViewController: UIViewController {
     
-    private var searchBar: PrepPostTagProductsSearchBar!
-    private var customListView: TagListView!
-    private var barcodeScannerVC: BarcodeScannerViewController!
+    private var customListView: RatingListView!
+    private var searchBar: PrepPostRatingProductsSearchBar!
     private var searchBarHeightConstraint: NSLayoutConstraint!
     private var searchBarHeight: CGFloat = 45
     private var previousOffset: CGFloat = 0
@@ -59,10 +58,10 @@ class PrepPostTagProductsViewController: UIViewController, BarcodeScannerProtoco
     }
 }
 
-extension PrepPostTagProductsViewController: PrepPostTagProductsSearchBarDelegate {
+extension PrepPostRatingViewController: PrepPostRatingProductsSearchBarDelegate {
     
     private func setupSearchBar() {
-        searchBar = PrepPostTagProductsSearchBar()
+        searchBar = PrepPostRatingProductsSearchBar()
         searchBar.delegate = self
         searchBar.backgroundColor = .clear
         searchBar.translatesAutoresizingMaskIntoConstraints = false
@@ -89,41 +88,12 @@ extension PrepPostTagProductsViewController: PrepPostTagProductsSearchBarDelegat
     func searchBarDidEndEditing() {
         isSearchBarFocused = false // Unlock the search bar height
     }
-    
-    func searchBarBarcodeTapped() {
-        barcodeScannerVC = BarcodeScannerViewController()
-        barcodeScannerVC.delegate = self
-        barcodeScannerVC.modalPresentationStyle = .pageSheet
-        if let sheetController = barcodeScannerVC.sheetPresentationController {
-            // Set a custom detent for 40% of the screen height
-            let customDetent = UISheetPresentationController.Detent.custom(identifier: .init("40Percent")) { context in
-                return context.maximumDetentValue * 0.4 // 40% of the maximum height
-            }
-            sheetController.detents = [customDetent]
-            sheetController.prefersGrabberVisible = true // Shows the grabber at the top
-        }
-        barcodeScannerVC.sheetPresentationController?.prefersGrabberVisible = true // Shows grabber at the top
-        present(barcodeScannerVC, animated: true, completion: nil)
-    }
-    
-    func searchBarSubmitCosmetic() {
-        
-    }
-    
-    // for BarcodeScannerViewController
-    func didScanBarcode(withCode code: String) {
-        // Dismiss the BarcodeScannerViewController
-        barcodeScannerVC.dismiss(animated: true) {
-            // Replace the search bar's text with the scanned barcode
-            self.searchBar.updateSearchText(with: code)
-        }
-    }
 }
 
-extension PrepPostTagProductsViewController: TagListViewDelegate {
+extension PrepPostRatingViewController: RatingListViewDelegate {
     
     private func setupListView() {
-        customListView = TagListView()
+        customListView = RatingListView()
         customListView.delegate = self
         self.view.backgroundColor = .clear
         
@@ -138,17 +108,40 @@ extension PrepPostTagProductsViewController: TagListViewDelegate {
         ])
 
         // Sample data
-        let sampleData = Array(repeating: (
-            productImage: UIImage(systemName: "star"),
-            productName: "Sample Product",
-            productBrand: "Brand",
-            hasLink: true
-        ), count: 12)
+        let sampleData: [(productImage: UIImage?, productName: String, productBrand: String, sliders: [RatingSliderView3])] = (1...12).map { index in
+            let slider1 = RatingSliderView3(
+                frame: .zero,
+                configuration: RatingSliderConfiguration(
+                    tagCosmeticID: "cosmeticID\(index)",
+                    title: "Effectiveness",
+                    maxWidth: 300,
+                    minRatingText: "Low",
+                    maxRatingText: "High"
+                )
+            )
+            
+            let slider2 = RatingSliderView3(
+                frame: .zero,
+                configuration: RatingSliderConfiguration(
+                    tagCosmeticID: "cosmeticID\(index)",
+                    title: "Recommendation",
+                    maxWidth: 300,
+                    minRatingText: "1",
+                    maxRatingText: "5"
+                )
+            )
+            
+            return (
+                productImage: UIImage(systemName: "star"),
+                productName: "Sample Product \(index)",
+                productBrand: "Brand \(index)",
+                sliders: [slider1, slider2]
+            )
+        }
         
         customListView.updateData(sampleData)
     }
     
-    // MARK: - CustomListViewDelegate
     func listViewDidScroll(to yOffset: CGFloat) {
         guard !isSearchBarFocused else { return } // Skip collapsing when focused
         
@@ -179,20 +172,15 @@ extension PrepPostTagProductsViewController: TagListViewDelegate {
     }
 }
 
-
-protocol PrepPostTagProductsSearchBarDelegate: AnyObject {
+protocol PrepPostRatingProductsSearchBarDelegate: AnyObject {
     func searchBarDidBeginEditing()
     func searchBarDidEndEditing()
-    func searchBarBarcodeTapped()
-    func searchBarSubmitCosmetic()
 }
 
-class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
+class PrepPostRatingProductsSearchBar: UIView, UISearchBarDelegate {
     
     // MARK: - Subviews
     private let searchBar = UISearchBar()
-    private let button1 = UIButton(type: .system)
-    private let button2 = UIButton(type: .system)
     private let clearButton = UIButton(type: .system) // New clear button
     private let dummyBackgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .light)) // Apply blur effect
     
@@ -201,7 +189,7 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
     private let maxHeight: CGFloat = 45
     private let visibilityThreshold: CGFloat = 35 // or maxHeight * 0.9
     
-    weak var delegate: PrepPostTagProductsSearchBarDelegate? // Delegate property
+    weak var delegate: PrepPostRatingProductsSearchBarDelegate? // Delegate property
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -240,20 +228,6 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
         
         // Configure Button 1 with vial.viewfinder image
         let config = UIImage.SymbolConfiguration(pointSize: 23, weight: .semibold) // Adjust size of the icon
-        button1.setImage(UIImage(systemName: "vial.viewfinder", withConfiguration: config), for: .normal)
-        button1.tintColor = UIColor(red: 0.486, green: 0.629, blue: 0.53, alpha: 1.0)
-        button1.translatesAutoresizingMaskIntoConstraints = false
-        button1.alpha = 1.0 // Initially visible
-        dummyBackgroundView.contentView.addSubview(button1)
-        
-        // Configure Button 2 with barcode.viewfinder image
-        button2.setImage(UIImage(systemName: "barcode.viewfinder", withConfiguration: config), for: .normal)
-        button2.tintColor = UIColor(red: 0.486, green: 0.629, blue: 0.53, alpha: 1.0)
-        button2.translatesAutoresizingMaskIntoConstraints = false
-        button2.alpha = 1.0 // Initially visible
-        button2.addTarget(self, action: #selector(handleBarcodeTap), for: .touchUpInside)
-        dummyBackgroundView.contentView.addSubview(button2)
-        
         // Configure Clear Button (New)
         clearButton.setImage(UIImage(systemName: "xmark.circle.fill", withConfiguration: config), for: .normal)
         clearButton.tintColor = .systemGray
@@ -277,34 +251,18 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
         
         // Constraints for Button 2
         NSLayoutConstraint.activate([
-            button2.trailingAnchor.constraint(equalTo: dummyBackgroundView.trailingAnchor, constant: -8),
-            button2.centerYAnchor.constraint(equalTo: dummyBackgroundView.centerYAnchor),
-            button2.widthAnchor.constraint(equalToConstant: 36),
-            button2.heightAnchor.constraint(equalToConstant: 36)
-        ])
-        
-        // Constraints for Button 1
-        NSLayoutConstraint.activate([
-            button1.trailingAnchor.constraint(equalTo: button2.leadingAnchor, constant: -8),
-            button1.centerYAnchor.constraint(equalTo: dummyBackgroundView.centerYAnchor),
-            button1.widthAnchor.constraint(equalToConstant: 36),
-            button1.heightAnchor.constraint(equalToConstant: 36)
+            clearButton.trailingAnchor.constraint(equalTo: dummyBackgroundView.trailingAnchor, constant: -8),
+            clearButton.centerYAnchor.constraint(equalTo: dummyBackgroundView.centerYAnchor),
+            clearButton.widthAnchor.constraint(equalToConstant: 36),
+            clearButton.heightAnchor.constraint(equalToConstant: 36)
         ])
         
         // Constraints for the Search Bar
         NSLayoutConstraint.activate([
             searchBar.leadingAnchor.constraint(equalTo: dummyBackgroundView.leadingAnchor, constant: 8),
-            searchBar.trailingAnchor.constraint(equalTo: button1.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor),
             searchBar.topAnchor.constraint(equalTo: dummyBackgroundView.topAnchor, constant: 5),
             searchBar.bottomAnchor.constraint(equalTo: dummyBackgroundView.bottomAnchor, constant: -5)
-        ])
-        
-        // Constraints for Clear Button (New)
-        NSLayoutConstraint.activate([
-            clearButton.trailingAnchor.constraint(equalTo: button2.leadingAnchor, constant: -16),
-            clearButton.centerYAnchor.constraint(equalTo: dummyBackgroundView.centerYAnchor),
-            clearButton.widthAnchor.constraint(equalToConstant: 20),
-            clearButton.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
     
@@ -313,19 +271,12 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
         searchBar.delegate?.searchBarTextDidBeginEditing?(searchBar) // Notify delegate about the text change
     }
     
-    // Barcode Button Action
-    @objc private func handleBarcodeTap() {
-        delegate?.searchBarBarcodeTapped() // Notify the delegate
-    }
-    
-    
     // MARK: - UISearchBarDelegate Methods
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         delegate?.searchBarDidBeginEditing() // Notify delegate
         
         // Hide Button 1 and show Clear Button
         UIView.animate(withDuration: 0.3) {
-            self.button1.alpha = 0.0
             self.clearButton.alpha = 1.0
         }
     }
@@ -335,7 +286,6 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
         
         // Show Button 1 and hide Clear Button
         UIView.animate(withDuration: 0.3) {
-            self.button1.alpha = 1.0
             self.clearButton.alpha = 0.0
         }
     }
@@ -359,14 +309,8 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
         let exponentialFactor = pow(normalizedHeight, 5) // Exponential easing
         
         // Calculate scale and alpha based on exponential factor
-        let scaleFactor = 0.5 + (exponentialFactor * 0.5) // Scale between 0.5 and 1.0
         let buttonAlpha = exponentialFactor // Alpha increases exponentially with height
         
-        let scaleTransform = CGAffineTransform(scaleX: scaleFactor, y: scaleFactor)
-        self.button1.transform = scaleTransform
-        self.button2.transform = scaleTransform
-        self.button1.alpha = buttonAlpha
-        self.button2.alpha = buttonAlpha
         self.searchBar.alpha = buttonAlpha
         self.layoutIfNeeded()
     }
@@ -375,39 +319,43 @@ class PrepPostTagProductsSearchBar: UIView, UISearchBarDelegate {
 
 // MARK: -- Cosmetic List Cell and List
 
-class TagIndividualCosmeticsTagCell: UITableViewCell {
+/*class TagIndividualCosmeticsRatingCell: UITableViewCell {
     
     // MARK: - Subviews
     private let containerView = UIView()
     private let productImageView = UIImageView()
     private let productNameLabel = UILabel()
     private let productBrandLabel = UILabel()
-    private let linkImageView = UIImageView()
+    private let toggleButton = UIButton(type: .system)
+    private let sliderStackView = UIStackView()
     private let separator = UIView()
     
-    var tagState: Bool = false {
+    private var containerBottomConstraint: NSLayoutConstraint?
+    private var sliderBottomConstraint: NSLayoutConstraint?
+    
+    private var bottomHeight: CGFloat = 40
+    private var topHeight: CGFloat = 90
+    
+    var isExpanded: Bool = false {
         didSet {
-            updateContainerBackground()
+            updateCellExpansion()
         }
     }
     
-    // Callback for tap gestures
-    var onLinkTap: (() -> Void)?
-    var onTagToggle: (() -> Void)?
+    // Callback for toggle button
+    var onToggleExpansion: (() -> Void)?
     
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
         setupConstraints()
-        addTapGesture()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
         setupConstraints()
-        addTapGesture()
     }
     
     // MARK: - Setup
@@ -415,18 +363,11 @@ class TagIndividualCosmeticsTagCell: UITableViewCell {
         selectionStyle = .none
         
         // Container View
-//        containerView.layer.cornerRadius = 20
-//        containerView.layer.shadowRadius = 3
-//        containerView.layer.shadowOpacity = 0.1
-//        containerView.layer.shadowOffset = CGSize(width: 0, height: 1)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         
         // Product Image
         productImageView.layer.cornerRadius = 16
-        productImageView.layer.shadowRadius = 3
-        productImageView.layer.shadowOpacity = 0.1
-        productImageView.layer.shadowOffset = CGSize(width: 0, height: 1)
         productImageView.clipsToBounds = true
         productImageView.contentMode = .scaleAspectFill
         productImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -443,32 +384,52 @@ class TagIndividualCosmeticsTagCell: UITableViewCell {
         productBrandLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(productBrandLabel)
         
-        // Link Image
-        linkImageView.image = UIImage(systemName: "link.circle.fill")
-        linkImageView.tintColor = UIColor.systemBlue
-        linkImageView.isUserInteractionEnabled = true
-        linkImageView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(linkImageView)
+        // Toggle Button
+        toggleButton.setTitle("^", for: .normal)
+        toggleButton.addTarget(self, action: #selector(toggleExpansion), for: .touchUpInside)
+        toggleButton.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(toggleButton)
+        
+        // Slider Stack View
+        sliderStackView.axis = .horizontal
+        sliderStackView.distribution = .fillEqually
+        sliderStackView.spacing = 10
+        sliderStackView.isHidden = true // Hidden initially
+        sliderStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add sliders to stack view
+        for _ in 1...4 {
+            let slider = UISlider()
+            sliderStackView.addArrangedSubview(slider)
+        }
+        containerView.addSubview(sliderStackView)
     }
     
     private func setupConstraints() {
+        
+        containerBottomConstraint = containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        containerBottomConstraint?.isActive = true
+        
+        sliderBottomConstraint = sliderStackView.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: topHeight)
+        sliderBottomConstraint?.isActive = true
+        
+
         NSLayoutConstraint.activate([
             // Container View
-            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
-            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
-            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             // Product Image
             productImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
-            productImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10), // Top padding
-            productImageView.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -10), // Bottom padding
+            productImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            productImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
             productImageView.widthAnchor.constraint(equalToConstant: 70),
             productImageView.heightAnchor.constraint(equalToConstant: 70),
             
             // Product Name Label
             productNameLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 10),
-            productNameLabel.trailingAnchor.constraint(equalTo: linkImageView.leadingAnchor, constant: -10),
+            productNameLabel.trailingAnchor.constraint(equalTo: toggleButton.leadingAnchor, constant: -10),
             productNameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
             
             // Product Brand Label
@@ -477,48 +438,198 @@ class TagIndividualCosmeticsTagCell: UITableViewCell {
             productBrandLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor, constant: 4),
             productBrandLabel.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -10),
             
-            // Link Image
-            linkImageView.widthAnchor.constraint(equalToConstant: 25),
-            linkImageView.heightAnchor.constraint(equalToConstant: 25),
-            linkImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
-            linkImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+            // Toggle Button
+            toggleButton.widthAnchor.constraint(equalToConstant: 25),
+            toggleButton.heightAnchor.constraint(equalToConstant: 25),
+            toggleButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            toggleButton.centerYAnchor.constraint(equalTo: productImageView.centerYAnchor),
+            
+            // Slider Stack View
+            sliderStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+            sliderStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            sliderStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: topHeight + 20),
         ])
     }
     
-    override func updateConstraints() {
-        super.updateConstraints()
+    // MARK: - Toggle Expansion
+    @objc private func toggleExpansion() {
+        isExpanded.toggle()
+        onToggleExpansion?()
+    }
+    
+    private func updateCellExpansion() {
+        sliderStackView.isHidden = !isExpanded
+        
+        // Adjust the bottom constraint for animation
+        containerBottomConstraint?.constant = isExpanded ?  -(bottomHeight + 10) : 0
+        sliderBottomConstraint?.constant = isExpanded ? topHeight : 0 // Adjust height when expanded or collapsed
+        
+        // Update toggle button title
+        toggleButton.setTitle(isExpanded ? "v" : "^", for: .normal)
+        
+        // Animate layout changes
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
+    }
+
+    
+    // MARK: - Configure Cell
+    func configure(
+        productImage: UIImage?,
+        productName: String,
+        productBrand: String
+    ) {
+        productImageView.image = productImage ?? UIImage(systemName: "cross.vial")
+        productNameLabel.text = productName
+        productBrandLabel.text = productBrand
+    }
+}*/
+
+class TagIndividualCosmeticsRatingCell: UITableViewCell {
+    
+    // MARK: - Subviews
+    private let containerView = UIView()
+    private let productImageView = UIImageView()
+    private let productNameLabel = UILabel()
+    private let productBrandLabel = UILabel()
+    private let toggleButton = UIButton(type: .system)
+    private let sliderStackView = UIStackView()
+    private let separator = UIView()
+    
+    private var containerBottomConstraint: NSLayoutConstraint?
+    private var sliderBottomConstraint: NSLayoutConstraint?
+    
+    private var bottomHeight: CGFloat = 90
+    private var topHeight: CGFloat = 90
+    
+    var isExpanded: Bool = false {
+        didSet {
+            updateCellExpansion()
+        }
+    }
+    
+    // Callback for toggle button
+    var onToggleExpansion: (() -> Void)?
+    
+    // MARK: - Initializer
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupView()
+        setupConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+        setupConstraints()
+    }
+    
+    // MARK: - Setup
+    private func setupView() {
+        selectionStyle = .none
+        
+        // Container View
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(containerView)
+        
+        // Product Image
+        productImageView.layer.cornerRadius = 16
+        productImageView.clipsToBounds = true
+        productImageView.contentMode = .scaleAspectFill
+        productImageView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(productImageView)
+        
+        // Product Name Label
+        productNameLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        productNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(productNameLabel)
+        
+        // Product Brand Label
+        productBrandLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        productBrandLabel.textColor = .gray
+        productBrandLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(productBrandLabel)
+        
+        // Toggle Button
+        toggleButton.setTitle("^", for: .normal)
+        toggleButton.addTarget(self, action: #selector(toggleExpansion), for: .touchUpInside)
+        toggleButton.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(toggleButton)
+        
+        // Slider Stack View
+        sliderStackView.axis = .vertical
+        sliderStackView.distribution = .fill
+        sliderStackView.spacing = 15
+        sliderStackView.isHidden = true // Hidden initially
+        sliderStackView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(sliderStackView)
+    }
+    
+    private func setupConstraints() {
+        
+        containerBottomConstraint = containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        containerBottomConstraint?.isActive = true
+        
+        sliderBottomConstraint = sliderStackView.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: topHeight)
+        sliderBottomConstraint?.isActive = true
+        
+
         NSLayoutConstraint.activate([
+            // Container View
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            
+            // Product Image
+            productImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+            productImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            productImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+            productImageView.widthAnchor.constraint(equalToConstant: 70),
+            productImageView.heightAnchor.constraint(equalToConstant: 70),
+            
+            // Product Name Label
+            productNameLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 10),
+            productNameLabel.trailingAnchor.constraint(equalTo: toggleButton.leadingAnchor, constant: -10),
+            productNameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            
+            // Product Brand Label
+            productBrandLabel.leadingAnchor.constraint(equalTo: productNameLabel.leadingAnchor),
+            productBrandLabel.trailingAnchor.constraint(equalTo: productNameLabel.trailingAnchor),
+            productBrandLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor, constant: 4),
+            productBrandLabel.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -10),
+            
+            // Toggle Button
+            toggleButton.widthAnchor.constraint(equalToConstant: 25),
+            toggleButton.heightAnchor.constraint(equalToConstant: 25),
+            toggleButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            toggleButton.centerYAnchor.constraint(equalTo: productImageView.centerYAnchor),
+            
+            // Slider Stack View
+            sliderStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+            sliderStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            sliderStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: topHeight + 20),
         ])
     }
     
-    private func addTapGesture() {
-        let tagTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTagToggle))
-        containerView.addGestureRecognizer(tagTapGesture)
+    @objc private func toggleExpansion() {
+        isExpanded.toggle()
+        onToggleExpansion?()
+    }
+    
+    private func updateCellExpansion() {
+        sliderStackView.isHidden = !isExpanded
         
-        let linkTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLinkTap))
-        linkImageView.addGestureRecognizer(linkTapGesture)
-    }
-    
-    private func updateContainerBackground() {
-//        let activeColor = UIColor(red: 0.686, green: 0.817, blue: 0.724, alpha: 1.0)
-        let activeColor = UIColor.systemGray5
-        let inactiveColor = UIColor.systemBackground
-        containerView.backgroundColor = tagState ? activeColor : inactiveColor
-    }
-    
-    // MARK: - Handlers
-    @objc private func handleTagToggle() {
-        tagState.toggle()
-        updateContainerBackground()
-        onTagToggle?()
-    }
-    
-    @objc private func handleLinkTap() {
-        onLinkTap?()
+        // Adjust the bottom constraint for animation
+        containerBottomConstraint?.constant = isExpanded ? -(bottomHeight + 10) : 0
+        
+        // Update toggle button title
+        toggleButton.setTitle(isExpanded ? "v" : "^", for: .normal)
+        
+        // Animate layout changes
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
     }
     
     // MARK: - Configure Cell
@@ -526,20 +637,29 @@ class TagIndividualCosmeticsTagCell: UITableViewCell {
         productImage: UIImage?,
         productName: String,
         productBrand: String,
-        hasLink: Bool
+        ratingSliders: [RatingSliderView3]
     ) {
         productImageView.image = productImage ?? UIImage(systemName: "cross.vial")
         productNameLabel.text = productName
         productBrandLabel.text = productBrand
-        linkImageView.isHidden = !hasLink
+        
+        // Clear existing sliders
+        sliderStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        // Add new sliders
+        for slider in ratingSliders {
+            sliderStackView.addArrangedSubview(slider)
+        }
     }
-}
+} 
 
-protocol TagListViewDelegate: AnyObject {
+
+
+protocol RatingListViewDelegate: AnyObject {
     func listViewDidScroll(to yOffset: CGFloat)
 }
 
-class TagListView: UIView, UITableViewDelegate, UITableViewDataSource {
+class RatingListView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     private let tableView = UITableView()
     
@@ -547,9 +667,9 @@ class TagListView: UIView, UITableViewDelegate, UITableViewDataSource {
         return tableView
     }
     
-    private var data: [(productImage: UIImage?, productName: String, productBrand: String, hasLink: Bool)] = []
+    private var data: [(productImage: UIImage?, productName: String, productBrand: String, sliders: [RatingSliderView3])] = []
     
-    weak var delegate: TagListViewDelegate?
+    weak var delegate: RatingListViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -564,10 +684,10 @@ class TagListView: UIView, UITableViewDelegate, UITableViewDataSource {
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(TagIndividualCosmeticsTagCell.self, forCellReuseIdentifier: "TagIndividualCosmeticsTagCell")
+        tableView.register(TagIndividualCosmeticsRatingCell.self, forCellReuseIdentifier: "TagIndividualCosmeticsRatingCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.contentInsetAdjustmentBehavior = .never
-        tableView.estimatedRowHeight = 100
+        tableView.estimatedRowHeight = UITableView.automaticDimension
         tableView.rowHeight = UITableView.automaticDimension
 
         // Add a spacer at the top using tableHeaderView
@@ -589,7 +709,7 @@ class TagListView: UIView, UITableViewDelegate, UITableViewDataSource {
         ])
     }
 
-    func updateData(_ newData: [(productImage: UIImage?, productName: String, productBrand: String, hasLink: Bool)]) {
+    func updateData(_ newData: [(productImage: UIImage?, productName: String, productBrand: String, sliders: [RatingSliderView3])]) {
         data = newData
         tableView.reloadData()
     }
@@ -599,7 +719,7 @@ class TagListView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TagIndividualCosmeticsTagCell", for: indexPath) as? TagIndividualCosmeticsTagCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TagIndividualCosmeticsRatingCell", for: indexPath) as? TagIndividualCosmeticsRatingCell else {
             return UITableViewCell()
         }
         
@@ -608,8 +728,13 @@ class TagListView: UIView, UITableViewDelegate, UITableViewDataSource {
             productImage: item.productImage,
             productName: item.productName,
             productBrand: item.productBrand,
-            hasLink: item.hasLink
+            ratingSliders: item.sliders
         )
+        
+        cell.onToggleExpansion = { [weak tableView] in
+            tableView?.beginUpdates()
+            tableView?.endUpdates()
+        }
         
         return cell
     }

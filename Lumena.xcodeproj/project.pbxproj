@@ -10,6 +10,7 @@
 		170264702BEACED5004C9444 /* SkinSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */; };
 		170264722BEB0C30004C9444 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170264712BEB0C30004C9444 /* Notifications.swift */; };
 		171761CD2C096317000268A6 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */; };
+		172003102CF1E5C10018E1C4 /* PrepPostRatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720030F2CF1E5C10018E1C4 /* PrepPostRatingViewController.swift */; };
 		17343E012C80C8070050035D /* TagMusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17343E002C80C8070050035D /* TagMusicViewController.swift */; };
 		17343E032C810A950050035D /* CameraFlashSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17343E022C810A950050035D /* CameraFlashSliderView.swift */; };
 		17343E052C8127260050035D /* TextBasedContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17343E042C8127260050035D /* TextBasedContentViewController.swift */; };
@@ -99,6 +100,7 @@
 		1784D9E72CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */; };
 		1784D9E92CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */; };
 		1784D9EB2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784D9EA2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift */; };
+		178A8CDF2CFFB98C00C4ACF1 /* RatingSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178A8CDE2CFFB98C00C4ACF1 /* RatingSliderView.swift */; };
 		179358672C05C68F0047F3F9 /* ProfileBackgroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */; };
 		179358692C05CEE30047F3F9 /* ProfileToolButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */; };
 		1798E7D62BD6237200793A2C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1798E7D52BD6237200793A2C /* LoginViewController.swift */; };
@@ -236,6 +238,7 @@
 		1702646F2BEACED5004C9444 /* SkinSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingViewController.swift; sourceTree = "<group>"; };
 		170264712BEB0C30004C9444 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		171761CC2C096317000268A6 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
+		1720030F2CF1E5C10018E1C4 /* PrepPostRatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostRatingViewController.swift; sourceTree = "<group>"; };
 		17343E002C80C8070050035D /* TagMusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagMusicViewController.swift; sourceTree = "<group>"; };
 		17343E022C810A950050035D /* CameraFlashSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFlashSliderView.swift; sourceTree = "<group>"; };
 		17343E042C8127260050035D /* TextBasedContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextBasedContentViewController.swift; sourceTree = "<group>"; };
@@ -335,6 +338,7 @@
 		1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostContentCheckViewController.swift; sourceTree = "<group>"; };
 		1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostDescriptionViewController.swift; sourceTree = "<group>"; };
 		1784D9EA2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepPostTagProductsViewController.swift; sourceTree = "<group>"; };
+		178A8CDE2CFFB98C00C4ACF1 /* RatingSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingSliderView.swift; sourceTree = "<group>"; };
 		179358662C05C68F0047F3F9 /* ProfileBackgroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundViewController.swift; sourceTree = "<group>"; };
 		179358682C05CEE30047F3F9 /* ProfileToolButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolButtonViewController.swift; sourceTree = "<group>"; };
 		1798E7D52BD6237200793A2C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -684,6 +688,8 @@
 				1784D9E62CDA0B660048E1C8 /* PrepPostContentCheckViewController.swift */,
 				1784D9E82CDAEC6D0048E1C8 /* PrepPostDescriptionViewController.swift */,
 				1784D9EA2CEF1FAB0048E1C8 /* PrepPostTagProductsViewController.swift */,
+				1720030F2CF1E5C10018E1C4 /* PrepPostRatingViewController.swift */,
+				178A8CDE2CFFB98C00C4ACF1 /* RatingSliderView.swift */,
 				1784D9E22CDA03E10048E1C8 /* PrepPostStatusBarView.swift */,
 			);
 			path = PostPrep;
@@ -1247,8 +1253,10 @@
 				177DDFCD2C45A0EB0042802B /* ReadingData.swift in Sources */,
 				17FFC03D2BD6190900682EE2 /* MusicModel.swift in Sources */,
 				17B7A3C62C04104E00777CC1 /* LayoutDimension.swift in Sources */,
+				178A8CDF2CFFB98C00C4ACF1 /* RatingSliderView.swift in Sources */,
 				17B7A3C82C04104E00777CC1 /* LayoutProperty.swift in Sources */,
 				17FFC0412BD6190900682EE2 /* BarcodeScanner.swift in Sources */,
+				172003102CF1E5C10018E1C4 /* PrepPostRatingViewController.swift in Sources */,
 				17FFC0402BD6190900682EE2 /* SearchModel.swift in Sources */,
 				17FFBFA52BD616D900682EE2 /* AppDelegate.swift in Sources */,
 				17FFC05F2BD6190900682EE2 /* CustomVideoPlayer.swift in Sources */,

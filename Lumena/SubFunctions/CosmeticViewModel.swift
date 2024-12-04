@@ -885,7 +885,7 @@ struct RatingIndividualListView: View {
                     
                     if showSlider {
                         ForEach(0..<sliderConfigs.count, id: \.self) { index in
-                            RatingSliderView(
+                            RatingSliderViewSwiftUI(
                                 postLume: postLume,
                                 tagCosmeticID: tagCosmetic.cosmeticItem!.cosmeticID,
                                 title: sliderConfigs[index].title, maxWidth: adjustedWidth,
@@ -903,7 +903,7 @@ struct RatingIndividualListView: View {
     }
 }
 
-struct RatingSliderView: View {
+struct RatingSliderViewSwiftUI: View {
     
     @ObservedObject var postLume: Lume
     
