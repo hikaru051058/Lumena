@@ -64,7 +64,3 @@ Lumena.xcworkspace                   # Open this workspace in Xcode
 4. Select the `Lumena` scheme in Xcode and run on an iOS simulator or device.
 
 The app expects valid AWS Amplify configuration for Cognito, AppSync, S3, and Pinpoint. Some cloud-backed flows will not work unless the matching backend environment and credentials are configured.
-
-## Notes
-
-This is a legacy showcase repository, not a polished production release. The value of the project is in the breadth of implementation: a native iOS social media experience, media capture/editing, cloud persistence, generated GraphQL models, authentication, push notifications, and product/search workflows in one app.
