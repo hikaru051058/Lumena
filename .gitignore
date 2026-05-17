@@ -21,3 +21,7 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# Local-only files
+AuthKey_*.p8
+*.p8
